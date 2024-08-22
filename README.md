@@ -6,6 +6,7 @@ Tasks driven agentic framework that gives you the building blocks to create AI w
 * Multi Agent workflows ;  
 * Tool calling for all models, even dumb ones ;
 * Multi turn chat between Agents
+...and many more !
 
 ## Why choose Yacana over other frameworks ?
 
