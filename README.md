@@ -1,7 +1,7 @@
 # Yacana
 Tasks driven agentic framework that gives you the building blocks to create AI workflows for local LLMs.  
 
-## Functionalities
+# Functionalities
 * Built for getting the best results with local opensource LLMs ;  
 * Multi Agent workflows ;  
 * Tool calling for all models, even dumb ones ;
@@ -9,7 +9,7 @@ Tasks driven agentic framework that gives you the building blocks to create AI w
 
 ...and many more !
 
-## Why choose Yacana over other frameworks ?
+# Why choose Yacana over other frameworks ?
 
 Yacana was built to make local LLMs great ! It won't work with chatGPT, and we don't intend to make it. An important part of the future lies in local opensource models. Many companies cannot afford paied subscriptions to proprietary models or won't for privacy issues. Also agentic framework tend to cost way more than simple chat, generating cloud bills that could ruin a business. But why pay for AI when you can have it for only a fraction of the cost hosted on a single GPU machine or even on the device itself ? This is where Yacana can help you harness the power of LLMs whatever the size and cachieve production grade results.
 
@@ -27,11 +27,11 @@ Also, it's free and opensource (MIT) forever. It is made by the community, for t
 
 **What's the catch ?** Well nothing really. But for transparency it is important that you understand that this version has only been tested with Ollama as inference server. We know that you guys out there are also using other inference technologies like VLLM, etc. Yacana has not been tested with this type of tech... Yet ! The next update will focus on making sure that performance when connected to something other than Ollama doesn't degrade in any way. Stay tuned. This will be addressed in the next few weeks. Also note that we are not saying that it's not compatible with other inference servers. We're saying that we don't know yet. ^^
 
-## Quickstart
+# Quickstart
 
-### Installation
+## I. Installation
 
-#### Installing Ollama
+### Installing Ollama
 
 ![image](https://github.com/user-attachments/assets/f3c45d0e-efca-4853-8237-3e56d90e1747)
 
@@ -45,7 +45,7 @@ Ollama is:
 
 ℹ️ You can connect Yacana to a remote Ollama instance. Read forward.  
 
-#### Choosing an LLM model
+### Choosing an LLM model
 
 After Ollama is installed you can browse the list of available LLMs on the [Ollama website](https://ollama.com/library) and download any model you want (or you computer can deal with).  
 For reference if you don't know what LLM model to chose (we've all been there) here is a list of models you can try out on consumer hardware:  
@@ -60,23 +60,23 @@ For reference if you don't know what LLM model to chose (we've all been there) h
 
 If you have access to a GPU VM with A LOT of RAM than you should try the state of the art 'llama3.1:405b' model.
 
-#### Running the model
+### Running the model
 
 When you have chosen your model it is time to use Ollama CLI to pull it on your computer. Simply do `ollama pull <model_name>`. The download will start immediatly. When finished you can test the model locally by doing `ollama run <model_name>` which will start a conversation with the LLM.
 
-#### Installing Yacana
+### Installing Yacana
 
 ```
 pip3 install yacana
 ```
 
-### Imports
+## II. Imports
 
 When using other frameworks 'import hell' quickly appears. To prevent this bothersome problem we propose that you import all of Yacana's modules and when finished developping let the IDE remove the unsued imports. Unused imports generaly appear grayed. Thus we recommand that you prepend these imports in all your files and clean them later. This way the IDE will have auto competion available and will help you develop 10 times faster.
 
-### Creating your first Agent
+## III. Creating your first Agent
 
-#### Initializing the Agent
+### Initializing the Agent
 Now that you have an Ollama server running and Yacana installed let's create are first agent !  
 
 Create a python file with this content:
@@ -91,7 +91,7 @@ The Agent(...) class has many optionnal parameters that we will discover in this
 1. **The system prompt** : Helps defining the personnality of the Agent.
 2. **The endpoint** : The URL of your Ollama instance. It points by default to your localhost and on the Ollama default port. If you are using Ollama on your computer you can remove this optionnal parameter and the default value will be used.
 
-#### Testing Yacana and Ollama interraction
+### Testing Yacana and Ollama interraction
 
 This framework is not meant for basic roleplay. However for people starting their journey in the realm of AI and for debug purposes we added a simple chat system. Add this line to test it :
 ```python
@@ -122,7 +122,7 @@ Arrrr, shiver me timbers! What be bringin' ye to these fair waters? Are ye looki
 Red Beard's treasure, ye say? (puffs on pipe) Well, I be knowin' a thing or two about that scurvy dog and his loot. But, I'll only be tellin' ye if ye be willin' to share yer own booty... of information! (winks)
 ```
 
-#### Complete section code 
+### Complete section code 
 
 ```python
 # @todo Imports
@@ -133,14 +133,14 @@ agent1.simple_chat()
 
 ⚠️From now on we will not set the *endpoint* attribute anymore for clarity and will resort to the defaults. If your LLM is not served by Ollama or isn't on your localhost you should continue setting this value.
 
-### Creating your first Task
+## IV. Creating your first Task
 
-### Managing Agents history
+## V. Managing Agents history
 
-### Assigning a tool to a Task
+## VI. Assigning a tool to a Task
 
-### Assigning multiple Tools
+## VII. Assigning multiple Tools
 
-### Chat between two Agents
+## VIII. Chat between two Agents
 
-### Chat between many Agents
+## IX. Chat between many Agents
