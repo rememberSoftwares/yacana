@@ -47,14 +47,14 @@ Ollama is:
 
 #### Choosing an LLM model
 
-When Ollama is installed you can browse the list of available LLMs on the [Ollama website](https://ollama.com/library) and download any model you want (or you computer can deal with).  
-For reference if you don't know what LLM model to chose (we've all been there) here is a list of models you can try out on consuimer hardware:
-| Computer power   |      LLM model name      |  LLM quality |
+After Ollama is installed you can browse the list of available LLMs on the [Ollama website](https://ollama.com/library) and download any model you want (or you computer can deal with).  
+For reference if you don't know what LLM model to chose (we've all been there) here is a list of models you can try out on consumer hardware:  
+| Computer power   |      LLM models name to try      |  LLM quality |
 |----------|:-------------:|:------:|
-| Out of this world (GC RTX 4090 / 64 GB RAM) | 'llama3.1:70b' or 'mixtral:8x22b' | Excellent reasoning and instruction following. |
-| Epic (GC RTX 4090 / 32 GB RAM) | 'llama3.1:8b' or 'dolphin-mixtral:8x7b' or 'dolphin-mixtral:8x7b-v2.5-q6_K' | Good reasoning and instruction following. (q6_K model should be less consumming than the default Mixtral if you have any issues) |
-| Gamer (GC GTX 1080TI / 16 GB RAM) |    'llama3.1:8b' or 'mistral:7b'   | Llama still works but is slower. Expect limited reasonning and no more than 2 complex instruction at a time  |
-| Potato | 'phi:2.7b' or 'phi3:3.8b' or 'tinyllama:1.1b' | Almost no reasoning, incapable of following more than 1 instruction at a time, english bound only ; Dumb as a stone |
+| **Out of this world** *(GC RTX 4090 / 64 GB RAM)* | 'llama3.1:70b' or 'mixtral:8x22b' | Excellent reasoning and instruction following. |
+| **Epic** *(GC RTX 4090 / 32 GB RAM)* | 'llama3.1:8b' or 'dolphin-mixtral:8x7b' or 'dolphin-mixtral:8x7b-v2.5-q6_K' | Good reasoning and instruction following. (q6_K model should be less consumming than the default Mixtral if you have any issues) |
+| **Gamer** *(GC GTX 1080TI / 16 GB RAM)* |    'llama3.1:8b' or 'mistral:7b'   | Llama still works but is slower. Expect limited reasonning and no more than 2 complex instruction at a time  |
+| **Potato** | 'phi:2.7b' or 'phi3:3.8b' or 'tinyllama:1.1b' | Almost no reasoning, incapable of following more than 1 instruction at a time, english bound only ; Dumb as a stone |
 
 ---
 
