@@ -5,7 +5,8 @@ Tasks driven agentic framework that gives you the building blocks to create AI w
 * Built for getting the best results with local opensource LLMs ;  
 * Multi Agent workflows ;  
 * Tool calling for all models, even dumb ones ;
-* Multi turn chat between Agents
+* Multi turn chat between Agents ;
+* Routing ;
 
 ...and many more !
 
