@@ -177,17 +177,40 @@ The Task class takes 2 mandatory parameters:
 
 ℹ️ There are many other parameters that can be given to a Task. We will see some of them in the following sections of this tutorial. But you can checkout the Task class documentation @todo URL
 
-The 
 ### Do you get how this is disruptiv unlike other Frameworks ?
 
 In the above code snippet we assigned the agent to the Task. So it's the Task that leads the direction that the AI takes. In most other frameworks it's the opposite, where you assign some work to an existing agent. This reversed way allows to have fined grained control on each resolution step as the LLM only follow bread crumb (the Tasks). The patern will become even more obvious as we get to the Tool section of this tutorial. As you'll see the Tools are also assigned at the Task level and not to the Agent directly.  
 
-TO compare with LangGraph, it's true that we canno't make a call graph as we don't bind the Task together explicitly. However, Yacana's way gives more flexibility and allows a hierarchical programing way or oronancing the Task and keeping control of the flow. It also allows creating new Task dynamically if the need was to come. You shall rely on your programming skill and good OOP to have a clean code and a good Task ordering.
+TO compare with LangGraph, it's true that we canno't make a call graph as we don't bind the Task together explicitly. However, Yacana's way gives more flexibility and allows a hierarchical programing way or ordonancing the Task and keeping control of the flow. It also allows creating new Task dynamically if the need arised. You shall rely on your programming skill and good OOP to have a clean code and a good Task ordering.
 
 ### Getting the result of a Task
 
-Even though we get the logging on the standard output of the terminal we need to extract the answer of the LLM that solved that Task.  
-getting the string message is quite easy as the 
+Even though we get logs on the standard output of the terminal, we still need to extract the answer of the LLM that solved that Task to actualy do something with it.  
+Getting the string message is quite easy as the .solve() methods returns a Message() class.  
+Maybe you are thinking "ho noo another class to deal with". Well let me tell you that it's always better to have an OOP class than somme semi-random python dictionnary where you'll forget what keys it contain. Also the Message class is very straightforward. It exposes a `content` attribute. Modify the curent code like this:
+```python
+# So that something actually happens you must call the .solve() method on your task
+my_message: Message = task1.solve()
+
+# Printing the LLM's response
+print(f"The AI response to our task is : {my_message.content}")
+```
+There you go ! Give it a try.
+
+ℹ️ Note that we used duck typing, wich is postfixing all variables declaration with their type `my_message: Message`. Yacana's source code is entirely duck typed so that your IDE always know what type it's dealing with and proposes you with the best methods and arguments. We recommand that you do the same as  it's the industry's best strandard.
+
+---
+
+Dont like having 100 lines of code for something simple ? Then chain them all in one line !
+```
+# First, let's make a basic AI agent
+agent1 = Agent("AI assistant", "llama3:8b", system_prompt="You are a helpful AI assistant")
+
+# Creating the task, solving it, extracting the result, printint the result
+print(f"The AI response to our task is : {Task(f'Solve the equation 2 + 2 and output the result', agent1).solve().content}")
+```
+🤔 If I were you I would do the message extraction on one line and the print on a new one. Let's not one-line things that much 😅.
+
 
 ### Chaining Tasks
 
