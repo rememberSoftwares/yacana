@@ -334,12 +334,15 @@ router_answer: str = Task(f"To summarize in one word, was the question about pla
 ```
 Now, even though you cannot see it, the Agent doesn't remember solving this Task. In the next section we'll see how to access and manipulate the history. Then, you'll be able to see what the Agent remembers !
 
-### Complete section code 
+### Demo time
 
-For this "complete code" demo we'll make a simple app that takes a user query (HF replacing the static string by a python `input()` if you wish) that checks if the query is about plants.
-If it is not we end the workflow there. On the other hand if it is about plants the flow will branch toward refining the type of query with another router that splits in two. If a type of plant is in the query it is extracted and common knowledge about the plant will be extracted before answering the original question. If not it will simply answer the query as is.
+For this demo we'll make a simple app that takes a user query (HF replacing the static string by a python `input()` if you wish) that checks if the query is about plants.
+If it is not we end the workflow there. However, if it is about plants the flow will branch and search if a plant type/name was given. If it was then it is extracted and knowledge about the plant will be shown before answering the original question. If not it will simply answer the query as is.
 
-Read from bottom ⬇️ to top ⬆️
+![plant1B](https://github.com/user-attachments/assets/e479e74c-c4f4-4942-a8b5-bd06b377af8c)
+
+
+Read from bottom ⬇️ to top ⬆️. (Do note that the Agent and question are defined globaly at the top)
 
 ```python
 @todo imports
@@ -500,7 +503,7 @@ As these factors combine, the leaves' ability to carry out photosynthesis decrea
 So, there you have it! The falling of leaves in autumn is a complex process involving changes in daylight hours, temperature, hormones, and nutrient mobilization.
 ```
 
-ℹ️ Later we'll see how to remove the automatic "[INFO]" prints so that only YOUR prints are shown. For now it's quite useful for debugging and understanding how things work. So I'll leave them in this tuorial section.
+ℹ️ Later we'll see how to remove the automatic "[INFO]" prints so that only YOUR prints are shown. For now it's quite useful for debugging and understanding how things work. So I'll leave them in this tutorial section.
 
 
 **Upating question to match the "specific plant info" workflow:**
