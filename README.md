@@ -342,7 +342,7 @@ If it is not we end the workflow there. However, if it is about plants the flow 
 ![plant1B](https://github.com/user-attachments/assets/e479e74c-c4f4-4942-a8b5-bd06b377af8c)
 
 
-Read from bottom ⬇️ to top ⬆️. (Do note that the Agent and question are defined globaly at the top)
+Read from bottom ⬇️ to top ⬆️. (Although the Agent and question are defined globaly at the top)
 
 ```python
 @todo imports
