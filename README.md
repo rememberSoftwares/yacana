@@ -245,8 +245,39 @@ But what is routing ? Well, having LLMs solving a Task and then chaining many ot
 The most common routing mechanic is "yes" / "no". Depending on the result your program can do different things next. Let's see an example:  
 
 ```
+agent1 = Agent("AI assistant", "llama3:8b", system_prompt="You are a helpful AI assistant")
 
+# Let's invent a question about 'leaves'
+question: str = "Why do leaves fall in autumn ?"
+
+# Ask if the question is plant related, yes or no
+task1_result: str = Task(f"Is the following question about plants ? <question>{question}</question> Answer ONLY by 'yes' or "
+                         f"'no'.", agent1).solve().content
+
+if "yes" in task1_result.lower():
+    print("Question is about plants")
+    # next step in workflow that involves plants
+
+elif "no" in task1_result.lower():
+    print("Question is NOT about plants")
+    # next step in workflow that DOESN'T involve plants
 ```
+
+You should get the following output:
+```
+INFO: [PROMPT]: Is the following question about plants ? <question>Why do leaves fall in autumn ?</question> Answer ONLY by 'yes' or 'no'.
+
+INFO: [AI_RESPONSE]: yes
+Question is about plants
+```
+
+Many things are happening here. We didn't implement an abstraction to silplify things but the downside is that you must learn a few tricks:
+1. **Always compare with lower case string** : Because LLMs have their own mind they do not always anwser a straight `yes`. Sometime you get "Yes" or "No" or even full cap "YES" for no reasons.
+2. **Always start by searching for "yes"** : We do a substring match using the `in` keyword of python because the LLM doesn't always respect the instructions of outputing "ONLY 'yes' or 'no'". Sometimes you'll get "yes!" or "Great idea, I say yes". Substring match will match "yes" anywhere in the LLMs answer. But what if you matched "no" first and the LLM generated "Not sure but I would say yes". Because we search for substrings the condition would match the "no" part of the word "Not" even though the LLM said yes. We could use regexe to fix this but it's easier to just start the condition by lookig for "yes" as their are no english words that contains "yes" in substring (at least no common ones ^^).
+3. **Push the model to respect the instruction** : Tell it to "answer ONLY with 'xx'". See the use of upper cap to "ONLY" ? Also the single quotes arround the possible choices 'yes' | 'no' helps the LLM that sees them as delimiters.
+4. **Use formating tags** : The question that is mentionned in the prompt is then given in custom `<question>` tags. LLMs love delimiters. This way the LLM knows when the question starts and when the question ends. This technic helps it to differenciate your prompt and the dynamic part. You don't have to add tags everywhere but they can prove useful. Do not abuse of them or the LLM might start using them in it's response.
+
+This is all basic prompt engineering. If you wish to build an app with local models you will definitly have to leanr thoses tricks. LLMs ar unpredictable. It's why we built them.
 
 ###
 
