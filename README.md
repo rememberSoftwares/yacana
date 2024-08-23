@@ -270,7 +270,7 @@ INFO: [AI_RESPONSE]: yes
 Question is about plants
 ```
 
-Many things are happening here. We didn't implement an abstraction to silplify things but the downside is that you must learn a few tricks:
+▶️ Many things are happening here. We didn't implement an abstraction to silplify things but the downside is that you must learn a few tricks:
 1. **Always compare with lower case string** : Because LLMs have their own mind they do not always anwser a straight `yes`. Sometime you get "Yes" or "No" or even full cap "YES" for no reasons.
 2. **Always start by searching for "yes"** : We do a substring match using the `in` keyword of python because the LLM doesn't always respect the instructions of outputing "ONLY 'yes' or 'no'". Sometimes you'll get "yes!" or "Great idea, I say yes". Substring match will match "yes" anywhere in the LLMs answer. But what if you matched "no" first and the LLM generated "Not sure but I would say yes". Because we search for substrings the condition would match the "no" part of the word "Not" even though the LLM said yes. We could use regexe to fix this but it's easier to just start the condition by lookig for "yes" as their are no english words that contains "yes" in substring (at least no common ones ^^).
 3. **Push the model to respect the instruction** : Tell it to "answer ONLY with 'xx'". See the use of upper cap to "ONLY" ? Also the single quotes arround the possible choices 'yes' | 'no' helps the LLM that sees them as delimiters.
@@ -318,14 +318,26 @@ Question is about plants
 
 See how the LLM had an "intense" reflexion about the subject. This is verry good. You want LLMs to do reasonning like this. It will improves the overall result for the next Tasks to solve.  
 
-The prompt engineering technics used here are:
+▶️The prompt engineering technics used here are:
 1. **Make it think** : Using the expression "Explain your reasoning." makes it generate a logical answer. Note that if the model is bad at reasonning or makes a mistake during this step it may result in extremly bad situations. But fear not, failsafes can be built to limit bad reasoning. For instance having another LLM check the logic and interracting with the original Agent (see GroupSolve later on) to show it its mistake or you can give tools to the Agent that will help it achieve the truth and not rely soly on his reasonning abilities (see Tools later on).
 2. **Making it two shots** : Now that we have 2 Tasks instead of one, the second one only focuses on on task : "yes" or "no" interpretation of the result of Task1. Cutting objectives in multiple Tasks gives better performance. This why using an agentic framework is great but it's also why it's consuming a lot of tokens and having "free to run" local LLMs is great !
 
+### Cleaning the history
 
+Keeping the self reflection prompt and associated answer is always good. It helps gardrailing the model. But the "yes"/"no" router on the other hand adds unnecessary noise in the Agent's history. Moreover local models dont have huge context window size, so removing useless interaction is always good.  
+The "yes"/"no" router is only useful on the moment but we shoul make the Agent forget it ever happend after it answered. No need to keep that. This is why the Task class offers an optionnal parameter : `forget=False`.
+
+Update the router line with this new parameter:
+```python
+router_answer: str = Task(f"To summarize in one word, was the question about plants ? Answer ONLY by 'yes' or 'no'.",
+     agent1, forget=True).solve().content
+```
+Now, even though you cannot see it, the Agent doesn't remember solving this Task. In the next section we'll see how to access and manipulate the history. Then, you'll be able to see what the Agent remembers !
 
 ### Complete section code 
 
+For this "complete code" demo we'll make a simple app that takes a user query (HF replacing the static string by a python `input()` if you wish) that checks if the query is about plants.
+If it is not we end the workflow there. On the other hand if it is about plants the flow will branch toward refining the type of query with another router that splits in two. If a type of plant is in the query it is extracted and common knowledge about the plant will be extracted. If not it will simply answer the query as is.
 
 
 ## V. Managing Agents history
