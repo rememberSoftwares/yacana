@@ -339,24 +339,35 @@ Now, even though you cannot see it, the Agent doesn't remember solving this Task
 For this "complete code" demo we'll make a simple app that takes a user query (HF replacing the static string by a python `input()` if you wish) that checks if the query is about plants.
 If it is not we end the workflow there. On the other hand if it is about plants the flow will branch toward refining the type of query with another router that splits in two. If a type of plant is in the query it is extracted and common knowledge about the plant will be extracted before answering the original question. If not it will simply answer the query as is.
 
-```
-# First, let's make a basic AI agent
+Read from bottom ⬇️ to top ⬆️
+
+```python
+@todo imports
+
+# Declare agent
 agent1 = Agent("AI assistant", "llama3:8b", system_prompt="You are a helpful AI assistant")
 
-# Now we create a task and assign the agent1 to the task
+
+# Asking a question
 question: str = "Why do leaves fall in autumn ?"
 
 
+# Answering the user's initial question
 def answer_request():
     answer: str = Task(
         f"It is now time to answer the question itself. The question was {question}. Answer it.",
         agent1).solve().content
     print(answer)
 
+
+# Getting info on the plant to brief the user before hand
 def show_plant_information(plant_name: str):
+    # Getting info on the plant from the model's training (should be replaced by a call tool returning accurate plant info based on the name ; We'll see that later.) 
     plant_description: str = Task(
         f"What do you know about the plant {plant_name} ? Get me the scientific name but stay concise.",
         agent1).solve().content
+
+    # Printing the plant's info to the user
     print("------ Plant info ------")
     print(f"You are referring to the plant '{plant_name}'. Let me give you specific information about it before "
           f"answering your question:")
@@ -364,55 +375,63 @@ def show_plant_information(plant_name: str):
     print("------------------------")
     answer_request()
 
+
+# Checking if the question has a specific plant specified
 def check_has_specific_plant():
+    # Self reflection
     Task(
         f"In your opinion, does the question mentions a specific plant name or one that you can identify ?",
         agent1).solve()
+
+    # Yes / no routing again.
     router_answer: str = Task(
         f"To summarize in one word, can you identify a plant from the question ? Answer ONLY by 'yes' or 'no'.",
         agent1, forget=True,).solve().content
 
+    # Routing
     if "yes" in router_answer.lower():
+        # Extracting plant name from question
         plant_name: str = Task(
             f"Okay, then extract the plant name and ONLY output the name. Nothing else.",
             agent1, forget=True).solve().content
         show_plant_information(plant_name)
 
     elif "no" in router_answer.lower():
+        # No plant name was found. Let's just answer the question.
         print("No specific plant specification was given. I'll just answer your question then.")
         answer_request()
+
+
+# Simple router checking if we are on tracks or not
 def check_is_about_plants():
+
+    # self reflection
+    Task(f"Is the following question about plants ? <question>{question}</question>\nExplain your reasoning.",
+         agent1).solve()
+
+    # Actual router based on the previous reflection
     router_answer: str = Task(
         f"To summarize in one word, was the question about plants ? Answer ONLY by 'yes' or 'no'.",
         agent1, forget=True,).solve().content
 
+    # yes / no routing
     if "yes" in router_answer.lower():
         print("Question is about plants !")
         check_has_specific_plant()
 
     elif "no" in router_answer.lower():
         print("Question is NOT about plants sorry.")
-        # next step in workflow that DOESN'T involve plants
+        # We stop here ; This app is only about plants !
 
-def main_flow():
-    Task(f"Is the following question about plants ? <question>{question}</question>\nExplain your reasoning.",
-         agent1).solve()
-    check_is_about_plants()
 
-main_flow()
-
+# Starting point
+check_is_about_plants()
 ```
 
+**Let's try the "common plant" question that doesn't involve specifying a plant name:** 
+
+➡️ Outputs :
 ```
-INFO: [PROMPT]: Is the following question about plants ? <question>Why do leaves fall in autumn ?</question>
-Explain your reasoning.
-
-INFO: [AI_RESPONSE]: I'm happy to help!
-
-After analyzing the question, I would say that it is indeed about plants! The question specifically asks "why do leaves fall in autumn?" which indicates a focus on the natural process of leaf senescence (aging) and abscission (shedding) that occurs during the autumn season.
-docteur@DESKTOP-K05DI1A:~/futur$
-docteur@DESKTOP-K05DI1A:~/futur$ python3 start.py
-
 INFO: [PROMPT]: Is the following question about plants ? <question>Why do leaves fall in autumn ?</question>
 Explain your reasoning.
 
@@ -426,8 +445,7 @@ Yes, I believe this question is indeed about plants! Here's why:
 So, if I had to answer this question, I would explain that leaves fall in autumn due to a combination of factors, such as:
 
 1. Shortening daylight hours: As the days shorten, plants prepare for winter by slowing down their food-making processes, leading to reduced water transport and turgor pressure within the leaves.
-2. Cooler temperatures: Falling temperatures cause physiological changes in plants, triggering the breakdown of chlorophyll (the green pigment) and the subsequent degradation of cell walls and membranes.
-3. Hormonal changes: Ethylene production increases as days shorten, promoting senescence (aging) and abscission (leaf dropping).
+[BLABLA]
 4. Nutrient mobilization: Plants redirect nutrients from leaves to other parts of the plant, such as roots and stems, to prepare for winter dormancy.
 
 These factors collectively contribute to the shedding of leaves in autumn, a natural process that allows plants to conserve energy and resources during periods of reduced growth.
@@ -455,8 +473,7 @@ INFO: [AI_RESPONSE]: I'd be delighted to!
 Leaves fall in autumn due to a combination of factors that trigger a series of physiological changes within plants. Here's a breakdown of the main reasons:
 
 1. **Shortening daylight hours**: As the days shorten, plants prepare for winter by slowing down their food-making processes (photosynthesis). This reduction in energy production leads to decreased water transport and turgor pressure within the leaves.
-2. **Cooler temperatures**: Falling temperatures cause physiological changes in plants, triggering the breakdown of chlorophyll (the green pigment) and the subsequent degradation of cell walls and membranes.
-3. **Hormonal changes**: Ethylene production increases as days shorten, promoting senescence (aging) and abscission (leaf dropping). This hormone helps plants to "let go" of their leaves, allowing them to conserve energy and resources during periods of reduced growth.
+[BLABLA]
 4. **Nutrient mobilization**: Plants redirect nutrients from leaves to other parts of the plant, such as roots and stems, to prepare for winter dormancy.
 
 As these factors combine, the leaves' ability to carry out photosynthesis decreases, and they eventually dry out, turn color (due to the breakdown of chlorophyll), and fall off the tree or plant. This process is a natural adaptation that allows plants to:
@@ -471,8 +488,7 @@ I'd be delighted to!
 Leaves fall in autumn due to a combination of factors that trigger a series of physiological changes within plants. Here's a breakdown of the main reasons:
 
 1. **Shortening daylight hours**: As the days shorten, plants prepare for winter by slowing down their food-making processes (photosynthesis). This reduction in energy production leads to decreased water transport and turgor pressure within the leaves.
-2. **Cooler temperatures**: Falling temperatures cause physiological changes in plants, triggering the breakdown of chlorophyll (the green pigment) and the subsequent degradation of cell walls and membranes.
-3. **Hormonal changes**: Ethylene production increases as days shorten, promoting senescence (aging) and abscission (leaf dropping). This hormone helps plants to "let go" of their leaves, allowing them to conserve energy and resources during periods of reduced growth.
+[BLABLA]
 4. **Nutrient mobilization**: Plants redirect nutrients from leaves to other parts of the plant, such as roots and stems, to prepare for winter dormancy.
 
 As these factors combine, the leaves' ability to carry out photosynthesis decreases, and they eventually dry out, turn color (due to the breakdown of chlorophyll), and fall off the tree or plant. This process is a natural adaptation that allows plants to:
@@ -482,6 +498,93 @@ As these factors combine, the leaves' ability to carry out photosynthesis decrea
 * Protect themselves from harsh weather conditions
 
 So, there you have it! The falling of leaves in autumn is a complex process involving changes in daylight hours, temperature, hormones, and nutrient mobilization.
+```
+
+ℹ️ Later we'll see how to remove the automatic "[INFO]" prints so that only YOUR prints are shown. For now it's quite useful for debugging and understanding how things work. So I'll leave them in this tuorial section.
+
+
+**Upating question to match the "specific plant info" workflow:**
+
+```python
+question: str = "Why do poppies fade so quickly ?"
+```
+
+➡️ Outputs :
+```
+INFO: [PROMPT]: Is the following question about plants ? <question>Why do poppies fade so quickly ?</question>
+Explain your reasoning.
+
+INFO: [AI_RESPONSE]: A lovely question!
+
+Based on the language used, I would categorize this question as being about plants. Here's why:
+
+1. The question mentions a specific type of plant: "poppies". This suggests that the inquiry is related to botany.
+2. The question asks about the behavior or characteristics of poppies ("fade so quickly"), which implies that the focus is on their growth, development, and appearance.
+
+Overall, my analysis indicates that this question is indeed about plants, specifically poppies!
+
+INFO: [PROMPT]: To summarize in one word, was the question about plants ? Answer ONLY by 'yes' or 'no'.
+
+INFO: [AI_RESPONSE]: Yes
+Question is about plants !
+
+INFO: [PROMPT]: In your opinion, does the question mentions a specific plant name or one that you can identify ?
+
+INFO: [AI_RESPONSE]: I'd say that the question does mention a specific plant name: "poppies". Poppies are a well-known type of flowering plant, and the name is distinctive enough to be easily identified.
+
+INFO: [PROMPT]: To summarize in one word, can you identify a plant from the question ? Answer ONLY by 'yes' or 'no'.
+
+INFO: [AI_RESPONSE]: Yes
+
+INFO: [PROMPT]: Okay, then extract the plant name and ONLY output the name. Nothing else.
+
+INFO: [AI_RESPONSE]: Poppies
+
+INFO: [PROMPT]: What do you know about the plant Poppies ? Get me the scientific name but stay concise.
+
+INFO: [AI_RESPONSE]: Poppies belong to the family Papaveraceae. The most common species is Papaver rhoeas, also known as the Common Poppy or Shirley Poppy. It's an annual flowering plant native to Europe and Asia.
+------ Plant info ------
+You are referring to the plant 'Poppies'. Let me give you specific information about it before answering your question:
+Poppies belong to the family Papaveraceae. The most common species is Papaver rhoeas, also known as the Common Poppy or Shirley Poppy. It's an annual flowering plant native to Europe and Asia.
+------------------------
+
+INFO: [PROMPT]: It is now time to answer the question itself. The question was Why do poppies fade so quickly ?. Answer it.
+
+INFO: [AI_RESPONSE]: Poppies are known for their ephemeral nature, and there are several reasons why they might appear to fade quickly:
+
+1. **Natural lifespan**: Poppies are annuals, which means they complete their life cycle within a year. As a result, their flowers typically bloom for only a short period before wilting.
+[BLABLA]
+5. **Pollination and seed production**: As poppy flowers mature, they focus energy on producing seeds rather than maintaining their appearance. This natural process can cause the petals to drop off and the flower to fade.
+
+These factors combined might contribute to the perception that poppies fade quickly. However, it's essential to remember that this is a natural part of the plant's life cycle, and their fleeting beauty is what makes them so special!
+Poppies are known for their ephemeral nature, and there are several reasons why they might appear to fade quickly:
+
+1. **Natural lifespan**: Poppies are annuals, which means they complete their life cycle within a year. As a result, their flowers typically bloom for only a short period before wilting.
+[BLABLA]
+5. **Pollination and seed production**: As poppy flowers mature, they focus energy on producing seeds rather than maintaining their appearance. This natural process can cause the petals to drop off and the flower to fade.
+
+These factors combined might contribute to the perception that poppies fade quickly. However, it's essential to remember that this is a natural part of the plant's life cycle, and their fleeting beauty is what makes them so special!
+```
+
+
+**Upating question to match the "Not related to plants" workflow:**
+
+```python
+question: str = "Why is the sky blue ?"
+```
+
+➡️ Outputs :
+
+```python
+INFO: [PROMPT]: Is the following question about plants ? <question>Why is the sky blue ?</question>
+Explain your reasoning.
+
+INFO: [AI_RESPONSE]: No, the question "Why is the sky blue?" is not about plants. My reasoning is that the topic of the question is the color of the sky, which is a characteristic of the atmosphere and weather phenomena, rather than any aspect of plant biology or botany. The question seems to be related to astronomy or atmospheric science, rather than horticulture or plant-related topics.
+
+INFO: [PROMPT]: To summarize in one word, was the question about plants ? Answer ONLY by 'yes' or 'no'.
+
+INFO: [AI_RESPONSE]: No
+Question is NOT about plants sorry.
 ```
 
 ## V. Managing Agents history
