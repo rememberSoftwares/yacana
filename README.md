@@ -339,6 +339,150 @@ Now, even though you cannot see it, the Agent doesn't remember solving this Task
 For this "complete code" demo we'll make a simple app that takes a user query (HF replacing the static string by a python `input()` if you wish) that checks if the query is about plants.
 If it is not we end the workflow there. On the other hand if it is about plants the flow will branch toward refining the type of query with another router that splits in two. If a type of plant is in the query it is extracted and common knowledge about the plant will be extracted before answering the original question. If not it will simply answer the query as is.
 
+```
+# First, let's make a basic AI agent
+agent1 = Agent("AI assistant", "llama3:8b", system_prompt="You are a helpful AI assistant")
+
+# Now we create a task and assign the agent1 to the task
+question: str = "Why do leaves fall in autumn ?"
+
+
+def answer_request():
+    answer: str = Task(
+        f"It is now time to answer the question itself. The question was {question}. Answer it.",
+        agent1).solve().content
+    print(answer)
+
+def show_plant_information(plant_name: str):
+    plant_description: str = Task(
+        f"What do you know about the plant {plant_name} ? Get me the scientific name but stay concise.",
+        agent1).solve().content
+    print("------ Plant info ------")
+    print(f"You are referring to the plant '{plant_name}'. Let me give you specific information about it before "
+          f"answering your question:")
+    print(plant_description)
+    print("------------------------")
+    answer_request()
+
+def check_has_specific_plant():
+    Task(
+        f"In your opinion, does the question mentions a specific plant name or one that you can identify ?",
+        agent1).solve()
+    router_answer: str = Task(
+        f"To summarize in one word, can you identify a plant from the question ? Answer ONLY by 'yes' or 'no'.",
+        agent1, forget=True,).solve().content
+
+    if "yes" in router_answer.lower():
+        plant_name: str = Task(
+            f"Okay, then extract the plant name and ONLY output the name. Nothing else.",
+            agent1, forget=True).solve().content
+        show_plant_information(plant_name)
+
+    elif "no" in router_answer.lower():
+        print("No specific plant specification was given. I'll just answer your question then.")
+        answer_request()
+def check_is_about_plants():
+    router_answer: str = Task(
+        f"To summarize in one word, was the question about plants ? Answer ONLY by 'yes' or 'no'.",
+        agent1, forget=True,).solve().content
+
+    if "yes" in router_answer.lower():
+        print("Question is about plants !")
+        check_has_specific_plant()
+
+    elif "no" in router_answer.lower():
+        print("Question is NOT about plants sorry.")
+        # next step in workflow that DOESN'T involve plants
+
+def main_flow():
+    Task(f"Is the following question about plants ? <question>{question}</question>\nExplain your reasoning.",
+         agent1).solve()
+    check_is_about_plants()
+
+main_flow()
+
+```
+
+```
+INFO: [PROMPT]: Is the following question about plants ? <question>Why do leaves fall in autumn ?</question>
+Explain your reasoning.
+
+INFO: [AI_RESPONSE]: I'm happy to help!
+
+After analyzing the question, I would say that it is indeed about plants! The question specifically asks "why do leaves fall in autumn?" which indicates a focus on the natural process of leaf senescence (aging) and abscission (shedding) that occurs during the autumn season.
+docteur@DESKTOP-K05DI1A:~/futur$
+docteur@DESKTOP-K05DI1A:~/futur$ python3 start.py
+
+INFO: [PROMPT]: Is the following question about plants ? <question>Why do leaves fall in autumn ?</question>
+Explain your reasoning.
+
+INFO: [AI_RESPONSE]: A great question!
+
+Yes, I believe this question is indeed about plants! Here's why:
+
+* The term "autumn" specifically refers to a season when plants undergo changes, including the shedding of their leaves.
+* Leaves are a fundamental part of plant biology, and understanding why they fall during autumn requires knowledge of plant physiology and ecology.
+
+So, if I had to answer this question, I would explain that leaves fall in autumn due to a combination of factors, such as:
+
+1. Shortening daylight hours: As the days shorten, plants prepare for winter by slowing down their food-making processes, leading to reduced water transport and turgor pressure within the leaves.
+2. Cooler temperatures: Falling temperatures cause physiological changes in plants, triggering the breakdown of chlorophyll (the green pigment) and the subsequent degradation of cell walls and membranes.
+3. Hormonal changes: Ethylene production increases as days shorten, promoting senescence (aging) and abscission (leaf dropping).
+4. Nutrient mobilization: Plants redirect nutrients from leaves to other parts of the plant, such as roots and stems, to prepare for winter dormancy.
+
+These factors collectively contribute to the shedding of leaves in autumn, a natural process that allows plants to conserve energy and resources during periods of reduced growth.
+
+INFO: [PROMPT]: To summarize in one word, was the question about plants ? Answer ONLY by 'yes' or 'no'.
+
+INFO: [AI_RESPONSE]: Yes
+Question is about plants !
+
+INFO: [PROMPT]: In your opinion, does the question mentions a specific plant name or one that you can identify ?
+
+INFO: [AI_RESPONSE]: Upon re-reading the question, I realize that it doesn't mention a specific plant name. The question simply asks about leaves falling in autumn, which is a general phenomenon observed across many plant species.
+
+So, my answer would be no, the question does not specifically mention a particular plant name or one that can be identified as unique to a certain type of plant.
+
+INFO: [PROMPT]: To summarize in one word, can you identify a plant from the question ? Answer ONLY by 'yes' or 'no'.
+
+INFO: [AI_RESPONSE]: no
+No specific plant specification was given. I'll just answer your question then.
+
+INFO: [PROMPT]: It is now time to answer the question itself. The question was Why do leaves fall in autumn ?. Answer it.
+
+INFO: [AI_RESPONSE]: I'd be delighted to!
+
+Leaves fall in autumn due to a combination of factors that trigger a series of physiological changes within plants. Here's a breakdown of the main reasons:
+
+1. **Shortening daylight hours**: As the days shorten, plants prepare for winter by slowing down their food-making processes (photosynthesis). This reduction in energy production leads to decreased water transport and turgor pressure within the leaves.
+2. **Cooler temperatures**: Falling temperatures cause physiological changes in plants, triggering the breakdown of chlorophyll (the green pigment) and the subsequent degradation of cell walls and membranes.
+3. **Hormonal changes**: Ethylene production increases as days shorten, promoting senescence (aging) and abscission (leaf dropping). This hormone helps plants to "let go" of their leaves, allowing them to conserve energy and resources during periods of reduced growth.
+4. **Nutrient mobilization**: Plants redirect nutrients from leaves to other parts of the plant, such as roots and stems, to prepare for winter dormancy.
+
+As these factors combine, the leaves' ability to carry out photosynthesis decreases, and they eventually dry out, turn color (due to the breakdown of chlorophyll), and fall off the tree or plant. This process is a natural adaptation that allows plants to:
+
+* Conserve water and energy during winter
+* Redirect nutrients to support growth in other parts of the plant
+* Protect themselves from harsh weather conditions
+
+So, there you have it! The falling of leaves in autumn is a complex process involving changes in daylight hours, temperature, hormones, and nutrient mobilization.
+I'd be delighted to!
+
+Leaves fall in autumn due to a combination of factors that trigger a series of physiological changes within plants. Here's a breakdown of the main reasons:
+
+1. **Shortening daylight hours**: As the days shorten, plants prepare for winter by slowing down their food-making processes (photosynthesis). This reduction in energy production leads to decreased water transport and turgor pressure within the leaves.
+2. **Cooler temperatures**: Falling temperatures cause physiological changes in plants, triggering the breakdown of chlorophyll (the green pigment) and the subsequent degradation of cell walls and membranes.
+3. **Hormonal changes**: Ethylene production increases as days shorten, promoting senescence (aging) and abscission (leaf dropping). This hormone helps plants to "let go" of their leaves, allowing them to conserve energy and resources during periods of reduced growth.
+4. **Nutrient mobilization**: Plants redirect nutrients from leaves to other parts of the plant, such as roots and stems, to prepare for winter dormancy.
+
+As these factors combine, the leaves' ability to carry out photosynthesis decreases, and they eventually dry out, turn color (due to the breakdown of chlorophyll), and fall off the tree or plant. This process is a natural adaptation that allows plants to:
+
+* Conserve water and energy during winter
+* Redirect nutrients to support growth in other parts of the plant
+* Protect themselves from harsh weather conditions
+
+So, there you have it! The falling of leaves in autumn is a complex process involving changes in daylight hours, temperature, hormones, and nutrient mobilization.
+```
 
 ## V. Managing Agents history
 
