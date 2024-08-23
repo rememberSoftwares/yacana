@@ -136,6 +136,8 @@ agent1.simple_chat()
 
 ## IV. Creating your first Task
 
+### Introduction example
+
 The whole concept of the framework lies here. If gou get this following section then you have mastered 80% of Yacana's building principle. Like in LangGraph where you create nodes that you link together, Yacana has a Task() class wich takes as arguments a task to solve. There are no hardcoded links between the Tasks so it's easy to refactor and move things arround. The important concept to grasp here is that through these Task() classes you will give instructions to the LLM in a way that the result must be a computable result. So instructions must be clear and the prompt to use must reflect that. It's Task, it's a job, it's something that needs solving but wrote like it is given as an order ! Let's see some examples :
 
 ```python
@@ -167,10 +169,31 @@ So, the result of solving the equation 2 + 2 is indeed 4.
 
 If your terminal is working normaly you should see task's prompts in green and starting with the '[PROMPT]' string. The LLM's answer should appear purple and start with the [AI_RESPONSE] string.  
 
-#### Do you get how this is disruptiv unlike other Frameworks ?
+### About Task parameters
 
+The Task class takes 2 mandatory parameters:
+* The prompt : It is the task to be solved. Use imperative language, be precise, ask for step by step thinking for complexe Tasks and expected outputs if needed.
+* The Agent : The agent that will be assigned to this task. The agent will be in charge of solving the task.
+
+ℹ️ There are many other parameters that can be given to a Task. We will see some of them in the following sections of this tutorial. But you can checkout the Task class documentation @todo URL
+
+The 
+### Do you get how this is disruptiv unlike other Frameworks ?
+
+In the above code snippet we assigned the agent to the Task. So it's the Task that leads the direction that the AI takes. In most other frameworks it's the opposite, where you assign some work to an existing agent. This reversed way allows to have fined grained control on each resolution step as the LLM only follow bread crumb (the Tasks). The patern will become even more obvious as we get to the Tool section of this tutorial. As you'll see the Tools are also assigned at the Task level and not to the Agent directly.  
+
+TO compare with LangGraph, it's true that we canno't make a call graph as we don't bind the Task together explicitly. However, Yacana's way gives more flexibility and allows a hierarchical programing way or oronancing the Task and keeping control of the flow. It also allows creating new Task dynamically if the need was to come. You shall rely on your programming skill and good OOP to have a clean code and a good Task ordering.
+
+### Getting the result of a Task
+
+Even though we get the logging on the standard output of the terminal we need to extract the answer of the LLM that solved that Task.  
+getting the string message is quite easy as the 
+
+### Chaining Tasks
 
 ### Routing
+
+###
 
 ## V. Managing Agents history
 
