@@ -134,7 +134,7 @@ agent1.simple_chat()
 
 ⚠️From now on we will not set the *endpoint* attribute anymore for clarity and will resort to the defaults. If your LLM is not served by Ollama or isn't on your localhost you should continue setting this value.
 
-## IV. Creating your first Task
+## IV. Creating Tasks
 
 ### Introduction example
 
@@ -234,7 +234,7 @@ The AI response to our task is : If we multiply the previous result of 4 by 2, w
 See ? The assigned Agent remembered that it solve the task1 previously and used this information to solve the second task.  
 You can chain as many Task as you need. Also, you should create other Agents that don't have the knowledge of previous Task and make them do things based on the output of your first agent. You can build anything now !    
 
-### Routing
+## V. Routing
 
 Other frameworks have the tedency to make abastraction for everything. Even thing that dont need any. That's why I'll show you how to do routing whith only what we have seen earlier. Yacana doesn't provide routing abstraction because there is no need to do so.  
 
@@ -590,12 +590,12 @@ INFO: [AI_RESPONSE]: No
 Question is NOT about plants sorry.
 ```
 
-## V. Managing Agents history
+## VI. Managing Agents history
 
-## VI. Assigning a tool to a Task
+## VII. Assigning a tool to a Task
 
-## VII. Assigning multiple Tools
+## VIII. Assigning multiple Tools
 
-## VIII. Chat between two Agents
+## IX. Chat between two Agents
 
-## IX. Chat between many Agents
+## X. Chat between many Agents
