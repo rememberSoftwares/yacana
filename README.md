@@ -177,7 +177,7 @@ The Task class takes 2 mandatory parameters:
 
 ℹ️ There are many other parameters that can be given to a Task. We will see some of them in the following sections of this tutorial. But you can checkout the Task class documentation @todo URL
 
-### Do you get how this is disruptiv unlike other Frameworks ?
+### Do you see how disruptiv this is compared to other Frameworks ?
 
 In the above code snippet we assigned the agent to the Task. So it's the Task that leads the direction that the AI takes. In most other frameworks it's the opposite, where you assign some work to an existing agent. This reversed way allows to have fined grained control on each resolution step as the LLM only follow bread crumb (the Tasks). The patern will become even more obvious as we get to the Tool section of this tutorial. As you'll see the Tools are also assigned at the Task level and not to the Agent directly.  
 
@@ -214,7 +214,39 @@ print(f"The AI response to our task is : {Task(f'Solve the equation 2 + 2 and ou
 
 ### Chaining Tasks
 
+Chaining Tasks is nothing more than just calling a second Task with the same Agent. Agents keep track of the History of what they did (aka the Tasks they solved). So just call a second Task and assign the same Agent. For instance let's multiply by 2 the result of initial Task. Append this to our current script:
+
+```
+task2_result: str = Task(f'Multiply by 2 our previous result', agent1).solve().content
+print(f"The AI response to our task is : {task2_result}")
+```
+You should get:
+```
+The AI response to our task is : If we multiply the previous result of 4 by 2, we get:
+
+8
+```
+
+ℹ️ Without tools this only relies on the LLM ability to do the maths and is dependant to it's training.
+
+---
+
+See ? The assigned Agent remembered that it solve the task1 previously and used this information to solve the second task.  
+You can chain as many Task as you need. Also, you should create other Agents that don't have the knowledge of previous Task and make them do things based on the output of your first agent. You can build anything now !    
+
 ### Routing
+
+Other frameworks have the tedency to make abastraction for everything. Even thing that dont need any. That's why I'll show you how to do routing whith only what we have seen earlier. Yacana doesn't provide routing abstraction because there is no need to do so.  
+
+But what is routing ? Well, having LLMs solving a Task and then chaining many other in sequence is good but to be efficient you have to create conditionnal workflows. In particular when using local LLMs that don't have the power to solve all Tasks with only one prompt. You have to create an AI worflow in advance that wil go foward step by step and converge to some expected result. AI allows you to deal with some level of unknown but expecting that you can have a master brain (like in crewAI) that distributes Tasks to agents and achieve an expected result is IMPOSSIBLE with local LLMs. They are too dumb ! Therefor they need you to help them allong their path. This is why LangGraph works well with local LLMs and Yacana does to. You create a workflow and when conditions are met you switch from one branch to another that treats more specific cases, etc.
+
+---
+
+The most common routing mechanic is "yes" / "no". Depending on the result your program can do different things next. Let's see an example:  
+
+```
+
+```
 
 ###
 
