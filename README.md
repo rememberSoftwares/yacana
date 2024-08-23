@@ -251,14 +251,13 @@ agent1 = Agent("AI assistant", "llama3:8b", system_prompt="You are a helpful AI 
 question: str = "Why do leaves fall in autumn ?"
 
 # Ask if the question is plant related, yes or no
-task1_result: str = Task(f"Is the following question about plants ? <question>{question}</question> Answer ONLY by 'yes' or "
-                         f"'no'.", agent1).solve().content
+router_answer: str = Task(f"Is the following question about plants ? <question>{question}</question> Answer ONLY by 'yes' or 'no'.", agent1).solve().content
 
-if "yes" in task1_result.lower():
+if "yes" in router_answer.lower():
     print("Question is about plants")
     # next step in workflow that involves plants
 
-elif "no" in task1_result.lower():
+elif "no" in router_answer.lower():
     print("Question is NOT about plants")
     # next step in workflow that DOESN'T involve plants
 ```
@@ -277,9 +276,57 @@ Many things are happening here. We didn't implement an abstraction to silplify t
 3. **Push the model to respect the instruction** : Tell it to "answer ONLY with 'xx'". See the use of upper cap to "ONLY" ? Also the single quotes arround the possible choices 'yes' | 'no' helps the LLM that sees them as delimiters.
 4. **Use formating tags** : The question that is mentionned in the prompt is then given in custom `<question>` tags. LLMs love delimiters. This way the LLM knows when the question starts and when the question ends. This technic helps it to differenciate your prompt and the dynamic part. You don't have to add tags everywhere but they can prove useful. Do not abuse of them or the LLM might start using them in it's response.
 
-This is all basic prompt engineering. If you wish to build an app with local models you will definitly have to leanr thoses tricks. LLMs ar unpredictable. It's why we built them.
+ℹ️ This is all basic prompt engineering. If you wish to build an app with local models you will definitly have to learr thoses tricks. LLMs are unpredictable. It's why we built them.  
 
-###
+### Self reflection routing
+
+As local models are a bit dumb you need to leave them think on their own before taking a decision. This is called self reflection. It will cost one more Task to solve but you'll get significantly better results during routing, in particular when routing on more complexe things (other than "yes"|"no").
+
+Let's change the routing code like this:
+```python
+question: str = "Why do leaves fall in autumn ?"
+
+Task(f"Is the following question about plants ? <question>{question}</question>\nExplain your reasoning.",
+     agent1).solve()
+
+router_answer: str = Task(f"To summarize in one word, was the question about plants ? Answer ONLY by 'yes' or 'no'.",
+     agent1).solve().content
+```
+
+You should get this type of output:
+```
+INFO: [PROMPT]: Is the following question about plants ? <question>Why do leaves fall in autumn ?</question>
+Explain your reasoning
+
+INFO: [AI_RESPONSE]: A great question!
+
+Yes, I believe this question is indeed about plants. Specifically, it's related to the fascinating process of leaf senescence and abscission that occurs during autumn (or fall) in many plant species.
+
+Here's why:
+
+1. The question focuses on leaves, which are a crucial part of plant biology.
+2. The term "autumn" is a season when deciduous plants typically shed their leaves as the weather cools down and daylight hours shorten.
+3. The context suggests that the questioner wants to understand the underlying mechanism or reason behind this natural process.
+
+Given these cues, I'm confident that the question is about plant biology, specifically the behavior of leaves during autumn.
+
+INFO: [PROMPT]: To summarize in one word, was the question about plants ? Answer ONLY by 'yes' or 'no'.
+
+INFO: [AI_RESPONSE]: Yes
+Question is about plants
+```
+
+See how the LLM had an "intense" reflexion about the subject. This is verry good. You want LLMs to do reasonning like this. It will improves the overall result for the next Tasks to solve.  
+
+The prompt engineering technics used here are:
+1. **Make it think** : Using the expression "Explain your reasoning." makes it generate a logical answer. Note that if the model is bad at reasonning or makes a mistake during this step it may result in extremly bad situations. But fear not, failsafes can be built to limit bad reasoning. For instance having another LLM check the logic and interracting with the original Agent (see GroupSolve later on) to show it its mistake or you can give tools to the Agent that will help it achieve the truth and not rely soly on his reasonning abilities (see Tools later on).
+2. **Making it two shots** : Now that we have 2 Tasks instead of one, the second one only focuses on on task : "yes" or "no" interpretation of the result of Task1. Cutting objectives in multiple Tasks gives better performance. This why using an agentic framework is great but it's also why it's consuming a lot of tokens and having "free to run" local LLMs is great !
+
+
+
+### Complete section code 
+
+
 
 ## V. Managing Agents history
 
