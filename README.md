@@ -136,6 +136,42 @@ agent1.simple_chat()
 
 ## IV. Creating your first Task
 
+The whole concept of the framework lies here. If gou get this following section then you have mastered 80% of Yacana's building principle. Like in LangGraph where you create nodes that you link together, Yacana has a Task() class wich takes as arguments a task to solve. There are no hardcoded links between the Tasks so it's easy to refactor and move things arround. The important concept to grasp here is that through these Task() classes you will give instructions to the LLM in a way that the result must be a computable result. So instructions must be clear and the prompt to use must reflect that. It's Task, it's a job, it's something that needs solving but wrote like it is given as an order ! Let's see some examples :
+
+```python
+# First, let's make a basic AI agent
+agent1 = Agent("AI assistant", "llama3:8b", system_prompt="You are a helpful AI assistant")
+
+# Now we create a task and assign the agent1 to the task
+task1 = Task(f"Solve the equation 2 + 2 and output the result", agent1)
+
+# So that something actually happens you must call the .solve() method on your task
+task1.solve()
+```
+
+What's happening above ?  
+* First, we instanciated an Agent with the `llama3:8b` model. You might need to update that depending on what LLM you downloaded from Ollama ;
+* Second, we instanciated a Task ;
+* Third, we asked that the Task be solved ;
+
+ℹ️ For easing the learning curve the default logging level is INFO. It will show what is going on in Yacana. Note that not ALL intermediary prompts are shown.
+
+Output of executing should look like this:
+```
+INFO: [PROMPT]: Solve the equation 2 + 2 and output the result
+
+INFO: [AI_RESPONSE]: The answer to the equation 2 + 2 is... (drumroll please)... 4!
+
+So, the result of solving the equation 2 + 2 is indeed 4.
+```
+
+If your terminal is working normaly you should see task's prompts in green and starting with the '[PROMPT]' string. The LLM's answer should appear purple and start with the [AI_RESPONSE] string.  
+
+#### Do you get how this is disruptiv unlike other Frameworks ?
+
+
+### Routing
+
 ## V. Managing Agents history
 
 ## VI. Assigning a tool to a Task
