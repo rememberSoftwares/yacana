@@ -337,7 +337,7 @@ Now, even though you cannot see it, the Agent doesn't remember solving this Task
 ### Complete section code 
 
 For this "complete code" demo we'll make a simple app that takes a user query (HF replacing the static string by a python `input()` if you wish) that checks if the query is about plants.
-If it is not we end the workflow there. On the other hand if it is about plants the flow will branch toward refining the type of query with another router that splits in two. If a type of plant is in the query it is extracted and common knowledge about the plant will be extracted. If not it will simply answer the query as is.
+If it is not we end the workflow there. On the other hand if it is about plants the flow will branch toward refining the type of query with another router that splits in two. If a type of plant is in the query it is extracted and common knowledge about the plant will be extracted before answering the original question. If not it will simply answer the query as is.
 
 
 ## V. Managing Agents history
