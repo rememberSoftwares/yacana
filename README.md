@@ -595,25 +595,90 @@ Question is NOT about plants sorry.
 
 ## VI. Managing Agents history
 
-As you saw in the previous examples, each agent has his own history of messages that compose it's memory. When a new request is made to the LLM the whole history is sent to the inference server (ie: Ollama) and the LLM responds to the last prompt in the chain history but bases it's answer on the previous message + initial system prompt. 
+As you saw in the previous examples, each agent has his own history of messages that compose it's memory. When a new request is made to the LLM the whole history is sent to the inference server (ie: Ollama) and the LLM responds to the last prompt in the chain but bases its answer on the context it gets from the previous messages ( and initial system prompt if present). 
 
-This what the history looks like:
+This what a history looks like:
 
 ![history1A](https://github.com/user-attachments/assets/631b634a-8699-4fff-9ac4-06b403c06ae1)
 
+There are 3 types of prompts. The optionnal system prompt that, if present, always go first. Then it's only an alternation between the "User prompts" that commes from the Task you set and the "Assistant message" which is the answer from the LLM.
 
-
-Sending the whole history to the LLM each time has some disavantes that canno't be overturn:
+However, sending the whole history to the LLM for each Task to solve has some disavantes that canno't be overturn:
 * The longer the history the longer the LLM takes to analyse it and return an answer.
-* Each LLM comes with a maximum token window size. This the maximum words an LLM can analyse in one run therefor it's maximum memory. 1 token roughly reprensents 1 word or 3/4 of a word. More information on token count per word [here](https://winder.ai/calculating-token-counts-llm-context-windows-practical-guide/) or [here](https://help.openai.com/en/articles/4936856-what-are-tokens-and-how-to-count-them).  
+* Each LLM comes with a maximum token window size. This the maximum words an LLM can analyse in one run, therefor it's maximum memory. One token roughly reprensents one word or 3/4 of a word. More information on token count per word [here](https://winder.ai/calculating-token-counts-llm-context-windows-practical-guide/) or [here](https://help.openai.com/en/articles/4936856-what-are-tokens-and-how-to-count-them).  
 
-To counteract thoses negative effects it is recommanded to clean the history when possible. You can use the `forget=True` in the Task() class so the prompt and the LLM response do not get save to the history (look for the relevant section in the Task Routing for more information). There are other ways to preserve the history from useles noise. But first we'll must find a wat to see the history store in the Agent. Fortunatly Yacana got you covered.
+To counteract thoses negative effects it is recommanded you clean the history when possible. You can use the `forget=True` parameter in the Task() class so the prompt and the LLM response do not get save to the history ([see here]() @todo). There are other ways to preserve the history from useless noise. But first we'll look at viewing ones Agent history. Fortunatly Yacana got you covered.
 
 ### Printing history
 
-The agent class comes with a 
+The Agent class comes with a `.history` property. It's of type `History` (@todo [see here]()) and exposes methods to interract with it. For instance it has got a `.pretty_print()` method that prints on the stanard output the the content of the history using the classic color scheme. It's great for debugging but not for parsing. If you need to parse the history there is a `.get_as_dict()` methods which as the name implies returns the History as a python dictionnary.  
+
+Let's see a simple example:
+```python
+# Let's deactivate automatic logging so that onyl OUR prints are shown
+LoggerManager.set_log_level(None)
+
+agent1 = Agent("Cook", "llama3:8b", system_prompt="You are a pastry chef")
+
+Task("Generate 5 pastry names followed by the associated estimated calory.", agent1).solve()
+Task("Rank the pastries from the lowest calory count to the largest.", agent1).solve()
+
+print("############## Agent 1 history pretty print ##################")
+agent1.history.pretty_print()
+print("############## END ##################")
+
+print("")
+
+print("############## Agent 1 history pretty print ##################")
+print(str(agent1.history.get_as_dict()))
+print("############## END ##################")
+```
+
+```
+############## Agent 1 history pretty print ##################
+
+user: Generate 5 pastry names followed by the associated estimated calory.
+
+assistant: Here are 5 pastry names with their associated estimated calorie counts:
+
+1. **Cinnamon Swirl Brioche** (250-300 calories) - A sweet, buttery brioche filled with a gooey cinnamon swirl.
+2. **Lemon Lavender Mille-Feuille** (400-450 calories) - Layers of flaky pastry, lemon curd, and lavender cream create a bright and airy dessert.
+3. **Chocolate Soufflé Cake** (500-550 calories) - A rich, decadent chocolate cake that rises like a cloud from the oven, served with a scoop of vanilla ice cream.
+4. **Raspberry Almond Croissant** (200-250 calories) - Flaky, buttery croissants filled with sweet and tart raspberry jam and topped with sliced almonds.
+5. **Pistachio Rosewater Macarons** (150-200 calories) - Delicate, chewy macarons flavored with pistachio and rosewater, sandwiched together with a light and creamy filling.
+
+Note: The estimated calorie counts are approximate and may vary based on specific ingredients and portion sizes used.
+
+user: Rank the pastries from the lowest calory count to the largest.
+
+assistant: Based on the estimated calorie counts I provided earlier, here are the pastries ranked from lowest to highest:
+
+1. **Pistachio Rosewater Macarons** (150-200 calories)
+2. **Raspberry Almond Croissant** (200-250 calories)
+3. **Cinnamon Swirl Brioche** (250-300 calories)
+4. **Lemon Lavender Mille-Feuille** (400-450 calories)
+5. **Chocolate Soufflé Cake** (500-550 calories)
+
+Let me know if you have any other questions!
+
+############## END ##################
+
+############## Agent 1 history pretty print ##################
+[{'role': 'system', 'content': 'You are a pastry chef'}, {'role': 'user', 'content': 'Generate 5 pastry names followed by the associated estimated calory.'}, {'role': 'assistant', 'content': 'Here are 5 pastry names with their associated estimated calorie counts:\n\n1. **Cinnamon Swirl Brioche** (250-300 calories) - A sweet, buttery brioche filled with a gooey cinnamon swirl.\n2. **Lemon Lavender Mille-Feuille** (400-450 calories) - Layers of flaky pastry, lemon curd, and lavender cream create a bright and airy dessert.\n3. **Chocolate Soufflé Cake** (500-550 calories) - A rich, decadent chocolate cake that rises like a cloud from the oven, served with a scoop of vanilla ice cream.\n4. **Raspberry Almond Croissant** (200-250 calories) - Flaky, buttery croissants filled with sweet and tart raspberry jam and topped with sliced almonds.\n5. **Pistachio Rosewater Macarons** (150-200 calories) - Delicate, chewy macarons flavored with pistachio and rosewater, sandwiched together with a light and creamy filling.\n\nNote: The estimated calorie counts are approximate and may vary based on specific ingredients and portion sizes used.'}, {'role': 'user', 'content': 'Rank the pastries from the lowest calory count to the largest.'}, {'role': 'assistant', 'content': 'Based on the estimated calorie counts I provided earlier, here are the pastries ranked from lowest to highest:\n\n1. **Pistachio Rosewater Macarons** (150-200 calories)\n2. **Raspberry Almond Croissant** (200-250 calories)\n3. **Cinnamon Swirl Brioche** (250-300 calories)\n4. **Lemon Lavender Mille-Feuille** (400-450 calories)\n5. **Chocolate Soufflé Cake** (500-550 calories)\n\nLet me know if you have any other questions!'}]
+############## END ##################
+```
+
+Output speaks for itself.
+
 
 ### Creating and loading checkpoints
+
+As mentionned earlier it's better to keep the History clean. To many prompts and unrelated questions will lead to 
+Task3("Generate a concise description
+
+### Multi prompt shot VS 0 prompt shot
+
+### Saving an Agent state
 
 ## VII. Assigning a tool to a Task
 
