@@ -620,8 +620,8 @@ LoggerManager.set_log_level(None)
 
 agent1 = Agent("Cook", "llama3:8b", system_prompt="You are a pastry chef")
 
-Task("Generate 5 pastry names followed by the associated estimated calory.", agent1).solve()
-Task("Rank the pastries from the lowest calory count to the largest.", agent1).solve()
+Task("Generate 5 pastry names followed by the associated estimated calorie.", agent1).solve()
+Task("Rank the pastries from the lowest calorie count to the largest.", agent1).solve()
 
 print("############## Agent 1 history pretty print ##################")
 agent1.history.pretty_print()
@@ -637,7 +637,7 @@ print("############## END ##################")
 ```
 ############## Agent 1 history pretty print ##################
 
-user: Generate 5 pastry names followed by the associated estimated calory.
+user: Generate 5 pastry names followed by the associated estimated calorie.
 
 assistant: Here are 5 pastry names with their associated estimated calorie counts:
 
@@ -649,7 +649,7 @@ assistant: Here are 5 pastry names with their associated estimated calorie count
 
 Note: The estimated calorie counts are approximate and may vary based on specific ingredients and portion sizes used.
 
-user: Rank the pastries from the lowest calory count to the largest.
+user: Rank the pastries from the lowest calorie count to the largest.
 
 assistant: Based on the estimated calorie counts I provided earlier, here are the pastries ranked from lowest to highest:
 
@@ -664,7 +664,7 @@ Let me know if you have any other questions!
 ############## END ##################
 
 ############## Agent 1 history pretty print ##################
-[{'role': 'system', 'content': 'You are a pastry chef'}, {'role': 'user', 'content': 'Generate 5 pastry names followed by the associated estimated calory.'}, {'role': 'assistant', 'content': 'Here are 5 pastry names with their associated estimated calorie counts:\n\n1. **Cinnamon Swirl Brioche** (250-300 calories) - A sweet, buttery brioche filled with a gooey cinnamon swirl.\n2. **Lemon Lavender Mille-Feuille** (400-450 calories) - Layers of flaky pastry, lemon curd, and lavender cream create a bright and airy dessert.\n3. **Chocolate Soufflé Cake** (500-550 calories) - A rich, decadent chocolate cake that rises like a cloud from the oven, served with a scoop of vanilla ice cream.\n4. **Raspberry Almond Croissant** (200-250 calories) - Flaky, buttery croissants filled with sweet and tart raspberry jam and topped with sliced almonds.\n5. **Pistachio Rosewater Macarons** (150-200 calories) - Delicate, chewy macarons flavored with pistachio and rosewater, sandwiched together with a light and creamy filling.\n\nNote: The estimated calorie counts are approximate and may vary based on specific ingredients and portion sizes used.'}, {'role': 'user', 'content': 'Rank the pastries from the lowest calory count to the largest.'}, {'role': 'assistant', 'content': 'Based on the estimated calorie counts I provided earlier, here are the pastries ranked from lowest to highest:\n\n1. **Pistachio Rosewater Macarons** (150-200 calories)\n2. **Raspberry Almond Croissant** (200-250 calories)\n3. **Cinnamon Swirl Brioche** (250-300 calories)\n4. **Lemon Lavender Mille-Feuille** (400-450 calories)\n5. **Chocolate Soufflé Cake** (500-550 calories)\n\nLet me know if you have any other questions!'}]
+[{'role': 'system', 'content': 'You are a pastry chef'}, {'role': 'user', 'content': 'Generate 5 pastry names followed by the associated estimated calorie.'}, {'role': 'assistant', 'content': 'Here are 5 pastry names with their associated estimated calorie counts:\n\n1. **Cinnamon Swirl Brioche** (250-300 calories) - A sweet, buttery brioche filled with a gooey cinnamon swirl.\n2. **Lemon Lavender Mille-Feuille** (400-450 calories) - Layers of flaky pastry, lemon curd, and lavender cream create a bright and airy dessert.\n3. **Chocolate Soufflé Cake** (500-550 calories) - A rich, decadent chocolate cake that rises like a cloud from the oven, served with a scoop of vanilla ice cream.\n4. **Raspberry Almond Croissant** (200-250 calories) - Flaky, buttery croissants filled with sweet and tart raspberry jam and topped with sliced almonds.\n5. **Pistachio Rosewater Macarons** (150-200 calories) - Delicate, chewy macarons flavored with pistachio and rosewater, sandwiched together with a light and creamy filling.\n\nNote: The estimated calorie counts are approximate and may vary based on specific ingredients and portion sizes used.'}, {'role': 'user', 'content': 'Rank the pastries from the lowest calorie count to the largest.'}, {'role': 'assistant', 'content': 'Based on the estimated calorie counts I provided earlier, here are the pastries ranked from lowest to highest:\n\n1. **Pistachio Rosewater Macarons** (150-200 calories)\n2. **Raspberry Almond Croissant** (200-250 calories)\n3. **Cinnamon Swirl Brioche** (250-300 calories)\n4. **Lemon Lavender Mille-Feuille** (400-450 calories)\n5. **Chocolate Soufflé Cake** (500-550 calories)\n\nLet me know if you have any other questions!'}]
 ############## END ##################
 ```
 
@@ -681,9 +681,9 @@ The flow will look like this:
 1. Propose 5 pastry name ;
 2. We create a checkpoint ;
 3. The user chooses one of the pastries ;
-4. We show the associated calory of the selected pastry ;
+4. We show the associated calorie of the selected pastry ;
 5. If the user is okay with it we end the program ;
-6. If the user is not okay with the calory count we load back the checkpoint and propose the list again ;
+6. If the user is not okay with the calorie count we load back the checkpoint and propose the list again ;
 7. Repeat until satisfied ;
 8. We'll show the final agent's History and make sure that it ONLY stored the selected pastry ;
 
