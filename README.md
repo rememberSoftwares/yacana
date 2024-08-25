@@ -673,7 +673,21 @@ Output speaks for itself.
 
 ### Creating and loading checkpoints
 
-As mentionned earlier it's better to keep the History clean. To many prompts and unrelated questions will lead to 
+As mentionned earlier it's better to keep the History clean. To many prompts and unrelated questions will lead to poorer results so if you have the opportunity to scratch some portion then you should.  
+Yacana allows you to make a history snapshots and rollback to them. This is in particullary useful when you are reaching the end of a flow branch and want to go back onto another branch.  
+
+Let's take a concrete example. You have an pastry website that generates pastries recipes (using real data from a tool would be better ^^). 
+The flow will look like this:
+1. Propose 5 pastry name ;
+2. We create a checkpoint ;
+3. The user chooses one of the pastries ;
+4. We show the associated calory of the selected pastry ;
+5. If the user is okay with it we end the program ;
+6. If the user is not okay with the calory count we load back the checkpoint and propose the list again ;
+7. Repeat until satisfied ;
+8. We'll show the final agent's History and make sure that it ONLY stored the selected pastry ;
+
+At this moment we'll create a checkpoint ! Then, we'll propose the 5 pastries to the user and he will be proposed to chose one. If he does, the AI generates the needed pastry's ingredients. If not, we rollback to the checkpoint and  
 Task3("Generate a concise description
 
 ### Multi prompt shot VS 0 prompt shot
