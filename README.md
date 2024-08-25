@@ -599,6 +599,8 @@ As you saw in the previous examples, each agent has his own history of messages 
 
 This what the history looks like:
 
+![history1A](https://github.com/user-attachments/assets/631b634a-8699-4fff-9ac4-06b403c06ae1)
+
 
 
 Sending the whole history to the LLM each time has some disavantes that canno't be overturn:
