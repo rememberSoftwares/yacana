@@ -590,7 +590,28 @@ INFO: [AI_RESPONSE]: No
 Question is NOT about plants sorry.
 ```
 
+### Logging levels
+@todo
+
 ## VI. Managing Agents history
+
+As you saw in the previous examples, each agent has his own history of messages that compose it's memory. When a new request is made to the LLM the whole history is sent to the inference server (ie: Ollama) and the LLM responds to the last prompt in the chain history but bases it's answer on the previous message + initial system prompt. 
+
+This what the history looks like:
+
+
+
+Sending the whole history to the LLM each time has some disavantes that canno't be overturn:
+* The longer the history the longer the LLM takes to analyse it and return an answer.
+* Each LLM comes with a maximum token window size. This the maximum words an LLM can analyse in one run therefor it's maximum memory. 1 token roughly reprensents 1 word or 3/4 of a word. More information on token count per word [here](https://winder.ai/calculating-token-counts-llm-context-windows-practical-guide/) or [here](https://help.openai.com/en/articles/4936856-what-are-tokens-and-how-to-count-them).  
+
+To counteract thoses negative effects it is recommanded to clean the history when possible. You can use the `forget=True` in the Task() class so the prompt and the LLM response do not get save to the history (look for the relevant section in the Task Routing for more information). There are other ways to preserve the history from useles noise. But first we'll must find a wat to see the history store in the Agent. Fortunatly Yacana got you covered.
+
+### Printing history
+
+The agent class comes with a 
+
+### Creating and loading checkpoints
 
 ## VII. Assigning a tool to a Task
 
