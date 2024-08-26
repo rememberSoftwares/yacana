@@ -1022,7 +1022,7 @@ Let's do our first tool calling with a simple addition !
 First, let define our tool:
 ```python
 def adder(first_number: int, second_number: int) -> int:
-    print(f"Tool adder was called with param {first_number} ({type(fisrt_number}) and {second_number} ({type(second_number)})")
+    print(f"Tool adder was called with param {first_number}) ({type(first_number)} and {second_number} ({type(second_number)})")
     return first_number + second_number
 ```
 
@@ -1048,7 +1048,7 @@ Task(f"What's 2+2 ?", agent1, tools=[adder_tool]).solve()
 Complete code:
 ```python
 def adder(first_number: int, second_number: int) -> int:
-    print(f"Tool adder was called with param {first_number} ({type(first_number)} and {second_number} ({type(second_number)})")
+    print(f"Tool adder was called with param {first_number}) ({type(first_number)} and {second_number} ({type(second_number)})")
     return first_number + second_number
 
 adder_tool: Tool = Tool("Adder", "Adds two numbers and returns the result", adder)
@@ -1059,42 +1059,63 @@ let's run it:
 ```
 INFO: [PROMPT]: I give you the following tool definition that you must use to fulfill a future task: adder(first_number: int, second_number: int) -> int - Adds two numbers and returns the result. Please acknowledge the given tool.
 
-INFO: [AI_RESPONSE]: I acknowledge the provided tool definition:
+INFO: [AI_RESPONSE]: Thank you for providing me with the `adder` tool definition! I understand that this is a function that takes two integer arguments (`first_number` and `second_number`) and returns an integer result, which represents the sum of these two input numbers.
 
-`adder(first_number: int, second_number: int) -> int`
-
-This is a function called `adder` that takes two integer arguments, `first_number` and `second_number`, and returns an integer value representing their sum.
-
-I will remember this tool for future tasks.
+I will keep this in mind as we progress through our tasks. Please go ahead and give me the next instruction or task to complete!
 
 INFO: [PROMPT]: To use the tool you MUST extract each parameter and use it as a JSON key like this: {"arg1": "<value1>", "arg2": "<value2>"}. You must respect arguments type. For instance, the tool `getWeather(city: str, lat: int, long: int)` would be structured like this {"city": "new-york", "lat": 10, "lon": 20}. In our case, the tool call you must use must look like that: {'first_number': 'arg 0', 'second_number': 'arg 1'}
 
-INFO: [AI_RESPONSE]: I understand now. Thank you for the clarification!
+INFO: [AI_RESPONSE]: Thank you for clarifying how to structure the tool calls.
 
-In that case, I will structure the tool call as follows:
+In that case, I will extract each parameter and use it as a JSON key. For the `adder` tool, I will structure the tool call as follows:
 
-`{"first_number": "5", "second_number": "7"}`
+{'first_number': 3, 'second_number': 5}
 
-Please let me know what task I should perform next!
+Please let me know what's next!
 
 INFO: [PROMPT]: You have a task to solve. Use the tool at your disposition to solve the task by outputing as JSON the correct arguments. In return you will get an answer from the tool. The task is:
 What's 2+2 ?
 
 INFO: [AI_RESPONSE]: {"first_number": "2", "second_number": "2"}
 
-Tool adder was called with param 2 (<class 'str'> and 2 (<class 'str'>)
+
+
+Tool adder was called with param '2' (<class 'str'>) and '2' (<class 'str'>)
+Result of added tool is: 22
+
+Equation result = 22
 ```
 
 What you are seeing here is Yacana doing its magic to make the LLM call the tool.  
 
-#### Understand the mechanism of tool calling
+Unfortunatly, even though the tool is indeed called, getting a correct result failed spectacularly ! ^^  
+Is `2 + 2 = 22` ? No, I don't think so. Can you find what went wrong ?
 
-If you don't understand how a text to text neural network can call a python function let me tell you: It doesn't.
-When we refer to *tool calling* we also refer to *function calling* which is very poorly named. Function calling is the ability of an inference server to make the LLM output the text in a particular format. As of today only JSON is supported but there is no doubt that more formats will be available soon.
-However, now that we have the ability to control how the LLM answers, we can parse a JSON that we know the structure. Therefor we can ask the LLM for a JSON that matches the prototype of a python function. For instance the name and parameters value.
-Some LLMs have been trained to ouput JSON in a particular way that matches a particular JSON structure. This particular JSON structure is becoming a convention and was pushed by big AI players likes OpenAI.
-Unfortunatly, the size and complexity of this JSON doesn't work very well with our dumb 8B LLMs. A problem that ChatGPT, claude, Grok and other smart LLMs don't have. 
-To overcome this particular issue, Yacana comes with it's own JSON to call python functions. It's way lighter than the OpenAI standard and Yacana uses [percussive maintenance]() @todo url to force the model to output the JSON as a way the tool awaits.
+---
+
+When looking at the logs we can see that the tool was called with the following JSON: `{"first_number": "2", "second_number": "2"}`. The given values are of type `string`. Later confirmed by the print() inside the tool itself: `param '2' (<class 'str'>) and '2' (<class 'str'>)`.  
+So instead of having integers we got string and what's the result of "2" + "2" in python ? Not 4 but "22" (concatenation of strings).  
+
+Fortunatly we can fix this easily in diferent ways.
+
+#### Understanding the mechanism of tool calling
+
+As an aside for those interested...
+
+If you don't understand how a text to text neural network can call a python function let me tell you: It doesn't.  
+When we refer to *tool calling* we also refer to *function calling* which is very poorly named. Function calling is the ability of an inference server to make the LLM output the text in a particular format. As of today only JSON is supported but there is no doubt that more formats will be available soon.  
+However, now that we have the ability to control how the LLM answers, we can parse a JSON that we know the structure. Therefor we can ask the LLM for a JSON that matches the prototype of a python function. For instance the name and parameters value.  
+Some LLMs have been trained to ouput JSON in a particular way that matches a particular JSON structure. This particular JSON structure is becoming a convention and was pushed by big AI players likes OpenAI.  
+Unfortunatly, the size and complexity of this JSON doesn't work very well with our dumb 8B LLMs. A problem that ChatGPT, claude, Grok and other smart LLMs don't have.  
+To overcome this particular issue, Yacana comes with it's own JSON to call python functions. It's way lighter than the OpenAI standard and Yacana uses [percussive maintenance]() @todo url to force the model to output the JSON in a way that the tool expects.  
+
+### Getting better tool calling results
+
+As you saw in the previous adder example we ran into trouble with the `2 + 2` call sent as string. Let's fix that.
+
+#### Giving examples
+
+#### Tool validation
 
 
 ## VIII. Assigning multiple Tools
