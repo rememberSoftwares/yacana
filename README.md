@@ -809,16 +809,168 @@ We can see in the agent output that it only remembers me chosing the Golden Gale
 
 When a LLM struggles to solve a complexe Task and achieve a good success rate it may be time to give it a little help.  
 
-In large language models, the approach to prompting can significantly influence the model's performance. Zero-shot prompting asks the model to complete a task without any prior examples, relying solely on its pre-existing knowledge. This can lead to varied results, especially in more complex tasks. One-shot prompting improves accuracy by providing the model with a single example, offering some guidance on how to approach the task. Few-shot prompting further enhances performance by supplying multiple examples, allowing the model to better understand the task's nuances and produce more reliable and accurate results.
+In large language models, the approach to prompting can significantly influence the model's performance. *Zero-shot prompting* asks the model to complete a task without any prior examples, relying solely on its pre-existing knowledge. This can lead to varied results, especially in more complex tasks. *One-shot prompting* improves accuracy by providing the model with a single example, offering some guidance on how to approach the task. *Few-shot prompting* further enhances performance by supplying multiple examples, allowing the model to better understand the task's nuances and produce more reliable and accurate results.
 
 In other words:
 * Zero-Shot Prompting: The model must rely on its general knowledge, which may result in varied performance depending on the task's complexity.
 * One-Shot Prompting: A single example helps guide the model, improving its performance over zero-shot prompting.
 * Few-Shot Prompting: Multiple examples give the model a better understanding of the task, significantly increasing accuracy and performance.
 
-Yacana provides you with a way to add new Messages to the History manualy. The History class (available in the agent as `agent.history`) exposes an `.add(...)` method. This method takes an argument of type `Message()` ([[see here]() @todo). The Message() constructor takes two parameters a MessageRole enum ([see here]() @todo url)
+Yacana provides you with a way to add new Messages to the History manualy. The History class exposes a `.add(...)` method.  
+This method takes an argument of type `Message()` ([[see here]() @todo) taking two parameters: a [MessageRole]() @todo url enum and the string message itself.
+
+For example:
+```python
+# Creating a basic agent with an empty history
+agent1 = Agent("AI assistant", "llama3:8b")
+
+# We create a fake prompt identified as comming the user (MessageRole.USER)
+user_message = Message(MessageRole.USER, "What's 2+2 ?")
+
+# We create a fake answer identified as comming from the LLM (MessageRole.ASSISTANT)
+fake_ai_response = Message(MessageRole.ASSISTANT, "The answer is 4")
+
+# Let's add these two Messages to the Agent's History
+agent1.history.add(user_message)
+agent1.history.add(fake_ai_response)
+
+# Print the content of the history
+agent1.history.pretty_print()
+```
+
+Outputs:
+```
+[user]:
+What's 2+2 ?
+
+[assistant]:
+The answer is 4
+```
+
+The Agent's History contains the two message we manualy added.  
+ℹ️ Note that the History doesn't have to be empty to use this. The .add() method aonly appends your messages to the end of the current History.  
+⚠️ Though, try to keep the alternation of USER and ASSISTANT as this is how "instruct" LLMs have been trained.  
+
+---
+
+Let's see a 0 shot example asking for a json output extracted from a given sentence:
+
+```python
+LoggerManager.set_log_level("INFO")
+
+agent1 = Agent("Ai assistant", "llama3:8b")
+
+Task(f"Print the following sentence as json, extracting the names and rephrasing the actions: 'Marie is walking her dog. Ryan is watching them through the window. The dark sky is pouring down heavy raindrops.'", agent1).solve()
+```
+
+Outputs:
+```
+INFO: [PROMPT]: Print the following sentence as json extracting the names and rephrasing the actions: 'Marie is walking her dog. Ryan is watching them through the window. The dark sky is pouring down heavy raindrops.'
+
+INFO: [AI_RESPONSE]: Here is the sentence rewritten in JSON format:
+
+```json
+{
+  "people": [
+    {
+      "name": "Marie",
+      "action": "walking"
+    },
+    {
+      "name": "Ryan",
+      "action": "watching through the window"
+    }
+  ],
+  "weather": {
+    "condition": "heavy raindrops",
+    "sky": "dark sky"
+  }
+}
+```
+
+Let me know if you'd like me to help with anything else!
+```
+
+Not bad but there's is noise. We would like to output the JSON and nothing else. No bedside manners.  
+Let's introduce another optionnal Task() parameter: `json_output=True`. This relies on Ollama to force the ouput as JSON.  
+⚠️ It is preferable to prompt the LLM to output as JSON in addition to this option.
+
+Replace our Task with this one:
+```python
+Task(f"Print the following sentence as json extracting the names and rephrasing the actions: 'Marie is walking her dog. Ryan is watching them through the window. The dark sky is pouring down heavy raindrops.'", agent1, json_output=True).solve()
+```
+
+Outputs:
+```
+INFO: [PROMPT]: Print the following sentence as json extracting the names and rephrasing the actions: 'Marie is walking her dog. Ryan is watching them through the window. The dark sky is pouring down heavy raindrops.'
+
+INFO: [AI_RESPONSE]: {"names": ["Marie", "Ryan"], "actions": {"Marie": "is walking", "Ryan": "is watching"}, "description": [{"location": "window", "activity": "watching"}, {"location": "outdoors", "activity": "pouring raindrops"}]}
+```
+
+Way better. No more noise.  
+However, we would prefer having an array of `name` and `action`, even for the weather (name would be *sky* and action *raining*).
+
+To achieve this let's give the LLM an example of what we expect by making it belive it outputed it correctly once:
+```python
+LoggerManager.set_log_level("INFO")
+
+agent1 = Agent("Ai assistant", "llama3:8b")
+
+# Making a fake interaction that is correct
+agent1.history.add(Message(MessageRole.USER, "Print the following sentence as json extracting the names and rephrasing the actions: 'John is reading a book on the porch while the cold wind blows through the trees.'"))
+agent1.history.add(Message(MessageRole.ASSISTANT, '[{"name": "John", "action": "Reading a book.", "Cold wind": "Blowing through the trees."]'))
+
+Task(f"Print the following sentence as json extracting the names and rephrasing the actions: 'Marie is walking her dog. Ryan is watching them through the window. The dark sky is pouring down heavy raindrops.'", agent1).solve()
+```
+
+Outputs:
+```
+INFO: [PROMPT]: Print the following sentence as json extracting the names and rephrasing the actions: 'Marie is walking her dog. Ryan is watching them through the window. The dark sky is pouring down heavy raindrops.'
+
+INFO: [AI_RESPONSE]: [{"name": "Marie", "action": "Walking her dog."}, {"name": "Ryan", "action": "Watching Marie and her dog through the window."}, {"name": "The dark sky", "action": "Pouring down heavy raindrops."}]
+```
+
+This is perfect.  
+You can add multiple fake interractions like this one to cover more advanced cases and train the LLM on how to react when they happen. It would become multi-shot prompting.  
+
+---
+
+You can also do multi-shot prompting with self reflection. This takes more CPU time because you decompose the task into multiple subtasks but can be beneficial in some scenarios.  
+
+For example:  
+```python
+LoggerManager.set_log_level("INFO")
+
+agent1 = Agent("Ai assistant", "llama3:8b")
+
+Task('I will give you a sentence where you must extract as JSON all the names and rephrase all the actions. For example in the following sentence: "John is reading a book on the porch while the cold wind blows through the trees." would result in this JSON output: [{"name": "John", "action": "Reading a book."}, {"name": "Cold wind", "action": "Blowing through the trees."}] ', agent1).solve()
+
+Task(f"Marie is walking her dog. Ryan is watching them through the window. The dark sky is pouring down heavy raindrops.", agent1, json_output=True).solve()
+```
+
+Outputs
+```
+INFO: [PROMPT]: I will give you a sentence where you must extract as JSON all the names and rephrase all the actions. For example in the following sentence: "John is reading a book on the porch while the cold wind blows through the trees." would result in this JSON output: [{"name": "John", "action": "Reading a book."}, {"name": "Cold wind", "action": "Blowing through the trees."}]
+
+INFO: [AI_RESPONSE]: I'm ready to extract the names and rephrase the actions. What's the sentence?
+
+INFO: [PROMPT]: Marie is walking her dog. Ryan is watching them through the window. The dark sky is pouring down heavy raindrops.
+
+INFO: [AI_RESPONSE]: {"name": "Marie", "action": "Walking with her dog."}
+```
+:-(  
+In this case it didn't work very well as only one name was extracted as JSON. But in more complexe scenarios I can assure you that letting the LLM reflect on the guide line behore han,ding it the real task can be benefical.  
 
 ### Saving an Agent state
+
+Maybe your program needs to start, stop and resume where it stopped. For this usecase Yacana provides a way to store an Agent state on file and load it later. All of the Agent's properties are saved including the History. Only checkpoint are lost as they are more of a runtime thing. We might include them in the save file if the need arrise.
+
+To save an Agent do the following:
+```python
+
+```
+
+
 
 ## VII. Assigning a tool to a Task
 
