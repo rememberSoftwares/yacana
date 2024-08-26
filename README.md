@@ -803,9 +803,20 @@ yes
 As you can see in the above output. I went for "the creamy one" but when shown the clories I said no... Then chose the Golden Galettes was satisfied and the program ended with an output of the agent's history.  
 We can see in the agent output that it only remembers me chosing the Golden Galettes but not the Creamy Confections. This is because we loaded the checkpoint that was made before the user choice.
 
-ℹ️ Note that the 
+ℹ️ Note that the Task asking to replace the variables might not work very well with dumb LLMs. It could be rework by splitting the Task into two. One that would extract the name of the chosen pastry from the user's input and a second one that would generate the associated calories. Finally print the sentence with the variables pre-generated. Using local models is all about knowing the maximum performance of your LLM and adapt the prompts to match that performance. The dumber, the more guidance it needs !  
 
 ### Multi prompt shot VS 0 prompt shot
+
+When a LLM struggles to solve a complexe Task and achieve a good success rate it may be time to give it a little help.  
+
+In large language models, the approach to prompting can significantly influence the model's performance. Zero-shot prompting asks the model to complete a task without any prior examples, relying solely on its pre-existing knowledge. This can lead to varied results, especially in more complex tasks. One-shot prompting improves accuracy by providing the model with a single example, offering some guidance on how to approach the task. Few-shot prompting further enhances performance by supplying multiple examples, allowing the model to better understand the task's nuances and produce more reliable and accurate results.
+
+In other words:
+* Zero-Shot Prompting: The model must rely on its general knowledge, which may result in varied performance depending on the task's complexity.
+* One-Shot Prompting: A single example helps guide the model, improving its performance over zero-shot prompting.
+* Few-Shot Prompting: Multiple examples give the model a better understanding of the task, significantly increasing accuracy and performance.
+
+Yacana provides you with a way to add new Messages to the History manualy. The History class (available in the agent as `agent.history`) exposes an `.add(...)` method. This method takes an argument of type `Message()` ([[see here]() @todo). The Message() constructor takes two parameters a MessageRole enum ([see here]() @todo url)
 
 ### Saving an Agent state
 
