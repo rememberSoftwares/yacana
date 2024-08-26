@@ -1013,9 +1013,26 @@ As you can see when asked to multiply by 2 the previous result it remember agent
 
 ### Introduction
 
-Giving the LLM the opportunity to call a tool is the most important thing an agent can do ! But what is a "tool" ? A "tool" simply refers to a python function. THis function can be the entry point to any level of underlying complexity. But it doesn't matter. What matters is that the LLM can call the tool with the correct arguments. This way, LLMs can interract with *classic* programming interfaces that produce deterministic results (aka normal programming).  
+Giving the LLM the opportunity to call a tool is the most important thing an agent can do ! But what is a "tool" ? A "tool" simply refers to a python function. This function can be the entry point to any level of underlying complexity. But it doesn't matter. What matters is that the LLM can call the tool with parameters that match the function. This way, LLMs can interract with *classic* programming interfaces that produce deterministic results (aka normal programming).  
 
-For instance let's say you want a calculator powered by an LLM. You cannot rely on the LLM doing the math because even though it knows how to decompose equation to an extent and basic arthitmetics, it will fail on more advance calculous. Therefore what we expect from the LLM is not to peerform the operation itself. That the CPU can do perfectly. What we expect it to achive is to decompose correctly the equation and call tools that perform the resolution and return the result.
+For instance let's say you want a calculator powered by an LLM. You cannot rely on the LLM doing the math because even though it knows how to decompose equation to an extent and basic arthitmetics, it will fail on more advance calculous. Therefore we do not expect the LLM to perform the operation itself. We already got the CPU to do this task perfectly. On the other hand we expect the LLM to decompose correctly the equation and call tools for each arithmetic operation needed to get the result.
+
+#### In what way is Yacana different than other frameworks ?
+
+Other frameworks out there assign their tools to the agent during it's initialisation. In our opinion, this tends to confuse the agent because it's getting access to many tools which may not be relevant to the immediate job it is given. In Yacana tools are only available at the Task level. Thus no noise is generated before having to solve a particluar task. The tool is made available to the LLM only when it is needed and not bbefore. 
+
+#### Understanding the underlying mechanism of tool calling in LLMs
+
+As an aside for those interested...
+
+If you don't understand how a text to text neural network can call a python function let me tell you: It doesn't.  
+When we refer to *tool calling* we also refer to *function calling* which is very poorly named. Function calling is the ability of an inference server to make the LLM output the text in a particular format. As of today only JSON is supported but there is no doubt that more formats will be available soon.  
+However, now that we have the ability to control how the LLM answers, we can parse a JSON that we know the structure. Therefore we can ask the LLM for a JSON that matches the prototype of a python function. For instance the name and parameters value.  
+Some LLMs have been trained to ouput JSON in a particular way that matches a particular JSON structure. This particular JSON structure is becoming a convention and was pushed by big AI players likes OpenAI.  
+Unfortunatly, the size and complexity of this JSON doesn't work very well with our dumb 8B LLMs. A problem that ChatGPT, claude, Grok and other smart LLMs don't have.  
+To overcome this particular issue, Yacana comes with it's own JSON to call python functions. It's way lighter than the OpenAI standard and Yacana uses [percussive maintenance]() @todo url to force the model to output the JSON in a way that the tool expects.  
+
+### Calling a tool
 
 Let's do our first tool calling with a simple addition !
 
@@ -1095,17 +1112,6 @@ When looking at the logs we can see that the tool was called with the following 
 So instead of having integers we got string and what's the result of "2" + "2" in python ? Not 4 but "22" (concatenation of strings).  
 
 Fortunatly we can fix this easily in diferent ways.
-
-#### Understanding the mechanism of tool calling
-
-As an aside for those interested...
-
-If you don't understand how a text to text neural network can call a python function let me tell you: It doesn't.  
-When we refer to *tool calling* we also refer to *function calling* which is very poorly named. Function calling is the ability of an inference server to make the LLM output the text in a particular format. As of today only JSON is supported but there is no doubt that more formats will be available soon.  
-However, now that we have the ability to control how the LLM answers, we can parse a JSON that we know the structure. Therefore we can ask the LLM for a JSON that matches the prototype of a python function. For instance the name and parameters value.  
-Some LLMs have been trained to ouput JSON in a particular way that matches a particular JSON structure. This particular JSON structure is becoming a convention and was pushed by big AI players likes OpenAI.  
-Unfortunatly, the size and complexity of this JSON doesn't work very well with our dumb 8B LLMs. A problem that ChatGPT, claude, Grok and other smart LLMs don't have.  
-To overcome this particular issue, Yacana comes with it's own JSON to call python functions. It's way lighter than the OpenAI standard and Yacana uses [percussive maintenance]() @todo url to force the model to output the JSON in a way that the tool expects.  
 
 ### Getting better tool calling results
 
@@ -1301,7 +1307,7 @@ adder_tool: Tool = Tool("Adder", "Adds two numbers and returns the result", adde
 
 ℹ️ Note that showing the Agent's history with `agent1.history.pretty_print()` won't show you all the shenanigans that are shown in the logs. Many prompts get rid from the final history once the tool call is successful. It's always in the interest of the LLM to keep a clean History. 
 
-### Optionnal tool
+### Making a tool optionnal
 
 Sometimes you assign a Tool to a Task but without knowing for sure that the tool will be useful. If you have a fine tuned model or doing basic operations you may want to rely on the LLM's reasoning to chose if it really needs to call the tool or use his own training knowledge. Setting the `optional: bool = True` will tweak how Yacana proposes the Tools to the LLM, leaving it a chance to pass on the offer of the tool and use it's own knowledge instead.
 
@@ -1440,7 +1446,7 @@ In my opinion, using the `get_temperature` tool is NOT relevant to solving this 
 
 ## VIII. Assigning multiple Tools
 
-In this section we
+In this section we will see that you can add more then
 
 ## IX. Chat between two Agents
 
