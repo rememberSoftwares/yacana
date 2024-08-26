@@ -637,9 +637,11 @@ print("############## END ##################")
 ```
 ############## Agent 1 history pretty print ##################
 
-user: Generate 5 pastry names followed by the associated estimated calorie.
+[user]:
+Generate 5 pastry names followed by the associated estimated calorie.
 
-assistant: Here are 5 pastry names with their associated estimated calorie counts:
+[assistant]:
+Here are 5 pastry names with their associated estimated calorie counts:
 
 1. **Cinnamon Swirl Brioche** (250-300 calories) - A sweet, buttery brioche filled with a gooey cinnamon swirl.
 2. **Lemon Lavender Mille-Feuille** (400-450 calories) - Layers of flaky pastry, lemon curd, and lavender cream create a bright and airy dessert.
@@ -649,9 +651,11 @@ assistant: Here are 5 pastry names with their associated estimated calorie count
 
 Note: The estimated calorie counts are approximate and may vary based on specific ingredients and portion sizes used.
 
-user: Rank the pastries from the lowest calorie count to the largest.
+[user]:
+Rank the pastries from the lowest calorie count to the largest.
 
-assistant: Based on the estimated calorie counts I provided earlier, here are the pastries ranked from lowest to highest:
+[assistant]:
+Based on the estimated calorie counts I provided earlier, here are the pastries ranked from lowest to highest:
 
 1. **Pistachio Rosewater Macarons** (150-200 calories)
 2. **Raspberry Almond Croissant** (200-250 calories)
@@ -678,17 +682,109 @@ Yacana allows you to make a history snapshots and rollback to them. This is in p
 
 Let's take a concrete example. You have an pastry website that generates pastries recipes (using real data from a tool would be better ^^). 
 The flow will look like this:
-1. Propose 5 pastry name ;
-2. We create a checkpoint ;
+1. Propose 5 pastry names ;
+2. Create a checkpoint ;
 3. The user chooses one of the pastries ;
-4. We show the associated calorie of the selected pastry ;
+4. We show the associated calories of the selected pastry ;
 5. If the user is okay with it we end the program ;
-6. If the user is not okay with the calorie count we load back the checkpoint and propose the list again ;
+6. If the user is not okay with the calorie count we load back the checkpoint and propose to choose from the the list again ;
 7. Repeat until satisfied ;
 8. We'll show the final agent's History and make sure that it ONLY stored the selected pastry ;
 
-At this moment we'll create a checkpoint ! Then, we'll propose the 5 pastries to the user and he will be proposed to chose one. If he does, the AI generates the needed pastry's ingredients. If not, we rollback to the checkpoint and  
-Task3("Generate a concise description
+```python
+# Let's deactivate automatic logging so that only OUR prints are shown ; Maybe reactivate (to "info") if you want to see what's happening behind the scene.
+LoggerManager.set_log_level(None)
+
+agent1 = Agent("Cook", "llama3:8b", system_prompt="You are a pastry chef")
+
+# Getting a list of pastries
+pastries: str = Task("Generate 5 pastry names displayed as a list. ONLY output the names and nothing else.", agent1).solve().content
+print(f"Welcome, you may order one of the following pastries\n{pastries}")
+
+#Looping till the user is satisfied
+while True:
+    print("")
+
+    # Creating our checkpoint to go back in time
+    checkpoint_id: str = agent1.history.create_check_point()
+
+    # Asking for one of the pastry from the list
+    user_choice: str = input("Please choose one of the above pastries: ")
+
+    # Printing associated calories for the selected pastry
+    pastry_calorie_question: str = Task(f"The user said '{user_choice}'. Your task is to output a specific sentence and replace the <replace> tags with the correct values: 'You selected the <replace>selected pastry</replace>. The average calorie intake for this pastry is <replace>average associated calories for the selected pastry</replace>. Do you wish to continue ?", agent1).solve().content
+    print(pastry_calorie_question)
+
+    # Asking if user wants to continue
+    is_satisfied: str = input("Continue ? ")
+
+    # Basic yes / no router
+    router_answer: str = Task(f"The user said '{is_satisfied}'. Evaluate if the user was okay with its order. If he was, ONLY output 'yes', if not only output 'no'.", agent1).solve().content
+
+    if "yes" in router_answer.lower():
+        print("Thank you for your order.")
+        # The user was satisfied with his choice. Exiting the loop...
+        break
+    else:
+        # The user wants to choose another pastry. Let's go back in time by loading are previous checkpoint !
+        agent1.history.load_check_point(checkpoint_id)
+        #  Let's go back to the top of the loop
+        continue
+
+print("############## Agent 1 history pretty print ##################")
+agent1.history.pretty_print()
+print("############## END ##################")
+```
+
+Output:
+```
+Welcome, you may order one of the following pastries
+1. Whipped Wonders
+2. Creamy Confections
+3. Flaky Fancies
+4. Golden Galettes
+5. Sugar Serenades
+
+Please choose one of the above pastries: The Creamy one looks good
+You selected the Creamy Confections. The average calorie intake for this pastry is 350-400 calories per serving. Do you wish to continue?
+Continue ? no
+
+Please choose one of the above pastries: Hummm. The golden one ?
+You selected the Golden Galettes. The average calorie intake for this pastry is approximately 250-300 calories per serving. Do you wish to continue?
+Continue ? yes
+Thank you for your order.
+
+############## Agent 1 history pretty print ##################
+
+[user]:
+Generate 5 pastry names displayed as a list. ONLY output the names and nothing else.
+
+[assistant]:
+1. Whipped Wonders
+2. Creamy Confections
+3. Flaky Fancies
+4. Golden Galettes
+5. Sugar Serenades
+
+[user]:
+The user said 'Hummm. The golden one ?'. Your task is to output a specific sentence and replace the <replace> tags with the correct values: 'You selected the <replace>selected pastry</replace>. The average calorie intake for this pastry is <replace>average associated calories for the selected pastry</replace>. Do you wish to continue ?
+
+[assistant]:
+You selected the Golden Galettes. The average calorie intake for this pastry is approximately 250-300 calories per serving. Do you wish to continue?
+
+[user]:
+The user said 'yes'. Evaluate if the user was okay with its order. If he was, ONLY output 'yes', if not only output 'no'.
+
+[assistant]:
+yes
+
+############## END ##################
+```
+
+As you can see in the above output. I went for "the creamy one" but when shown the clories I said no... Then chose the Golden Galettes was satisfied and the program ended with an output of the agent's history.  
+We can see in the agent output that it only remembers me chosing the Golden Galettes but not the Creamy Confections. This is because we loaded the checkpoint that was made before the user choice.
+
+ℹ️ Note that the 
 
 ### Multi prompt shot VS 0 prompt shot
 
