@@ -677,10 +677,24 @@ Output speaks for itself.
 
 ### Creating and loading checkpoints
 
-As mentionned earlier it's better to keep the History clean. To many prompts and unrelated questions will lead to poorer results so if you have the opportunity to scratch some portion then you should.  
-Yacana allows you to make a history snapshots and rollback to them. This is in particullary useful when you are reaching the end of a flow branch and want to go back onto another branch.  
+As mentionned earlier it's better to keep the History clean. Too many prompts and unrelated questions will lead to poorer results so if you have the opportunity to scratch some portion then you should.  
+Yacana allows you to make a history snapshots and rollback to any them. This is in particullary useful when you are reaching the end of a flow branch and want to go back onto another branch.  
 
-Let's take a concrete example. You have an pastry website that generates pastries recipes (using real data from a tool would be better ^^). 
+It is as simple as this:  
+```python
+# Creating a checkpoint
+checkpoint_id: str = agent1.history.create_check_point()
+```
+The checkpoint_id is only an uniq identifier that you can use to load back a save. Like this:  
+```python
+# Go back in time to when the checkpoint was created
+agent1.history.load_check_point(checkpoint_id)
+```
+
+ℹ️ Note that nothing prevents you from making a snapshot before rolling back to a previopus save. This way you could return... to the future. ^^  
+Are you okay Marty ?  
+
+Let's take a concrete example. You have an pastry website that generates pastries recipes (using real data from a tool would be better, continue the tutorial). 
 The flow will look like this:
 1. Propose 5 pastry names ;
 2. Create a checkpoint ;
@@ -690,6 +704,11 @@ The flow will look like this:
 6. If the user is not okay with the calorie count we load back the checkpoint and propose to choose from the the list again ;
 7. Repeat until satisfied ;
 8. We'll show the final agent's History and make sure that it ONLY stored the selected pastry ;
+
+With a bit of color it would look like this:
+
+![pastry1B](https://github.com/user-attachments/assets/3a4952aa-18f3-4b6d-93c1-85b909cf24f4)
+
 
 ```python
 # Let's deactivate automatic logging so that only OUR prints are shown ; Maybe reactivate (to "info") if you want to see what's happening behind the scene.
