@@ -611,7 +611,7 @@ To counteract thoses negative effects it is recommanded you clean the history wh
 
 ### Printing history
 
-The Agent class comes with a `.history` property. It's of type `History` (@todo [see here]()) and exposes methods to interract with it. For instance it has got a `.pretty_print()` method that prints on the stanard output the the content of the history using the classic color scheme. It's great for debugging but not for parsing. If you need to parse the history there is a `.get_as_dict()` methods which as the name implies returns the History as a python dictionnary.  
+The Agent class comes with a `.history` property of type `History` (@todo [see here]()). It exposes methods so you can manipulate and view it (for debugging, mostly) during runtime. For instance it has got a `.pretty_print()` method that prints on the standard output the the content of the history using the classic color scheme. It's great for debugging but not for parsing. If you need to parse the history there is a `.get_as_dict()` methods which as the name implies returns the History as a python dictionnary.  
 
 Let's see a simple example:
 ```python
