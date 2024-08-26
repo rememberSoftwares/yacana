@@ -1303,11 +1303,144 @@ adder_tool: Tool = Tool("Adder", "Adds two numbers and returns the result", adde
 
 ### Optionnal tool
 
-Sometimes you assign a Tool to a Task but without knowing for sure that the tool will be useful. If you have a fine tuned model or doing basic operations you may want to rely on the LLM's training knowledge. Setting the `optional: bool = True` will tweak how Yacana proposes the Tools to the LLM, leaving it a chance to pass on the offer and use it's own knowledge instead.
+Sometimes you assign a Tool to a Task but without knowing for sure that the tool will be useful. If you have a fine tuned model or doing basic operations you may want to rely on the LLM's reasoning to chose if it really needs to call the tool or use his own training knowledge. Setting the `optional: bool = True` will tweak how Yacana proposes the Tools to the LLM, leaving it a chance to pass on the offer of the tool and use it's own knowledge instead.
+
+To demonstrate this let's make a tool that returns a temperature from a city. It will return a fake temperature as we don't really care. We won't set `optionnal=True` so it will be forced to use the tool.
+```python
+def get_temperature(city: str) -> int:
+    return 20
 
 
+result: str = Task(f"What's the temperature in NY ?", agent1, tools=[Tool("get_temp", "Returns the celsius temperature of a given city", get_temperature)]).solve().content
+
+print(f"Temperature = {result}")
+```
+
+Output:
+```
+INFO: [PROMPT]: I give you the following tool definition that you must use to fulfill a future task: get_temperature(city: str) -> int - Adds two numbers and returns the result. Please acknowledge the given tool.
+
+INFO: [AI_RESPONSE]: I've received the tool definition!
+
+So, I understand that I have been given a tool called `get_temperature` that takes one argument `city` which is a string, and it's supposed to return an integer.
+
+However, I notice that the tool definition says "Adds two numbers and returns the result" but the function name `get_temperature` suggests it should be related to getting the temperature of a city.
+
+I'll make sure to keep this in mind for any future tasks that require using this tool!
+
+INFO: [PROMPT]: To use the tool you MUST extract each parameter and use it as a JSON key like this: {"arg1": "<value1>", "arg2": "<value2>"}. You must respect arguments type. For instance, the tool `getWeather(city: str, lat: int, long: int)` would be structured like this {"city": "new-york", "lat": 10, "lon": 20}. In our case, the tool call you must use must look like that: {'city': 'arg 0'}
+
+INFO: [AI_RESPONSE]: So I understand now. Thank you for the clarification!
+
+To use the `get_temperature` tool, I will extract each parameter and use it as a JSON key with its corresponding value.
+
+The tool definition is: `get_temperature(city: str) -> int`
+
+So, I will structure my tool call like this:  {"city": "arg0"}
+
+Please let me know what's the next step!
+
+INFO: [PROMPT]: You have a task to solve. Use the tool at your disposition to solve the task by outputing as JSON the correct arguments. In return you will get an answer from the tool. The task is:
+What's the temperature in NY ?
+
+INFO: [AI_RESPONSE]: { "city": "NY" }
+Temperature = 20
+```
+The tool was called with `{ "city": "NY" }` which returned 20. Good !
+
+---
+
+Now let's ask something completly unrelated but keep the tool mandatory:
+```python
+result: str = Task(f"Why is the sky blue ?", agent1, tools=[Tool("get_temp", "Returns the celsius temperature of a given city", get_temperature)]).solve().content
+```
+
+Output:
+```
+INFO: [PROMPT]: I give you the following tool definition that you must use to fulfill a future task: get_temperature(city: str) -> int - Returns the celsius temperature of a given city. Please acknowledge the given tool.
+
+INFO: [AI_RESPONSE]: Acknowledged!
+
+You've provided me with a tool definition for `get_temperature(city: str) -> int`, which returns the Celsius temperature of a given city.
+
+I'm ready to use this tool whenever I need it in future tasks!
+
+INFO: [PROMPT]: To use the tool you MUST extract each parameter and use it as a JSON key like this: {"arg1": "<value1>", "arg2": "<value2>"}. You must respect arguments type. For instance, the tool `getWeather(city: str, lat: int, long: int)` would be structured like this {"city": "new-york", "lat": 10, "lon": 20}. In our case, the tool call you must use must look like that: {'city': 'arg 0'}
+
+INFO: [AI_RESPONSE]: For the `get_temperature( city: str ) -> int` tool, I understand that I need to extract each parameter and use it as a JSON key.
+
+So, for this specific tool, I would structure my JSON call as follows:
+
+{"city": "arg0"}
+
+Where "arg0" is replaced with the actual value of the city I'm interested in.
+
+INFO: [PROMPT]: You have a task to solve. Use the tool at your disposition to solve the task by outputing as JSON the correct arguments. In return you will get an answer from the tool. The task is:
+Why is the sky blue ?
+
+INFO: [AI_RESPONSE]: {"city": "Paris"}
+Temperature = 20
+```
+It asked the tool for the temperature in Paris without any reasons. We can't blame it. The tool we provided and the Task to solve have nothing to do with each other. So it's making things up, like the city name.  
+
+---
+
+Now let's make the tool optionnal and keep our unrelated Task:
+```python
+result: str = Task(f"Why is the sky blue ?", agent1, tools=[Tool("get_temp", "Returns the celsius temperature of a given city", get_temperature, optional=True)]).solve().content
+```
+
+Output:
+```
+INFO: [PROMPT]: I give you the following tool definition that you may use to fulfill a future task: get_temperature(city: str) -> int - Returns the celsius temperature of a given city. Please acknowledge the given tool.
+
+INFO: [AI_RESPONSE]: Acknowledged!
+
+I have taken note of the `get_temperature` tool, which takes a city name as input (`city: str`) and returns the Celsius temperature of that city (`-> int`). I'm ready to use this tool whenever you'd like me to fulfill a task in the future!
+
+INFO: [PROMPT]: To use the tool you MUST extract each parameter and use it as a JSON key like this: {"arg1": "<value1>", "arg2": "<value2>"}. You must respect arguments type. For instance, the tool `getWeather(city: str, lat: int, long: int)` would be structured like this {"city": "new-york", "lat": 10, "lon": 20}. In our case, the tool call you must use must look like that: {'city': 'arg 0'}
+
+INFO: [AI_RESPONSE]: So for the `get_temperature( city: str )` tool, I would extract the single parameter as:
+
+{"city": "arg0"}
+
+Please let me know what's next!
+
+INFO: [PROMPT]: You have a task to solve. In your opinion, is using the tool "get_temp" relevant to solve the task or not ? The task is:
+Why is the sky blue ?
+
+INFO: [AI_RESPONSE]: Ha ha, that's an interesting question!
+
+In my opinion, using the `get_temperature` tool is NOT relevant to solving this task. The task asks about why the sky is blue, and temperature doesn't seem to be directly related to that.
+
+So, I'll have to come up with a different approach or use a different tool (if one exists) to tackle this question!
+
+INFO: [PROMPT]: To summurize in one word your previous answer. Do you wish to use the tool or not ? Respond ONLY by 'yes' or 'no'.
+
+INFO: [AI_RESPONSE]: no
+
+INFO: [PROMPT]: Why is the sky blue ?
+
+INFO: [AI_RESPONSE]: A question that has puzzled humans for centuries!
+
+The sky appears blue because of a phenomenon called Rayleigh scattering, named after the British physicist Lord Rayleigh. Here's what happens:
+
+1. **Sunlight**: The sun emits white light, which is made up of all the colors of the visible spectrum (red, orange, yellow, green, blue, indigo, and violet).
+2. **Atmosphere**: When this sunlight enters Earth's atmosphere, it encounters tiny molecules of gases like nitrogen (N2) and oxygen (O2). These molecules are much smaller than the wavelength of light.
+[BLABLA]
+5. **Sky appears blue**: The combined effect of all these scattered blue and violet photons is what makes the sky appear blue to our eyes! The more direct sunlight that reaches our eyes, the whiter it will appear.
+
+So, to summarize: the sky appears blue because of the selective scattering of shorter wavelengths (like blue and violet) by tiny molecules in the atmosphere, which dominates the colors we see when looking up at the sky.
+```
+
+As you can see it chose to ignore the tool when Yacana proposed it. It said:
+```
+In my opinion, using the `get_temperature` tool is NOT relevant to solving this task. The task asks about why the sky is blue, and temperature doesn't seem to be directly related to that.
+```
 
 ## VIII. Assigning multiple Tools
+
+In this section we
 
 ## IX. Chat between two Agents
 
