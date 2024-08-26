@@ -1011,6 +1011,51 @@ As you can see when asked to multiply by 2 the previous result it remember agent
 
 ## VII. Assigning a tool to a Task
 
+### Introduction
+
+Giving the LLM the opportunity to call a tool is the most important thing an agent can do ! But what is a "tool" ? A "tool" simply refers to a python function. THis function can be the entry point to any level of underlying complexity. But it doesn't matter. What matters is that the LLM can call the tool with the correct arguments. This way, LLMs can interract with *classic* programming interfaces that produce deterministic results (aka normal programming).  
+
+For instance let's say you want a calculator powered by an LLM. You cannot rely on the LLM doing the math because even though it knows how to decompose equation to an extent and basic arthitmetics, it will fail on more advance calculous. Therefor what we expect from the LLM is not to peerform the operation itself. That the CPU can do perfectly. What we expect it to achive is to decompose correctly the equation and call tools that perform the resolution and return the result.
+
+Let's do our first tool calling with a simple addition !
+
+First, let define our tool:
+```python
+def adder(first_number: int, second_number: int) -> int:
+    print(f"Tool adder was called with param {first_number} ({type(fisrt_number}) and {second_number} ({type(second_number)})")
+    return first_number + second_number
+```
+
+What do we have here ?
+* The name of the function must be relevant to what the function does. Here the function performs an addition so we'll call it `adder` ;
+* Same thing goes for the parameters. The name you choose is very important as it will help the LLM to know what value to give this argument ;
+* Duck typing the prototype is very important ! You must define the type of each parameters and also the return type ;
+* We perform the operation between the two parameters and return the result ;
+
+⚠️ Be aware that whatever the return of your function, Yacana will cast it to string using the builtin `str(...)` function. LLMs can only understand text so make sure that whatever you send back it can be casted correctly (override the __str__ if needed).  
+
+Let's create a [Tool]() @todo url using Yacana Tool constructor. It takes a name, a description and a reference to the actual function.  
+ℹ️ I can only emphasize the importance of providing an accurate description.  
+```python
+adder_tool: Tool = Tool("Adder", "Adds two numbers and returns the result", adder)
+```
+
+Now let's assign our *adder_tool* to a Task. How to do that ? It's simple, the Task() class takes an opionnal `tools=[]` parameter. It's an array so be sure not to forget thoses `[]` !  
+```python
+Task(f"What's 2+2 ?", agent1, tools=[adder_tool]).solve()
+```
+
+Complete code:
+```python
+def adder(first_number: int, second_number: int) -> int:
+    print(f"Tool adder was called with param {first_number} ({type(fisrt_number}) and {second_number} ({type(second_number)})")
+    return first_number + second_number
+
+adder_tool: Tool = Tool("Adder", "Adds two numbers and returns the result", adder)
+Task(f"What's 2+2 ?", agent1, tools=[adder_tool]).solve()
+```
+
+
 ## VIII. Assigning multiple Tools
 
 ## IX. Chat between two Agents
