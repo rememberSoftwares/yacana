@@ -856,8 +856,6 @@ The Agent's History contains the two message we manualy added.
 Let's see a 0 shot example asking for a json output extracted from a given sentence:
 
 ```python
-LoggerManager.set_log_level("INFO")
-
 agent1 = Agent("Ai assistant", "llama3:8b")
 
 Task(f"Print the following sentence as json, extracting the names and rephrasing the actions: 'Marie is walking her dog. Ryan is watching them through the window. The dark sky is pouring down heavy raindrops.'", agent1).solve()
@@ -912,8 +910,6 @@ However, we would prefer having an array of `name` and `action`, even for the we
 
 To achieve this let's give the LLM an example of what we expect by making it belive it outputed it correctly once:
 ```python
-LoggerManager.set_log_level("INFO")
-
 agent1 = Agent("Ai assistant", "llama3:8b")
 
 # Making a fake interaction that is correct
@@ -939,8 +935,6 @@ You can also do multi-shot prompting with self reflection. This takes more CPU t
 
 For example:  
 ```python
-LoggerManager.set_log_level("INFO")
-
 agent1 = Agent("Ai assistant", "llama3:8b")
 
 Task('I will give you a sentence where you must extract as JSON all the names and rephrase all the actions. For example in the following sentence: "John is reading a book on the porch while the cold wind blows through the trees." would result in this JSON output: [{"name": "John", "action": "Reading a book."}, {"name": "Cold wind", "action": "Blowing through the trees."}] ', agent1).solve()
@@ -967,10 +961,53 @@ Maybe your program needs to start, stop and resume where it stopped. For this us
 
 To save an Agent do the following:
 ```python
+agent1 = Agent("Ai assistant", "llama3:8b")
 
+Task("What's 2+2 ?", agent1).solve()
+
+# Exporting the agent1 current state to a file called agent1_save.json
+agent1.export_state("./agent1_save.json")
 ```
 
+If you look at the file `agent1_save.json` you'll see something like this:
+```
+{
+    "name": "Ai assistant",
+    "model_name": "llama3:8b",
+    "system_prompt": null,
+    "model_settings": {},
+    "endpoint": "http://127.0.0.1:11434",
+    "history": [
+        {
+            "role": "user",
+            "content": "What's 2+2 ?"
+        },
+        {
+            "role": "assistant",
+            "content": "The answer to 2+2 is... (drumroll please)... 4!"
+        }
+    ]
+}
+```
 
+Now let's load back this agent from the dead using `.get_agent_from_state()` !  
+In another file add this bit of code:
+```python
+agent2: Agent = Agent.get_agent_from_state("./agent1_save.json")
+
+Task("Multiply by 2 the previous result", agent2).solve()
+```
+ℹ️ The `.get_agent_from_state(...)` works like a factory pattern, returning a new instance of an Agent.
+
+Output:
+```
+INFO: [PROMPT]: Multiply by 2 the previous result
+
+INFO: [AI_RESPONSE]: If we multiply 4 by 2, we get...
+
+8!
+```
+As you can see when asked to multiply by 2 the previous result it remember agent1's result which was 4. It then did 4 x 2 and got us 8.  
 
 ## VII. Assigning a tool to a Task
 
