@@ -238,7 +238,7 @@ You can chain as many Task as you need. Also, you should create other Agents tha
 
 Other frameworks have the tedency to make abastraction for everything. Even thing that dont need any. That's why I'll show you how to do routing whith only what we have seen earlier. Yacana doesn't provide routing abstraction because there is no need to do so.  
 
-But what is routing ? Well, having LLMs solving a Task and then chaining many other in sequence is good but to be efficient you have to create conditionnal workflows. In particular when using local LLMs that don't have the power to solve all Tasks with only one prompt. You have to create an AI worflow in advance that wil go foward step by step and converge to some expected result. AI allows you to deal with some level of unknown but expecting that you can have a master brain (like in crewAI) that distributes Tasks to agents and achieve an expected result is IMPOSSIBLE with local LLMs. They are too dumb ! Therefor they need you to help them allong their path. This is why LangGraph works well with local LLMs and Yacana does to. You create a workflow and when conditions are met you switch from one branch to another that treats more specific cases, etc.
+But what is routing ? Well, having LLMs solving a Task and then chaining many other in sequence is good but to be efficient you have to create conditionnal workflows. In particular when using local LLMs that don't have the power to solve all Tasks with only one prompt. You have to create an AI worflow in advance that wil go foward step by step and converge to some expected result. AI allows you to deal with some level of unknown but expecting that you can have a master brain (like in crewAI) that distributes Tasks to agents and achieve an expected result is IMPOSSIBLE with local LLMs. They are too dumb ! Therefore they need you to help them allong their path. This is why LangGraph works well with local LLMs and Yacana does to. You create a workflow and when conditions are met you switch from one branch to another that treats more specific cases, etc.
 
 ---
 
@@ -605,7 +605,7 @@ There are 3 types of prompts. The optionnal system prompt that, if present, alwa
 
 However, sending the whole history to the LLM for each Task to solve has some disavantes that canno't be overturn:
 * The longer the history the longer the LLM takes to analyse it and return an answer.
-* Each LLM comes with a maximum token window size. This the maximum words an LLM can analyse in one run, therefor it's maximum memory. One token roughly reprensents one word or 3/4 of a word. More information on token count per word [here](https://winder.ai/calculating-token-counts-llm-context-windows-practical-guide/) or [here](https://help.openai.com/en/articles/4936856-what-are-tokens-and-how-to-count-them).  
+* Each LLM comes with a maximum token window size. This the maximum words an LLM can analyse in one run, therefore it's maximum memory. One token roughly reprensents one word or 3/4 of a word. More information on token count per word [here](https://winder.ai/calculating-token-counts-llm-context-windows-practical-guide/) or [here](https://help.openai.com/en/articles/4936856-what-are-tokens-and-how-to-count-them).  
 
 To counteract thoses negative effects it is recommanded you clean the history when possible. You can use the `forget=True` parameter in the Task() class so the prompt and the LLM response do not get save to the history ([see here]() @todo). There are other ways to preserve the history from useless noise. But first we'll look at viewing ones Agent history. Fortunatly Yacana got you covered.
 
@@ -1015,7 +1015,7 @@ As you can see when asked to multiply by 2 the previous result it remember agent
 
 Giving the LLM the opportunity to call a tool is the most important thing an agent can do ! But what is a "tool" ? A "tool" simply refers to a python function. THis function can be the entry point to any level of underlying complexity. But it doesn't matter. What matters is that the LLM can call the tool with the correct arguments. This way, LLMs can interract with *classic* programming interfaces that produce deterministic results (aka normal programming).  
 
-For instance let's say you want a calculator powered by an LLM. You cannot rely on the LLM doing the math because even though it knows how to decompose equation to an extent and basic arthitmetics, it will fail on more advance calculous. Therefor what we expect from the LLM is not to peerform the operation itself. That the CPU can do perfectly. What we expect it to achive is to decompose correctly the equation and call tools that perform the resolution and return the result.
+For instance let's say you want a calculator powered by an LLM. You cannot rely on the LLM doing the math because even though it knows how to decompose equation to an extent and basic arthitmetics, it will fail on more advance calculous. Therefore what we expect from the LLM is not to peerform the operation itself. That the CPU can do perfectly. What we expect it to achive is to decompose correctly the equation and call tools that perform the resolution and return the result.
 
 Let's do our first tool calling with a simple addition !
 
@@ -1078,8 +1078,6 @@ What's 2+2 ?
 
 INFO: [AI_RESPONSE]: {"first_number": "2", "second_number": "2"}
 
-
-
 Tool adder was called with param '2' (<class 'str'>) and '2' (<class 'str'>)
 Result of added tool is: 22
 
@@ -1104,7 +1102,7 @@ As an aside for those interested...
 
 If you don't understand how a text to text neural network can call a python function let me tell you: It doesn't.  
 When we refer to *tool calling* we also refer to *function calling* which is very poorly named. Function calling is the ability of an inference server to make the LLM output the text in a particular format. As of today only JSON is supported but there is no doubt that more formats will be available soon.  
-However, now that we have the ability to control how the LLM answers, we can parse a JSON that we know the structure. Therefor we can ask the LLM for a JSON that matches the prototype of a python function. For instance the name and parameters value.  
+However, now that we have the ability to control how the LLM answers, we can parse a JSON that we know the structure. Therefore we can ask the LLM for a JSON that matches the prototype of a python function. For instance the name and parameters value.  
 Some LLMs have been trained to ouput JSON in a particular way that matches a particular JSON structure. This particular JSON structure is becoming a convention and was pushed by big AI players likes OpenAI.  
 Unfortunatly, the size and complexity of this JSON doesn't work very well with our dumb 8B LLMs. A problem that ChatGPT, claude, Grok and other smart LLMs don't have.  
 To overcome this particular issue, Yacana comes with it's own JSON to call python functions. It's way lighter than the OpenAI standard and Yacana uses [percussive maintenance]() @todo url to force the model to output the JSON in a way that the tool expects.  
@@ -1113,9 +1111,191 @@ To overcome this particular issue, Yacana comes with it's own JSON to call pytho
 
 As you saw in the previous adder example we ran into trouble with the `2 + 2` call sent as string. Let's fix that.
 
-#### Giving examples
+#### Providing tool call examples
+
+If you followed this tutorial from the start you saw that multi-shot prompting yields good results. The Tool class allows this too using the `usage_examples=[]` optionnal parameter. You have to provide a python dictionnary where each key is equal to the argument name and the associated value, a valid value for the tool. You can add as many examples as you want in the array. In general one or two is enough.  
+These dictionnaries will be presented by Yacana to the LLM as examples on how to call the tool correctly.  
+
+Let's look at an example with our adder tool:
+```
+adder_tool: Tool = Tool("Adder", "Adds two numbers and returns the result", adder, usage_examples=[{"first_number": 2, "second_number": 4}, {"first_number": 8, "second_number": -2}])
+```
+
+Replace the previous adder_tool definition by this one. You see the that we provided two examples. Each time giving `first_number` and `second_number` have different integer values. Not strings. Actual integers.
+
+Let's run our program again and see if we get input types this time:
+```python
+INFO: [PROMPT]: I give you the following tool definition that you must use to fulfill a future task: adder(first_number: int, second_number: int) -> int - Adds two numbers and returns the result. Please acknowledge the given tool.
+
+INFO: [AI_RESPONSE]: Acknowledged!
+
+The tool definition provided is:
+
+`adder(first_number: int, second_number: int) -> int`
+
+This tool takes two integer inputs `first_number` and `second_number`, and returns their sum as an integer.
+
+I'm ready to use this tool for any future tasks that require addition!
+
+INFO: [PROMPT]: To use the tool you MUST extract each parameter and use it as a JSON key like this: {"arg1": "<value1>", "arg2": "<value2>"}. You must respect arguments type. For instance, the tool `getWeather(city: str, lat: int, long: int)` would be structured like this {"city": "new-york", "lat": 10, "lon": 20}. In our case, the tool call you must use must look like that: {'first_number': 'arg 0', 'second_number': 'arg 1'}
+
+INFO: [AI_RESPONSE]: I understand now!
+
+So, for the `adder` tool, I need to extract each parameter and structure it as a JSON key-value pair. Here's the result:
+
+{'first_number': 'int', 'second_number': 'int'}
+
+This means that when using this tool, I should specify two integer values for `first_number` and `second_number`, respectively.
+
+INFO: [PROMPT]: You have a task to solve. Use the tool at your disposition to solve the task by outputing as JSON the correct arguments. In return you will get an answer from the tool. The task is:
+What's 2+2 ?
+
+INFO: [AI_RESPONSE]: {"first_number": 2, "second_number": 2}
+
+Tool adder was called with param '2' (<class 'int'>) and '2' (<class 'int'>)
+Result of added tool is:  4
+Equation result = 4
+[user]:
+What's 2+2 ?
+
+[assistant]:
+I can use the tool 'Adder' related to the task to solve it correctly.
+
+[user]:
+Output the tool 'Adder' as valid JSON.
+
+[assistant]:
+{"first_number": 2, "second_number": 2}
+
+[user]:
+4
+```
+
+It worked !
+ℹ️ Note that the multiu-shot prompt are not shown in the info logs. This is because no actual request is made to the LLM they are appended to the Hystory() like show in the multi-shot example. However, if you do a `agent1.history.pretty_print()` at the end you'll see both examples given to the LLM as history context.  
+
+Seeing in the examples that the tool needed integers in input, it called the tool with the correct types therefore the adder tool returned `4` as it was expected. Houra.  
+
+⚠️ Do not abuse of this technic as it tends to create noise. Trying to manage too many hypothetical use cases might, in the end, degrade performances.  
 
 #### Tool validation
+
+The previous trick is good to nudge the LLM into the right direction. But it's not the best way to get accurate results. The technic presented here is by far more effective and should be prefered over the previous one.  
+
+As LLM are not deterministic we can never assure what will be given to our tool. Therefore, you should look at a tool like you would a web server route. I'm talking here of server side validation. Your tool must check that what is given to it is valid and raise an error if not.  
+
+This means adding heavy checks on our tool. Thus, when the LLM sends an incorrect value an error will be raised. But not any error ! Specificaly a ToolError(...). This exception will be catch by Yacana which will instruct the LLM that something bad happened while calling the tool. This also means that you must give precise error messages in the exception because the LLM will try to change his tool calling based on this message.  
+
+Let's upgrade our adder tool !
+```python
+def adder(first_number: int, second_number: int) -> int:
+    print(f"Tool adder was called with param '{first_number}' ({type(first_number)}) and '{second_number}' ({type(second_number)})")
+
+    # Adding type validation
+    if not (isinstance(first_number, int)):
+        raise ToolError("Parameter 'first_number' expected a type integer")
+    if not (isinstance(second_number, int)):
+        raise ToolError("Parameter 'second_number' expected a type integer")
+
+    ret = first_number + second_number
+    print("Result of added tool is: ", ret)
+    return ret
+```
+
+We added type validation on both parameters. But you should also check for None values, etc. As I said. Think of this as server side validation. You cannot trust AI more than humans...  
+
+Let's remove the examples set in the previous section. The LLM will be blind once again. As such, he will probably make mistakes but the ToolError exception will guide it onto the correct path. Let's see:
+
+*Complete code*
+```python
+agent1 = Agent("Ai assistant", "llama3:8b")
+
+def adder(first_number: int, second_number: int) -> int:
+    print(f"Tool adder was called with param '{first_number}' ({type(first_number)}) and '{second_number}' ({type(second_number)})")
+    if not (isinstance(first_number, int)):
+        raise ToolError("Parameter 'first_number' expected a type integer")
+    if not (isinstance(second_number, int)):
+        raise ToolError("Parameter 'second_number' expected a type integer")
+    ret = first_number + second_number
+    print("Result of added tool is: ", ret)
+    return ret
+
+# No more examples
+adder_tool: Tool = Tool("Adder", "Adds two numbers and returns the result", adder)
+
+result: str = Task(f"What's 2+2 ?", agent1, tools=[adder_tool]).solve().content
+
+print(f"Equation result = {result}")
+```
+
+Output:
+```
+INFO: [PROMPT]: I give you the following tool definition that you must use to fulfill a future task: adder(first_number: int, second_number: int) -> int - Adds two numbers and returns the result. Please acknowledge the given tool.
+
+INFO: [AI_RESPONSE]: Acknowledged!
+
+I have taken note of the `adder` tool definition:
+
+`adder(first_number: int, second_number: int) -> int`
+
+This tool takes two integer arguments, `first_number` and `second_number`, and returns their sum as an integer.
+
+I'm ready to use this tool when needed.
+
+INFO: [PROMPT]: To use the tool you MUST extract each parameter and use it as a JSON key like this: {"arg1": "<value1>", "arg2": "<value2>"}. You must respect arguments type. For instance, the tool `getWeather(city: str, lat: int, long: int)` would be structured like this {"city": "new-york", "lat": 10, "lon": 20}. In our case, the tool call you must use must look like that: {'first_number': 'arg 0', 'second_number': 'arg 1'}
+
+INFO: [AI_RESPONSE]: Thank you for the clarification.
+
+For the `adder` tool, I will extract each parameter and use it as a JSON key. Here is the result:
+
+{"first__number": "arg 0", "second__number": "arg 1"}
+
+I will make sure to respect the argument types (in this case, both are integers) when using this structure in the future.
+
+Thank you for the guidance!
+
+INFO: [PROMPT]: You have a task to solve. Use the tool at your disposition to solve the task by outputing as JSON the correct arguments. In return you will get an answer from the tool. The task is:
+What's 2+2 ?
+
+INFO: [AI_RESPONSE]: {"first__number": 2, "second__number": 2}
+
+WARNING: Yacana failed to call tool 'Adder' correctly based on the LLM output
+
+
+INFO: [PROMPT]: The tool returned an error: `adder() got an unexpected keyword argument 'first__number'`
+Using this error message, fix the JSON arguments you gave.
+Remember that you must output ONLY the tool arguments as valid JSON. For instance: {'first_number': 'arg 0', 'second_number': 'arg 1'}
+
+INFO: [AI_RESPONSE]: {"first_number": "arg 0", "second_number": "arg 1"}
+Tool adder was called with param 'arg 0' (<class 'str'>) and 'arg 1' (<class 'str'>)
+
+WARNING: Tool 'Adder' raised an error
+
+
+INFO: [PROMPT]: The tool returned an error: `Parameter 'first_number' expected a type integer`
+Using this error message, fix the JSON arguments you gave.
+
+
+INFO: [AI_RESPONSE]: {"first_number": 2, "second_number": 2}
+Tool adder was called with param '2' (<class 'int'>) and '2' (<class 'int'>)
+Result of added tool is:  4
+Equation result = 4
+```
+
+It worked !
+
+2 errors happened here:
+* "WARNING: Yacana failed to call tool 'Adder' correctly based on the LLM output"
+* "WARNING: Tool 'Adder' raised an error"
+
+**Error 1**: Regarding the first one if you look closely the output you can see a strange malformation in the JSON : `{"first__number": "arg 0", "second__number": "arg 1"}`. The first parameter was called with two underscores for some reasons (LLMs...). Fortunatly Yacana banged on the LLM's head and it was fixed in the next iteration.  
+**Error 2**: Concerning the second error, it was definitely the tool that raised the exception: `The tool returned an error: `Parameter 'first_number' expected a type integer`. This is only logical as the LLM sent castrophic values to the tool: `{'first_number': 'arg 0', 'second_number': 'arg 1'}`. When the ToolError was sent the error message was given to the LLM and a third iteration started. This time all was correct: `{"first_number": 2, "second_number": 2}` and we got our result which is 4.
+
+#### Maximum tool errors
+
+You should combine both methods described above. But adding heavy tool validation with great error messages on what went wrong is always what yields the best results and is also the safest option.  
+
+So what happens if the LLM 
 
 
 ## VIII. Assigning multiple Tools
