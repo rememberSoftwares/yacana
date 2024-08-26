@@ -1188,18 +1188,11 @@ This means adding heavy checks on our tool. Thus, when the LLM sends an incorrec
 
 Let's upgrade our adder tool !
 ```python
-def adder(first_number: int, second_number: int) -> int:
-    print(f"Tool adder was called with param '{first_number}' ({type(first_number)}) and '{second_number}' ({type(second_number)})")
-
     # Adding type validation
     if not (isinstance(first_number, int)):
         raise ToolError("Parameter 'first_number' expected a type integer")
     if not (isinstance(second_number, int)):
         raise ToolError("Parameter 'second_number' expected a type integer")
-
-    ret = first_number + second_number
-    print("Result of added tool is: ", ret)
-    return ret
 ```
 
 We added type validation on both parameters. But you should also check for None values, etc. As I said. Think of this as server side validation. You cannot trust AI more than humans...  
@@ -1288,14 +1281,30 @@ It worked !
 * "WARNING: Yacana failed to call tool 'Adder' correctly based on the LLM output"
 * "WARNING: Tool 'Adder' raised an error"
 
-**Error 1**: Regarding the first one if you look closely the output you can see a strange malformation in the JSON : `{"first__number": "arg 0", "second__number": "arg 1"}`. The first parameter was called with two underscores for some reasons (LLMs...). Fortunatly Yacana banged on the LLM's head and it was fixed in the next iteration.  
-**Error 2**: Concerning the second error, it was definitely the tool that raised the exception: `The tool returned an error: `Parameter 'first_number' expected a type integer`. This is only logical as the LLM sent castrophic values to the tool: `{'first_number': 'arg 0', 'second_number': 'arg 1'}`. When the ToolError was sent the error message was given to the LLM and a third iteration started. This time all was correct: `{"first_number": 2, "second_number": 2}` and we got our result which is 4.
+- **Error 1**: Regarding the first one if you look closely the output you can see a strange malformation in the JSON : `{"first__number": "arg 0", "second__number": "arg 1"}`. The first parameter was called with two underscores for some reasons (LLMs...). Fortunatly Yacana banged on the LLM's head and it was fixed in the next iteration.  
+- **Error 2**: Concerning the second error, it was definitely the tool that raised the exception: `The tool returned an error: `Parameter 'first_number' expected a type integer`. This is only logical as the LLM sent castrophic values to the tool: `{'first_number': 'arg 0', 'second_number': 'arg 1'}`. When the ToolError was sent the error message was given to the LLM and a third iteration started. This time all was correct: `{"first_number": 2, "second_number": 2}` and we got our result which is 4.
 
 #### Maximum tool errors
 
 You should combine both methods described above. But adding heavy tool validation with great error messages on what went wrong is always what yields the best results and is also the safest option.  
 
-So what happens if the LLM 
+So what happens if the LLM is stubborn and gets stuck in a loop. Even though Yacana's percussiv maintenance should avoid that by shifting LLM internal configuation during runtime more or less randomly, the LLM still might go into an infinite loop. And this is NOT a viable option !  
+Fortunatly Yacana come with a default of 5 iterations (tries) for each of the 2 types of errors. Either the calling error like the `"first__number"` error seen above or the custom ToolError that the tool throws. This means that if one of these two counters get to 5 then an error is raised.  
+Specifically a `MaxToolErrorIter` exception. You should try/catch all of your Task that utilise Tools as they might loop too many time and trigger an exception.  
+
+However, you can also set these counters to the value you wish. Move them higher or lower with the following Tool optionnal parameters: `max_custom_error: int = 5, max_call_error: int = 5`
+For instance:
+```
+# Doubling the number of iterations the LLM can do before raising: 5 -> 10
+adder_tool: Tool = Tool("Adder", "Adds two numbers and returns the result", adder, max_custom_error=10, max_call_error=10)
+```
+
+ℹ️ Note that showing the Agent's history with `agent1.history.pretty_print()` won't show you all the shenanigans that are shown in the logs. Many prompts get rid from the final history once the tool call is successful. It's always in the interest of the LLM to keep a clean History. 
+
+### Optionnal tool
+
+Sometimes you assign a Tool to a Task but without knowing for sure that the tool will be useful. If you have a fine tuned model or doing basic operations you may want to rely on the LLM's training knowledge. Setting the `optional: bool = True` will tweak how Yacana proposes the Tools to the LLM, leaving it a chance to pass on the offer and use it's own knowledge instead.
+
 
 
 ## VIII. Assigning multiple Tools
