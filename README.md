@@ -593,6 +593,10 @@ Question is NOT about plants sorry.
 ### Logging levels
 @todo
 
+### Configuring the LLM internal settings
+
+LLMs have settings that can be tweaked through Ollama but also many inference servers. For instance lowering the `temperature` setting makes the model less creative in it's responses. On the contrary  B Yacana provides you with  
+
 ## VI. Managing Agents history
 
 As you saw in the previous examples, each agent has his own history of messages that compose it's memory. When a new request is made to the LLM the whole history is sent to the inference server (ie: Ollama) and the LLM responds to the last prompt in the chain but bases its answer on the context it gets from the previous messages ( and initial system prompt if present). 
@@ -1457,9 +1461,203 @@ This is roughly what the tool calling mechanism looks like:
 Let's make a more advance calculator. We'll add the missing tools and give them some "server side" checking to help the LLM use them properly.
 
 ```python
+def adder(first_number: int, second_number: int) -> int:
+    print("Adder was called with types = ", str(type(first_number)), str(type(second_number)))
+    if not (isinstance(first_number, int)):
+        raise ToolError("Parameter 'first_number' expected a type integer")
+    if not (isinstance(second_number, int)):
+        raise ToolError("Parameter 'second_number' expected a type integer")
+    print(f"Adder was called with param = |{first_number}| and |{second_number}|")
+    return first_number + second_number
 
+def multiplier(first_number, second_number) -> int:
+    print("Multiplier was called with types = ", str(type(first_number)), str(type(second_number)))
+    if not (isinstance(first_number, int)):
+        raise ToolError("Parameter 'first_number' expected a type integer")
+    if not (isinstance(second_number, int)):
+        raise ToolError("Parameter 'second_number' expected a type integer")
+    print(f"Multiplier was called with param = |{first_number}| and |{second_number}|")
+    return first_number * second_number
+
+def substractor(first_number, second_number) -> int:
+    print("substractor was called with types = ", str(type(first_number)), str(type(second_number)))
+    if not (isinstance(first_number, int)):
+        raise ToolError("Parameter 'first_number' expected a type integer")
+    if not (isinstance(second_number, int)):
+        raise ToolError("Parameter 'second_number' expected a type integer")
+    print(f"substractor was called with param = |{first_number}| and |{second_number}|")
+    return first_number - second_number
+
+
+
+agent1 = Agent("Ai assistant", "llama3:8b")
+
+# Defining 3 tools
+adder_tool: Tool = Tool("Adder", "Adds two numbers and returns the result", adder)
+substractor_tool: Tool = Tool("Substractor", "Subtracts two numbers and returns the result. When having, for instance, 2 - 6 the arguments are 2 and 6 and not 2 and -6. The tool does the subtraction.", substractor, usage_examples=[{"first_number": 2, "second_number": 4}])
+multiplier_tool: Tool = Tool("Multiplier", "Multiplies two numbers and returns the result.", multiplier)
+
+# Creating a Task to solve and assiging tools to it
+result: str = Task(
+    f"What's the result of '2 + 2 - 6 * 8'. Decompose the math before trying to solve it. Start with the multiplication. Use the tools at your disposal and do not do the maths yourself.",
+    agent1, tools=[
+        adder_tool,
+        substractor_tool,
+        multiplier_tool
+    ]).solve().content
+
+print("Result = ", result)
 ```
 
+Output:
+```
+INFO: [PROMPT]: You have access to this list of tools definitions you can use to fulfill tasks :
+* Name: 'Adder' - Usage: adder(first_number: int, second_number: int) -> int - Description: Adds two numbers and returns the result
+* Name: 'Substractor' - Usage: substractor(first_number, second_number) -> int - Description: Subtracts two numbers and returns the result. When having, for instance, 2 - 6 the arguments are 2 and 6 and not 2 and -6. The tool does the subtraction.
+* Name: 'Multiplier' - Usage: multiplier(first_number, second_number) -> int - Description: Multiplies two numbers and returns the result.
+Please acknowledge the given tools.
+
+INFO: [AI_RESPONSE]: I acknowledge that I have access to a list of tools with the following definitions:
+
+1. **Adder**: A tool used for adding two numbers together and returning the result.
+        * Usage: `adder(first_number: int, second_number: int) -> int`
+2. **Substractor**: A tool used for subtracting one number from another and returning the result.
+        * Usage: `substractor(first_number, second_number) -> int` (note that the order of arguments implies subtraction, e.g., 2 - 6 would be `substractor(2, 6)`)
+3. **Multiplier**: A tool used for multiplying two numbers together and returning the result.
+        * Usage: `multiplier(first_number, second_number) -> int`
+
+I'm ready to use these tools to fulfill tasks!
+
+INFO: [PROMPT]: You have a task to solve. I will give it to you between these tags `<task></task>`. However your actual job is to decide if you need to use any of the available tools to solve the task or not. If you do need tools then output their names. The task to solve is <task>What's the result of '2 + 2 - 6 * 8'. Decompose the math before trying to solve it. Start with the multiplication. Use the tools at your disposal and do not do the maths yourself.</task> So, would any tools be useful in relation to the given task ?
+
+INFO: [AI_RESPONSE]: I've got a task! Let's break down the math expression: "2 + 2 - 6 * 8".
+
+The first operation I'll focus on is the multiplication: 6 * 8. This seems like a good candidate for using a tool!
+
+Given the available tools, I think **Multiplier** could be useful here. It can help me calculate the result of multiplying 6 and 8.
+
+So, my answer is: **Multiplier**
+
+INFO: [PROMPT]: In order to summarize your previous answer in one word. Did you chose to use any tools ? Respond ONLY by 'yes' or 'no'.
+
+INFO: [AI_RESPONSE]: Yes
+
+INFO: [PROMPT]: You can only use one tool at a time. From this list of tools which one do you want to use: [Adder, Substractor, Multiplier]. You must answer ONLY with the single tool name. Nothing else.
+
+INFO: [AI_RESPONSE]: Multiplier
+
+INFO: [PROMPT]: To use the tool you MUST extract each parameter and use it as a JSON key like this: {"arg1": "<value1>", "arg2": "<value2>"}. You must respect arguments type. For instance, the tool `getWeather(city: str, lat: int, long: int)` would be structured like this {"city": "new-york", "lat": 10, "lon": 20}. In our case, the tool call you must use must look like that: {'first_number': 'arg 0', 'second_number': 'arg 1'}
+
+INFO: [AI_RESPONSE]: {"first_number": 6, "second_number": 8}
+
+INFO: [PROMPT]: Now that I showed you examples on how the tool is used it's your turn. Output the tool as valid JSON.
+
+INFO: [AI_RESPONSE]: {"first_umber": 6, "second_number": 8}
+
+WARNING: Yacana failed to call tool 'Multiplier' correctly based on the LLM output
+
+
+INFO: [PROMPT]: The tool returned an error: `multiplier() got an unexpected keyword argument 'first_umber'`
+Using this error message, fix the JSON arguments you gave.
+Remember that you must output ONLY the tool arguments as valid JSON. For instance: {'first_number': 'arg 0', 'second_number': 'arg 1'}
+
+INFO: [AI_RESPONSE]: {"first_number": 6, "second_number": 8}
+Multiplier was called with types =  <class 'int'> <class 'int'>
+Multiplier was called with param = |6| and |8|
+
+INFO: [PROMPT]: Now that the tool responded do you need to make another tool call ? Explain why and what are the remaining steps are if any.
+
+INFO: [AI_RESPONSE]: Yes, I do need to make another tool call!
+
+After using the **Multiplier** tool to get the result of 6 * 8 = 48, I now have to perform the addition and subtraction operations.
+
+The expression is still: "2  + 2  - 48"
+
+I need to use another tool to add 2 and 2. Then, I'll subtract 48 from the result.
+
+So, my next step would be to use either the **Adder** or **Substractor** tool!
+
+INFO: [PROMPT]: To summurize your previous answer in one word. Do you need to make another tool call ? Answer ONLY by 'yes' or 'no'.
+
+INFO: [AI_RESPONSE]: Yes
+
+INFO: Continuing tool calls loop
+
+
+INFO: [PROMPT]: You can only use one tool at a time. From this list of tools which one do you want to use: [Adder, Substractor, Multiplier]. You must answer ONLY with the single tool name. Nothing else.
+
+INFO: [AI_RESPONSE]: Adder
+
+INFO: [PROMPT]: To use the tool you MUST extract each parameter and use it as a JSON key like this: {"arg1": "<value1>", "arg2": "<value2>"}. You must respect arguments type. For instance, the tool `getWeather(city: str, lat: int, long: int)` would be structured like this {"city": "new-york", "lat": 10, "lon": 20}. In our case, the tool call you must use must look like that: {'first_number': 'arg 0', 'second_number': 'arg 1'}
+
+INFO: [AI_RESPONSE]: {"first_number": 2, "second_number": 2}
+
+INFO: [PROMPT]: Now that I showed you examples on how the tool is used it's your turn. Output the tool as valid JSON.
+
+INFO: [AI_RESPONSE]: {"first_number": 2, "second_number": 2}
+Adder was called with types =  <class 'int'> <class 'int'>
+Adder was called with param = |2| and |2|
+
+INFO: [PROMPT]: Now that the tool responded do you need to make another tool call ? Explain why and what are the remaining steps are if any.
+
+INFO: [AI_RESPONSE]: Yes, I do need to make another tool call!
+After using the  **Adder** tool to get the result of 2 + 2 = 4, I now have: "4 - 48"
+I still have subtraction operation left, so I'll use either  **Substractor** or  **Multiplier** (which is not necessary in this case) and then I can finish the task.
+So, my next step would be to use the  **Substractor** tool!
+
+INFO: [PROMPT]: To summurize your previous answer in one word. Do you need to make another tool call ? Answer ONLY by 'yes' or 'no'.
+
+INFO: [AI_RESPONSE]: Yes
+
+INFO: Continuing tool calls loop
+
+
+INFO: [PROMPT]: You can only use one tool at a time. From this list of tools which one do you want to use: [Adder, Substractor, Multiplier]. You must answer ONLY with the single tool name. Nothing else.
+
+INFO: [AI_RESPONSE]: Substractor
+
+INFO: [PROMPT]: To use the tool you MUST extract each parameter and use it as a JSON key like this: {"arg1": "<value1>", "arg2": "<value2>"}. You must respect arguments type. For instance, the tool `getWeather(city: str, lat: int, long: int)` would be structured like this {"city": "new-york", "lat": 10, "lon": 20}. In our case, the tool call you must use must look like that: {'first_number': 'arg 0', 'second_number': 'arg 1'}
+
+INFO: [AI_RESPONSE]: {"first_number": 4, "second_number": 48}
+
+INFO: [PROMPT]: Now that I showed you examples on how the tool is used it's your turn. Output the tool as valid JSON.
+
+INFO: [AI_RESPONSE]: {"first_number": 4, "second_number": 48}
+substractor was called with types =  <class 'int'> <class 'int'>
+substractor was called with param = |4| and |48|
+
+INFO: [PROMPT]: Now that the tool responded do you need to make another tool call ? Explain why and what are the remaining steps are if any.
+
+INFO: [AI_RESPONSE]: No, I don't need to make another tool call!
+The result of -44 is the final answer for the original expression: "2 + 2 - 6 * 8".
+I've used all the necessary tools (Multiplier, Adder, and Substractor) to break down the math expression and get the correct answer!
+
+INFO: [PROMPT]: To summurize your previous answer in one word. Do you need to make another tool call ? Answer ONLY by 'yes' or 'no'.
+
+INFO: [AI_RESPONSE]: no
+
+INFO: Exiting tool calls loop
+
+Result =  No, I don't need to make another tool call!
+The result of -44 is the final answer for the original expression: "2 + 2 - 6 * 8".
+I've used all the necessary tools (Multiplier, Adder, and Substractor) to break down the math expression and get the correct answer!
+```
+
+-44 is the correct answer. You could throw in maybe one more operation. However, in our tests using Llama 3.0 going over 4 operations does not garanty a correct result anymore. It may be about prompt engineering but we also think that Yacana should continue improving. For the moment the LLM tends to contradict itself at some point which sends the final result off. In next update Yacana will try to detect errors in reasonning and self correct. Stay tuned for updates.  
+
 ## IX. Chat between two Agents
+
+One of the best functionnalities of other framework like CrewAI is to allow Agents to speak with one another. Yacana also has this functionnality.  
+This allows Agents to brainstorm and come up with solutions by themselves. However, where other frameworks propose many ways to schedule interactions, Yacana emphasis on providing developers ways to make them stop talking !
+
+Making agents speak is not an issue. But making them stop is a whole other thing. How do you stop a conversation at the exact right moment without monitoring the chat yourself ? There are only 2 ways. Either use a maximum number of iteration and stop the chat when it is reached or let one or more LLMs decide when the conversation should end.  
+Yacana provides both.  
+It utilises the Task system that you already know and allows some Task to be worked on by the Agents of these class. But be aware that using the Task system implies this mechanism had to be implemented differently than what you may have seen elsewhere. Even though the result is the same if done correctly.  
+
+We'll be using a new class called [GroupSolve]() @todo url. It takes a list of Tasks (at least two) and an [EndChat]() object.  
+1. The list of task will be the center of conversation for the LLM agents. The order in the list matters as the first task in the list will be the first to be evaluated and could be considered as the main task.
+2. The EndChat object will allow you to configure when/how the conversation stops.
+
+Let's look at en exemple:
 
 ## X. Chat between many Agents
