@@ -1819,6 +1819,21 @@ Some potential themes that could tie everything together:
 These are just a few ideas to get you started! What do you think? Would you like to add or modify any attractions or themes?
 [BLABLA]
 ```
+I won't show the full 5 iterations as it's useless. However I'm sure you have one question at this point if you ran the program yourself...  
+
+> Why do I get the logging twice ??
+
+Well... This is because of how the conversation pattern is implemented. Let me explain... Have you ever read the documentation for the microsoft Autogen framework ? If you have, I hope you're having a better time with Yacana than I did with Autogen. That said, the conversationnal patterns they show is a serie of dual agents conversations. And never did I understood the mess they did before Yacana came to life. The reason why they chain two-agents conversations is because LLMs have been trained to speak in alternation with a user. It's how all "instruct" models have been fine tuned. So to get the best performance out of the LLMs they chose to limit the number of participants to two. If more than two was ever needed then the context of the first conversation would be given to a new dual-chat with one of the agents remaining. Then it would go on and on.  
+
+![image](https://github.com/user-attachments/assets/c8c4d958-2ffc-4eca-8d4a-aef576627572)
+*Source: microsoft autogen*
+
+I honestly think that it's smart but is stinking mess that lost many people.  
+
+---
+
+Yacana does not do things this way but is bound to the same limitations. Two agents chat give the best results. For this reason, to also get good performances we did the following conversation pattern:
+
 
 
 ## X. Chat between many Agents
