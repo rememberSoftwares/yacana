@@ -1447,9 +1447,18 @@ In my opinion, using the `get_temperature` tool is NOT relevant to solving this 
 ## VIII. Assigning multiple Tools
 
 In this section we will see that you can assign more then one tool to a Task. You can add as many Tools as you want and the LLM will be asked what tool it want's to use. After using one of the tool it will be asked if it considers its Task complete. If it says "no" then Yacana will propose the list of tools again and a new iteration is started.  
+
 This is roughly what the tool calling mechanism looks like:
 ![toolcall1B](https://github.com/user-attachments/assets/bfaec298-44e9-4177-bfb8-e25bdfd01fe6)
+ℹ️ This doesn't take into account many tweaks Yacana makes like: model's config updates (in case of infinite loops), optionnal tools, self reflection, mutli-shot tool call examples, history cleaning, exiting when reaching max iterations, etc. However, it's definitly the *classic* process of calling tools one after the other.
 
+⚠️ For this next section we assume that you have already read section **Assigning a tool to a Task** of the documentation.
+
+Let's make a more advance calculator. We'll add the missing tools and give them some "server side" checking to help the LLM use them properly.
+
+```python
+
+```
 
 ## IX. Chat between two Agents
 
