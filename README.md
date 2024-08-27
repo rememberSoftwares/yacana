@@ -1747,8 +1747,78 @@ task2 = Task("Your task is to propose themes for an amusement park.", agent2)
 GroupSolve([task1, task2], EndChat(EndChatMode.MAX_ITERATIONS_ONLY)).solve()
 ```
 
-In the above code we can see that the end of chat condition is `EndChatMode.MAX_ITERATIONS_ONLY`. This means that both agent will exit the convesation after a predefined number of iteration. **By default set to 5**.  
-You can set the max iteration level 
+In the above code we can see that the end of chat condition is `EndChatMode.MAX_ITERATIONS_ONLY`. This means that both agents will exit the convesation after a predefined number of iteration. **By default set to 5**.  
+You can set the max iteration level in the EndChat object with the `max_iterations=10` parameter:    
+```
+GroupSolve([task1, task2], EndChat(EndChatMode.MAX_ITERATIONS_ONLY, max_iterations=10)).solve()
+```
+ℹ️ Dont forget the `.solve()`
+
+Output:
+```
+INFO: [PROMPT]: Your task is to create a list of attractions for an amusement park.
+
+INFO: [AI_RESPONSE]: What a fun task! Here's a list of attractions for an amusement park:
+
+**Thrill Rides**
+
+1. **Sky Screamer**: A record-breaking rollercoaster that takes riders on a heart-pumping journey through loops, corkscrews, and airtime hills.
+2. **Drop Zone**: A free-fall tower that sends thrill-seekers plummeting 10 stories down in mere seconds.
+3. **Inferno**: A high-speed spinning coaster with flames and fire effects to simulate the sensation of flying through a fiery inferno.
+
+**Family Favorites**
+
+1. **Kiddie Coaster**: A gentle, slow-paced rollercoaster designed for young children with soft music and colorful scenery.
+2. **Frog Hopper**: An interactive ride where riders hop aboard toy frogs that bounce up and down on giant lily pads.
+3. **Storybook Train**: A classic train ride featuring beloved cartoon characters and whimsical settings.
+
+**Water Park Fun**
+
+1. **Splashin' Safari**: A water play area with geysers, fountains, and squirting animals for kids to enjoy.
+2. **River Rapids**: A lazy river that winds its way through a scenic valley, complete with waterfalls and splash pads.
+3. **Tornado Tube**: A spinning, twisting waterslide that sends riders swirling down into a splashy finale.
+
+That's just a taste of what our amusement park has to offer!
+
+INFO: [PROMPT]: Your task is to propose themes for an amusement park.
+
+INFO: [AI_RESPONSE]: What a fun challenge!
+
+Here are some theme ideas for an amusement park:
+
+**1. Enchanted Forest**: A whimsical zone inspired by mythical creatures and ancient forests. Attractions could include a "Dragon's Den" roller coaster, a "Mermaid's Lagoon" splash pad, and a "Fairy Ring" carousel.
+
+**2. Future Frontier**: A futuristic area with intergalactic and space-themed rides. Imagine a "Galaxy Blaster" launch coaster, an "Alien Invasion" dark ride, or a "Gravity Simulator" virtual reality experience.
+
+**3. Pirate's Cove**: Ahoy matey! A swashbuckling zone filled with pirate-themed attractions like a "Jolly Roger" drop tower, a "Treasure Hunt" interactive play area, and a "Barrel of Laughs" comedy show.
+
+These are just a few ideas to get you started. Which theme would you like to explore further?
+
+INFO: [AI_RESPONSE]: What a fantastic list!
+
+I can already imagine the thrill and excitement that visitors would experience with these attractions. Let's break down some potential themes and connections between the different areas:
+
+**Thrill Rides**: These high-adrenaline rides would be perfect for the "Future Frontier" or "Enchanted Forest" theme, where riders would feel like they're exploring new worlds or battling mythical creatures.
+
+**Family Favorites**: These gentle attractions would fit well in a "Carnival Spectacular" or "Pirate' s Cove" theme, where families could enjoy classic carnival games and pirate-themed play areas together.
+
+**Water Park Fun**: The water park area would be an excellent addition to the "Enchanted Forest" or "Steampunk City" theme, where riders could explore fantastical aquatic worlds or steam-powered contraptions.
+
+**Dark Rides**: These spooky attractions would be a great fit for the "Mystic Mountain" or "Haunted Mansion" theme, where visitors could experience eerie mysteries and supernatural encounters.
+
+**Classic Attritions**: The merry-go-round, Ferris wheel, and fun house would be perfect additions to a "Retro Arcade" or "Carnival Spectacular" theme, where riders could enjoy classic games and nostalgic experiences.
+
+**Special Experiences**: These unique shows and meet-and-greets would be excellent additions to the "Enchanted Forest" or "Future Frontier" theme, where visitors could encounter mythical creatures, astronauts, or otherworldly beings.
+
+Some potential themes that could tie everything together:
+
+1. **Mythical Realms**: A world of fantasy and adventure, where visitors can explore enchanted forests, battle dragons, and ride mythical creatures.
+2. **Steampunk Odyssey**: A futuristic world with a Victorian twist, where steam-powered machines and fantastical contraptions await exploration.
+3. **Galactic Frontier**: A cosmic adventure zone where visitors can blast off into space, explore alien worlds, and encounter extraterrestrial beings.
+
+These are just a few ideas to get you started! What do you think? Would you like to add or modify any attractions or themes?
+[BLABLA]
+```
 
 
 ## X. Chat between many Agents
