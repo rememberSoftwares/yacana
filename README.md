@@ -1015,11 +1015,11 @@ As you can see when asked to multiply by 2 the previous result it remember agent
 
 Giving the LLM the opportunity to call a tool is the most important thing an agent can do ! But what is a "tool" ? A "tool" simply refers to a python function. This function can be the entry point to any level of underlying complexity. But it doesn't matter. What matters is that the LLM can call the tool with parameters that match the function. This way, LLMs can interract with *classic* programming interfaces that produce deterministic results (aka normal programming).  
 
-For instance let's say you want a calculator powered by an LLM. You cannot rely on the LLM doing the math because even though it knows how to decompose equation to an extent and basic arthitmetics, it will fail on more advance calculous. Therefore we do not expect the LLM to perform the operation itself. We already got the CPU to do this task perfectly. On the other hand we expect the LLM to decompose correctly the equation and call tools for each arithmetic operation needed to get the result.
+For instance let's say you want a calculator powered by an LLM. You cannot rely on the LLM doing the math because even though it knows how to decompose equation to an extent and basic arthitmetics, it will fail on more advance calculous. Therefore we do not expect the LLM to perform the operation itself. We already got the CPU to do this task perfectly. On the other hand we expect the LLM to decompose correctly the equation and call tools for each arithmetic operation needed to get the result.  
 
 #### In what way is Yacana different than other frameworks ?
 
-Other frameworks out there assign their tools to the agent during it's initialisation. In our opinion, this tends to confuse the agent because it's getting access to many tools which may not be relevant to the immediate job it is given. In Yacana tools are only available at the Task level. Thus no noise is generated before having to solve a particluar task. The tool is made available to the LLM only when it is needed and not bbefore. 
+Other frameworks assign their tools to the agent during it's initialisation. This creates a hard link between the tools and the agents. In our opinion, this implementation tends to confuse the agent because it's getting access to many tools which may not be relevant to the immediate task it is given. In Yacana tools are only available at the Task level. Thus no noise is generated before having to solve a particluar task. The tool is made available to the LLM only when it's needed and not before. Also the Agent doesn't keep the memory of having used the tool so it wont be tempted to use it elsewhere, where it would not have been appropriate.  
 
 #### Understanding the underlying mechanism of tool calling in LLMs
 
@@ -1446,7 +1446,10 @@ In my opinion, using the `get_temperature` tool is NOT relevant to solving this 
 
 ## VIII. Assigning multiple Tools
 
-In this section we will see that you can add more then
+In this section we will see that you can assign more then one tool to a Task. You can add as many Tools as you want and the LLM will be asked what tool it want's to use. After using one of the tool it will be asked if it considers its Task complete. If it says "no" then Yacana will propose the list of tools again and a new iteration is started.  
+This is roughly what the tool calling mechanism looks like:
+![toolcall1B](https://github.com/user-attachments/assets/bfaec298-44e9-4177-bfb8-e25bdfd01fe6)
+
 
 ## IX. Chat between two Agents
 
