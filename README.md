@@ -1719,17 +1719,36 @@ I've used all the necessary tools (Multiplier, Adder, and Substractor) to break 
 
 ## IX. Chat between two Agents
 
-One of the best functionnalities of other framework like CrewAI is to allow Agents to speak with one another. Yacana also has this functionnality.  
+One of the best functionnalities available in some other frameworks like CrewAI is to allow Agents to speak with one another. Yacana also has this functionnality.  
 This allows Agents to brainstorm and come up with solutions by themselves. However, where other frameworks propose many ways to schedule interactions, Yacana emphasis on providing developers ways to make them stop talking !
 
 Making agents speak is not an issue. But making them stop is a whole other thing. How do you stop a conversation at the exact right moment without monitoring the chat yourself ? There are only 2 ways. Either use a maximum number of iteration and stop the chat when it is reached or let one or more LLMs decide when the conversation should end.  
 Yacana provides both.  
-It utilises the Task system that you already know and allows some Task to be worked on by the Agents of these class. But be aware that using the Task system implies this mechanism had to be implemented differently than what you may have seen elsewhere. Even though the result is the same if done correctly.  
+It utilises the Task system that you already know and allows some Tasks to be worked on by the Agents. But be aware that using the Task system implies this mechanism had to be implemented differently than what you may have seen elsewhere. Even though the result is the same if done correctly...  
+
+### Stopping chat using 'maximum iterations'
 
 We'll be using a new class called [GroupSolve]() @todo url. It takes a list of Tasks (at least two) and an [EndChat]() object.  
 1. The list of task will be the center of conversation for the LLM agents. The order in the list matters as the first task in the list will be the first to be evaluated and could be considered as the main task.
 2. The EndChat object will allow you to configure when/how the conversation stops.
+3. The GroupSolve class uses a `.solve()` method like the Task themselves. So dont forget about it.
 
-Let's look at en exemple:
+Let's look at an example:
+```python
+# Creating two agents
+agent1 = Agent("Ai assistant 1", "llama3:8b")
+agent2 = Agent("Ai assistant 2", "llama3:8b")
+
+# Creating two different Tasks to solve but that are related to one another
+task1 = Task("Your task is to create a list of attractions for an amusement park.", agent1)
+task2 = Task("Your task is to propose themes for an amusement park.", agent2)
+
+# Creating the GroupSolve and specifying how the chat ends
+GroupSolve([task1, task2], EndChat(EndChatMode.MAX_ITERATIONS_ONLY)).solve()
+```
+
+In the above code we can see that the end of chat condition is `EndChatMode.MAX_ITERATIONS_ONLY`. This means that both agent will exit the convesation after a predefined number of iteration. **By default set to 5**.  
+You can set the max iteration level 
+
 
 ## X. Chat between many Agents
