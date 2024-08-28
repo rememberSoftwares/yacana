@@ -1528,6 +1528,13 @@ This is roughly what the tool calling mechanism looks like:
 ![toolcall1B](https://github.com/user-attachments/assets/bfaec298-44e9-4177-bfb8-e25bdfd01fe6)
 ℹ️ This doesn't take into account many tweaks Yacana makes like: model's config updates (in case of infinite loops), optionnal tools, self reflection, mutli-shot tool call examples, history cleaning, exiting when reaching max iterations, etc. However, it's definitly the *classic* process of calling tools one after the other.
 
+> Additionnal behavior information: When only one tool is assigned the Agent won't be proposed to use it again. One tool is one shot !
+> When giving multiple tools, the agent will this time be proposed to use another tool. He could choose to always use the same one though.
+> In the future Yacana may allow you to have more control on how the tools are being used. For instance, allowing one tool to be re-called or when using multiple tools, each tool being used would be removed from the tool list, ensuring that each tool can only be used once.
+> Also we could add a setting to force the LLM to use all the given tools from the list.
+> Currently, giving more than one tool only ensure it makes use of one of them but could decide to stop after the first use if it wished to.
+> Stay tuned for the next patch.
+ 
 ⚠️ For this next section we assume that you have already read section **Assigning a tool to a Task** of the documentation.
 
 Let's make a more advance calculator. We'll add the missing tools and give them some "server side" checking to help the LLM use them properly.
@@ -1828,11 +1835,199 @@ Well... This is because of how the conversation pattern is implemented. Let me e
 ![image](https://github.com/user-attachments/assets/c8c4d958-2ffc-4eca-8d4a-aef576627572)
 *Source: microsoft autogen*
 
-I honestly think that it's smart but is stinking mess that lost many people.  
+I honestly think that it's smart but is a stinking mess that lost many people. Worst, it's the simpler pattern they provide.  
 
 ---
 
 Yacana does not do things this way but is bound to the same limitations. Two agents chat give the best results. For this reason, to also get good performances we did the following conversation pattern:
+
+Let's play a game: The first agent will think of a number. The second agent will try to guess it based on indication like "higher" or "lower" given from the first agent. The conversation ends when the second agent finds the correct number and wins the game.
+```python
+# Creating our two players
+agent1 = Agent("Player 1", "llama3:8b")
+agent2 = Agent("Player 2", "llama3:8b")
+
+
+# Making up a number and guiding player 2 
+task1 = Task("Your task is to generate a random number between 1 and 20 then show it only once. Once you have the number, respond to the guesses you receive with one of the following:\n* If the guess is higher than your number, say 'lower.'\n* If the guess is lower than your number, say 'higher.'\n* If the guess matches your number, say 'You won!' and end the game.\nDo not provide any other feedback or responses, and only play one round.", agent1) # To help you compare the numbers you have acces to a tool that describes the relation between the two", agent2, tools=[high_low_tool])
+
+# Guessing the correct number. Higher or lower depending on what Player 1 tells you
+# This agent has the llm_stops_by_itself=True meaning it will be in charge of stopping the conversation
+task2 = Task("Your task is to guess a number between 1 and 20. You will receive feedback after each guess: either 'lower,' 'higher,' or 'You won!' Adjust your next guess based on this feedback. You must propose only one number at a time. Continue guessing until you receive confirmation that you have guessed correctly and the game is won. Only play one round.", agent2, llm_stops_by_itself=True)
+
+# Adding the two tasks to the GroupSolve. The chat ends when the first success in achieved
+GroupSolve([task1, task2], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION)).solve()
+
+# Printing both Agent's point of view
+print("------ Agent 1 --------")
+print(agent1.history.pretty_print())
+
+print("------Agent 2----------")
+print(agent2.history.pretty_print())
+```
+
+```
+[Automatic logging I won't show]
+
+------ Agent 1 --------
+[user]:
+Your task is to generate a random number between 1 and 20 then show it only once. Once you have the number, respond to the guesses you receive with one of the following:
+* If the guess is higher than your number, say 'lower.'
+* If the guess is lower than your number, say 'higher.'
+* If the guess matches your number, say 'You won!' and end the game.
+Do not provide any other feedback or responses, and only play one round.
+
+[assistant]:
+I've generated a random number between 1 and 20: **14**
+
+What's your guess?
+
+[user]:
+Thanks for the feedback!
+
+Since the correct answer is 14, which is higher than my initial guess of 10, my next guess will be... **12**.
+
+What's the feedback this time?
+
+[assistant]:
+lower
+
+[user]:
+So the correct answer (14) is lower than my new guess (12). That means my next guess should be even lower!
+
+My next guess is... **11**.
+
+What's the feedback?
+
+[assistant]:
+higher
+
+[user]:
+So the correct answer (14) is higher than my guess of 11. That means I'm getting closer, but not quite there yet!
+My next guess is... **13**.
+What's the feedback?
+
+[assistant]:
+You won!
+
+[user]:
+WOOHOO!
+
+I did it! I guessed correctly! The correct answer was indeed 14, and I finally got it right after a few attempts.
+
+Thank you so much for playing the game with me! It was an absolute blast. If you want to play again or try a different game, just let me know!
+
+[assistant]:
+Congratulations on guessing correctly! You played the game perfectly!
+
+I'm glad I could provide a fun experience for you. If you're up for another round or want to try a different game, just let me know and we can start fresh.
+
+Thanks for playing with me, and I hope to see you again soon!
+
+[user]:
+Thank you so much! I'm thrilled to have played the game correctly and had a great experience. I'd love to play again or try a different game, so please feel free to suggest one anytime.
+
+I'm always up for a fun challenge, and I appreciate your creativity in designing this guessing game. It was a delightful way to spend time together!
+
+Let's do it again sometime soon!
+
+[assistant]:
+Aw, thank you so much! I'm thrilled that you had a great experience playing the game with me too!
+
+I'd be happy to suggest another game or play again whenever you're ready. There are many options we can try, such as:
+
+1. 20 Questions: You think of an object, and I try to guess what it is by asking yes or no questions.
+2. Word Chain: We take turns thinking of a word that starts with the last letter of the previous word.
+3. Hangman: I think of a word or phrase, and you try to guess it by suggesting letters.
+
+Which one sounds interesting to you, or do you have a different game in mind?
+
+Let me know when you're ready, and we can start a new game!
+
+------Agent 2----------
+[user]:
+Your task is to guess a number between 1 and 20. You will receive feedback after each guess: either 'lower,' 'higher,' or 'You won!' Adjust your next guess based on this feedback. You must propose only one number at a time. Continue guessing until you receive confirmation that you have guessed correctly and the game is won. Only play one round.
+
+[assistant]:
+Sounds like fun!
+
+My first guess is... 10.
+
+What's the feedback?
+
+[user]:
+I've generated a random number between 1 and 20: **14**
+
+What's your guess?
+
+[assistant]:
+Thanks for the feedback!
+
+Since the correct answer is 14, which is higher than my initial guess of 10, my next guess will be... **12**.
+
+What's the feedback this time?
+
+[user]:
+lower
+
+[assistant]:
+So the correct answer (14) is lower than my new guess (12). That means my next guess should be even lower!
+
+My next guess is... **11**.
+
+What's the feedback?
+
+[user]:
+higher
+
+[assistant]:
+So the correct answer (14) is higher than my guess of 11. That means I'm getting closer, but not quite there yet!
+My next guess is... **13**.
+What's the feedback?
+
+[user]:
+You won!
+
+[assistant]:
+WOOHOO!
+
+I did it! I guessed correctly! The correct answer was indeed 14, and I finally got it right after a few attempts.
+
+Thank you so much for playing the game with me! It was an absolute blast. If you want to play again or try a different game, just let me know!
+
+[user]:
+Congratulations on guessing correctly! You played the game perfectly!
+
+I'm glad I could provide a fun experience for you. If you're up for another round or want to try a different game, just let me know and we can start fresh.
+
+Thanks for playing with me, and I hope to see you again soon!
+
+[assistant]:
+Thank you so much! I'm thrilled to have played the game correctly and had a great experience. I'd love to play again or try a different game, so please feel free to suggest one anytime.
+
+I'm always up for a fun challenge, and I appreciate your creativity in designing this guessing game. It was a delightful way to spend time together!
+
+Let's do it again sometime soon!
+```
+
+It's a complete failure... But why is that ?  
+First let's analyse the output:
+* Agent1 generates the initial secret number: it's 14 !
+* Agent2 tries 12 which is lower than 14. In theory Agent1 should tell him "higher" to guide it toward the correct number
+* Agent1 tells Agent2: "lower" wich is wrong !
+In the end:
+* Agent2 tries 13
+* Agent1 tells it it won !
+
+No, he didn't !? The initial secret number was 14 ! Not 13...  
+
+There are two main issues here. The first one is that the LLM I use, which is Llama3.0, sucks at maths and cannot compare numbers accuratly ! This is a common issue even with frontier models sometimes. So the game breaks very quickly.
+Second issue, the secret number is available to the other agent because they share the same history as part of the conversation. I could tell the Agent1 to NOT show the number but it's not like it really has a brain so when it decides that the number is correct would be entirely random. So the number must be part of the history from the start but not available to the other Agent.
+
+Let's fix all of that:
+```python
+
+```
 
 
 
