@@ -1,32 +1,32 @@
 # Yacana
-Tasks driven agentic framework that gives you the building blocks to create AI workflows for local LLMs.  
+Tasks-driven agentic framework that gives you the building blocks to create AI workflows for local LLMs.  
 
 # Functionalities
 * Built for getting the best results with local opensource LLMs ;  
-* Multi Agent workflows ;  
+* Multi-Agent workflows ;  
 * Tool calling for all models, even dumb ones ;
-* Multi turn chat between Agents ;
+* Multi-turn chat between Agents ;
 * Routing ;
 
-...and many more !
+...and many more!
 
-# Why choose Yacana over other frameworks ?
+# Why choose Yacana over other frameworks?
 
-Yacana was built to make local LLMs great ! It won't work with chatGPT, and we don't intend to make it. An important part of the future lies in local opensource models. Many companies cannot afford paied subscriptions to proprietary models or won't for privacy issues. Also agentic framework tend to cost way more than simple chat, generating cloud bills that could ruin a business. But why pay for AI when you can have it for only a fraction of the cost hosted on a single GPU machine or even on the device itself ? This is where Yacana can help you harness the power of LLMs whatever the size and cachieve production grade results.
+Yacana was built to make local LLMs great! It won't work with chatGPT, and we don't intend to make it. An important part of the future lies in local open source models. Many companies cannot afford paid subscriptions to proprietary models or won't for privacy issues. Also, agentic frameworks tend to cost way more than simple chat, generating cloud bills that could ruin a business. But why pay for AI when you can have it for only a fraction of the cost hosted on a single GPU machine or the device itself? This is where Yacana can help you harness the power of LLMs whatever the size and achieve production grade results.
 
-> What other good framework are out there ?  
-* **CrewAI** is very simple to use but is terrible when dealing with local models. This is because most of the heavy lifting is left to the LLM and if chatGPT or any other proprietary frontier models can deal with complex prompting, local LLMs cannot. Can we really expect to have the same performance from 8 Billion parameters model than proprietary model that have over 1000 Billion parameters ? it's impossible. That's why CrewAI doesn't do well with local LLMs and also. This means that it cannot call tools ! And calling tool is the most useful functionality a framework should offer.  
+> What other good frameworks are out there?  
+* **CrewAI** is very simple to use but is terrible when dealing with local models. This is because most of the heavy lifting is left to the LLM and if chatGPT or any other proprietary frontier models can deal with complex prompting, local LLMs cannot. Can we expect the same performance from 8 Billion parameters proprietary models with over 1000 Billion parameters? it's impossible. That's why CrewAI doesn't do well with local LLMs and also. This means that it cannot call tools! And calling tool is the most useful functionality a framework should offer.  
 
-➡️**Why would Yacana be better suited ?** We loved how easy creating agents in CrewAI was. So when building Yacana it was clear to us that it needed the same level of simplicity. Learning to program with Yacana is very easy and only takes a few minutes. Also, the tool calling feature was of paramount importance. That's why we worked on making Yacana's tool calling ability so good that even tiny LLMs like Phi can call tools with almost 100% chance of success.
+➡️**Why would Yacana be better suited ?** We loved how easy creating agents in CrewAI was. So when building Yacana it was clear to us that it needed the same level of simplicity. Learning to program with Yacana is very easy and only takes a few minutes. Also, the tool-calling feature was of paramount importance. That's why we worked on making Yacana's tool calling ability so good that even tiny LLMs like Phi can call tools with almost a 100% chance of success.
 
-* **LangGraph** is one of the best tool of 2024 to work with local models. It allows to create complex workflows that guide the LLM along a specific route to achieve a specific result. The problem with langGraph is its learning curve that is far above many developers and the spotty documentation doesn't help. It does allow tool calling but only with models that support function calling natively. Learning LangGraph has a one in three chance to give you a burnout. Also, the graph definition, beside being a great conceptual idea, is poorly implemented (IMHO) and the fact that they introduced a web UI to control the framework seems as an admission of failure (even though the UI looks great). But as a developer I don't want to rely on yet another tool.
+* **LangGraph** is one of the best tools of 2024 to work with local models. It allows to creation of complex workflows that guide the LLM along a specific route to achieve a specific result. The problem with langGraph is its learning curve that is far above many developers and the spotty documentation doesn't help. It does allow tool calling but only with models that support function calling natively. Learning LangGraph has a one in three chance to give you a burnout. Also, the graph definition, besides being a great conceptual idea, is poorly implemented (IMHO) and the fact that they introduced a web UI to control the framework seems like an admission of failure (even though the UI looks great). But as a developer, I don't want to rely on yet another tool.
 
-➡️**Why would Yacana be better suited ?** The LangGraph nodes system that guides LLMs in a graph is great and is the reason why it succeeds with local LLMs. Knowing this we build Yacana with the exact same concept. But instead of having a complex graph system Yacana provides a classic programming interface in Python that can be leverage by any developers regardless of their level of expertise. No burn outs here. So, Yacana provides its own way to chain Tasks and achieve a computable result in the end that can be used in classic programming products. This makes Yacana a production ready tool that can be easily integrated with any software.
+➡️**Why would Yacana be better suited?** The LangGraph nodes system that guides LLMs in a graph is great and is the reason why it succeeds with local LLMs. Knowing this we build Yacana with the same concept. But instead of having a complex graph system Yacana provides a classic programming interface in Python that can be leveraged by any developers regardless of their level of expertise. No burnouts here. So, Yacana provides its own way to chain Tasks and achieve a computable result in the end that can be used in classic programming products. This makes Yacana a production ready tool that can be easily integrated with any software.
 
-**In summary...** Yacana took the simplicity of CrewAI, and it's capability to have multi-agent chats but following the LangGraph principle of guidance using a dedicated Task system that guaranties a computable result at the end of the workflow. Also, Yacana is the only Framework proposing a tool calling system with a high success rate.  
-Also, it's free and opensource (MIT) forever. It is made by the community, for the community.  
+**In summary...** Yacana took the simplicity of CrewAI, and its capability to have multi-agent chats but followed the LangGraph principle of guidance using a dedicated Task system that guarantees a computable result at the end of the workflow. Also, Yacana is the only Framework proposing a tool-calling system with a high success rate.  
+Also, it's free and open source (MIT) forever. It is made by the community, for the community.  
 
-**What's the catch ?** Well nothing really. But for transparency it is important that you understand that this version has only been tested with Ollama as inference server. We know that you guys out there are also using other inference technologies like VLLM, etc. Yacana has not been tested with this type of tech... Yet ! The next update will focus on making sure that performance when connected to something other than Ollama doesn't degrade in any way. Stay tuned. This will be addressed in the next few weeks. Also note that we are not saying that it's not compatible with other inference servers. We're saying that we don't know yet. ^^
+**What's the catch ?** Well nothing really. But for transparency, you must understand that this version has only been tested with Ollama as an inference server. We know that you guys out there are also using other inference technologies like VLLM, etc. Yacana has not been tested with this type of tech... Yet! The next update will focus on making sure that performance when connected to something other than Ollama doesn't degrade in any way. Stay tuned. This will be addressed in the next few weeks. Also, note that we are not saying that it's not compatible with other inference servers. We're saying that we don't know yet. ^^
 
 # Quickstart
 
@@ -36,34 +36,34 @@ Also, it's free and opensource (MIT) forever. It is made by the community, for t
 
 ![image](https://github.com/user-attachments/assets/f3c45d0e-efca-4853-8237-3e56d90e1747)
 
-As mentionned previously, the current version of Yacana has only been tested on Ollama. This will be sorted out in the next few weeks.  
+As mentioned previously, the current version of Yacana has only been tested on Ollama. This will be sorted out in the next few weeks.  
 To work with Yacana you'll need an Ollama server. If your computer is performant enough you can use it to run LLMs directly on your machine. Ollama is a great inference server and the most simple to install. Click [here](https://ollama.com/download) to get the latest release.
 Ollama is:
 * Compatible with all operating systems Windows/Max/Linux ;  
 * Gets installed using one command ;  
-* Has a great CLi that even a 4 year old can use to download models ;  
-* Tons of tutorial out there if you ran in any type of trouble ;
+* Has a great CLi that even a 4-year-old can use to download models ;  
+* Tons of tutorials out there if you run in any type of trouble ;
 
 ℹ️ You can connect Yacana to a remote Ollama instance. Read forward.  
 
 ### Choosing an LLM model
 
-After Ollama is installed you can browse the list of available LLMs on the [Ollama website](https://ollama.com/library) and download any model you want (or you computer can deal with).  
-For reference if you don't know what LLM model to chose (we've all been there) here is a list of models you can try out on consumer hardware:  
+After Ollama is installed you can browse the list of available LLMs on the [Ollama website](https://ollama.com/library) and download any model you want (or your computer can deal with).  
+For reference, if you don't know what LLM model to choose (we've all been there) here is a list of models you can try out on consumer hardware:  
 | Computer power   |      LLM models name to try      |  LLM quality |
 |----------|:-------------:|:------:|
 | **Out of this world** *(GC RTX 4090 / 64 GB RAM)* | 'llama3.1:70b' or 'mixtral:8x22b' | Excellent reasoning and instruction following. |
-| **Epic** *(GC RTX 4090 / 32 GB RAM)* | 'llama3.1:8b' or 'dolphin-mixtral:8x7b' or 'dolphin-mixtral:8x7b-v2.5-q6_K' | Good reasoning and instruction following. (q6_K model should be less consumming than the default Mixtral if you have any issues) |
-| **Gamer** *(GC GTX 1080TI / 16 GB RAM)* |    'llama3.1:8b' or 'mistral:7b'   | Llama still works but is slower. Expect limited reasonning and no more than 2 complex instruction at a time  |
-| **Potato** | 'phi:2.7b' or 'phi3:3.8b' or 'tinyllama:1.1b' | Almost no reasoning, incapable of following more than 1 instruction at a time, english bound only ; Dumb as a stone |
+| **Epic** *(GC RTX 4090 / 32 GB RAM)* | 'llama3.1:8b' or 'dolphin-mixtral:8x7b' or 'dolphin-mixtral:8x7b-v2.5-q6_K' | Good reasoning and instruction following. (q6_K model should be less consuming than the default Mixtral if you have any issues) |
+| **Gamer** *(GC GTX 1080TI / 16 GB RAM)* |    'llama3.1:8b' or 'mistral:7b'   | Llama still works but is slower. Expect limited reasoning and no more than 2 complex instructions at a time  |
+| **Potato** | 'phi:2.7b' or 'phi3:3.8b' or 'tinyllama:1.1b' | Almost no reasoning, incapable of following more than 1 instruction at a time, English bound only ; Dumb as a stone |
 
 ---
 
-If you have access to a GPU VM with A LOT of RAM than you should try the state of the art 'llama3.1:405b' model.
+If you have access to a GPU VM with A LOT of RAM then you should try the state of the art 'llama3.1:405b' model.
 
 ### Running the model
 
-When you have chosen your model it is time to use Ollama CLI to pull it on your computer. Simply do `ollama pull <model_name>`. The download will start immediatly. When finished you can test the model locally by doing `ollama run <model_name>` which will start a conversation with the LLM.
+When you have chosen your model it is time to use Ollama CLI to pull it on your computer. Simply do `ollama pull <model_name>`. The download will start immediately. When finished you can test the model locally by doing `ollama run <model_name>` which will start a conversation with the LLM.
 
 ### Installing Yacana
 
@@ -73,28 +73,28 @@ pip3 install yacana
 
 ## II. Imports
 
-When using other frameworks 'import hell' quickly appears. To prevent this bothersome problem we propose that you import all of Yacana's modules and when finished developping let the IDE remove the unsued imports. Unused imports generaly appear grayed. Thus we recommand that you prepend these imports in all your files and clean them later. This way the IDE will have auto competion available and will help you develop 10 times faster.
+When using other frameworks 'import hell' quickly appears. To prevent this bothersome problem we propose that you import all of Yacana's modules and when finished developing let the IDE remove the unused imports. Unused imports generally appear grayed. Thus we recommend that you prepend these imports in all your files and clean them later. This way the IDE will have auto-completion available and will help you develop 10 times faster.
 
 ## III. Creating your first Agent
 
 ### Initializing the Agent
-Now that you have an Ollama server running and Yacana installed let's create are first agent !  
+Now that you have an Ollama server running and Yacana installed let's create our first agent!  
 
-Create a python file with this content:
+Create a Python file with this content:
 ```python
 agent1 = Agent("AI assistant", "llama3.1:8b", system_prompt="You are a helpful AI assistant", endpoint="http://127.0.0.1:11434")
 ```
 The Agent(...) class takes 2 mandatory parameters:
-1. **The agent name** : Chose something short and in relation to what the agent global focus
-2. **A model name** : The Ollama model that this Agent will use. You may have multiple Agents running different models. Some models are better suitted for some specific jobs so it can be interesting to mix LLM models.
+1. **The agent name**: Choose something short about the agent's global focus
+2. **A model name**: The Ollama model that this Agent will use. You may have multiple Agents running different models. Some models are better suited for some specific jobs so it can be interesting to mix LLM models.
 
-The Agent(...) class has many optionnal parameters that we will discover in this tutorial. Here we can see 2 of them:  
-1. **The system prompt** : Helps defining the personnality of the Agent.
-2. **The endpoint** : The URL of your Ollama instance. It points by default to your localhost and on the Ollama default port. If you are using Ollama on your computer you can remove this optionnal parameter and the default value will be used.
+The Agent(...) class has many optional parameters that we will discover in this tutorial. Here we can see 2 of them:  
+1. **The system prompt**: Helps defining the personnality of the Agent.
+2. **The endpoint**: The URL of your Ollama instance. It points by default to your localhost and on the Ollama default port. If you are using Ollama on your computer you can remove this optional parameter and the default value will be used.
 
-### Testing Yacana and Ollama interraction
+### Testing Yacana and Ollama's interaction
 
-This framework is not meant for basic roleplay. However for people starting their journey in the realm of AI and for debug purposes we added a simple chat system. Add this line to test it :
+This framework is not meant for basic roleplay. However, for people starting their journey in the realm of AI and for debugging purposes we added a simple chat system. Add this line to test it :
 ```python
 agent1.simple_chat()
 ```
@@ -110,7 +110,7 @@ Hey! It's nice to meet you. Is there something I can help you with, or would you
 >
 ```
 
-Let's change the **system prompt** and have some fun !
+Let's change the **system prompt** and have some fun!
 ```python
 agent1 = Agent("Pirate", "llama3:8b", system_prompt="You are a pirate", endpoint="http://127.0.0.1:11434")
 ```
@@ -151,14 +151,14 @@ task1 = Task(f"Solve the equation 2 + 2 and output the result", agent1)
 task1.solve()
 ```
 
-What's happening above ?  
-* First, we instanciated an Agent with the `llama3:8b` model. You might need to update that depending on what LLM you downloaded from Ollama ;
+What's happening above?  
+* First, we instantiated an Agent with the `llama3:8b` model. You might need to update that depending on what LLM you downloaded from Ollama ;
 * Second, we instanciated a Task ;
 * Third, we asked that the Task be solved ;
 
 ℹ️ For easing the learning curve the default logging level is INFO. It will show what is going on in Yacana. Note that not ALL intermediary prompts are shown.
 
-Output of executing should look like this:
+The output of execution should look like this:
 ```
 INFO: [PROMPT]: Solve the equation 2 + 2 and output the result
 
@@ -167,27 +167,27 @@ INFO: [AI_RESPONSE]: The answer to the equation 2 + 2 is... (drumroll please)...
 So, the result of solving the equation 2 + 2 is indeed 4.
 ```
 
-If your terminal is working normaly you should see task's prompts in green and starting with the '[PROMPT]' string. The LLM's answer should appear purple and start with the [AI_RESPONSE] string.  
+If your terminal is working normally you should see the task's prompts in green and starting with the '[PROMPT]' string. The LLM's answer should appear purple and start with the [AI_RESPONSE] string.  
 
 ### About Task parameters
 
 The Task class takes 2 mandatory parameters:
-* The prompt : It is the task to be solved. Use imperative language, be precise, ask for step by step thinking for complexe Tasks and expected outputs if needed.
-* The Agent : The agent that will be assigned to this task. The agent will be in charge of solving the task.
+* The prompt: It is the task to be solved. Use imperative language, be precise, and ask for step by step thinking for complex Tasks and expected outputs if needed.
+* The Agent: The agent that will be assigned to this task. The agent will be in charge of solving the task.
 
-ℹ️ There are many other parameters that can be given to a Task. We will see some of them in the following sections of this tutorial. But you can checkout the Task class documentation @todo URL
+ℹ️ Many other parameters can be given to a Task. We will see some of them in the following sections of this tutorial. But you can check out the Task class documentation @todo URL
 
-### Do you see how disruptiv this is compared to other Frameworks ?
+### Do you see how disruptive this is compared to other frameworks?
 
-In the above code snippet we assigned the agent to the Task. So it's the Task that leads the direction that the AI takes. In most other frameworks it's the opposite, where you assign some work to an existing agent. This reversed way allows to have fined grained control on each resolution step as the LLM only follow bread crumb (the Tasks). The patern will become even more obvious as we get to the Tool section of this tutorial. As you'll see the Tools are also assigned at the Task level and not to the Agent directly.  
+In the above code snippet, we assigned the agent to the Task. So it's the Task that leads the direction that the AI takes. In most other frameworks it's the opposite, where you assign some work to an existing agent. This reversed way allows to have fined grained control on each resolution step as the LLM only follows bread crumb (the Tasks). The pattern will become even more obvious as we get to the Tool section of this tutorial. As you'll see the Tools are also assigned at the Task level and not to the Agent directly.  
 
-TO compare with LangGraph, it's true that we canno't make a call graph as we don't bind the Task together explicitly. However, Yacana's way gives more flexibility and allows a hierarchical programing way or ordonancing the Task and keeping control of the flow. It also allows creating new Task dynamically if the need arised. You shall rely on your programming skill and good OOP to have a clean code and a good Task ordering.
+To compare with LangGraph, we indeed cannot make a call graph as we don't bind the Task together explicitly. However, Yacana's way gives more flexibility and allows a hierarchical programming way or scheduling the Task and keeping control of the flow. It also allows creating new Task dynamically if the need arises. You shall rely on your programming skills and good OOP to have a clean code and good Task ordering.
 
 ### Getting the result of a Task
 
-Even though we get logs on the standard output of the terminal, we still need to extract the answer of the LLM that solved that Task to actualy do something with it.  
-Getting the string message is quite easy as the .solve() methods returns a Message() class.  
-Maybe you are thinking "ho noo another class to deal with". Well let me tell you that it's always better to have an OOP class than somme semi-random python dictionnary where you'll forget what keys it contain. Also the Message class is very straightforward. It exposes a `content` attribute. Modify the curent code like this:
+Even though we get logs on the standard output of the terminal, we still need to extract the answer of the LLM that solved that Task to actually do something with it.  
+Getting the string message is quite easy as the .solve() method returns a Message() class.  
+Maybe you are thinking "Ho noo another class to deal with". Well, let me tell you that it's always better to have an OOP class than some semi-random python dictionary where you'll forget what keys it contains. Also, the Message class is very straightforward. It exposes a `content` attribute. Modify the current code like this:
 ```python
 # So that something actually happens you must call the .solve() method on your task
 my_message: Message = task1.solve()
@@ -195,26 +195,26 @@ my_message: Message = task1.solve()
 # Printing the LLM's response
 print(f"The AI response to our task is : {my_message.content}")
 ```
-There you go ! Give it a try.
+There you go! Give it a try.
 
-ℹ️ Note that we used duck typing, wich is postfixing all variables declaration with their type `my_message: Message`. Yacana's source code is entirely duck typed so that your IDE always know what type it's dealing with and proposes you with the best methods and arguments. We recommand that you do the same as  it's the industry's best strandard.
+ℹ️ Note that we used duck typing, which is postfixing all variables declaration with their type `my_message: Message`. Yacana's source code is entirely duck-typed so that your IDE always knows what type it's dealing with and proposes you with the best methods and arguments. We recommend that you do the same as  it's the industry's best standards.
 
 ---
 
-Dont like having 100 lines of code for something simple ? Then chain them all in one line !
+Don't like having 100 lines of code for something simple? Then chain them all in one line!
 ```
 # First, let's make a basic AI agent
 agent1 = Agent("AI assistant", "llama3:8b", system_prompt="You are a helpful AI assistant")
 
 # Creating the task, solving it, extracting the result, printint the result
-print(f"The AI response to our task is : {Task(f'Solve the equation 2 + 2 and output the result', agent1).solve().content}")
+print(f"The AI response to our task is: {Task(f'Solve the equation 2 + 2 and output the result', agent1).solve().content}")
 ```
 🤔 If I were you I would do the message extraction on one line and the print on a new one. Let's not one-line things that much 😅.
 
 
 ### Chaining Tasks
 
-Chaining Tasks is nothing more than just calling a second Task with the same Agent. Agents keep track of the History of what they did (aka the Tasks they solved). So just call a second Task and assign the same Agent. For instance let's multiply by 2 the result of initial Task. Append this to our current script:
+Chaining Tasks is nothing more than just calling a second Task with the same Agent. Agents keep track of the History of what they did (aka the Tasks they solved). So just call a second Task and assign the same Agent. For instance, let's multiply by 2 the result of the initial Task. Append this to our current script:
 
 ```
 task2_result: str = Task(f'Multiply by 2 our previous result', agent1).solve().content
@@ -222,21 +222,21 @@ print(f"The AI response to our task is : {task2_result}")
 ```
 You should get:
 ```
-The AI response to our task is : If we multiply the previous result of 4 by 2, we get:
+The AI response to our task is: If we multiply the previous result of 4 by 2, we get:
 
 8
 ```
 
-ℹ️ Without tools this only relies on the LLM ability to do the maths and is dependant to it's training.
+ℹ️ Without tools this only relies on the LLM's ability to do the maths and is dependent to it's training.
 
 ---
 
-See ? The assigned Agent remembered that it solve the task1 previously and used this information to solve the second task.  
-You can chain as many Task as you need. Also, you should create other Agents that don't have the knowledge of previous Task and make them do things based on the output of your first agent. You can build anything now !    
+See? The assigned Agent remembered that it had solved the task1 previously and used this information to solve the second task.  
+You can chain as many Tasks as you need. Also, you should create other Agents that don't have the knowledge of previous Task and make them do things based on the output of your first agent. You can build anything now !    
 
 ## V. Routing
 
-Other frameworks have the tedency to make abastraction for everything. Even thing that dont need any. That's why I'll show you how to do routing whith only what we have seen earlier. Yacana doesn't provide routing abstraction because there is no need to do so.  
+Other frameworks have the tendency to make abstractions for everything. Even thing that dont need any. That's why I'll show you how to do routing whith only what we have seen earlier. Yacana doesn't provide routing abstraction because there is no need to do so.  
 
 But what is routing ? Well, having LLMs solving a Task and then chaining many other in sequence is good but to be efficient you have to create conditionnal workflows. In particular when using local LLMs that don't have the power to solve all Tasks with only one prompt. You have to create an AI worflow in advance that wil go foward step by step and converge to some expected result. AI allows you to deal with some level of unknown but expecting that you can have a master brain (like in crewAI) that distributes Tasks to agents and achieve an expected result is IMPOSSIBLE with local LLMs. They are too dumb ! Therefore they need you to help them allong their path. This is why LangGraph works well with local LLMs and Yacana does to. You create a workflow and when conditions are met you switch from one branch to another that treats more specific cases, etc.
 
@@ -255,32 +255,32 @@ router_answer: str = Task(f"Is the following question about plants ? <question>{
 
 if "yes" in router_answer.lower():
     print("Question is about plants")
-    # next step in workflow that involves plants
+    # next step in the workflow that involves plants
 
 elif "no" in router_answer.lower():
     print("Question is NOT about plants")
-    # next step in workflow that DOESN'T involve plants
+    # Next step in the workflow that DOESN'T involve plants
 ```
 
 You should get the following output:
 ```
-INFO: [PROMPT]: Is the following question about plants ? <question>Why do leaves fall in autumn ?</question> Answer ONLY by 'yes' or 'no'.
+INFO: [PROMPT]: Is the following question about plants? <question>Why do leaves fall in autumn ?</question> Answer ONLY by 'yes' or 'no'.
 
 INFO: [AI_RESPONSE]: yes
 Question is about plants
 ```
 
-▶️ Many things are happening here. We didn't implement an abstraction to silplify things but the downside is that you must learn a few tricks:
-1. **Always compare with lower case string** : Because LLMs have their own mind they do not always anwser a straight `yes`. Sometime you get "Yes" or "No" or even full cap "YES" for no reasons.
-2. **Always start by searching for "yes"** : We do a substring match using the `in` keyword of python because the LLM doesn't always respect the instructions of outputing "ONLY 'yes' or 'no'". Sometimes you'll get "yes!" or "Great idea, I say yes". Substring match will match "yes" anywhere in the LLMs answer. But what if you matched "no" first and the LLM generated "Not sure but I would say yes". Because we search for substrings the condition would match the "no" part of the word "Not" even though the LLM said yes. We could use regexe to fix this but it's easier to just start the condition by lookig for "yes" as their are no english words that contains "yes" in substring (at least no common ones ^^).
-3. **Push the model to respect the instruction** : Tell it to "answer ONLY with 'xx'". See the use of upper cap to "ONLY" ? Also the single quotes arround the possible choices 'yes' | 'no' helps the LLM that sees them as delimiters.
-4. **Use formating tags** : The question that is mentionned in the prompt is then given in custom `<question>` tags. LLMs love delimiters. This way the LLM knows when the question starts and when the question ends. This technic helps it to differenciate your prompt and the dynamic part. You don't have to add tags everywhere but they can prove useful. Do not abuse of them or the LLM might start using them in it's response.
+▶️ Many things are happening here. We didn't implement an abstraction to simplify things but the downside is that you must learn a few tricks:
+1. **Always compare with lower case string**: Because LLMs have their own mind they do not always answer a straight `yes`. Sometimes you get "Yes" or "No" or even full cap "YES" for no reason.
+2. **Always start by searching for "yes"**: We do a substring match using the `in` keyword of Python because the LLM doesn't always respect the instructions of outputting "ONLY 'yes' or 'no'". Sometimes you'll get "yes!" or "Great idea, I say yes". Substring match will match "yes" anywhere in the LLM answer. But what if you matched "no" first and the LLM generated "Not sure but I would say yes". Because we search for substrings the condition would match the "no" part of the word "Not" even though the LLM said yes. We could use regexe to fix this but it's easier to just start the condition by looking for "yes" as there are no English words that contains "yes" in the substring (at least no common ones ^^).
+3. **Push the model to respect the instruction**: Tell it to "answer ONLY with 'xx'". See the use of upper cap to "ONLY"? Also, the single quotes around the possible choices 'yes' | 'no' helps the LLM that sees them as delimiters.
+4. **Use formatting tags**: The question that is mentioned in the prompt is then given in custom `<question>` tags. LLMs love delimiters. This way the LLM knows when the question starts and when the question ends. This technique helps to differentiate your prompt and the dynamic part. You don't have to add tags everywhere but they can prove useful. Do not abuse them or the LLM might start using them in its response.
 
-ℹ️ This is all basic prompt engineering. If you wish to build an app with local models you will definitly have to learr thoses tricks. LLMs are unpredictable. It's why we built them.  
+ℹ️ This is all basic prompt engineering. If you wish to build an app with local models you will definitely have to learn those tricks. LLMs are unpredictable. It's why we built them.  
 
-### Self reflection routing
+### Self-reflection routing
 
-As local models are a bit dumb you need to leave them think on their own before taking a decision. This is called self reflection. It will cost one more Task to solve but you'll get significantly better results during routing, in particular when routing on more complexe things (other than "yes"|"no").
+As local models are a bit dumb you need to leave them think on their own before making a decision. This is called self-reflection. It will cost one more Task to solve but you'll get significantly better results during routing, in particular when routing on more complex things (other than "yes"|"no").
 
 Let's change the routing code like this:
 ```python
@@ -316,33 +316,33 @@ INFO: [AI_RESPONSE]: Yes
 Question is about plants
 ```
 
-See how the LLM had an "intense" reflexion about the subject. This is verry good. You want LLMs to do reasonning like this. It will improves the overall result for the next Tasks to solve.  
+See how the LLM had an "intense" reflection on the subject. This is very good. You want LLMs to do reasoning like this. It will improve the overall result for the next Tasks to solve.  
 
-▶️The prompt engineering technics used here are:
-1. **Make it think** : Using the expression "Explain your reasoning." makes it generate a logical answer. Note that if the model is bad at reasonning or makes a mistake during this step it may result in extremly bad situations. But fear not, failsafes can be built to limit bad reasoning. For instance having another LLM check the logic and interracting with the original Agent (see GroupSolve later on) to show it its mistake or you can give tools to the Agent that will help it achieve the truth and not rely soly on his reasonning abilities (see Tools later on).
-2. **Making it two shots** : Now that we have 2 Tasks instead of one, the second one only focuses on on task : "yes" or "no" interpretation of the result of Task1. Cutting objectives in multiple Tasks gives better performance. This why using an agentic framework is great but it's also why it's consuming a lot of tokens and having "free to run" local LLMs is great !
+▶️The prompt engineering techniques used here are:
+1. **Make it think**: Using the expression "Explain your reasoning." makes it generate a logical answer. Note that if the model is bad at reasoning or makes a mistake during this step it may result in extremely bad situations. But fear not, failsafe can be built to limit bad reasoning. For instance, having another LLM check the logic and interacting with the original Agent (see GroupSolve later on) to show it its mistake or you can give tools to the Agent that will help it achieve the truth and not rely soly on his reasoning abilities (see Tools later on).
+2. **Making it two shots**: Now that we have 2 Tasks instead of one, the second one only focuses on one task: "yes" or "no" interpretation of the result of Task1. Cutting objectives in multiple Tasks gives better performance. This why using an agentic framework is great but it's also why it's consuming a lot of tokens and having "free to run" local LLMs is great!
 
 ### Cleaning the history
 
-Keeping the self reflection prompt and associated answer is always good. It helps gardrailing the model. But the "yes"/"no" router on the other hand adds unnecessary noise in the Agent's history. Moreover local models dont have huge context window size, so removing useless interaction is always good.  
-The "yes"/"no" router is only useful on the moment but we shoul make the Agent forget it ever happend after it answered. No need to keep that. This is why the Task class offers an optionnal parameter : `forget=False`.
+Keeping the self-reflection prompt and the associated answer is always good. It helps gardrailing the model. But the "yes"/"no" router on the other hand adds unnecessary noise in the Agent's history. Moreover, local models don't have huge context window sizes, so removing useless interactions is always good.  
+The "yes"/"no" router is only useful on the moment but we should make the Agent forget it ever happened after it answered. No need to keep that. This is why the Task class offers an optional parameter: `forget=False`.
 
 Update the router line with this new parameter:
 ```python
 router_answer: str = Task(f"To summarize in one word, was the question about plants ? Answer ONLY by 'yes' or 'no'.",
      agent1, forget=True).solve().content
 ```
-Now, even though you cannot see it, the Agent doesn't remember solving this Task. In the next section we'll see how to access and manipulate the history. Then, you'll be able to see what the Agent remembers !
+Now, even though you cannot see it, the Agent doesn't remember solving this Task. In the next section, we'll see how to access and manipulate the history. Then, you'll be able to see what the Agent remembers!
 
 ### Demo time
 
-For this demo we'll make a simple app that takes a user query (HF replacing the static string by a python `input()` if you wish) that checks if the query is about plants.
+For this demo, we'll make a simple app that takes a user query (HF replacing the static string by a Python `input()` if you wish) that checks if the query is about plants.
 If it is not we end the workflow there. However, if it is about plants the flow will branch and search if a plant type/name was given. If it was then it is extracted and knowledge about the plant will be shown before answering the original question. If not it will simply answer the query as is.
 
 ![plant1B](https://github.com/user-attachments/assets/e479e74c-c4f4-4942-a8b5-bd06b377af8c)
 
 
-Read from bottom ⬇️ to top ⬆️. (Although the Agent and question are defined globaly at the top)
+Read from bottom ⬇️ to top ⬆️. (Although the Agent and question are defined globally at the top)
 
 ```python
 @todo imports
@@ -363,9 +363,9 @@ def answer_request():
     print(answer)
 
 
-# Getting info on the plant to brief the user before hand
+# Getting info on the plant to brief the user beforehand
 def show_plant_information(plant_name: str):
-    # Getting info on the plant from the model's training (should be replaced by a call tool returning accurate plant info based on the name ; We'll see that later.) 
+    # Getting info on the plant from the model's training (should be replaced by a call tool returning accurate plant info based on the name; We'll see that later.) 
     plant_description: str = Task(
         f"What do you know about the plant {plant_name} ? Get me the scientific name but stay concise.",
         agent1).solve().content
@@ -381,9 +381,9 @@ def show_plant_information(plant_name: str):
 
 # Checking if the question has a specific plant specified
 def check_has_specific_plant():
-    # Self reflection
+    # Self-reflection
     Task(
-        f"In your opinion, does the question mentions a specific plant name or one that you can identify ?",
+        f"In your opinion, does the question mention a specific plant name or one that you can identify ?",
         agent1).solve()
 
     # Yes / no routing again.
@@ -408,7 +408,7 @@ def check_has_specific_plant():
 # Simple router checking if we are on tracks or not
 def check_is_about_plants():
 
-    # self reflection
+    # self-reflection
     Task(f"Is the following question about plants ? <question>{question}</question>\nExplain your reasoning.",
          agent1).solve()
 
@@ -424,7 +424,7 @@ def check_is_about_plants():
 
     elif "no" in router_answer.lower():
         print("Question is NOT about plants sorry.")
-        # We stop here ; This app is only about plants !
+        # We stop here; This app is only about plants!
 
 
 # Starting point
@@ -570,7 +570,7 @@ These factors combined might contribute to the perception that poppies fade quic
 ```
 
 
-**Upating question to match the "Not related to plants" workflow:**
+**Updating question to match the "Not related to plants" workflow:**
 
 ```python
 question: str = "Why is the sky blue ?"
@@ -593,8 +593,8 @@ Question is NOT about plants sorry.
 ### Logging levels
 
 As entering the AI landscape can get a bit hairy we decided to leave the INFO log level by default. This allows to log to the standard output all the request made to the LLM.  
-Note that not everything of Yacana's internal magic appear in these logs. We don't show everithing because there are many time traveling things going arround the history of an Agent and printing a log at the time it is generated wouldn't make sense for you.  
-However, we try to log a maximum of information to help you understand what is happening intenally and allow you to tweak your prompts accordingly.  
+Note that not everything of Yacana's internal magic appears in these logs. We don't show everything because there are many time-traveling things going around the history of an Agent and printing a log at the time it is generated wouldn't make sense for you.  
+However, we try to log a maximum of information to help you understand what is happening internally and allow you to tweak your prompts accordingly.  
 
 Nonetheless, you are the master of what is logged and what isn't. You cannot let Yacana logs activated when working with an app in production.  
 There are 5 levels of logs:  
@@ -610,7 +610,7 @@ To configure the log simply add this line at the start of your program:
 LoggerManager.set_log_level("INFO")
 ```
 
-ℹ️ Note that Yacana utilises the python logging package. This means that setting de level to "DEBUG" will print other libraries logs on the debug level too.
+ℹ️ Note that Yacana utilizes the python logging package. This means that setting de level to "DEBUG" will print other libraries' logs on the debug level too.
 
 If you need a library to stop spamming could do:
 ```python
@@ -620,22 +620,22 @@ The above example sets the logging level of the network httpx library to warning
 
 ### Configuring the LLM internal settings
 
-LLMs have settings that can be tweaked through Ollama but also many inference servers. For instance lowering the `temperature` setting makes the model less creative in it's responses. On the contrary raising this setting will make the LLM more chatty and creative.  
-Yacana provides you with a class that exposes all the possible LLM properties. Look at them [here]() @todo url and if you need a good explanation of each of them I would recommand the [excellent video](https://youtu.be/QfFRNF5AhME?si=lpSYUq2WoidYiqzP) Matt Williams did on this subject.  
+LLMs have settings that can be tweaked through Ollama but also many inference servers. For instance, lowering the `temperature` setting makes the model less creative in its responses. On the contrary, raising this setting will make the LLM more chatty and creative.  
+Yacana provides you with a class that exposes all the possible LLM properties. Look at them [here]() @todo url and if you need a good explanation of each of them I would recommend the [excellent video](https://youtu.be/QfFRNF5AhME?si=lpSYUq2WoidYiqzP) Matt Williams did on this subject.  
 
-These settings are set at the Agent level so that you can have the same model used by two separate agent and have them behave differently.  
+These settings are set at the Agent level so that you can have the same model used by two separate agents and have them behave differently.  
 
 We use the [ModelSettings]() @todo url class to configure the settings we need. 
 
-For examples, let's lower the temperature of an Agent to 0.4:
+For example, let's lower the temperature of an Agent to 0.4:
 ```
 ms = ModelSettings(temperature=0.4)
 
 agent1 = Agent("Ai assistant", "llama3:8b", model_settings=ms)
 ```
-If you're wondering what are the default values of these when not set. Well, Ollama sets the default for you. They can also be overridden in the Model config file (looks like a dockerfile but for LLM) and finaly you can set them through Yacana during runtime.  
+If you're wondering what are the default values of these when not set. Well, Ollama sets the default for you. They can also be overridden in the Model config file (looks like a dockerfile but for LLM) and finally, you can set them through Yacana during runtime.  
 
-A good way to show how this can have a real impact on the output, is by setting the `num_predict` parameter. This one allows to control how many tokens should be generated by the LLM. Let's make the same Task twice but with different `num_predict` values:
+A good way to show how this can have a real impact on the output, is by setting the `num_predict` parameter. This one allows control of how many tokens should be generated by the LLM. Let's make the same Task twice but with different `num_predict` values:
 ```python
 # Setting temperature and max token to 100
 ms = ModelSettings(temperature=0.4, num_predict=100)
@@ -671,27 +671,27 @@ As you can see above the two agents didn't output the same number of tokens.
 
 ## VI. Managing Agents history
 
-As you saw in the previous examples, each agent has his own history of messages that compose it's memory. When a new request is made to the LLM the whole history is sent to the inference server (ie: Ollama) and the LLM responds to the last prompt in the chain but bases its answer on the context it gets from the previous messages ( and initial system prompt if present). 
+As you saw in the previous examples, each agent has his own history of messages that compose its memory. When a new request is made to the LLM the whole history is sent to the inference server (ie: Ollama) and the LLM responds to the last prompt in the chain but bases its answer on the context it gets from the previous messages ( and the initial system prompt if present). 
 
-This what a history looks like:
+This is what a history looks like:
 
 ![history1A](https://github.com/user-attachments/assets/631b634a-8699-4fff-9ac4-06b403c06ae1)
 
-There are 3 types of prompts. The optionnal system prompt that, if present, always go first. Then it's only an alternation between the "User prompts" that commes from the Task you set and the "Assistant message" which is the answer from the LLM.
+There are 3 types of prompts. The optional system prompt that, if present, always go first. Then it's only an alternation between the "User prompts" that come from the Task you set and the "Assistant message" which is the answer from the LLM.
 
-However, sending the whole history to the LLM for each Task to solve has some disavantes that canno't be overturn:
-* The longer the history the longer the LLM takes to analyse it and return an answer.
-* Each LLM comes with a maximum token window size. This the maximum words an LLM can analyse in one run, therefore it's maximum memory. One token roughly reprensents one word or 3/4 of a word. More information on token count per word [here](https://winder.ai/calculating-token-counts-llm-context-windows-practical-guide/) or [here](https://help.openai.com/en/articles/4936856-what-are-tokens-and-how-to-count-them).  
+However, sending the whole history to the LLM for each Task to solve has some disadvantages that can not be overturned:
+* The longer the history the longer the LLM takes to analyze it and return an answer.
+* Each LLM comes with a maximum token window size. This is the maximum number of words an LLM can analyze in one run, therefore it's maximum memory. One token roughly represents one word or 3/4 of a word. More information on token count per word [here](https://winder.ai/calculating-token-counts-llm-context-windows-practical-guide/) or [here](https://help.openai.com/en/articles/4936856-what-are-tokens-and-how-to-count-them).  
 
-To counteract thoses negative effects it is recommanded you clean the history when possible. You can use the `forget=True` parameter in the Task() class so the prompt and the LLM response do not get save to the history ([see here]() @todo). There are other ways to preserve the history from useless noise. But first we'll look at viewing ones Agent history. Fortunatly Yacana got you covered.
+To counteract these negative effects it is recommended you clean the history when possible. You can use the `forget=True` parameter in the Task() class so the prompt and the LLM response do not get saved to the history ([see here]() @todo). There are other ways to preserve the history from useless noise. But first, we'll look at viewing one's Agent history. Fortunately, Yacana got you covered.
 
-### Printing history
+### Printing History
 
-The Agent class comes with a `.history` property of type `History` (@todo [see here]()). It exposes methods so you can manipulate and view it (for debugging, mostly) during runtime. For instance it has got a `.pretty_print()` method that prints on the standard output the the content of the history using the classic color scheme. It's great for debugging but not for parsing. If you need to parse the history there is a `.get_as_dict()` methods which as the name implies returns the History as a python dictionnary.  
+The Agent class comes with a `.history` property of type `History` (@todo [see here]()). It exposes methods so you can manipulate and view it (for debugging, mostly) during runtime. For instance, it has a `.pretty_print()` method that prints on the standard output the content of the history using the classic color scheme. It's great for debugging but not for parsing. If you need to parse the history there is a `.get_as_dict()` method which as the name implies returns the History as a Python dictionary.  
 
 Let's see a simple example:
 ```python
-# Let's deactivate automatic logging so that onyl OUR prints are shown
+# Let's deactivate automatic logging so that only OUR prints are shown
 LoggerManager.set_log_level(None)
 
 agent1 = Agent("Cook", "llama3:8b", system_prompt="You are a pastry chef")
@@ -753,24 +753,24 @@ Output speaks for itself.
 
 ### Creating and loading checkpoints
 
-As mentionned earlier it's better to keep the History clean. Too many prompts and unrelated questions will lead to poorer results so if you have the opportunity to scratch some portion then you should.  
-Yacana allows you to make a history snapshots and rollback to any them. This is in particullary useful when you are reaching the end of a flow branch and want to go back onto another branch.  
+As mentioned earlier it's better to keep the History clean. Too many prompts and unrelated questions will lead to poorer results so if you have the opportunity to scratch some portion then you should.  
+Yacana allows you to make a history snapshot and rollback to any of them. This is in particullary useful when you are reaching the end of a flow branch and want to go back onto another branch.  
 
 It is as simple as this:  
 ```python
 # Creating a checkpoint
 checkpoint_id: str = agent1.history.create_check_point()
 ```
-The checkpoint_id is only an uniq identifier that you can use to load back a save. Like this:  
+The checkpoint_id is only a unique identifier that you can use to load back a save. Like this:  
 ```python
 # Go back in time to when the checkpoint was created
 agent1.history.load_check_point(checkpoint_id)
 ```
 
-ℹ️ Note that nothing prevents you from making a snapshot before rolling back to a previopus save. This way you could return... to the future. ^^  
-Are you okay Marty ?  
+ℹ️ Note that nothing prevents you from making a snapshot before rolling back to a previous save. This way you could return... to the future. ^^  
+Are you okay Marty?  
 
-Let's take a concrete example. You have an pastry website that generates pastries recipes (using real data from a tool would be better, continue the tutorial). 
+Let's take a concrete example. You have a pastry website that generates pastry recipes (using real data from a tool would be better, continue the tutorial). 
 The flow will look like this:
 1. Propose 5 pastry names ;
 2. Create a checkpoint ;
@@ -781,13 +781,13 @@ The flow will look like this:
 7. Repeat until satisfied ;
 8. We'll show the final agent's History and make sure that it ONLY stored the selected pastry ;
 
-With a bit of color it would look like this:
+With a bit of color, it would look like this:
 
 ![pastry1B](https://github.com/user-attachments/assets/3a4952aa-18f3-4b6d-93c1-85b909cf24f4)
 
 
 ```python
-# Let's deactivate automatic logging so that only OUR prints are shown ; Maybe reactivate (to "info") if you want to see what's happening behind the scene.
+# Let's deactivate automatic logging so that only OUR prints are shown; Maybe reactivate (to "info") if you want to see what's happening behind the scenes.
 LoggerManager.set_log_level(None)
 
 agent1 = Agent("Cook", "llama3:8b", system_prompt="You are a pastry chef")
@@ -803,14 +803,14 @@ while True:
     # Creating our checkpoint to go back in time
     checkpoint_id: str = agent1.history.create_check_point()
 
-    # Asking for one of the pastry from the list
+    # Asking for one of the pastries from the list
     user_choice: str = input("Please choose one of the above pastries: ")
 
     # Printing associated calories for the selected pastry
     pastry_calorie_question: str = Task(f"The user said '{user_choice}'. Your task is to output a specific sentence and replace the <replace> tags with the correct values: 'You selected the <replace>selected pastry</replace>. The average calorie intake for this pastry is <replace>average associated calories for the selected pastry</replace>. Do you wish to continue ?", agent1).solve().content
     print(pastry_calorie_question)
 
-    # Asking if user wants to continue
+    # Asking if the user wants to continue
     is_satisfied: str = input("Continue ? ")
 
     # Basic yes / no router
@@ -821,7 +821,7 @@ while True:
         # The user was satisfied with his choice. Exiting the loop...
         break
     else:
-        # The user wants to choose another pastry. Let's go back in time by loading are previous checkpoint !
+        # The user wants to choose another pastry. Let's go back in time by loading are previous checkpoint!
         agent1.history.load_check_point(checkpoint_id)
         #  Let's go back to the top of the loop
         continue
@@ -844,7 +844,7 @@ Please choose one of the above pastries: The Creamy one looks good
 You selected the Creamy Confections. The average calorie intake for this pastry is 350-400 calories per serving. Do you wish to continue?
 Continue ? no
 
-Please choose one of the above pastries: Hummm. The golden one ?
+Please choose one of the above pastries: Hummm. The golden one?
 You selected the Golden Galettes. The average calorie intake for this pastry is approximately 250-300 calories per serving. Do you wish to continue?
 Continue ? yes
 Thank you for your order.
@@ -868,7 +868,7 @@ The user said 'Hummm. The golden one ?'. Your task is to output a specific sente
 You selected the Golden Galettes. The average calorie intake for this pastry is approximately 250-300 calories per serving. Do you wish to continue?
 
 [user]:
-The user said 'yes'. Evaluate if the user was okay with its order. If he was, ONLY output 'yes', if not only output 'no'.
+The user said 'yes'. Evaluate if the user was okay with the order. If he was, ONLY output 'yes', if not only output 'no'.
 
 [assistant]:
 yes
@@ -876,14 +876,14 @@ yes
 ############## END ##################
 ```
 
-As you can see in the above output. I went for "the creamy one" but when shown the clories I said no... Then chose the Golden Galettes was satisfied and the program ended with an output of the agent's history.  
-We can see in the agent output that it only remembers me chosing the Golden Galettes but not the Creamy Confections. This is because we loaded the checkpoint that was made before the user choice.
+As you can see in the above output. I went for "the creamy one" but when shown the calories I said no... Then chose the Golden Galettes was satisfied and the program ended with an output of the agent's history.  
+We can see in the agent output that it only remembers me choosing the Golden Galettes but not the Creamy Confections. This is because we loaded the checkpoint that was made before the user choice.
 
-ℹ️ Note that the Task asking to replace the variables might not work very well with dumb LLMs. It could be rework by splitting the Task into two. One that would extract the name of the chosen pastry from the user's input and a second one that would generate the associated calories. Finally print the sentence with the variables pre-generated. Using local models is all about knowing the maximum performance of your LLM and adapt the prompts to match that performance. The dumber, the more guidance it needs !  
+ℹ️ Note that the Task asking to replace the variables might not work very well with dumb LLMs. It could be reworked by splitting the Task into two. One that would extract the name of the chosen pastry from the user's input and a second one that would generate the associated calories. Finally, print the sentence with the variables pre-generated. Using local models is all about knowing the maximum performance of your LLM and adapting the prompts to match that performance. The dumber, the more guidance it needs!  
 
 ### Multi prompt shot VS 0 prompt shot
 
-When a LLM struggles to solve a complexe Task and achieve a good success rate it may be time to give it a little help.  
+When a LLM struggles to solve a complex Task and achieve a good success rate it may be time to give it a little help.  
 
 In large language models, the approach to prompting can significantly influence the model's performance. *Zero-shot prompting* asks the model to complete a task without any prior examples, relying solely on its pre-existing knowledge. This can lead to varied results, especially in more complex tasks. *One-shot prompting* improves accuracy by providing the model with a single example, offering some guidance on how to approach the task. *Few-shot prompting* further enhances performance by supplying multiple examples, allowing the model to better understand the task's nuances and produce more reliable and accurate results.
 
@@ -892,7 +892,7 @@ In other words:
 * One-Shot Prompting: A single example helps guide the model, improving its performance over zero-shot prompting.
 * Few-Shot Prompting: Multiple examples give the model a better understanding of the task, significantly increasing accuracy and performance.
 
-Yacana provides you with a way to add new Messages to the History manualy. The History class exposes a `.add(...)` method.  
+Yacana provides you with a way to add new Messages to the History manually. The History class exposes a `.add(...)` method.  
 This method takes an argument of type `Message()` ([[see here]() @todo) taking two parameters: a [MessageRole]() @todo url enum and the string message itself.
 
 For example:
@@ -900,10 +900,10 @@ For example:
 # Creating a basic agent with an empty history
 agent1 = Agent("AI assistant", "llama3:8b")
 
-# We create a fake prompt identified as comming the user (MessageRole.USER)
+# We create a fake prompt identified as coming the user (MessageRole.USER)
 user_message = Message(MessageRole.USER, "What's 2+2 ?")
 
-# We create a fake answer identified as comming from the LLM (MessageRole.ASSISTANT)
+# We create a fake answer identified as coming from the LLM (MessageRole.ASSISTANT)
 fake_ai_response = Message(MessageRole.ASSISTANT, "The answer is 4")
 
 # Let's add these two Messages to the Agent's History
@@ -923,8 +923,8 @@ What's 2+2 ?
 The answer is 4
 ```
 
-The Agent's History contains the two message we manualy added.  
-ℹ️ Note that the History doesn't have to be empty to use this. The .add() method aonly appends your messages to the end of the current History.  
+The Agent's History contains the two messages we manualy added.  
+ℹ️ Note that the History doesn't have to be empty to use this. The .add() method only appends your messages to the end of the current History.  
 ⚠️ Though, try to keep the alternation of USER and ASSISTANT as this is how "instruct" LLMs have been trained.  
 
 ---
@@ -934,12 +934,12 @@ Let's see a 0 shot example asking for a json output extracted from a given sente
 ```python
 agent1 = Agent("Ai assistant", "llama3:8b")
 
-Task(f"Print the following sentence as json, extracting the names and rephrasing the actions: 'Marie is walking her dog. Ryan is watching them through the window. The dark sky is pouring down heavy raindrops.'", agent1).solve()
+Task(f"Print the following sentence as JSON, extracting the names and rephrasing the actions: 'Marie is walking her dog. Ryan is watching them through the window. The dark sky is pouring down heavy raindrops.'", agent1).solve()
 ```
 
 Outputs:
 ```
-INFO: [PROMPT]: Print the following sentence as json extracting the names and rephrasing the actions: 'Marie is walking her dog. Ryan is watching them through the window. The dark sky is pouring down heavy raindrops.'
+INFO: [PROMPT]: Print the following sentence as JSON extracting the names and rephrasing the actions: 'Marie is walking her dog. Ryan is watching them through the window. The dark sky is pouring down heavy raindrops.'
 
 INFO: [AI_RESPONSE]: Here is the sentence rewritten in JSON format:
 
@@ -966,25 +966,25 @@ Let me know if you'd like me to help with anything else!
 ```
 
 Not bad but there's is noise. We would like to output the JSON and nothing else. No bedside manners.  
-Let's introduce another optionnal Task() parameter: `json_output=True`. This relies on Ollama to force the ouput as JSON.  
+Let's introduce another optional Task() parameter: `json_output=True`. This relies on Ollama to force the output as JSON.  
 ⚠️ It is preferable to prompt the LLM to output as JSON in addition to this option.
 
 Replace our Task with this one:
 ```python
-Task(f"Print the following sentence as json extracting the names and rephrasing the actions: 'Marie is walking her dog. Ryan is watching them through the window. The dark sky is pouring down heavy raindrops.'", agent1, json_output=True).solve()
+Task(f"Print the following sentence as JSON extracting the names and rephrasing the actions: 'Marie is walking her dog. Ryan is watching them through the window. The dark sky is pouring down heavy raindrops.'", agent1, json_output=True).solve()
 ```
 
 Outputs:
 ```
-INFO: [PROMPT]: Print the following sentence as json extracting the names and rephrasing the actions: 'Marie is walking her dog. Ryan is watching them through the window. The dark sky is pouring down heavy raindrops.'
+INFO: [PROMPT]: Print the following sentence as JSON extracting the names and rephrasing the actions: 'Marie is walking her dog. Ryan is watching them through the window. The dark sky is pouring down heavy raindrops.'
 
 INFO: [AI_RESPONSE]: {"names": ["Marie", "Ryan"], "actions": {"Marie": "is walking", "Ryan": "is watching"}, "description": [{"location": "window", "activity": "watching"}, {"location": "outdoors", "activity": "pouring raindrops"}]}
 ```
 
 Way better. No more noise.  
-However, we would prefer having an array of `name` and `action`, even for the weather (name would be *sky* and action *raining*).
+However, we would prefer having an array of `name` and `action`, even for the weather (the name would be *sky* and action *raining*).
 
-To achieve this let's give the LLM an example of what we expect by making it belive it outputed it correctly once:
+To achieve this let's give the LLM an example of what we expect by making it believe it outputted it correctly once:
 ```python
 agent1 = Agent("Ai assistant", "llama3:8b")
 
@@ -997,17 +997,17 @@ Task(f"Print the following sentence as json extracting the names and rephrasing 
 
 Outputs:
 ```
-INFO: [PROMPT]: Print the following sentence as json extracting the names and rephrasing the actions: 'Marie is walking her dog. Ryan is watching them through the window. The dark sky is pouring down heavy raindrops.'
+INFO: [PROMPT]: Print the following sentence as JSON extracting the names and rephrasing the actions: 'Marie is walking her dog. Ryan is watching them through the window. The dark sky is pouring down heavy raindrops.'
 
 INFO: [AI_RESPONSE]: [{"name": "Marie", "action": "Walking her dog."}, {"name": "Ryan", "action": "Watching Marie and her dog through the window."}, {"name": "The dark sky", "action": "Pouring down heavy raindrops."}]
 ```
 
 This is perfect.  
-You can add multiple fake interractions like this one to cover more advanced cases and train the LLM on how to react when they happen. It would become multi-shot prompting.  
+You can add multiple fake interactions like this one to cover more advanced cases and train the LLM on how to react when they happen. It would become multi-shot prompting.  
 
 ---
 
-You can also do multi-shot prompting with self reflection. This takes more CPU time because you decompose the task into multiple subtasks but can be beneficial in some scenarios.  
+You can also do multi-shot prompting with self-reflection. This takes more CPU time because you decompose the task into multiple subtasks but can be beneficial in some scenarios.  
 
 For example:  
 ```python
@@ -1029,11 +1029,11 @@ INFO: [PROMPT]: Marie is walking her dog. Ryan is watching them through the wind
 INFO: [AI_RESPONSE]: {"name": "Marie", "action": "Walking with her dog."}
 ```
 :-(  
-In this case it didn't work very well as only one name was extracted as JSON. But in more complexe scenarios I can assure you that letting the LLM reflect on the guide line behore han,ding it the real task can be benefical.  
+In this case, it didn't work very well as only one name was extracted as JSON. But in more complex scenarios I can assure you that letting the LLM reflect on the guideline beforehand, can be very beneficial to solving the task.  
 
 ### Saving an Agent state
 
-Maybe your program needs to start, stop and resume where it stopped. For this usecase Yacana provides a way to store an Agent state on file and load it later. All of the Agent's properties are saved including the History. Only checkpoint are lost as they are more of a runtime thing. We might include them in the save file if the need arrise.
+Maybe your program needs to start, stop, and resume where it stopped. For this usecase Yacana provides a way to store an Agent state on file and load it later. All of the Agent's properties are saved including the History. Only checkpoints are lost as they are more of a runtime thing. We might include them in the save file if the need arises.
 
 To save an Agent do the following:
 ```python
@@ -1066,7 +1066,7 @@ If you look at the file `agent1_save.json` you'll see something like this:
 }
 ```
 
-Now let's load back this agent from the dead using `.get_agent_from_state()` !  
+Now let's load back this agent from the dead using `.get_agent_from_state()`!  
 In another file add this bit of code:
 ```python
 agent2: Agent = Agent.get_agent_from_state("./agent1_save.json")
@@ -1083,15 +1083,15 @@ INFO: [AI_RESPONSE]: If we multiply 4 by 2, we get...
 
 8!
 ```
-As you can see when asked to multiply by 2 the previous result it remember agent1's result which was 4. It then did 4 x 2 and got us 8.  
+As you can see when asked to multiply by 2 the previous result, it remembered agent1's result which was 4. It then did 4 x 2 and got us 8.  
 
 ## VII. Assigning a tool to a Task
 
 ### Introduction
 
-Giving the LLM the opportunity to call a tool is the most important thing an agent can do ! But what is a "tool" ? A "tool" simply refers to a python function. This function can be the entry point to any level of underlying complexity. But it doesn't matter. What matters is that the LLM can call the tool with parameters that match the function. This way, LLMs can interract with *classic* programming interfaces that produce deterministic results (aka normal programming).  
+Allowing the LLM to call a tool is the most important thing an agent can do! But what is a "tool"? A "tool" simply refers to a Python function. This function can be the entry point to any level of underlying complexity. But it doesn't matter. What matters is that the LLM can call the tool with parameters that match the function. This way, LLMs can interact with *classic* programming interfaces that produce deterministic results (aka normal programming).  
 
-For instance let's say you want a calculator powered by an LLM. You cannot rely on the LLM doing the math because even though it knows how to decompose equation to an extent and basic arthitmetics, it will fail on more advance calculous. Therefore we do not expect the LLM to perform the operation itself. We already got the CPU to do this task perfectly. On the other hand we expect the LLM to decompose correctly the equation and call tools for each arithmetic operation needed to get the result.  
+For instance, let's say you want a calculator powered by an LLM. You cannot rely on the LLM doing the math because even though it knows how to decompose equations to an extent and basic arithmetics, it will fail on more advanced calculous. Therefore we do not expect the LLM to perform the operation itself. We already have the CPU to do this task perfectly. On the other hand, we expect the LLM to decompose correctly the equation and call tools for each arithmetic operation needed to get the result.  
 
 #### In what way is Yacana different than other frameworks ?
 
@@ -1110,30 +1110,30 @@ To overcome this particular issue, Yacana comes with it's own JSON to call pytho
 
 ### Calling a tool
 
-Let's do our first tool calling with a simple addition !
+Let's do our first tool calling with a simple addition!
 
-First, let define our tool:
+First, let's define our tool:
 ```python
 def adder(first_number: int, second_number: int) -> int:
     print(f"Tool adder was called with param {first_number}) ({type(first_number)} and {second_number} ({type(second_number)})")
     return first_number + second_number
 ```
 
-What do we have here ?
+What do we have here?
 * The name of the function must be relevant to what the function does. Here the function performs an addition so we'll call it `adder` ;
-* Same thing goes for the parameters. The name you choose is very important as it will help the LLM to know what value to give this argument ;
-* Duck typing the prototype is very important ! You must define the type of each parameters and also the return type ;
+* The same thing goes for the parameters. The name you choose is very important as it will help the LLM to know what value to give this argument ;
+* Duck typing the prototype is very important! You must define the type of each parameter and also the return type ;
 * We perform the operation between the two parameters and return the result ;
 
-⚠️ Be aware that whatever the return of your function, Yacana will cast it to string using the builtin `str(...)` function. LLMs can only understand text so make sure that whatever you send back it can be casted correctly (override the __str__ if needed).  
+⚠️ Be aware that whatever the return of your function, Yacana will cast it to string using the built-in `str(...)` function. LLMs can only understand the text so make sure that whatever you send back can be cast correctly (override the __str__ if needed).  
 
-Let's create a [Tool]() @todo url using Yacana Tool constructor. It takes a name, a description and a reference to the actual function.  
+Let's create a [Tool]() @todo url using the Yacana Tool constructor. It takes a name, a description, and a reference to the actual function.  
 ℹ️ I can only emphasize the importance of providing an accurate description.  
 ```python
 adder_tool: Tool = Tool("Adder", "Adds two numbers and returns the result", adder)
 ```
 
-Now let's assign our *adder_tool* to a Task. How to do that ? It's simple, the Task() class takes an opionnal `tools=[]` parameter. It's an array so be sure not to forget thoses `[]` !  
+Now let's assign our *adder_tool* to a Task. How to do that? It's simple, the Task() class takes an optional `tools=[]` parameter. It's an array so be sure not to forget those `[]`!  
 ```python
 Task(f"What's 2+2 ?", agent1, tools=[adder_tool]).solve()
 ```
@@ -1156,7 +1156,7 @@ INFO: [AI_RESPONSE]: Thank you for providing me with the `adder` tool definition
 
 I will keep this in mind as we progress through our tasks. Please go ahead and give me the next instruction or task to complete!
 
-INFO: [PROMPT]: To use the tool you MUST extract each parameter and use it as a JSON key like this: {"arg1": "<value1>", "arg2": "<value2>"}. You must respect arguments type. For instance, the tool `getWeather(city: str, lat: int, long: int)` would be structured like this {"city": "new-york", "lat": 10, "lon": 20}. In our case, the tool call you must use must look like that: {'first_number': 'arg 0', 'second_number': 'arg 1'}
+INFO: [PROMPT]: To use the tool you MUST extract each parameter and use it as a JSON key like this: {"arg1": "<value1>", "arg2": "<value2>"}. You must respect the arguments type. For instance, the tool `getWeather(city: str, lat: int, long: int)` would be structured like this {"city": "new-york", "lat": 10, "lon": 20}. In our case, the tool call you must use must look like that: {'first_number': 'arg 0', 'second_number': 'arg 1'}
 
 INFO: [AI_RESPONSE]: Thank you for clarifying how to structure the tool calls.
 
@@ -1180,30 +1180,30 @@ Equation result = 22
 What you are seeing here is Yacana doing its magic to make the LLM call the tool.  
 
 Unfortunatly, even though the tool is indeed called, getting a correct result failed spectacularly ! ^^  
-Is `2 + 2 = 22` ? No, I don't think so. Can you find what went wrong ?
+Is `2 + 2 = 22` ? No, I don't think so. Can you find out what went wrong?
 
 ---
 
 When looking at the logs we can see that the tool was called with the following JSON: `{"first_number": "2", "second_number": "2"}`. The given values are of type `string`. Later confirmed by the print() inside the tool itself: `param '2' (<class 'str'>) and '2' (<class 'str'>)`.  
-So instead of having integers we got string and what's the result of "2" + "2" in python ? Not 4 but "22" (concatenation of strings).  
+So instead of having integers, we got string and what's the result of "2" + "2" in Python? Not 4 but "22" (concatenation of strings).  
 
-Fortunatly we can fix this easily in diferent ways.
+Fortunately, we can fix this easily in different ways.
 
-### Getting better tool calling results
+### Getting better tool-calling results
 
-As you saw in the previous adder example we ran into trouble with the `2 + 2` call sent as string. Let's fix that.
+As you saw in the previous adder example we ran into trouble with the `2 + 2` call sent as a string. Let's fix that.
 
 #### Providing tool call examples
 
-If you followed this tutorial from the start you saw that multi-shot prompting yields good results. The Tool class allows this too using the `usage_examples=[]` optionnal parameter. You have to provide a python dictionnary where each key is equal to the argument name and the associated value, a valid value for the tool. You can add as many examples as you want in the array. In general one or two is enough.  
-These dictionnaries will be presented by Yacana to the LLM as examples on how to call the tool correctly.  
+If you followed this tutorial from the start you saw that multi-shot prompting yields good results. The Tool class allows this too, using the `usage_examples=[]` optional parameter. You have to provide a Python dictionary where each key is equal to the argument name and the associated value, a valid value for the tool. You can add as many examples as you want in the array. In general one or two is enough.  
+These dictionaries will be presented by Yacana to the LLM as examples of how to call the tool correctly.  
 
 Let's look at an example with our adder tool:
 ```
 adder_tool: Tool = Tool("Adder", "Adds two numbers and returns the result", adder, usage_examples=[{"first_number": 2, "second_number": 4}, {"first_number": 8, "second_number": -2}])
 ```
 
-Replace the previous adder_tool definition by this one. You see the that we provided two examples. Each time giving `first_number` and `second_number` have different integer values. Not strings. Actual integers.
+Replace the previous adder_tool definition with this one. You see the that we provided two examples. Each time giving `first_number` and `second_number` have different integer values. No strings. Actual integers.
 
 Let's run our program again and see if we get input types this time:
 ```python
@@ -1219,7 +1219,7 @@ This tool takes two integer inputs `first_number` and `second_number`, and retur
 
 I'm ready to use this tool for any future tasks that require addition!
 
-INFO: [PROMPT]: To use the tool you MUST extract each parameter and use it as a JSON key like this: {"arg1": "<value1>", "arg2": "<value2>"}. You must respect arguments type. For instance, the tool `getWeather(city: str, lat: int, long: int)` would be structured like this {"city": "new-york", "lat": 10, "lon": 20}. In our case, the tool call you must use must look like that: {'first_number': 'arg 0', 'second_number': 'arg 1'}
+INFO: [PROMPT]: To use the tool you MUST extract each parameter and use it as a JSON key like this: {"arg1": "<value1>", "arg2": "<value2>"}. You must respect the arguments type. For instance, the tool `getWeather(city: str, lat: int, long: int)` would be structured like this {"city": "new-york", "lat": 10, "lon": 20}. In our case, the tool call you must use must look like that: {'first_number': 'arg 0', 'second_number': 'arg 1'}
 
 INFO: [AI_RESPONSE]: I understand now!
 
@@ -1229,7 +1229,7 @@ So, for the `adder` tool, I need to extract each parameter and structure it as a
 
 This means that when using this tool, I should specify two integer values for `first_number` and `second_number`, respectively.
 
-INFO: [PROMPT]: You have a task to solve. Use the tool at your disposition to solve the task by outputing as JSON the correct arguments. In return you will get an answer from the tool. The task is:
+INFO: [PROMPT]: You have a task to solve. Use the tool at your disposition to solve the task by outputting as JSON the correct arguments. In return, you will get an answer from the tool. The task is:
 What's 2+2 ?
 
 INFO: [AI_RESPONSE]: {"first_number": 2, "second_number": 2}
@@ -1317,7 +1317,7 @@ This tool takes two integer arguments, `first_number` and `second_number`, and r
 
 I'm ready to use this tool when needed.
 
-INFO: [PROMPT]: To use the tool you MUST extract each parameter and use it as a JSON key like this: {"arg1": "<value1>", "arg2": "<value2>"}. You must respect arguments type. For instance, the tool `getWeather(city: str, lat: int, long: int)` would be structured like this {"city": "new-york", "lat": 10, "lon": 20}. In our case, the tool call you must use must look like that: {'first_number': 'arg 0', 'second_number': 'arg 1'}
+INFO: [PROMPT]: To use the tool you MUST extract each parameter and use it as a JSON key like this: {"arg1": "<value1>", "arg2": "<value2>"}. You must respect argument type. For instance, the tool `getWeather(city: str, lat: int, long: int)` would be structured like this {"city": "new-york", "lat": 10, "lon": 20}. In our case, the tool call you must use must look like that: {'first_number': 'arg 0', 'second_number': 'arg 1'}
 
 INFO: [AI_RESPONSE]: Thank you for the clarification.
 
@@ -1329,7 +1329,7 @@ I will make sure to respect the argument types (in this case, both are integers)
 
 Thank you for the guidance!
 
-INFO: [PROMPT]: You have a task to solve. Use the tool at your disposition to solve the task by outputing as JSON the correct arguments. In return you will get an answer from the tool. The task is:
+INFO: [PROMPT]: You have a task to solve. Use the tool at your disposition to solve the task by outputting as JSON the correct arguments. In return, you will get an answer from the tool. The task is:
 What's 2+2 ?
 
 INFO: [AI_RESPONSE]: {"first__number": 2, "second__number": 2}
@@ -1357,37 +1357,37 @@ Result of added tool is:  4
 Equation result = 4
 ```
 
-It worked !
+It worked!
 
 2 errors happened here:
 * "WARNING: Yacana failed to call tool 'Adder' correctly based on the LLM output"
 * "WARNING: Tool 'Adder' raised an error"
 
-- **Error 1**: Regarding the first one if you look closely the output you can see a strange malformation in the JSON : `{"first__number": "arg 0", "second__number": "arg 1"}`. The first parameter was called with two underscores for some reasons (LLMs...). Fortunatly Yacana banged on the LLM's head and it was fixed in the next iteration.  
-- **Error 2**: Concerning the second error, it was definitely the tool that raised the exception: `The tool returned an error: `Parameter 'first_number' expected a type integer`. This is only logical as the LLM sent castrophic values to the tool: `{'first_number': 'arg 0', 'second_number': 'arg 1'}`. When the ToolError was sent the error message was given to the LLM and a third iteration started. This time all was correct: `{"first_number": 2, "second_number": 2}` and we got our result which is 4.
+- **Error 1**: Regarding the first one if you look closely at the output you can see a strange malformation in the JSON: `{"first__number": "arg 0", "second__number": "arg 1"}`. The first parameter was called with two underscores for some reason (LLMs...). Fortunately Yacana banged on the LLM's head and it was fixed in the next iteration.  
+- **Error 2**: Concerning the second error, it was definitely the tool that raised the exception: `The tool returned an error: `Parameter 'first_number' expected a type integer`. This is only logical as the LLM sent catastrophic values to the tool: `{'first_number': 'arg 0', 'second_number': 'arg 1'}`. When the ToolError was sent the error message was given to the LLM and a third iteration started. This time all was correct: `{"first_number": 2, "second_number": 2}` and we got our result which is 4.
 
 #### Maximum tool errors
 
 You should combine both methods described above. But adding heavy tool validation with great error messages on what went wrong is always what yields the best results and is also the safest option.  
 
-So what happens if the LLM is stubborn and gets stuck in a loop. Even though Yacana's percussiv maintenance should avoid that by shifting LLM internal configuation during runtime more or less randomly, the LLM still might go into an infinite loop. And this is NOT a viable option !  
-Fortunatly Yacana come with a default of 5 iterations (tries) for each of the 2 types of errors. Either the calling error like the `"first__number"` error seen above or the custom ToolError that the tool throws. This means that if one of these two counters get to 5 then an error is raised.  
-Specifically a `MaxToolErrorIter` exception. You should try/catch all of your Task that utilise Tools as they might loop too many time and trigger an exception.  
+So what happens if the LLM is stubborn and gets stuck in a loop? Even though Yacana's percussive maintenance should avoid that by shifting LLM internal configuration during runtime more or less randomly, the LLM still might go into an infinite loop. And this is NOT a viable option!  
+Fortunately Yacana come with a default of 5 iterations (tries) for each of the 2 types of errors. Either the calling error like the `"first__number"` error seen above or the custom ToolError that the tool throws. This means that if one of these two counters gets to 5 then an error is raised.  
+Specifically a `MaxToolErrorIter` exception. You should try/catch all of your Tasks that utilise Tools as they might loop too many times and trigger an exception.  
 
-However, you can also set these counters to the value you wish. Move them higher or lower with the following Tool optionnal parameters: `max_custom_error: int = 5, max_call_error: int = 5`
+However, you can also set these counters to the value you wish. Move them higher or lower with the following Tool optional parameters: `max_custom_error: int = 5, max_call_error: int = 5`
 For instance:
 ```
 # Doubling the number of iterations the LLM can do before raising: 5 -> 10
 adder_tool: Tool = Tool("Adder", "Adds two numbers and returns the result", adder, max_custom_error=10, max_call_error=10)
 ```
 
-ℹ️ Note that showing the Agent's history with `agent1.history.pretty_print()` won't show you all the shenanigans that are shown in the logs. Many prompts get rid from the final history once the tool call is successful. It's always in the interest of the LLM to keep a clean History. 
+ℹ️ Note that showing the Agent's history with `agent1.history.pretty_print()` won't show you all the shenanigans that are shown in the logs. Many prompts get rid of the final history once the tool call is successful. It's always in the interest of the LLM to keep a clean History. 
 
-### Making a tool optionnal
+### Making a tool optional
 
-Sometimes you assign a Tool to a Task but without knowing for sure that the tool will be useful. If you have a fine tuned model or doing basic operations you may want to rely on the LLM's reasoning to chose if it really needs to call the tool or use his own training knowledge. Setting the `optional: bool = True` will tweak how Yacana proposes the Tools to the LLM, leaving it a chance to pass on the offer of the tool and use it's own knowledge instead.
+Sometimes you assign a Tool to a Task without knowing for sure that the tool will be useful. If you have a fine-tuned model or doing basic operations you may want to rely on the LLM's reasoning to choose if it really needs to call the tool or use his own training knowledge. Setting the `optional: bool = True` will tweak how Yacana proposes the Tools to the LLM, leaving it a chance to pass on the offer of the tool and use its own knowledge instead.
 
-To demonstrate this let's make a tool that returns a temperature from a city. It will return a fake temperature as we don't really care. We won't set `optionnal=True` so it will be forced to use the tool.
+To demonstrate this let's make a tool that returns a temperature from a city. It will return a fake temperature as we don't care. We won't set `optionnal=True` so it will be forced to use the tool.
 ```python
 def get_temperature(city: str) -> int:
     return 20
@@ -1422,7 +1422,7 @@ So, I will structure my tool call like this:  {"city": "arg0"}
 
 Please let me know what's the next step!
 
-INFO: [PROMPT]: You have a task to solve. Use the tool at your disposition to solve the task by outputing as JSON the correct arguments. In return you will get an answer from the tool. The task is:
+INFO: [PROMPT]: You have a task to solve. Use the tool at your disposition to solve the task by outputting as JSON the correct arguments. In return you will get an answer from the tool. The task is:
 What's the temperature in NY ?
 
 INFO: [AI_RESPONSE]: { "city": "NY" }
@@ -1432,7 +1432,7 @@ The tool was called with `{ "city": "NY" }` which returned 20. Good !
 
 ---
 
-Now let's ask something completly unrelated but keep the tool mandatory:
+Now let's ask something completely unrelated but keep the tool mandatory:
 ```python
 result: str = Task(f"Why is the sky blue ?", agent1, tools=[Tool("get_temp", "Returns the celsius temperature of a given city", get_temperature)]).solve().content
 ```
@@ -1447,7 +1447,7 @@ You've provided me with a tool definition for `get_temperature(city: str) -> int
 
 I'm ready to use this tool whenever I need it in future tasks!
 
-INFO: [PROMPT]: To use the tool you MUST extract each parameter and use it as a JSON key like this: {"arg1": "<value1>", "arg2": "<value2>"}. You must respect arguments type. For instance, the tool `getWeather(city: str, lat: int, long: int)` would be structured like this {"city": "new-york", "lat": 10, "lon": 20}. In our case, the tool call you must use must look like that: {'city': 'arg 0'}
+INFO: [PROMPT]: To use the tool you MUST extract each parameter and use it as a JSON key like this: {"arg1": "<value1>", "arg2": "<value2>"}. You must respect the arguments type. For instance, the tool `getWeather(city: str, lat: int, long: int)` would be structured like this {"city": "new-york", "lat": 10, "lon": 20}. In our case, the tool call you must use must look like that: {'city': 'arg 0'}
 
 INFO: [AI_RESPONSE]: For the `get_temperature( city: str ) -> int` tool, I understand that I need to extract each parameter and use it as a JSON key.
 
@@ -1457,17 +1457,17 @@ So, for this specific tool, I would structure my JSON call as follows:
 
 Where "arg0" is replaced with the actual value of the city I'm interested in.
 
-INFO: [PROMPT]: You have a task to solve. Use the tool at your disposition to solve the task by outputing as JSON the correct arguments. In return you will get an answer from the tool. The task is:
+INFO: [PROMPT]: You have a task to solve. Use the tool at your disposition to solve the task by outputting as JSON the correct arguments. In return you will get an answer from the tool. The task is:
 Why is the sky blue ?
 
 INFO: [AI_RESPONSE]: {"city": "Paris"}
 Temperature = 20
 ```
-It asked the tool for the temperature in Paris without any reasons. We can't blame it. The tool we provided and the Task to solve have nothing to do with each other. So it's making things up, like the city name.  
+It asked the tool for the temperature in Paris without any reason. We can't blame it. The tool we provided and the Task to solve have nothing to do with each other. So it's making things up, like the city name.  
 
 ---
 
-Now let's make the tool optionnal and keep our unrelated Task:
+Now let's make the tool optional and keep our unrelated Task:
 ```python
 result: str = Task(f"Why is the sky blue ?", agent1, tools=[Tool("get_temp", "Returns the celsius temperature of a given city", get_temperature, optional=True)]).solve().content
 ```
@@ -1497,7 +1497,7 @@ In my opinion, using the `get_temperature` tool is NOT relevant to solving this 
 
 So, I'll have to come up with a different approach or use a different tool (if one exists) to tackle this question!
 
-INFO: [PROMPT]: To summurize in one word your previous answer. Do you wish to use the tool or not ? Respond ONLY by 'yes' or 'no'.
+INFO: [PROMPT]: To summarize in one word your previous answer. Do you wish to use the tool or not ? Respond ONLY by 'yes' or 'no'.
 
 INFO: [AI_RESPONSE]: no
 
@@ -1522,11 +1522,11 @@ In my opinion, using the `get_temperature` tool is NOT relevant to solving this 
 
 ## VIII. Assigning multiple Tools
 
-In this section we will see that you can assign more then one tool to a Task. You can add as many Tools as you want and the LLM will be asked what tool it want's to use. After using one of the tool it will be asked if it considers its Task complete. If it says "no" then Yacana will propose the list of tools again and a new iteration is started.  
+In this section, we will see that you can assign more than one tool to a Task. You can add as many Tools as you want and the LLM will be asked what tool it wants to use. After using one of the tools it will be asked if it considers its Task complete. If it says "no" then Yacana will propose the list of tools again and a new iteration is started.  
 
-This is roughly what the tool calling mechanism looks like:
+This is roughly what the tool-calling mechanism looks like:
 ![toolcall1B](https://github.com/user-attachments/assets/bfaec298-44e9-4177-bfb8-e25bdfd01fe6)
-ℹ️ This doesn't take into account many tweaks Yacana makes like: model's config updates (in case of infinite loops), optionnal tools, self reflection, mutli-shot tool call examples, history cleaning, exiting when reaching max iterations, etc. However, it's definitly the *classic* process of calling tools one after the other.
+ℹ️ This doesn't take into account many tweaks Yacana makes like: model config updates (in case of infinite loops), optional tools, self-reflection, multi-shot tool call examples, history cleaning, exiting when reaching max iterations, etc. However, it's definitely the *classic* process of calling tools one after the other.
 
 > Additionnal behavior information: When only one tool is assigned the Agent won't be proposed to use it again. One tool is one shot !
 > When giving multiple tools, the agent will this time be proposed to use another tool. He could choose to always use the same one though.
@@ -1607,7 +1607,7 @@ INFO: [AI_RESPONSE]: I acknowledge that I have access to a list of tools with th
 
 I'm ready to use these tools to fulfill tasks!
 
-INFO: [PROMPT]: You have a task to solve. I will give it to you between these tags `<task></task>`. However your actual job is to decide if you need to use any of the available tools to solve the task or not. If you do need tools then output their names. The task to solve is <task>What's the result of '2 + 2 - 6 * 8'. Decompose the math before trying to solve it. Start with the multiplication. Use the tools at your disposal and do not do the maths yourself.</task> So, would any tools be useful in relation to the given task ?
+INFO: [PROMPT]: You have a task to solve. I will give it to you between these tags `<task></task>`. However, your actual job is to decide if you need to use any of the available tools to solve the task or not. If you do need tools then output their names. The task to solve is <task>What's the result of '2 + 2 - 6 * 8'. Decompose the math before trying to solve it. Start with the multiplication. Use the tools at your disposal and do not do the maths yourself.</task> So, would any tools be useful in relation to the given task ?
 
 INFO: [AI_RESPONSE]: I've got a task! Let's break down the math expression: "2 + 2 - 6 * 8".
 
@@ -1644,7 +1644,7 @@ INFO: [AI_RESPONSE]: {"first_number": 6, "second_number": 8}
 Multiplier was called with types =  <class 'int'> <class 'int'>
 Multiplier was called with param = |6| and |8|
 
-INFO: [PROMPT]: Now that the tool responded do you need to make another tool call ? Explain why and what are the remaining steps are if any.
+INFO: [PROMPT]: Now that the tool responded do you need to make another tool call ? Explain why and what the remaining steps are if any.
 
 INFO: [AI_RESPONSE]: Yes, I do need to make another tool call!
 
@@ -1656,7 +1656,7 @@ I need to use another tool to add 2 and 2. Then, I'll subtract 48 from the resul
 
 So, my next step would be to use either the **Adder** or **Substractor** tool!
 
-INFO: [PROMPT]: To summurize your previous answer in one word. Do you need to make another tool call ? Answer ONLY by 'yes' or 'no'.
+INFO: [PROMPT]: To summarize your previous answer in one word. Do you need to make another tool call ? Answer ONLY by 'yes' or 'no'.
 
 INFO: [AI_RESPONSE]: Yes
 
@@ -1671,20 +1671,20 @@ INFO: [PROMPT]: To use the tool you MUST extract each parameter and use it as a 
 
 INFO: [AI_RESPONSE]: {"first_number": 2, "second_number": 2}
 
-INFO: [PROMPT]: Now that I showed you examples on how the tool is used it's your turn. Output the tool as valid JSON.
+INFO: [PROMPT]: Now that I showed you examples of how the tool is used it's your turn. Output the tool as valid JSON.
 
 INFO: [AI_RESPONSE]: {"first_number": 2, "second_number": 2}
 Adder was called with types =  <class 'int'> <class 'int'>
 Adder was called with param = |2| and |2|
 
-INFO: [PROMPT]: Now that the tool responded do you need to make another tool call ? Explain why and what are the remaining steps are if any.
+INFO: [PROMPT]: Now that the tool responded do you need to make another tool call ? Explain why and what the remaining steps are if any.
 
 INFO: [AI_RESPONSE]: Yes, I do need to make another tool call!
 After using the  **Adder** tool to get the result of 2 + 2 = 4, I now have: "4 - 48"
 I still have subtraction operation left, so I'll use either  **Substractor** or  **Multiplier** (which is not necessary in this case) and then I can finish the task.
 So, my next step would be to use the  **Substractor** tool!
 
-INFO: [PROMPT]: To summurize your previous answer in one word. Do you need to make another tool call ? Answer ONLY by 'yes' or 'no'.
+INFO: [PROMPT]: To summarize your previous answer in one word. Do you need to make another tool call ? Answer ONLY by 'yes' or 'no'.
 
 INFO: [AI_RESPONSE]: Yes
 
@@ -1711,7 +1711,7 @@ INFO: [AI_RESPONSE]: No, I don't need to make another tool call!
 The result of -44 is the final answer for the original expression: "2 + 2 - 6 * 8".
 I've used all the necessary tools (Multiplier, Adder, and Substractor) to break down the math expression and get the correct answer!
 
-INFO: [PROMPT]: To summurize your previous answer in one word. Do you need to make another tool call ? Answer ONLY by 'yes' or 'no'.
+INFO: [PROMPT]: To summarize your previous answer in one word. Do you need to make another tool call ? Answer ONLY by 'yes' or 'no'.
 
 INFO: [AI_RESPONSE]: no
 
@@ -1722,23 +1722,23 @@ The result of -44 is the final answer for the original expression: "2 + 2 - 6 * 
 I've used all the necessary tools (Multiplier, Adder, and Substractor) to break down the math expression and get the correct answer!
 ```
 
--44 is the correct answer. You could throw in maybe one more operation. However, in our tests using Llama 3.0 going over 4 operations does not garanty a correct result anymore. It may be about prompt engineering but we also think that Yacana should continue improving. For the moment the LLM tends to contradict itself at some point which sends the final result off. In next update Yacana will try to detect errors in reasonning and self correct. Stay tuned for updates.  
+-44 is the correct answer. You could throw in maybe one more operation. However, in our tests using Llama 3.0 going over 4 operations does not guarantee a correct result anymore. It may be about prompt engineering but we also think that Yacana should continue improving. For the moment the LLM tends to contradict itself at some point which sends the final result off. In the next update, Yacana will try to detect errors in reasoning and self-correct. Stay tuned for updates.  
 
 ## IX. Chat between two Agents
 
-One of the best functionnalities available in some other frameworks like CrewAI is to allow Agents to speak with one another. Yacana also has this functionnality.  
-This allows Agents to brainstorm and come up with solutions by themselves. However, where other frameworks propose many ways to schedule interactions, Yacana emphasis on providing developers ways to make them stop talking !
+One of the best functionalities available in some other frameworks like CrewAI is to allow Agents to speak with one another. Yacana also has this functionality.  
+This allows Agents to brainstorm and come up with solutions by themselves. However, where other frameworks propose many ways to schedule interactions, Yacana emphasizes on providing developers with ways to make them stop talking!
 
-Making agents speak is not an issue. But making them stop is a whole other thing. How do you stop a conversation at the exact right moment without monitoring the chat yourself ? There are only 2 ways. Either use a maximum number of iteration and stop the chat when it is reached or let one or more LLMs decide when the conversation should end.  
+Making agents speak is not an issue. But making them stop is a whole other thing. How do you stop a conversation at the exact right moment without monitoring the chat yourself? There are only 2 ways. Either use a maximum number of iterations and stop the chat when it is reached or let one or more LLMs decide when the conversation should end.  
 Yacana provides both.  
-It utilises the Task system that you already know and allows some Tasks to be worked on by the Agents. But be aware that using the Task system implies this mechanism had to be implemented differently than what you may have seen elsewhere. Even though the result is the same if done correctly...  
+It utilizes the Task system that you already know and allows some Tasks to be worked on by the Agents. But be aware that using the Task system implies this mechanism had to be implemented differently than what you may have seen elsewhere. Even though the result is the same if done correctly...  
 
 ### Stopping chat using 'maximum iterations'
 
 We'll be using a new class called [GroupSolve]() @todo url. It takes a list of Tasks (at least two) and an [EndChat]() object.  
-1. The list of task will be the center of conversation for the LLM agents. The order in the list matters as the first task in the list will be the first to be evaluated and could be considered as the main task.
+1. The list of tasks will be the center of conversation for the LLM agents. The order in the list matters as the first task in the list will be the first to be evaluated and could be considered as the main task.
 2. The EndChat object will allow you to configure when/how the conversation stops.
-3. The GroupSolve class uses a `.solve()` method like the Task themselves. So dont forget about it.
+3. The GroupSolve class uses a `.solve()` method like the Task themselves. So don't forget about it.
 
 Let's look at an example:
 ```python
@@ -1754,12 +1754,12 @@ task2 = Task("Your task is to propose themes for an amusement park.", agent2)
 GroupSolve([task1, task2], EndChat(EndChatMode.MAX_ITERATIONS_ONLY)).solve()
 ```
 
-In the above code we can see that the end of chat condition is `EndChatMode.MAX_ITERATIONS_ONLY`. This means that both agents will exit the convesation after a predefined number of iteration. **By default set to 5**.  
+In the above code, we can see that the end of the chat condition is `EndChatMode.MAX_ITERATIONS_ONLY`. This means that both agents will exit the conversation after a predefined number of iterations. **By default set to 5**.  
 You can set the max iteration level in the EndChat object with the `max_iterations=10` parameter:    
 ```
 GroupSolve([task1, task2], EndChat(EndChatMode.MAX_ITERATIONS_ONLY, max_iterations=10)).solve()
 ```
-ℹ️ Dont forget the `.solve()`
+ℹ️ Don't forget the `.solve()`
 
 Output:
 ```
@@ -1826,22 +1826,22 @@ Some potential themes that could tie everything together:
 These are just a few ideas to get you started! What do you think? Would you like to add or modify any attractions or themes?
 [BLABLA]
 ```
-I won't show the full 5 iterations as it's useless. However I'm sure you have one question at this point if you ran the program yourself...  
+I won't show the full 5 iterations as it's useless. However, I'm sure you have one question at this point if you ran the program yourself...  
 
 > Why do I get the logging twice ??
 
-Well... This is because of how the conversation pattern is implemented. Let me explain... Have you ever read the documentation for the microsoft Autogen framework ? If you have, I hope you're having a better time with Yacana than I did with Autogen. That said, the conversationnal patterns they show is a serie of dual agents conversations. And never did I understood the mess they did before Yacana came to life. The reason why they chain two-agents conversations is because LLMs have been trained to speak in alternation with a user. It's how all "instruct" models have been fine tuned. So to get the best performance out of the LLMs they chose to limit the number of participants to two. If more than two was ever needed then the context of the first conversation would be given to a new dual-chat with one of the agents remaining. Then it would go on and on.  
+Well... This is because of how the conversation pattern is implemented. Let me explain... Have you ever read the documentation for the microsoft Autogen framework ? If you have, I hope you're having a better time with Yacana than I did with Autogen. That said, the conversational patterns they show is a serie of dual agents conversations. And never did I understand the mess they did before Yacana came to life. The reason why they chain two-agents conversations is because LLMs have been trained to speak in alternation with a user. It's how all "instruct" models have been fine-tuned. So to get the best performance out of the LLMs they chose to limit the number of participants to two. If more than two was ever needed then the context of the first conversation would be given to a new dual-chat with one of the agents remaining. Then it would go on and on.  
 
 ![image](https://github.com/user-attachments/assets/c8c4d958-2ffc-4eca-8d4a-aef576627572)
-*Source: microsoft autogen*
+*Source: Microsoft autogenic*
 
 I honestly think that it's smart but is a stinking mess that lost many people. Worst, it's the simpler pattern they provide.  
 
 ---
 
-Yacana does not do things this way but is bound to the same limitations. Two agents chat give the best results. For this reason, to also get good performances we did the following conversation pattern:
+Yacana does not do things this way but is bound to the same limitations. Two agents' chats give the best results. For this reason, to also get good performances we did the following conversation pattern:
 
-Let's play a game: The first agent will think of a number. The second agent will try to guess it based on indication like "higher" or "lower" given from the first agent. The conversation ends when the second agent finds the correct number and wins the game.
+Let's play a game: The first agent will think of a number. The second agent will try to guess it based on indications like "higher" or "lower" given by the first agent. The conversation ends when the second agent finds the correct number and wins the game.
 ```python
 # Creating our two players
 agent1 = Agent("Player 1", "llama3:8b")
@@ -1849,13 +1849,13 @@ agent2 = Agent("Player 2", "llama3:8b")
 
 
 # Making up a number and guiding player 2 
-task1 = Task("Your task is to generate a random number between 1 and 20 then show it only once. Once you have the number, respond to the guesses you receive with one of the following:\n* If the guess is higher than your number, say 'lower.'\n* If the guess is lower than your number, say 'higher.'\n* If the guess matches your number, say 'You won!' and end the game.\nDo not provide any other feedback or responses, and only play one round.", agent1) # To help you compare the numbers you have acces to a tool that describes the relation between the two", agent2, tools=[high_low_tool])
+task1 = Task("Your task is to generate a random number between 1 and 20 then show it only once. Once you have the number, respond to the guesses you receive with one of the following:\n* If the guess is higher than your number, say 'lower.'\n* If the guess is lower than your number, say 'higher.'\n* If the guess matches your number, say 'You won!' and end the game.\nDo not provide any other feedback or responses, and only play one round.", agent1) # To help you compare the numbers you have access to a tool that describes the relation between the two", agent2, tools=[high_low_tool])
 
 # Guessing the correct number. Higher or lower depending on what Player 1 tells you
 # This agent has the llm_stops_by_itself=True meaning it will be in charge of stopping the conversation
 task2 = Task("Your task is to guess a number between 1 and 20. You will receive feedback after each guess: either 'lower,' 'higher,' or 'You won!' Adjust your next guess based on this feedback. You must propose only one number at a time. Continue guessing until you receive confirmation that you have guessed correctly and the game is won. Only play one round.", agent2, llm_stops_by_itself=True)
 
-# Adding the two tasks to the GroupSolve. The chat ends when the first success in achieved
+# Adding the two tasks to the GroupSolve. The chat ends when the first success is achieved
 GroupSolve([task1, task2], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION)).solve()
 
 # Printing both Agent's point of view
@@ -2012,17 +2012,17 @@ Let's do it again sometime soon!
 
 It's a complete failure... But why is that ?  
 First let's analyse the output:
-* Agent1 generates the initial secret number: it's 14 !
-* Agent2 tries 12 which is lower than 14. In theory Agent1 should tell him "higher" to guide it toward the correct number
-* Agent1 tells Agent2: "lower" wich is wrong !
+* Agent1 generates the initial secret number: it's 14!
+* Agent2 tries 12 which is lower than 14. In theory, Agent1 should tell him "higher" to guide it toward the correct number
+* Agent1 tells Agent2: "lower" which is wrong!
 In the end:
 * Agent2 tries 13
-* Agent1 tells it it won !
+* Agent1 tells it it won!
 
-No, he didn't !? The initial secret number was 14 ! Not 13...  
+No, he didn't !? The initial secret number was 14! Not 13...  
 
-There are two main issues here. The first one is that the LLM I use, which is Llama3.0, sucks at maths and cannot compare numbers accuratly ! This is a common issue even with frontier models sometimes. So the game breaks very quickly.
-Second issue, the secret number is available to the other agent because they share the same history as part of the conversation. I could tell the Agent1 to NOT show the number but it's not like it really has a brain so when it decides that the number is correct would be entirely random. So the number must be part of the history from the start but not available to the other Agent.
+There are two main issues here. The first one is that the LLM I use, which is Llama3.0, sucks at maths and cannot compare numbers accurately! This is a common issue even with frontier models sometimes. So the game breaks very quickly.
+The second issue, the secret number is available to the other agent because they share the same history as part of the conversation. I could tell Agent1 to NOT show the number but it's not like it has a brain so when it decides that the number is correct would be entirely random. So the number must be part of the history from the start but not available to the other Agent.
 
 Let's fix all of that:
 ```python
