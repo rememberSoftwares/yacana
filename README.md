@@ -12,16 +12,16 @@ Tasks-driven agentic framework that gives you the building blocks to create AI w
 
 # Why choose Yacana over other frameworks?
 
-Yacana was built to make local LLMs great! It won't work with chatGPT, and we don't intend to make it. An important part of the future lies in local open source models. Many companies cannot afford paid subscriptions to proprietary models or won't for privacy issues. Also, agentic frameworks tend to cost way more than simple chat, generating cloud bills that could ruin a business. But why pay for AI when you can have it for only a fraction of the cost hosted on a single GPU machine or the device itself? This is where Yacana can help you harness the power of LLMs whatever the size and achieve production grade results.
+Yacana was built to make local LLMs great! It won't work with chatGPT, and we don't intend to make it. An important part of the future lies in local open source models. Many companies cannot afford paid subscriptions to proprietary models or won't for privacy issues. Also, agentic frameworks tend to cost way more than simple chat, generating cloud bills that could ruin a business. But why pay for AI when you can have it for only a fraction of the cost hosted on a single GPU machine or the device itself? This is where Yacana can help you harness the power of LLMs whatever the size and achieve production-grade results.
 
 > What other good frameworks are out there?  
 * **CrewAI** is very simple to use but is terrible when dealing with local models. This is because most of the heavy lifting is left to the LLM and if chatGPT or any other proprietary frontier models can deal with complex prompting, local LLMs cannot. Can we expect the same performance from 8 Billion parameters proprietary models with over 1000 Billion parameters? it's impossible. That's why CrewAI doesn't do well with local LLMs and also. This means that it cannot call tools! And calling tool is the most useful functionality a framework should offer.  
 
-➡️**Why would Yacana be better suited ?** We loved how easy creating agents in CrewAI was. So when building Yacana it was clear to us that it needed the same level of simplicity. Learning to program with Yacana is very easy and only takes a few minutes. Also, the tool-calling feature was of paramount importance. That's why we worked on making Yacana's tool calling ability so good that even tiny LLMs like Phi can call tools with almost a 100% chance of success.
+➡️**Why would Yacana be better suited ?** We loved how easy creating agents in CrewAI was. So when building Yacana it was clear to us that it needed the same level of simplicity. Learning to program with Yacana is very easy and only takes a few minutes. Also, the tool-calling feature was of paramount importance. That's why we worked on making Yacana's tool-calling ability so good that even tiny LLMs like Phi can call tools with almost a 100% chance of success.
 
 * **LangGraph** is one of the best tools of 2024 to work with local models. It allows to creation of complex workflows that guide the LLM along a specific route to achieve a specific result. The problem with langGraph is its learning curve that is far above many developers and the spotty documentation doesn't help. It does allow tool calling but only with models that support function calling natively. Learning LangGraph has a one in three chance to give you a burnout. Also, the graph definition, besides being a great conceptual idea, is poorly implemented (IMHO) and the fact that they introduced a web UI to control the framework seems like an admission of failure (even though the UI looks great). But as a developer, I don't want to rely on yet another tool.
 
-➡️**Why would Yacana be better suited?** The LangGraph nodes system that guides LLMs in a graph is great and is the reason why it succeeds with local LLMs. Knowing this we build Yacana with the same concept. But instead of having a complex graph system Yacana provides a classic programming interface in Python that can be leveraged by any developers regardless of their level of expertise. No burnouts here. So, Yacana provides its own way to chain Tasks and achieve a computable result in the end that can be used in classic programming products. This makes Yacana a production ready tool that can be easily integrated with any software.
+➡️**Why would Yacana be better suited?** The LangGraph nodes system that guides LLMs in a graph is great and is the reason why it succeeds with local LLMs. Knowing this we build Yacana with the same concept. But instead of having a complex graph system Yacana provides a classic programming interface in Python that can be leveraged by any developers regardless of their level of expertise. No burnouts here. So, Yacana provides its own way to chain Tasks and achieve a computable result in the end that can be used in classic programming products. This makes Yacana a production-ready tool that can be easily integrated with any software.
 
 **In summary...** Yacana took the simplicity of CrewAI, and its capability to have multi-agent chats but followed the LangGraph principle of guidance using a dedicated Task system that guarantees a computable result at the end of the workflow. Also, Yacana is the only Framework proposing a tool-calling system with a high success rate.  
 Also, it's free and open source (MIT) forever. It is made by the community, for the community.  
@@ -42,7 +42,7 @@ Ollama is:
 * Compatible with all operating systems Windows/Max/Linux ;  
 * Gets installed using one command ;  
 * Has a great CLi that even a 4-year-old can use to download models ;  
-* Tons of tutorials out there if you run in any type of trouble ;
+* Tons of tutorials out there if you run into any type of trouble ;
 
 ℹ️ You can connect Yacana to a remote Ollama instance. Read forward.  
 
@@ -89,12 +89,12 @@ The Agent(...) class takes 2 mandatory parameters:
 2. **A model name**: The Ollama model that this Agent will use. You may have multiple Agents running different models. Some models are better suited for some specific jobs so it can be interesting to mix LLM models.
 
 The Agent(...) class has many optional parameters that we will discover in this tutorial. Here we can see 2 of them:  
-1. **The system prompt**: Helps defining the personnality of the Agent.
+1. **The system prompt**: Helps define the personality of the Agent.
 2. **The endpoint**: The URL of your Ollama instance. It points by default to your localhost and on the Ollama default port. If you are using Ollama on your computer you can remove this optional parameter and the default value will be used.
 
 ### Testing Yacana and Ollama's interaction
 
-This framework is not meant for basic roleplay. However, for people starting their journey in the realm of AI and for debugging purposes we added a simple chat system. Add this line to test it :
+This framework is not meant for basic roleplay. However, for people starting their journey in the realm of AI and for debugging purposes, we added a simple chat system. Add this line to test it :
 ```python
 agent1.simple_chat()
 ```
@@ -138,7 +138,7 @@ agent1.simple_chat()
 
 ### Introduction example
 
-The whole concept of the framework lies here. If gou get this following section then you have mastered 80% of Yacana's building principle. Like in LangGraph where you create nodes that you link together, Yacana has a Task() class wich takes as arguments a task to solve. There are no hardcoded links between the Tasks so it's easy to refactor and move things arround. The important concept to grasp here is that through these Task() classes you will give instructions to the LLM in a way that the result must be a computable result. So instructions must be clear and the prompt to use must reflect that. It's Task, it's a job, it's something that needs solving but wrote like it is given as an order ! Let's see some examples :
+The whole concept of the framework lies here. If you understand this following section then you have mastered 80% of Yacana's building principle. Like in LangGraph, where you create nodes that you link together, Yacana has a Task() class which takes as arguments a task to solve. There are no hardcoded links between the Tasks so it's easy to refactor and move things around. The important concept to grasp here is that through these Task() classes you will give instructions to the LLM in a way that the result must be a computable result. So instructions must be clear and the prompt to use must reflect that. It's a Task, it's a job, it's something that needs solving but written like it is given as an order! Let's see some examples :
 
 ```python
 # First, let's make a basic AI agent
@@ -153,7 +153,7 @@ task1.solve()
 
 What's happening above?  
 * First, we instantiated an Agent with the `llama3:8b` model. You might need to update that depending on what LLM you downloaded from Ollama ;
-* Second, we instanciated a Task ;
+* Second, we instantiated a Task ;
 * Third, we asked that the Task be solved ;
 
 ℹ️ For easing the learning curve the default logging level is INFO. It will show what is going on in Yacana. Note that not ALL intermediary prompts are shown.
@@ -172,7 +172,7 @@ If your terminal is working normally you should see the task's prompts in green 
 ### About Task parameters
 
 The Task class takes 2 mandatory parameters:
-* The prompt: It is the task to be solved. Use imperative language, be precise, and ask for step by step thinking for complex Tasks and expected outputs if needed.
+* The prompt: It is the task to be solved. Use imperative language, be precise, and ask for step-by-step thinking for complex Tasks and expected outputs if needed.
 * The Agent: The agent that will be assigned to this task. The agent will be in charge of solving the task.
 
 ℹ️ Many other parameters can be given to a Task. We will see some of them in the following sections of this tutorial. But you can check out the Task class documentation @todo URL
@@ -187,7 +187,7 @@ To compare with LangGraph, we indeed cannot make a call graph as we don't bind t
 
 Even though we get logs on the standard output of the terminal, we still need to extract the answer of the LLM that solved that Task to actually do something with it.  
 Getting the string message is quite easy as the .solve() method returns a Message() class.  
-Maybe you are thinking "Ho noo another class to deal with". Well, let me tell you that it's always better to have an OOP class than some semi-random python dictionary where you'll forget what keys it contains. Also, the Message class is very straightforward. It exposes a `content` attribute. Modify the current code like this:
+Maybe you are thinking "Ho noo another class to deal with". Well, let me tell you that it's always better to have an OOP class than some semi-random Python dictionary where you'll forget what keys it contains. Also, the Message class is very straightforward. It exposes a `content` attribute. Modify the current code like this:
 ```python
 # So that something actually happens you must call the .solve() method on your task
 my_message: Message = task1.solve()
@@ -227,18 +227,18 @@ The AI response to our task is: If we multiply the previous result of 4 by 2, we
 8
 ```
 
-ℹ️ Without tools this only relies on the LLM's ability to do the maths and is dependent to it's training.
+ℹ️ Without tools this only relies on the LLM's ability to do the maths and is dependent on its training.
 
 ---
 
 See? The assigned Agent remembered that it had solved the task1 previously and used this information to solve the second task.  
-You can chain as many Tasks as you need. Also, you should create other Agents that don't have the knowledge of previous Task and make them do things based on the output of your first agent. You can build anything now !    
+You can chain as many Tasks as you need. Also, you should create other Agents that don't have the knowledge of previous Task and make them do things based on the output of your first agent. You can build anything now!    
 
 ## V. Routing
 
-Other frameworks have the tendency to make abstractions for everything. Even thing that dont need any. That's why I'll show you how to do routing whith only what we have seen earlier. Yacana doesn't provide routing abstraction because there is no need to do so.  
+Other frameworks have the tendency to make abstractions for everything. Even things that don't need any. That's why I'll show you how to do routing with only what we have seen earlier. Yacana doesn't provide routing abstraction because there is no need to do so.  
 
-But what is routing ? Well, having LLMs solving a Task and then chaining many other in sequence is good but to be efficient you have to create conditionnal workflows. In particular when using local LLMs that don't have the power to solve all Tasks with only one prompt. You have to create an AI worflow in advance that wil go foward step by step and converge to some expected result. AI allows you to deal with some level of unknown but expecting that you can have a master brain (like in crewAI) that distributes Tasks to agents and achieve an expected result is IMPOSSIBLE with local LLMs. They are too dumb ! Therefore they need you to help them allong their path. This is why LangGraph works well with local LLMs and Yacana does to. You create a workflow and when conditions are met you switch from one branch to another that treats more specific cases, etc.
+But what is routing? Well, having LLMs solve a Task and then chaining many others in a sequence is good but to be efficient you have to create conditional workflows. In particular when using local LLMs that don't have the power to solve all Tasks with only one prompt. You have to create an AI workflow in advance that will go forward step by step and converge to some expected result. AI allows you to deal with some level of unknown but expecting that you can have a master brain (like in crewAI) that distributes Tasks to agents and achieves an expected result is IMPOSSIBLE with local LLMs. They are too dumb! Therefore they need you to help them along their path. This is why LangGraph works well with local LLMs and Yacana does too. You create a workflow and when conditions are met you switch from one branch to another that treats more specific cases, etc.
 
 ---
 
