@@ -1843,11 +1843,11 @@ Yacana does not do things exactly in the same way but is bound to the same limit
 
 The [EndChatMode]() @todo url enum provides multiple ways to stop a chat. These are the available values:
 | Mode              | Needs Task annotation | Description |
-| :---------------- | :------: | ----: |
+| :---------------- | :------: | :----- |
 | MAX_ITERATIONS_ONLY | False  | Chat ends when we reach the maximum number of rounds. *Defaults to 5.* |
-| END_CHAT_AFTER_FIRST_COMPLETION | True | When a Task is marked as complete the chat end immediatly |
+| END_CHAT_AFTER_FIRST_COMPLETION | True | When a Task is marked as complete the chat ends immediatly |
 | ONE_LAST_CHAT_AFTER_FIRST_COMPLETION | True | When a Task is marked as complete, one last agent can speak and then the chat ends |
-| ONE_LAST_GROUP_CHAT_AFTER_FIRST_COMPLETION | True| When a Task is marked as complete |
+| ONE_LAST_GROUP_CHAT_AFTER_FIRST_COMPLETION | True| When a Task is marked as complete, one whole table turn will be allowed before the chat ends |
 | ALL_TASK_MUST_COMPLETE | True | All tasks must be marked as complete before the chat is ended |
 
 ⚠️ To prevent infinite loops ALL chat modes still have a maximum iteration count (defaults to 5) which can be change in the GroupSolve() class with the optionnal parameter `max_iterations=<int>`.
@@ -1903,6 +1903,8 @@ Let's decompose the graph piece by piece. There are two columns: one for Agent1'
     * To control who gets the shift, use the `shift_owner=<task instance>` optionnal parameter from the GroupSolve() class, like this: `GroupSolve([task1, task2], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION), shift_owner=task2).solve()`
     * To control the content of the shift message, use the `shift_content="<Some message>"` optional parameter from the GroupSolve() class. Note that not specifying this parameter results in the message being copied from the opposite Task (cf graph). Use it like this: `GroupSolve([task1, task2], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION), shift_content="List is empty").solve()`
     * Both parameters can be set at the same time. Also, not specifying any of them will output the same result as shown in the above graph.
+
+ℹ️ About the `max_iterations=<int>` optionnal parameter from the GroupSolve(...) class: Note that the iteration starts counting only after the shift message has been generated and history is synced. Resulting in one more message in one of the agent's History and two more in the other's (initial task solving + shift message).
 
 Output
 ```
