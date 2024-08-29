@@ -1830,16 +1830,21 @@ I won't show the full 5 iterations as it's useless. However, I'm sure you have o
 
 > Why do I get the logging twice ??
 
-Well... This is because of how the conversation pattern is implemented. Let me explain... Have you ever read the documentation for the Microsoft Autogen framework? If you have, I hope you're having a better time with Yacana than I did with Autogen. That said, the conversational patterns they show are a series of dual-agent conversations. And never did I understand the mess they did before Yacana came to life. The reason why they chain two-agent conversations is because LLMs have been trained to speak in alternation with a user. It's how all "instruct" models have been fine-tuned. So to get the best performance out of the LLMs they chose to limit the number of participants to two. If more than two was ever needed then the context of the first conversation would be given to a new dual-chat with one of the agents remaining. Then it would go on and on.  
-
+Well... This is because of how the conversation pattern is implemented. Let me explain... Have you ever read the documentation for the Microsoft Autogen framework? If you have, I hope you're having a better time with Yacana than I did with Autogen. That said, the conversational patterns they show are a series of dual-agent conversations. And never did I understand the mess they did before Yacana came to life. The reason why they chain two-agent conversations is because LLMs have been trained to speak in alternation with a user. It's how all "instruct" models have been fine-tuned.   
+So to get the best performance out of the LLMs they chose to limit the number of participants to two. If more than two was ever needed then the context of the first conversation would be given to a new dual-chat with one of the agents remaining from the previous conversation (hence keeping the state from one conversation to the other). Then it goes on and on.  
 ![image](https://github.com/user-attachments/assets/c8c4d958-2ffc-4eca-8d4a-aef576627572)
-*Source: Microsoft autogenic*
+*Source: Microsoft Autogen*  
+I honestly think that it's smart but is a stinking mess that lost many people. Worst, it's the simpler pattern they provide...   
 
-I honestly think that it's smart but is a stinking mess that lost many people. Worst, it's the simpler pattern they provide...  
+However, This two-chat-based conversations must still alternate between USER and ASSISTANT, so to make it work, each Agent thinks it's speaking to you (the human USER) even though it's speaking to the other Agent (ASSISTANT) instead.  
+Yacana does not do things exactly in the same way but is bound to the same limitations. Two agents' chats give the best results so the alternation between USER and ASSISTANT must also be achieved! This is why you are seeing duplicated logs in the de INFO logging system. **It's the answer of one agent being used as a prompt for the other one.**
+
+
+ 
 
 ---
 
-Yacana does not do things this way but is bound to the same limitations. Two agents' chats give the best results. For this reason, we also created a conversational pattern that is a dual-agent pattern. To achieve this we force a shift between the two agents by adding one message in ont of the AGent's conversation history. This shift then allows them to speak with each other.  
+For this reason, we also created a conversational pattern that is a dual-agent pattern. To achieve this we force a shift between the two agents by adding one message in ont of the AGent's conversation history. This shift then allows them to speak with each other.  
 
 Let's take an example:  
 * Agent1 has the main task of storing a list of numbers. The list is empty ;
@@ -1870,11 +1875,18 @@ print("------Agent2----------")
 task2.agent.history.pretty_print()
 ```
 
-Let's decompose the graph piece by piece. There are two columns: one for Agent1's point of view and one for Agent's 2 point of view. Like in any conversation, each speaker has its own point of view. This is why you shouldn't rely only on the debugging logs only but also print the Agent's History.  
+Let's decompose the graph piece by piece. There are two columns: one for Agent1's point of view and one for Agent's 2 point of view. Like in any conversation, each speaker has its own point of view. This is why you shouldn't rely only on the debugging logs only but also print each Agent's History.    
 * In line 1 we have the blue messages which are the initial 2 `Task(...)` that were given to the GroupSolve (We summarized the prompts so that they fit the graph a bit better)
-* In line 2 we have the AI answers to the prompts of line 1. What's very interesting here is that each initial prompt is solved by their respective agent and isn't shared between them! This means that Agent2 doesn't know what Agent1's task is and vice versa. This is important because it must be taken into account when writing the prompt of the second Task.
-In our example the Task2's prompt starts with *"You will have access to a list of numbers. ..."*. You MUST use future here because when this task is solved it won't have the knowledge that there is any list
+* In line 2 we have the AI answers to the prompts of line 1. What's very interesting here is that each initial prompt is solved by their respective Agent and isn't shared between them! This means that Agent2 doesn't know what Agent1's task is and vice versa. This is important because it must be taken into account when writing the prompt for the second Task.
+  * In our example the Task2's prompt starts with *"You will have access to a list of numbers. ..."*. This demonstrates the importance of using the future because when this task is solved it won't know that there is any list whatsoever.
+* In line 3 we add the *"shift"* ! The singular most important message here. As we need both Agents to speak to each other we need to initiate some kind of shift in the message so that the "USER" of one agent becomes the "ASSISTANT" of the other.
+  * The shift message is very important because it must not throw off the LLM with a strange message. By default, it is copied from Agent1's answer from line 2 (see the red arrow). In general, the conversation still makes sense. But if it doesn't then you'll have to take control of the shift message!
+  * Taking control of the shift message is fairly simple. You have 2 types of control. The first control is where the shift message should be placed. Either in Agent1 or in Agent2 (default) point of view. The second control is the content of the shift message. It can either come from the opposite side (default) or be set by you.
+    * To control who gets the shift, use the `shift_owner=<task instance>` optionnal parameter from the GroupSolve() class, like this: `GroupSolve([task1, task2], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION), shift_owner=task2).solve()`
+    * To control the content of the shift message, use the `shift_content="<Some message>"` optional parameter from the GroupSolve() class. Note that not specifying this parameter results in the message being copied from the opposite Task (cf graph). Use it like this: `GroupSolve([task1, task2], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION), shift_content="List is empty").solve()`
+    * Both parameters can be set at the same time. Also, not specifying any of them will output the same result as shown in the above graph.
 
+Output
 ```
 [ Not showing INFO debug]
 ------ Agent1 --------
