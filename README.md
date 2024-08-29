@@ -1839,7 +1839,25 @@ I honestly think that it's smart but is a stinking mess that lost many people. W
 However, This two-chat-based conversations must still alternate between USER and ASSISTANT, so to make it work, each Agent thinks it's speaking to you (the human USER) even though it's speaking to the other Agent (ASSISTANT) instead.  
 Yacana does not do things exactly in the same way but is bound to the same limitations. Two agents' chats give the best results so the alternation between USER and ASSISTANT must also be achieved! This is why you are seeing duplicated logs in the de INFO logging system. **It's the answer of one agent being used as a prompt for the other one.**
 
+### Letting Agents in charge of ending chat
 
+The [EndChatMode]() @todo url enum provides multiple ways to stop a chat. These are the available values:
+| Mode              | Needs Task annotation | Description |
+| :---------------- | :------: | ----: |
+| MAX_ITERATIONS_ONLY | False  | Chat ends when we reach the maximum number of rounds. *Defaults to 5.* |
+| END_CHAT_AFTER_FIRST_COMPLETION | True | When a Task is marked as complete the chat end immediatly |
+| ONE_LAST_CHAT_AFTER_FIRST_COMPLETION | True | When a Task is marked as complete, one last agent can speak and then the chat ends |
+| ONE_LAST_GROUP_CHAT_AFTER_FIRST_COMPLETION | True| When a Task is marked as complete |
+| ALL_TASK_MUST_COMPLETE | True | All tasks must be marked as complete before the chat is ended |
+
+⚠️ To prevent infinite loops ALL chat modes still have a maximum iteration count (defaults to 5) which can be change in the GroupSolve() class with the optionnal parameter `max_iterations=<int>`.
+
+ What is the **Needs task annotation** ?  
+
+ Well... To let an agent that it is in charge of ending the chat, its Task must be given an optionnal parameter `llm_stops_by_itself=True`. All Task() constructors setting this makes their assigned Agent potentially in charge of stopping the conversation.
+
+
+Let's test the different mode with a very simple conversation between two Agents:
  
 
 ---
@@ -2051,6 +2069,10 @@ Here's the updated list:
 [5, 8, 9, 2, 7, 11, 15, 3, 6]
 Please confirm before I proceed with the next set of additions!
 ```
+
+#####
+
+
 
 Let's play a game: The first agent will think of a number. The second agent will try to guess it based on indications like "higher" or "lower" given by the first agent. The conversation ends when the second agent finds the correct number and wins the game.
 ```python
