@@ -2462,7 +2462,7 @@ agent2 = Agent("Player 2", "llama3:8b")
 
 
 # Making up a number and guiding player 2 
-task1 = Task("Your task is to generate a random number between 1 and 20 then show it only once. Once you have the number, respond to the guesses you receive with one of the following:\n* If the guess is higher than your number, say 'lower.'\n* If the guess is lower than your number, say 'higher.'\n* If the guess matches your number, say 'You won!' and end the game.\nDo not provide any other feedback or responses, and only play one round.", agent1) # To help you compare the numbers you have access to a tool that describes the relation between the two", agent2, tools=[high_low_tool])
+task1 = Task("Your task is to generate a random number between 1 and 20 then show it only once. Once you have the number, respond to the guesses you receive with one of the following:\n* If the guess is higher than your number, say 'lower.'\n* If the guess is lower than your number, say 'higher.'\n* If the guess matches your number, say 'You won!' and end the game.\nDo not provide any other feedback or responses, and only play one round.", agent1)
 
 # Guessing the correct number. Higher or lower depending on what Player 1 tells you
 # This agent has the llm_stops_by_itself=True meaning it will be in charge of stopping the conversation
@@ -2473,10 +2473,10 @@ GroupSolve([task1, task2], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION))
 
 # Printing both Agent's point of view
 print("------ Agent 1 --------")
-print(agent1.history.pretty_print())
+agent1.history.pretty_print()
 
 print("------Agent 2----------")
-print(agent2.history.pretty_print())
+agent2.history.pretty_print()
 ```
 
 ```
@@ -2623,8 +2623,8 @@ I'm always up for a fun challenge, and I appreciate your creativity in designing
 Let's do it again sometime soon!
 ```
 
-It's a complete failure... But why is that ?  
-First let's analyse the output:
+It's a complete failure... :-( But why is that?  
+First, let's analyze the output:
 * Agent1 generates the initial secret number: it's 14!
 * Agent2 tries 12 which is lower than 14. In theory, Agent1 should tell him "higher" to guide it toward the correct number
 * Agent1 tells Agent2: "lower" which is wrong!
@@ -2632,12 +2632,19 @@ In the end:
 * Agent2 tries 13
 * Agent1 tells it it won!
 
-No, he didn't !? The initial secret number was 14! Not 13...  
+No, it didn't !? The initial secret number was 14! Not 13...  
 
-There are two main issues here. The first one is that the LLM I use, which is Llama3.0, sucks at maths and cannot compare numbers accurately! This is a common issue even with frontier models sometimes. So the game breaks very quickly.
-The second issue, the secret number is available to the other agent because they share the same history as part of the conversation. I could tell Agent1 to NOT show the number but it's not like it has a brain so when it decides that the number is correct would be entirely random. So the number must be part of the history from the start but not available to the other Agent.
+There are two main issues here:
+* The first one is that the LLM in use, which is Llama3.0, sucks at maths and cannot compare numbers accurately! This is a common issue even with frontier models sometimes. So the game breaks very quickly.
+* The second issue is that the secret number is available to the other agent because of the shift message!
+  * The shift message being the output of the Game Master, it spoils the secret number!
 
-Let's fix all of that:
+To fix those issues:
+* Use a tool and don't let the LLM compare numbers. Let the CPU deal with that!
+* Either switch the shift message or set it manually so that it doesn't spoil the secret number to the player.
+* Maybe even better than switching the shift message: Create a Task beforehand that generates the secret number and after that, enter the GroupSolve() (We're going with that solution!)
+
+
 ```python
 # Creating our tool with type checking and 3 conditional returns
 def high_low(secret_number: int, guessed_number: int) -> str:
@@ -2680,6 +2687,15 @@ player.history.pretty_print()
 print("------Game master----------")
 game_master.history.pretty_print()
 ```
+
+> How is tool calling mixed with GroupSolve()?
+
+When the task containing the Tool is solved the tool is automatically called at the start of the Task.
+ℹ️ You can set the tool as `optional=True` or any available parameters you wish for.
+The tool will then be called during each iteration. The Task the tool gets will be the output of the other agent. Note that this may lead to strange results sometimes...
+🚨**The most important information is that the final output of the Task will be the tool output !**
+
+<insert tool diagram>
 
 Output:
 ```
