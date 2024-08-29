@@ -2080,6 +2080,35 @@ Agent2 had the opportunity to answer to his win !
 
 **ONE_LAST_GROUP_CHAT_AFTER_FIRST_COMPLETION**
 
+Update the GroupSolve() line to this:
+```
+GroupSolve([task1, task2], EndChat(EndChatMode.ONE_LAST_GROUP_CHAT_AFTER_FIRST_COMPLETION)).solve()
+```
+This will allow both LLMs to speak one last time before the chat ends.
+
+Output:
+```
+------ Agent1 --------
+[BLABLA]
+[assistant]:
+ Congratulations, you won! Your guess of 1 matches my secret number, which was 2. Well done!
+
+[user]:
+ Thank you! I'm glad to have guessed correctly. Good luck in your future endeavors!
+
+[assistant]:
+ You're welcome, and thank you for the kind words! It's always a pleasure when someone successfully finds the secret number. Have a great day!
+```
+After the initial success, two more chats were generated.
+```
+------Agent2----------
+[user]:
+ Congratulations, you won! Your guess of 1 matches my secret number, which was 2. Well done!
+
+[assistant]:
+ Thank you! I'm glad to have guessed correctly. Good luck in your future endeavors!
+```
+
 ---
 
 For this reason, we also created a conversational pattern that is a dual-agent pattern. To achieve this we force a shift between the two agents by adding one message in ont of the AGent's conversation history. This shift then allows them to speak with each other.  
