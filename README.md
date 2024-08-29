@@ -2247,12 +2247,6 @@ To showcase this let's make another game:
 
 The "game" finishes when Agent1 has 15 numbers in its list.  
 
-It looks like this:  
-
-![gs2B](https://github.com/user-attachments/assets/e1e8e1eb-5c31-40ac-b044-e505deaa5219)
-
-
-The associated Python code is below:
 ```python
 agent1 = Agent("Ai assistant 1", "llama3:8b")
 agent2 = Agent("Ai assistant 2", "llama3:8b")
@@ -2269,6 +2263,10 @@ task1.agent.history.pretty_print()
 print("------Agent2----------")
 task2.agent.history.pretty_print()
 ```
+
+The execution flow looks like this: 
+
+![gs2B](https://github.com/user-attachments/assets/e1e8e1eb-5c31-40ac-b044-e505deaa5219)
 
 Let's decompose the graph piece by piece. There are two columns: one for Agent1's point of view and one for Agent's 2 point of view. Like in any conversation, each speaker has its own point of view. This is why you shouldn't rely on the debugging logs only but also print each Agent's History.    
 * In line 1 we have the blue messages which are the initial 2 `Task(...)` that were given to the GroupSolve (We summarized the prompts so that they fit the graph a bit better)
@@ -2449,11 +2447,13 @@ Here's the updated list:
 Please confirm before I proceed with the next set of additions!
 ```
 
-#####
+### Using tools inside GroupSolve
 
+As GroupSolve uses the common Task class, this means that tools are also available while agents are chatting.  
 
-
-Let's play a game: The first agent will think of a number. The second agent will try to guess it based on indications like "higher" or "lower" given by the first agent. The conversation ends when the second agent finds the correct number and wins the game.
+Let's play a new game:  
+The first agent will think of a number. The second agent will try to guess it based on indications like "higher" or "lower" given by the first agent.  
+The conversation ends when the second agent finds the correct number and wins the game!  
 ```python
 # Creating our two players
 agent1 = Agent("Player 1", "llama3:8b")
