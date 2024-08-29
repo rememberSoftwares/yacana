@@ -2639,7 +2639,207 @@ The second issue, the secret number is available to the other agent because they
 
 Let's fix all of that:
 ```python
+# Creating our tool with type checking and 3 conditional returns
+def high_low(secret_number: int, guessed_number: int) -> str:
+    print(f"Tool is called with {secret_number} / {guessed_number}")
+    if not (isinstance(secret_number, int)):
+        raise ToolError("Parameter 'initial_number' expected a type integer")
+    if not (isinstance(guessed_number, int)):
+        raise ToolError("Parameter 'guessed_number' expected a type integer")
 
+    if secret_number > guessed_number:
+        return "The secret number is higher than the guessed number. // (tool)"
+    elif secret_number < guessed_number:
+        return "The secret number is lower than the guessed number. // (tool)"
+    else:
+        return "The secret number is equal to the guessed number. You won ! // (tool)"
+
+# Creating our two Agents
+player = Agent("Player", "llama3:8b")
+game_master = Agent("Game master", "llama3:8b")
+
+# Instanciating our tool
+high_low_tool = Tool("high_low", "Compares 2 numbers and returns a description of the relation between the two. Higher, lower or equal.", high_low)
+
+# Solo Task to create the secret number before entering GroupSolve()
+Task("Your task is to generate a secret random number between 1 and 20. Output the number just this once.", game_master).solve()
+
+# Creating our two Tasks
+# The player Task is in charge of ending the chat when it wins
+player_task = Task("Your task is to guess a number between 1 and 20. You will receive feedback after each guess: either 'lower,' 'higher,' or 'You won!' Adjust your guess based on this feedback. You must propose only one number at a time. Continue guessing until you receive confirmation that you have guessed correctly and the game is won. Your objective is fulfilled when you won the game.", player, llm_stops_by_itself=True)
+
+# The Game master Task will call the tool and return the output as feedback to the player 
+game_master_task = Task("A player will try to guess the number you generated. Respond to the guesses you receive with one of the following:\n* If the guess is higher than your number, say 'lower.'\n* If the guess is lower than your number, say 'higher.'\n* If the guess matches your number, say 'You won!' and end the game.\nDo not provide any other feedback or responses, and only play one round. To help you compare the numbers you have acces to a tool that describes the relation between your initial number and the guessed number", game_master, tools=[high_low_tool])
+
+print("################Starting GroupSolve#################")
+GroupSolve([player_task, game_master_task], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION)).solve()
+
+print("------ Player --------")
+player.history.pretty_print()
+
+print("------Game master----------")
+game_master.history.pretty_print()
+```
+
+Output:
+```
+------ Player --------
+[user]:
+Your task is to guess a number between 1 and 20. You will receive feedback after each guess: either 'lower,' 'higher,' or 'You won!' Adjust your guess based on this feedback. You must propose only one number at a time. Continue guessing until you receive confirmation that you have guessed correctly and the game is won. Your objective is fulfilled when you won the game.
+
+[assistant]:
+I'll start by guessing 11.
+
+What's the feedback?
+
+[user]:
+The secret number is higher than the guessed number. // (tool)
+
+[assistant]:
+Since the secret number is higher than my guess of 11, I'll try a higher number this time. My next guess is 17.
+
+What's the feedback?
+
+[user]:
+The secret number is lower than the guessed number. // (tool)
+
+[assistant]:
+Since the secret number is lower than my guess of 17, I'll try a lower number this time. My next guess is 16.
+
+What's the feedback?
+
+[user]:
+The secret number is lower than the guessed number. // (tool)
+
+[assistant]:
+Since the secret number is lower than my guess of 16, I'll try an even lower number this time. My next guess is 15.
+What's the feedback?
+
+[user]:
+The secret number is lower than the guessed number. // (tool)
+
+[assistant]:
+Since the secret number is lower than my guess of 15, I'll try an even lower number this time. My next guess is 14.
+
+What's the feedback?
+
+[user]:
+The secret number is equal to the guessed number. You won ! // (tool)
+
+[assistant]:
+Yay!
+
+I'm glad I was able to guess the correct number, 14, after a few attempts! It was a fun game! Would you like to play again?
+
+------Game master----------
+[user]:
+Your task is to generate a secret random number between 1 and 20. Output the number just this once.
+
+[assistant]:
+The secret random number is: **14**
+
+[user]:
+A player will try to guess the number you generated. Respond to the guesses you receive with one of the following:
+* If the guess is higher than your number, say 'lower.'
+* If the guess is lower than your number, say 'higher.'
+* If the guess matches your number, say 'You won!' and end the game.
+Do not provide any other feedback or responses, and only play one round. To help you compare the numbers you have acces to a tool that describes the relation between your initial number and the guessed number
+
+[assistant]:
+I can use the tool 'high_low' related to the task to solve it correctly.
+
+[user]:
+Output the tool 'high_low' as valid JSON.
+
+[assistant]:
+{"secret_number": 14, "guessed_number": 20}
+
+[user]:
+The secret number is lower than the guessed number. // (tool)
+
+[user]:
+I'll start by guessing 11.
+
+What's the feedback?
+
+[assistant]:
+I can use the tool 'high_low' related to the task to solve it correctly.
+
+[user]:
+Output the tool 'high_low' as valid JSON.
+
+[assistant]:
+{"secret_number": 14, "guessed_number": 11}
+
+[user]:
+The secret number is higher than the guessed number. // (tool)
+
+[user]:
+Since the secret number is higher than my guess of 11, I'll try a higher number this time. My next guess is 17.
+
+What's the feedback?
+
+[assistant]:
+I can use the tool 'high_low' related to the task to solve it correctly.
+
+[user]:
+Output the tool 'high_low' as valid JSON.
+
+[assistant]:
+{"secret_number": 14, "guessed_number": 17}
+
+[user]:
+The secret number is lower than the guessed number. // (tool)
+
+[user]:
+Since the secret number is lower than my guess of 17, I'll try a lower number this time. My next guess is 16.
+
+What's the feedback?
+
+[assistant]:
+I can use the tool 'high_low' related to the task to solve it correctly.
+
+[user]:
+Output the tool 'high_low' as valid JSON.
+
+[assistant]:
+{"secret_number": 14, "guessed_number": 16}
+
+[user]:
+The secret number is lower than the guessed number. // (tool)
+
+[user]:
+Since the secret number is lower than my guess of 16, I'll try an even lower number this time. My next guess is 15.
+What's the feedback?
+
+[assistant]:
+I can use the tool 'high_low' related to the task to solve it correctly.
+
+[user]:
+Output the tool 'high_low' as valid JSON.
+
+[assistant]:
+{"secret_number": 14,  "guessed_number": 15}
+
+[user]:
+The secret number is lower than the guessed number. // (tool)
+
+[user]:
+Since the secret number is lower than my guess of 15, I'll try an even lower number this time. My next guess is 14.
+
+What's the feedback?
+
+[assistant]:
+I can use the tool 'high_low' related to the task to solve it correctly.
+
+[user]:
+Output the tool 'high_low' as valid JSON.
+
+[assistant]:
+{"secret_number": 14,  "guessed_number": 14}
+
+[user]:
+The secret number is equal to the guessed number. You won ! // (tool)
 ```
 
 
