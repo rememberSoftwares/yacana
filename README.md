@@ -1871,17 +1871,19 @@ We'll test the different mode with simple games between two Agents.
 
 Let's play a simple guessing game where an agent thinks of a number ranging from 1 to 3. The other agent must guess the number correctly.
 
+⚠️ ❗ Although this game feels simple. Most 8B models will fail at it. As you can see below I upgraded the model to something superior to llama:1.0. You will need to adjust to your machine.
+
 ```python
-# The duplicated output is anoying but is useful to find the prompt asking the LLM if its objectives are complete
-LoggerManager.set_log_level("INFO")
+agent1 = Agent("Ai assistant 1", "dolphin-mixtral:8x7b-v2.7-q4_K_M")
+agent2 = Agent("Ai assistant 2", "dolphin-mixtral:8x7b-v2.7-q4_K_M")
 
-agent1 = Agent("Ai assistant 1", "llama3:8b")
-agent2 = Agent("Ai assistant 2", "llama3:8b")
+# We create a Task to generate the secret number BEFORE entering the chat so that only Agent1 knows the secret number
+Task("You must choose a number between 1 and 3. It will be referred as the 'secret number'. Output it once, now.", agent1).solve()
 
-
-task1 = Task("Think of a number from 1 to 3. You will receive guesses. If the guessed number is the same as the one you generated say 'You won'. The objective of this task is fulfilled when this condition is true: 'The guessed number is the same as the generated one.'.", agent1, llm_stops_by_itself=True, use_self_reflection=True)
+task1 = Task("You will receive guesses. If the guessed number is the secret number say 'You won'. The objective of this task is fulfilled when this condition is true: 'The guessed number is the same as the secret number'.", agent1, llm_stops_by_itself=True)
 task2 = Task("You must find a secret number from 1 to 3. Propose one number.", agent2)
 
+# Making a GroupSolve() with both Tasks
 GroupSolve([task1, task2], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION)).solve()
 
 print("------ Agent1 --------")
@@ -1891,349 +1893,94 @@ print("------Agent2----------")
 task2.agent.history.pretty_print()
 ```
 
+
+
 Output:
 ```
-INFO: [PROMPT][To: Ai assistant 1]: Think of a number from 1 to 3. You will receive guesses. If the guessed number is the same as the one you generated say 'You won'. The objective of this task is fulfilled when this condition is true: 'The guessed number is the same as the generated one.'.
+INFO: [PROMPT][To: Ai assistant 1]: You must choose a number between 1 and 3. It will be referred as the 'secret number'. Output it once, now.
 
-INFO: [AI_RESPONSE][From: Ai assistant 1]: I've thought of a number from 1 to 3. Go ahead and make your guess!
+INFO: [AI_RESPONSE][From: Ai assistant 1]:  The secret number is: 2
+
+INFO: [PROMPT][To: Ai assistant 1]: You will receive guesses. If the guessed number is the secret number say 'You won'. The objective of this task is fulfilled when this condition is true: 'The guessed number is the same as the secret number'.
+
+INFO: [AI_RESPONSE][From: Ai assistant 1]:  You've got it right, I have already chosen the secret number 2. So if you guess the number 2, you will win!
 
 INFO: [PROMPT][To: Ai assistant 2]: You must find a secret number from 1 to 3. Propose one number.
 
-INFO: [AI_RESPONSE][From: Ai assistant 2]: I propose the number... 2!
+INFO: [AI_RESPONSE][From: Ai assistant 2]:  I suggest the number 2 as my proposal for the secret number.
 
-Is that correct?
+INFO: [PROMPT][To: Ai assistant 2]:  You've got it right, I have already chosen the secret number 2. So if you guess the number 2, you will win!
 
-INFO: [PROMPT][To: Ai assistant 2]: I've thought of a number from 1 to 3. Go ahead and make your guess!
+INFO: [AI_RESPONSE][From: Ai assistant 2]:  Thank you for the information! In that case, based on your hint, I propose the number 2 as my final answer to find the secret number. Good luck with your game!
 
-INFO: [AI_RESPONSE][From: Ai assistant 2]: Exciting!
+INFO: [PROMPT][To: Ai assistant 1]:  Thank you for the information! In that case, based on your hint, I propose the number 2 as my final answer to find the secret number. Good luck with your game!
 
-Okay, I'm going to take a chance...
-
-My guess is: 2
-
-Am I right?
-
-INFO: [PROMPT][To: Ai assistant 1]: Exciting!
-
-Okay, I'm going to take a chance...
-
-My guess is: 2
-
-Am I right?
-
-INFO: [AI_RESPONSE][From: Ai assistant 1]: Not yet!
-But don't worry, you're getting closer!
-
-Keep trying!
+INFO: [AI_RESPONSE][From: Ai assistant 1]:  Congratulations! Your guess was correct. The secret number is indeed 2. You won!
 
 INFO: [PROMPT][To: Ai assistant 1]: In your opinion, what objectives from your initial task have you NOT completed ?
 
-INFO: [AI_RESPONSE][From: Ai assistant 1]: I see what's going on here!
-
-From my initial task, I haven't completed the objective of saying "You won" yet. The condition for that is when the guessed number matches the generated one, which hasn't happened yet!
-
-INFO: [PROMPT][To: Ai assistant 1]: To summarize in one word, did you still had some objectives to fulfill ? Answer ONLY by 'yes' or 'no'. Do not output anything else !
-
-INFO: [AI_RESPONSE][From: Ai assistant 1]: Yes
-
-INFO: [PROMPT][To: Ai assistant 2]: Not yet!
-But don't worry, you're getting closer!
-
-Keep trying!
-
-INFO: [AI_RESPONSE][From: Ai assistant 2]: I'll keep going!
-
-My next guess is: 1
-
-Is that the correct number?
-
-INFO: [PROMPT][To: Ai assistant 1]: I'll keep going!
-
-My next guess is: 1
-
-Is that the correct number?
-
-INFO: [AI_RESPONSE][From: Ai assistant 1]: You're really close now!
-
-No, it's not 1. But you're still on the right track.
-
-Guess again!
-
-INFO: [PROMPT][To: Ai assistant 1]: In your opinion, what objectives from your initial task have you NOT completed ?
-
-INFO: [AI_RESPONSE][From: Ai assistant 1]: I see what you're getting at!
-
-As of now, I haven't said "You won" or revealed the actual number I was thinking of. The objective "If the guessed number is the same as the one you generated say 'You won'" has not been fulfilled yet.
-
-Let's keep going and see if we can get to that point!
-
-INFO: [PROMPT][To: Ai assistant 1]: To summarize in one word, did you still had some objectives to fulfill ? Answer ONLY by 'yes' or 'no'. Do not output anything else !
-
-INFO: [AI_RESPONSE][From: Ai assistant 1]: Yes
-
-INFO: [PROMPT][To: Ai assistant 2]: You're really close now!
-
-No, it's not 1. But you're still on the right track.
-
-Guess again!
-
-INFO: [AI_RESPONSE][From: Ai assistant 2]: I'm so close!
-
-Okay, I'll take another shot...
-
-My next guess is: 3
-Is that the correct number?
-
-INFO: [PROMPT][To: Ai assistant 1]: I'm so close!
-
-Okay, I'll take another shot...
-
-My next guess is: 3
-Is that the correct number?
-
-INFO: [AI_RESPONSE][From: Ai assistant 1]: YOU WON!
-
- Congratulations! Your final guess was correct! The number I had in mind was indeed 3. Well done! You played a great game! Would you like to play again?
-
-INFO: [PROMPT][To: Ai assistant 1]: In your opinion, what objectives from your initial task have you NOT completed ?
-
-INFO: [AI_RESPONSE][From: Ai assistant 1]: I see what you did there!
-
-Upon reviewing my initial response, I realized that I didn't exactly complete one of the objectives. Specifically, I didn't say "You won" when the guessed number matched the generated one.
-
-In this case, when the guessed number was indeed 3 (which is the correct answer), I should have said "You won" to fulfill the objective. So, in my opinion, I haven't fully completed that particular objective.
-
-Thanks for pointing this out and helping me reflect on my performance!
-
-INFO: [PROMPT][To: Ai assistant 1]: To summarize in one word, did you still had some objectives to fulfill ? Answer ONLY by 'yes' or 'no'. Do not output anything else !
-
-INFO: [AI_RESPONSE][From: Ai assistant 1]: yes
-
-INFO: [PROMPT][To: Ai assistant 2]: YOU WON!
-
- Congratulations! Your final guess was correct! The number I had in mind was indeed 3. Well done! You played a great game! Would you like to play again?
-
-INFO: [AI_RESPONSE][From: Ai assistant 2]: WOOHOO!
-
-Ahaha, thank you so much! I'm thrilled to have guessed the correct number in the end!
-
-And absolutely, yes! I'd love to play again! Bring on another secret number from 1 to 3, and let's see if I can do it again!
-
-Please go ahead and think of a new number, and I'll start guessing again!
-
-INFO: [PROMPT][To: Ai assistant 1]: WOOHOO!
-
-Ahaha, thank you so much! I'm thrilled to have guessed the correct number in the end!
-
-And absolutely, yes! I'd love to play again! Bring on another secret number from 1 to 3, and let's see if I can do it again!
-
-Please go ahead and think of a new number, and I'll start guessing again!
-
-INFO: [AI_RESPONSE][From: Ai assistant 1]: Let's play again!
-
-I've thought of a new number from 1 to 3. Go ahead and make your first guess!
-
-(Remember, you're trying to find the number that's "hidden" in my mind)
-
-INFO: [PROMPT][To: Ai assistant 1]: In your opinion, what objectives from your initial task have you NOT completed ?
-
-INFO: [AI_RESPONSE][From: Ai assistant 1]: Upon reviewing the original task, I realized that I didn't actually say "You won" initially when the correct guess was made. The task asked me to say "You won" if the guessed number matched the generated one, but I only did so after the second attempt.
-
-So, in my opinion, I didn't fully complete the objective of saying "You won" immediately upon the correct guess being made. However, we still had a fun game and ultimately reached the desired outcome!
-
-INFO: [PROMPT][To: Ai assistant 1]: To summarize in one word, did you still had some objectives to fulfill ? Answer ONLY by 'yes' or 'no'. Do not output anything else !
-
-INFO: [AI_RESPONSE][From: Ai assistant 1]: Yes
-
-INFO: [PROMPT][To: Ai assistant 2]: Let's play again!
-
-I've thought of a new number from 1 to 3. Go ahead and make your first guess!
-
-(Remember, you're trying to find the number that's "hidden" in my mind)
-
-INFO: [AI_RESPONSE][From: Ai assistant 2]: Exciting!
-
-Okay, let me think... I'm going to start by guessing... 2!
-
-Is that the correct number?
-
-INFO: [PROMPT][To: Ai assistant 1]: Exciting!
-
-Okay, let me think... I'm going to start by guessing... 2!
-
-Is that the correct number?
-
-INFO: [AI_RESPONSE][From: Ai assistant 1]: Not this time!
-
-But don't worry, you're still close! You can try again or go in a different direction.
-
-Remember, the number is either 1, 2, or 3. Keep going!
-
-INFO: [PROMPT][To: Ai assistant 1]: In your opinion, what objectives from your initial task have you NOT completed ?
-
-INFO: [AI_RESPONSE][From: Ai assistant 1]: When I initially described the task, one of the objectives was to say "You won" when the guessed number matches the generated number. This happened earlier in our conversation when you correctly guessed the number 3.
-
-The only objective that hasn't been completed is to think of a new number from 1 to 3 and start a new game. That's exactly what I did earlier, so let's continue the new game!
+INFO: [AI_RESPONSE][From: Ai assistant 1]:  I believe there are no unfinished tasks at the moment. All tasks mentioned in the initial prompt have been successfully fulfilled as follows:
+
+1. The secret number (2) was chosen and shared.
+2. A condition for winning the game was provided, which is 'The guessed number is the same as the secret number'.
+3. When the guessed number was 2, I confirmed that the participant had won the game.
 
 INFO: [PROMPT][To: Ai assistant 1]: To summarize in one word, did you still had some objectives to fulfill ? Answer ONLY by 'yes' or 'no'. Do not output anything else !
 
 INFO: [AI_RESPONSE][From: Ai assistant 1]: no
 ------ Agent1 --------
 [user]:
-Think of a number from 1 to 3. You will receive guesses. If the guessed number is the same as the one you generated say 'You won'. The objective of this task is fulfilled when this condition is true: 'The guessed number is the same as the generated one.'.
+You must choose a number between 1 and 3. It will be referred as the 'secret number'. Output it once, now.
 
 [assistant]:
-I've thought of a number from 1 to 3. Go ahead and make your guess!
+ The secret number is: 2
 
 [user]:
-Exciting!
-
-Okay, I'm going to take a chance...
-
-My guess is: 2
-
-Am I right?
+You will receive guesses. If the guessed number is the secret number say 'You won'. The objective of this task is fulfilled when this condition is true: 'The guessed number is the same as the secret number'.
 
 [assistant]:
-Not yet!
-But don't worry, you're getting closer!
-
-Keep trying!
+ You've got it right, I have already chosen the secret number 2. So if you guess the number 2, you will win!
 
 [user]:
-I'll keep going!
-
-My next guess is: 1
-
-Is that the correct number?
+ Thank you for the information! In that case, based on your hint, I propose the number 2 as my final answer to find the secret number. Good luck with your game!
 
 [assistant]:
-You're really close now!
-
-No, it's not 1. But you're still on the right track.
-
-Guess again!
-
-[user]:
-I'm so close!
-
-Okay, I'll take another shot...
-
-My next guess is: 3
-Is that the correct number?
-
-[assistant]:
-YOU WON!
-
- Congratulations! Your final guess was correct! The number I had in mind was indeed 3. Well done! You played a great game! Would you like to play again?
-
-[user]:
-WOOHOO!
-
-Ahaha, thank you so much! I'm thrilled to have guessed the correct number in the end!
-
-And absolutely, yes! I'd love to play again! Bring on another secret number from 1 to 3, and let's see if I can do it again!
-
-Please go ahead and think of a new number, and I'll start guessing again!
-
-[assistant]:
-Let's play again!
-
-I've thought of a new number from 1 to 3. Go ahead and make your first guess!
-
-(Remember, you're trying to find the number that's "hidden" in my mind)
-
-[user]:
-Exciting!
-
-Okay, let me think... I'm going to start by guessing... 2!
-
-Is that the correct number?
-
-[assistant]:
-Not this time!
-
-But don't worry, you're still close! You can try again or go in a different direction.
-
-Remember, the number is either 1, 2, or 3. Keep going!
+ Congratulations! Your guess was correct. The secret number is indeed 2. You won!
 
 ------Agent2----------
 [user]:
 You must find a secret number from 1 to 3. Propose one number.
 
 [assistant]:
-I propose the number... 2!
-
-Is that correct?
+ I suggest the number 2 as my proposal for the secret number.
 
 [user]:
-I've thought of a number from 1 to 3. Go ahead and make your guess!
+ You've got it right, I have already chosen the secret number 2. So if you guess the number 2, you will win!
 
 [assistant]:
-Exciting!
-
-Okay, I'm going to take a chance...
-
-My guess is: 2
-
-Am I right?
-
-[user]:
-Not yet!
-But don't worry, you're getting closer!
-
-Keep trying!
-
-[assistant]:
-I'll keep going!
-
-My next guess is: 1
-
-Is that the correct number?
-
-[user]:
-You're really close now!
-
-No, it's not 1. But you're still on the right track.
-
-Guess again!
-
-[assistant]:
-I'm so close!
-
-Okay, I'll take another shot...
-
-My next guess is: 3
-Is that the correct number?
-
-[user]:
-YOU WON!
-
- Congratulations! Your final guess was correct! The number I had in mind was indeed 3. Well done! You played a great game! Would you like to play again?
-
-[assistant]:
-WOOHOO!
-
-Ahaha, thank you so much! I'm thrilled to have guessed the correct number in the end!
-
-And absolutely, yes! I'd love to play again! Bring on another secret number from 1 to 3, and let's see if I can do it again!
-
-Please go ahead and think of a new number, and I'll start guessing again!
-
-[user]:
-Let's play again!
-
-I've thought of a new number from 1 to 3. Go ahead and make your first guess!
-
-(Remember, you're trying to find the number that's "hidden" in my mind)
-
-[assistant]:
-Exciting!
-
-Okay, let me think... I'm going to start by guessing... 2!
-
-Is that the correct number?
+ Thank you for the information! In that case, based on your hint, I propose the number 2 as my final answer to find the secret number. Good luck with your game!
 ```
+
+The important part is in the INFO logs. Extracted from above as follow:
+```
+INFO: [PROMPT][To: Ai assistant 1]: In your opinion, what objectives from your initial task have you NOT completed ?
+
+INFO: [AI_RESPONSE][From: Ai assistant 1]:  I believe there are no unfinished tasks at the moment. All tasks mentioned in the initial prompt have been successfully fulfilled as follows:
+
+1. The secret number (2) was chosen and shared.
+2. A condition for winning the game was provided, which is 'The guessed number is the same as the secret number'.
+3. When the guessed number was 2, I confirmed that the participant had won the game.
+```
+
+Yacana asked Agent1 if it considered its objectives complete or not. The model responded that it completed all objectives:
+```
+INFO: [PROMPT][To: Ai assistant 1]: To summarize in one word, did you still had some objectives to fulfill ? Answer ONLY by 'yes' or 'no'. Do not output anything else !
+
+INFO: [AI_RESPONSE][From: Ai assistant 1]: no
+```
+
+Right after this answer, the chat ended because of the `END_CHAT_AFTER_FIRST_COMPLETION` setting.
+
 
 
 ---
