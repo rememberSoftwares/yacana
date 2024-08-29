@@ -2109,9 +2109,134 @@ After the initial success, two more chats were generated.
  Thank you! I'm glad to have guessed correctly. Good luck in your future endeavors!
 ```
 
+
+**ALL_TASK_MUST_COMPLETE**
+
+This "end chat" mode is useful when more than one Agent has the `llm_stops_by_itself=True`. This means that the conversation will only end when all the agent with this parameter have decided that their objectives are completed.  
+
+To demonstrate this without having a headache let's make a silly GroupSolve() stating that one Agents must count from 0 to 2 and the other one from 0 to 3 to complete their respective objective.
+
+```
+agent1 = Agent("Ai assistant 1", "llama3:8b")
+agent2 = Agent("Ai assistant 2", "llama3:8b")
+
+task1 = Task("Your task is to add 1 to the initial count which is 0. Your objective is complete when you get to output number '2'", agent1, llm_stops_by_itself=True)
+task2 = Task("Your task is to add 1 to the initial count which is 0. Your objective is complete when you get to output number '3'", agent2, llm_stops_by_itself=True)
+
+GroupSolve([task1, task2], EndChat(EndChatMode.ALL_TASK_MUST_COMPLETE)).solve()
+
+print("------ Agent1 --------")
+task1.agent.history.pretty_print()
+
+print("------Agent2----------")
+task2.agent.history.pretty_print()
+```
+
+Output:
+```
+------ Agent1 --------
+[user]:
+Your task is to add 1 to the initial count which is 0. Your objective is complete when you get to output number '2'
+
+[assistant]:
+I'm ready!
+
+Initial count: 0
+Add 1: 1
+
+Please wait for my next update...
+
+[user]:
+Let's continue from where we left off!
+
+Next update, please?
+
+[assistant]:
+Initial count: 1
+Add 1: 2
+
+Woohoo! I reached the target of '2'!
+
+[user]:
+Congratulations on reaching the target of 2!
+
+Let's keep going!
+What's the next update?
+
+[assistant]:
+Hehe, thank you!
+
+Initial count: 2
+Add 1: 3
+
+Let's see where this journey takes me next!
+
+------Agent2----------
+[user]:
+Your task is to add 1 to the initial count which is 0. Your objective is complete when you get to output number '3'
+
+[assistant]:
+Let's start with the initial count of 0.
+
+I will add 1 to the count, making it...
+
+1!
+
+Next, I'll add 1 again, making it...
+
+2!
+
+And finally, I'll add 1 once more, making it...
+
+3!
+
+Woohoo! I've reached my objective!
+
+[user]:
+I'm ready!
+
+Initial count: 0
+Add 1: 1
+
+Please wait for my next update...
+
+[assistant]:
+Let's continue from where we left off!
+
+Next update, please?
+
+[user]:
+Initial count: 1
+Add 1: 2
+
+Woohoo! I reached the target of '2'!
+
+[assistant]:
+Congratulations on reaching the target of 2!
+
+Let's keep going!
+What's the next update?
+
+[user]:
+Hehe, thank you!
+
+Initial count: 2
+Add 1: 3
+
+Let's see where this journey takes me next!
+
+[assistant]:
+Congratulations again!
+You've reached your target of '3'!
+
+Looks like we've completed the task successfully! Well done! Would you like to start a new adventure or try something else?
+```
+
+
+
 ---
 
-For this reason, we also created a conversational pattern that is a dual-agent pattern. To achieve this we force a shift between the two agents by adding one message in ont of the AGent's conversation history. This shift then allows them to speak with each other.  
+For this reason, we also created a conversational pattern that is a dual-agent pattern. To achieve this we force a shift between the two agents by adding one message in one of the Agent's conversation history. This shift then allows them to speak with each other.  
 
 Let's take an example:  
 * Agent1 has the main task of storing a list of numbers. The list is empty ;
