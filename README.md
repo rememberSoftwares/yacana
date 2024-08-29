@@ -2116,6 +2116,8 @@ This "end chat" mode is useful when more than one Agent has the `llm_stops_by_it
 
 To demonstrate this without having a headache let's make a silly GroupSolve() stating that one Agents must count from 0 to 2 and the other one from 0 to 3 to complete their respective objective.
 
+❗ Shifting back to llama:3.0. Dolphin always wants to execute Python code when it has to do maths...
+
 ```
 agent1 = Agent("Ai assistant 1", "llama3:8b")
 agent2 = Agent("Ai assistant 2", "llama3:8b")
@@ -2232,13 +2234,14 @@ You've reached your target of '3'!
 Looks like we've completed the task successfully! Well done! Would you like to start a new adventure or try something else?
 ```
 
+As you can see, Agent2 cheated. It counted from 0 to 3 in one message. But who cares? Both of them carried on till both had their achievement completed.  
 
 
----
+### Getting better results by controlling the "shift message"
 
-For this reason, we also created a conversational pattern that is a dual-agent pattern. To achieve this we force a shift between the two agents by adding one message in one of the Agent's conversation history. This shift then allows them to speak with each other.  
+To achieve two agents speaking with each other we had to pipe the output of the first one into the prompt of the second. For this to work, we have to create an intermediary message in one of the Agent's conversation history. This special message is called the *"shift message"*.  
 
-Let's take an example:  
+To showcase this let's make another game:  
 * Agent1 has the main task of storing a list of numbers. The list is empty ;
 * Agent2 has the task of giving numbers to Agent1 so that it add them to its list ;
 
@@ -2267,7 +2270,7 @@ print("------Agent2----------")
 task2.agent.history.pretty_print()
 ```
 
-Let's decompose the graph piece by piece. There are two columns: one for Agent1's point of view and one for Agent's 2 point of view. Like in any conversation, each speaker has its own point of view. This is why you shouldn't rely only on the debugging logs only but also print each Agent's History.    
+Let's decompose the graph piece by piece. There are two columns: one for Agent1's point of view and one for Agent's 2 point of view. Like in any conversation, each speaker has its own point of view. This is why you shouldn't rely on the debugging logs only but also print each Agent's History.    
 * In line 1 we have the blue messages which are the initial 2 `Task(...)` that were given to the GroupSolve (We summarized the prompts so that they fit the graph a bit better)
 * In line 2 we have the AI answers to the prompts of line 1. What's very interesting here is that each initial prompt is solved by their respective Agent and isn't shared between them! This means that Agent2 doesn't know what Agent1's task is and vice versa. This is important because it must be taken into account when writing the prompt for the second Task.
   * In our example the Task2's prompt starts with *"You will have access to a list of numbers. ..."*. This demonstrates the importance of using the future because when this task is solved it won't know that there is any list whatsoever.
@@ -2278,7 +2281,7 @@ Let's decompose the graph piece by piece. There are two columns: one for Agent1'
     * To control the content of the shift message, use the `shift_content="<Some message>"` optional parameter from the GroupSolve() class. Note that not specifying this parameter results in the message being copied from the opposite Task (cf graph). Use it like this: `GroupSolve([task1, task2], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION), shift_content="List is empty").solve()`
     * Both parameters can be set at the same time. Also, not specifying any of them will output the same result as shown in the above graph.
 
-ℹ️ About the `max_iterations=<int>` optionnal parameter from the GroupSolve(...) class: Note that the iteration starts counting only after the shift message has been generated and history is synced. Resulting in one more message in one of the agent's History and two more in the other's (initial task solving + shift message).
+ℹ️ About the `max_iterations=<int>` optional parameter from the GroupSolve(...) class: Note that the iteration starts counting only after the shift message has been generated and history is synced. Resulting in one more message in one of the agent's History and two more in the other's (initial task solving + shift message).
 
 Output
 ```
