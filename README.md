@@ -1871,7 +1871,8 @@ We'll test the different mode with simple games between two Agents.
 
 Let's play a simple guessing game where an agent thinks of a number ranging from 1 to 3. The other agent must guess the number correctly.
 
-⚠️ ❗ Although this game feels simple. Most 8B models will fail at it. As you can see below I upgraded the model to something superior to the classic llama:3.0 that lacks in reasoning. You will need to adjust the model to your computer.
+⚠️ ❗ Although this game feels simple. Most 8B models will fail at it. As you can see below I upgraded the model to something superior to the classic llama:3.0 that lacks in reasoning. You will need to adjust the model to your computer.  
+But, a word of advice: don't expect any kind of great results with this approach. Local LLMs can brainstorm conceptual ideas but when it comes to logic and reasoning they are very bad. Even with this upgraded model, I often get illogical answers. Moreover, LLMs dislike numbers and have great difficulty to compare them.  
 
 ```python
 agent1 = Agent("Ai assistant 1", "dolphin-mixtral:8x7b-v2.7-q4_K_M")
