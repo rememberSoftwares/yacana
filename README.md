@@ -1830,16 +1830,208 @@ I won't show the full 5 iterations as it's useless. However, I'm sure you have o
 
 > Why do I get the logging twice ??
 
-Well... This is because of how the conversation pattern is implemented. Let me explain... Have you ever read the documentation for the microsoft Autogen framework ? If you have, I hope you're having a better time with Yacana than I did with Autogen. That said, the conversational patterns they show is a serie of dual agents conversations. And never did I understand the mess they did before Yacana came to life. The reason why they chain two-agents conversations is because LLMs have been trained to speak in alternation with a user. It's how all "instruct" models have been fine-tuned. So to get the best performance out of the LLMs they chose to limit the number of participants to two. If more than two was ever needed then the context of the first conversation would be given to a new dual-chat with one of the agents remaining. Then it would go on and on.  
+Well... This is because of how the conversation pattern is implemented. Let me explain... Have you ever read the documentation for the Microsoft Autogen framework? If you have, I hope you're having a better time with Yacana than I did with Autogen. That said, the conversational patterns they show are a series of dual-agent conversations. And never did I understand the mess they did before Yacana came to life. The reason why they chain two-agent conversations is because LLMs have been trained to speak in alternation with a user. It's how all "instruct" models have been fine-tuned. So to get the best performance out of the LLMs they chose to limit the number of participants to two. If more than two was ever needed then the context of the first conversation would be given to a new dual-chat with one of the agents remaining. Then it would go on and on.  
 
 ![image](https://github.com/user-attachments/assets/c8c4d958-2ffc-4eca-8d4a-aef576627572)
 *Source: Microsoft autogenic*
 
-I honestly think that it's smart but is a stinking mess that lost many people. Worst, it's the simpler pattern they provide.  
+I honestly think that it's smart but is a stinking mess that lost many people. Worst, it's the simpler pattern they provide...  
 
 ---
 
-Yacana does not do things this way but is bound to the same limitations. Two agents' chats give the best results. For this reason, to also get good performances we did the following conversation pattern:
+Yacana does not do things this way but is bound to the same limitations. Two agents' chats give the best results. For this reason, we also created a conversational pattern that is a dual agents pattern. To achieve this we force a shift between the two agents by adding one message in ont of the AGent's conversation history. This shift then allows them to speak with each other.  
+
+Let's take an example:  
+* Agent1 has the main task of storing a list of numbers. The list is empty ;
+* Agent2 has the task of giving numbers to Agent1 so that it add them to its list ;
+
+The "game" finishes when Agent1 has 15 numbers in its list.  
+
+It looks like this:  
+
+![tool1B](https://github.com/user-attachments/assets/01874d3c-e982-4e99-b6a9-035e1251875a)
+
+
+```python
+agent1 = Agent("Ai assistant 1", "llama3:8b")
+agent2 = Agent("Ai assistant 2", "llama3:8b")
+
+
+task1 = Task("Your task is to create a list of numbers. The list starts empty. The numbers will be given to you. Your objective is fulfilled when you have more than 15 numbers in the list.", agent1, llm_stops_by_itself=True)
+task2 = Task("You will have access to a list of numbers. Ask to add 3 more number to this list. Also ask to print the complete list each time to keep track.", agent2)
+
+GroupSolve([task1, task2], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION, max_iterations=3)).solve()
+
+print("------ Agent1 --------")
+task1.agent.history.pretty_print()
+
+print("------Agent2----------")
+task2.agent.history.pretty_print()
+```
+```
+[ Not showing INFO debug]
+------ Agent1 --------
+[user]:
+Your task is to create a list of numbers. The list starts empty. The numbers will be given to you. Your objective is fulfilled when you have more than 15 numbers in the list.
+
+[assistant]:
+I'm ready! My empty list is:
+
+[]
+
+Please give me the first number!
+
+[user]:
+Exciting!
+Let's add some numbers to your list.
+
+To start, I'd like to add the following three numbers:
+
+1. 5
+2. 8
+3. 9
+
+Here's the updated list:
+
+[5, 8, 9]
+
+Please confirm before I proceed with the next set of additions!
+
+[assistant]:
+Exciting indeed!
+
+I've confirmed the initial list:
+
+[5, 8, 9]
+
+Now, please go ahead and add more numbers to the list.
+
+[user]:
+Fantastic!
+
+Next, I'd like to add three more numbers to your list:
+
+1. 2
+2. 7
+3. 11
+
+Here's the updated list:
+
+[5, 8, 9, 2, 7, 11]
+
+Please confirm before I proceed with the next set of additions!
+
+[assistant]:
+Confirmation received!
+
+The updated list looks great:
+
+[5, 8, 9, 2, 7, 11]
+
+I'm ready for the next addition!
+
+[user]:
+Wonderful!
+Next, I'd like to add three more numbers to your list:
+1. 15
+2. 3
+3. 6
+
+Here's the updated list:
+
+[5, 8, 9, 2, 7, 11, 15, 3, 6]
+Please confirm before I proceed with the next set of additions!
+
+[assistant]:
+Confirmation received again!
+
+The updated list now has a total of:
+
+[5, 8, 9, 2, 7, 11, 15, 3, 6]
+
+Which exceeds the initial goal of having more than 15 numbers in the list!
+
+I'm pleased to report that my task is complete!
+
+------Agent2----------
+[user]:
+You will have access to a list of numbers. Ask to add 3 more number to this list. Also ask to print the complete list each time to keep track.
+
+[assistant]:
+I'd be happy to help with that.
+
+Please provide the initial list of numbers, and I'll proceed by adding three more numbers to it. I'll also request a printout of the updated list each time to ensure we're keeping track correctly.
+
+Let's get started! What's the initial list of numbers?
+
+[user]:
+I'm ready! My empty list is:
+
+[]
+
+Please give me the first number!
+
+[assistant]:
+Exciting!
+Let's add some numbers to your list.
+
+To start, I'd like to add the following three numbers:
+
+1. 5
+2. 8
+3. 9
+
+Here's the updated list:
+
+[5, 8, 9]
+
+Please confirm before I proceed with the next set of additions!
+
+[user]:
+Exciting indeed!
+
+I've confirmed the initial list:
+
+[5, 8, 9]
+
+Now, please go ahead and add more numbers to the list.
+
+[assistant]:
+Fantastic!
+
+Next, I'd like to add three more numbers to your list:
+
+1. 2
+2. 7
+3. 11
+
+Here's the updated list:
+
+[5, 8, 9, 2, 7, 11]
+
+Please confirm before I proceed with the next set of additions!
+
+[user]:
+Confirmation received!
+
+The updated list looks great:
+
+[5, 8, 9, 2, 7, 11]
+
+I'm ready for the next addition!
+
+[assistant]:
+Wonderful!
+Next, I'd like to add three more numbers to your list:
+1. 15
+2. 3
+3. 6
+
+Here's the updated list:
+
+[5, 8, 9, 2, 7, 11, 15, 3, 6]
+Please confirm before I proceed with the next set of additions!
+```
 
 Let's play a game: The first agent will think of a number. The second agent will try to guess it based on indications like "higher" or "lower" given by the first agent. The conversation ends when the second agent finds the correct number and wins the game.
 ```python
