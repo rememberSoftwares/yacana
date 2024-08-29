@@ -1839,7 +1839,7 @@ I honestly think that it's smart but is a stinking mess that lost many people. W
 
 ---
 
-Yacana does not do things this way but is bound to the same limitations. Two agents' chats give the best results. For this reason, we also created a conversational pattern that is a dual agents pattern. To achieve this we force a shift between the two agents by adding one message in ont of the AGent's conversation history. This shift then allows them to speak with each other.  
+Yacana does not do things this way but is bound to the same limitations. Two agents' chats give the best results. For this reason, we also created a conversational pattern that is a dual-agent pattern. To achieve this we force a shift between the two agents by adding one message in ont of the AGent's conversation history. This shift then allows them to speak with each other.  
 
 Let's take an example:  
 * Agent1 has the main task of storing a list of numbers. The list is empty ;
@@ -1849,9 +1849,10 @@ The "game" finishes when Agent1 has 15 numbers in its list.
 
 It looks like this:  
 
-![tool1B](https://github.com/user-attachments/assets/01874d3c-e982-4e99-b6a9-035e1251875a)
+![gs2B](https://github.com/user-attachments/assets/e1e8e1eb-5c31-40ac-b044-e505deaa5219)
 
 
+The associated Python code is below:
 ```python
 agent1 = Agent("Ai assistant 1", "llama3:8b")
 agent2 = Agent("Ai assistant 2", "llama3:8b")
@@ -1868,6 +1869,12 @@ task1.agent.history.pretty_print()
 print("------Agent2----------")
 task2.agent.history.pretty_print()
 ```
+
+Let's decompose the graph piece by piece. There are two columns: one for Agent1's point of view and one for Agent's 2 point of view. Like in any conversation, each speaker has its own point of view. This is why you shouldn't rely only on the debugging logs only but also print the Agent's History.  
+* In line 1 we have the blue messages which are the initial 2 `Task(...)` that were given to the GroupSolve (We summarized the prompts so that they fit the graph a bit better)
+* In line 2 we have the AI answers to the prompts of line 1. What's very interesting here is that each initial prompt is solved by their respective agent and isn't shared between them! This means that Agent2 doesn't know what Agent1's task is and vice versa. This is important because it must be taken into account when writing the prompt of the second Task.
+In our example the Task2's prompt starts with *"You will have access to a list of numbers. ..."*. You MUST use future here because when this task is solved it won't have the knowledge that there is any list
+
 ```
 [ Not showing INFO debug]
 ------ Agent1 --------
