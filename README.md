@@ -1860,7 +1860,7 @@ The [EndChatMode]() @todo url enum provides multiple ways to stop a chat. These 
 Now that LLMs can stop the conversation by themselve you must set clear objectives for this to happen. The conditions to which the objectives are met must be precise and consise. You will quickly see how prompt engineering is important in this matter.  
 Yacana uses the following wording:  
 > In your opinion, what objectives from your initial task have you 'NOT completed ?
-Therefor you should use the same prompt style in your Task prompt. For instance *"The task is fulfilled when the objective <insert here>"*.
+Therefore you should use the same prompt style in your Task prompt. For instance *"The task is fulfilled when the objective <insert here>"*.
 You should try different version of this "objective completed" prompt to find one that matches your task and LLM.
 
 #### Testing chat ending modes
@@ -1871,7 +1871,7 @@ We'll test the different mode with simple games between two Agents.
 
 Let's play a simple guessing game where an agent thinks of a number ranging from 1 to 3. The other agent must guess the number correctly.
 
-⚠️ ❗ Although this game feels simple. Most 8B models will fail at it. As you can see below I upgraded the model to something superior to llama:1.0. You will need to adjust to your machine.
+⚠️ ❗ Although this game feels simple. Most 8B models will fail at it. As you can see below I upgraded the model to something superior to the classic llama:3.0 that lacks in reasoning. You will need to adjust the model to your computer.
 
 ```python
 agent1 = Agent("Ai assistant 1", "dolphin-mixtral:8x7b-v2.7-q4_K_M")
@@ -1893,7 +1893,7 @@ print("------Agent2----------")
 task2.agent.history.pretty_print()
 ```
 
-
+❕The most important line is the `task1` line with the `llm_stops_by_itself=True` parameter. This means that the assigned Agent is in charge of stopping the conversation.
 
 Output:
 ```
@@ -1981,7 +1981,103 @@ INFO: [AI_RESPONSE][From: Ai assistant 1]: no
 
 Right after this answer, the chat ended because of the `END_CHAT_AFTER_FIRST_COMPLETION` setting.
 
+In summary, the conversation looks like this:
 
+![GS3B](https://github.com/user-attachments/assets/2fde0c79-1a03-492d-8d9d-94e2b628e2bc)
+
+ℹ️ You will learn what is a shift message later on and how it can be improved. 
+
+**ONE_LAST_CHAT_AFTER_FIRST_COMPLETION**
+
+This "end chat" mode allows one more Agent to speak after registering the first Task success.
+
+Update the GroupSolve line like this:
+```python
+GroupSolve([task1, task2], EndChat(EndChatMode.ONE_LAST_CHAT_AFTER_FIRST_COMPLETION), shift_message_owner=task1).solve()
+```
+
+Output:
+
+```
+------ Agent1 --------
+[user]:
+You must choose a number between 1 and 3. It will be referred as the 'secret number'. Output it once, now.
+
+[assistant]:
+ 2
+
+[user]:
+You will receive guesses. If the guessed number is the secret number say 'You won'. The objective of this task is fulfilled when this condition is true: 'The guessed number is the same as the secret number'.
+
+[assistant]:
+ I understand. You can now enter your guess, and I will check if it's the secret number.
+
+[user]:
+ Okay, my guess is 1. Let me know if that's correct or not.
+
+[assistant]:
+ Unfortunately, the guessed number (1) is not the same as the secret number (2). Please try again with a different number.
+
+[user]:
+ My apologies. Let me try again with another guess: 3. Is this the correct number?
+
+[assistant]:
+ No, the guessed number (3) is not the same as the secret number (2). Please try again with a different number.
+
+[user]:
+ I apologize for the confusion. My final guess is 2. I believe that should be the correct number. Let me know if I'm right.
+
+[assistant]:
+ Congratulations! The guessed number (2) is the same as the secret number (2). You won!
+
+------Agent2----------
+[user]:
+You must find a secret number from 1 to 3. Propose one number.
+
+[assistant]:
+ I propose the number 2. Is that your secret number?
+
+[user]:
+ I understand. You can now enter your guess, and I will check if it's the secret number.
+
+[assistant]:
+ Okay, my guess is 1. Let me know if that's correct or not.
+
+[user]:
+ Unfortunately, the guessed number (1) is not the same as the secret number (2). Please try again with a different number.
+
+[assistant]:
+ My apologies. Let me try again with another guess: 3. Is this the correct number?
+
+[user]:
+ No, the guessed number (3) is not the same as the secret number (2). Please try again with a different number.
+
+[assistant]:
+ I apologize for the confusion. My final guess is 2. I believe that should be the correct number. Let me know if I'm right.
+
+[user]:
+ Congratulations! The guessed number (2) is the same as the secret number (2). You won!
+
+[assistant]:
+ Thank you for your cooperation! I'm glad we found the secret number together. Have a great day!
+```
+
+Agent1 said that the game was finished:
+```
+[assistant]:
+ Congratulations! The guessed number (2) is the same as the secret number (2). You won!
+```
+
+Agent2 had the opportunity to answer to his win !
+```
+[user]:
+ Congratulations! The guessed number (2) is the same as the secret number (2). You won!
+
+[assistant]:
+ Thank you for your cooperation! I'm glad we found the secret number together. Have a great day!
+```
+
+**ONE_LAST_GROUP_CHAT_AFTER_FIRST_COMPLETION**
 
 ---
 
