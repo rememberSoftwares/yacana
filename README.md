@@ -2454,6 +2454,7 @@ As GroupSolve uses the common Task class, this means that tools are also availab
 Let's play a new game:  
 The first agent will think of a number. The second agent will try to guess it based on indications like "higher" or "lower" given by the first agent.  
 The conversation ends when the second agent finds the correct number and wins the game!  
+ℹ️ No tools for now.  
 ```python
 # Creating our two players
 agent1 = Agent("Player 1", "llama3:8b")
