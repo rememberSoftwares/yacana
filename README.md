@@ -1923,7 +1923,7 @@ So to get the best performance out of the LLMs they chose to limit the number of
 I honestly think that it's smart but is a stinking mess that lost many people. Worst, it's the simpler pattern they provide...   
 
 Yacana does not do things exactly in the same way but is bound to the same limitations. We must alternate between USER and ASSISTANT!  
-To achieve this we take the output of the Agent1 and give it as prompt to Agent2. Then the answer of Agent2 is given back as prompt to Agent1 and round it goes! This is the reason you are seeing each log twice. **It's the answer of one agent being used as a prompt for the other one.**  
+To achieve this we take the output of the Agent1 and give it as a prompt to Agent2. Then the answer of Agent2 is given back as a prompt to Agent1 and round it goes! This is the reason you are seeing each log twice. **It's the answer of one agent being used as a prompt for the other one.**  
 
 ### Letting Agents in charge of ending the chat
 
@@ -1931,7 +1931,7 @@ The [EndChatMode]() @todo url enum provides multiple ways to stop a chat. These 
 | Mode              | Needs Task annotation | Description |
 | :---------------- | :------: | :----- |
 | MAX_ITERATIONS_ONLY | False  | Chat ends when we reach the maximum number of rounds. *Defaults to 5.* |
-| END_CHAT_AFTER_FIRST_COMPLETION | True | When a Task is marked as complete the chat ends immediatly |
+| END_CHAT_AFTER_FIRST_COMPLETION | True | When a Task is marked as complete the chat ends immediately |
 | ONE_LAST_CHAT_AFTER_FIRST_COMPLETION | True | When a Task is marked as complete, one last agent can speak and then the chat ends |
 | ONE_LAST_GROUP_CHAT_AFTER_FIRST_COMPLETION | True| When a Task is marked as complete, one whole table turn will be allowed before the chat ends |
 | ALL_TASK_MUST_COMPLETE | True | All tasks must be marked as complete before the chat is ended |
@@ -2076,7 +2076,7 @@ In summary, the conversation looks like this:
 * **Message 3 & 4**: Are called "init messages". They are the prompt set in the two Tasks of GroupSolve. Agent1 does not see the answer of Agent2 (4) and Agent2 does not see the answer of Agent1 (4).  
 * **Message 5**: This is a shift message. You will learn about them later. For now, just acknowledge that you can configure this message in either Agent and that in this case, it spoils the secret to Agent2 which is bad luck. The shift message can be set to some hardcoded string if you want. You'll see that later.  
 * **Message 6**: History is now synced. All messages beyond this point will be shared with both agents.  
-* **Message 7**: This is the response of Agent1's input. It says that the game is won hence terminating the chat. There is no message 7 for Agent2 because message 6 was already an output and as the game finishes it won't take Agent's 1 answer as prompt.  
+* **Message 7**: This is the response of Agent1's. It says that the game is won hence terminating the chat. There is no message 7 for Agent2 because message 6 was already an output and as the game finishes it won't take Agent's 1 answer as input.  
 
 ℹ️ You will learn what is a shift message later on and how it can be improved. 
 
@@ -2086,7 +2086,7 @@ This "end chat" mode allows one more Agent to speak after registering the first 
 
 Update the GroupSolve line like this:
 ```python
-GroupSolve([task1, task2], EndChat(EndChatMode.ONE_LAST_CHAT_AFTER_FIRST_COMPLETION), shift_message_owner=task1).solve()
+GroupSolve([task1, task2], EndChat(EndChatMode.ONE_LAST_CHAT_AFTER_FIRST_COMPLETION)).solve()
 ```
 
 Output:
@@ -2170,13 +2170,22 @@ Agent2 had the opportunity to answer to his win !
  Thank you for your cooperation! I'm glad we found the secret number together. Have a great day!
 ```
 
+Agent2 now has the opportunity to speak one last time after Agent1 completes its objective and ends the chat:
+```
+------Agent2-----
+...
+[assistant]:
+ Thank you for your cooperation! I'm glad we found the secret number together. Have a great day!
+```
+
 **ONE_LAST_GROUP_CHAT_AFTER_FIRST_COMPLETION**
 
 Update the GroupSolve() line to this:
 ```
 GroupSolve([task1, task2], EndChat(EndChatMode.ONE_LAST_GROUP_CHAT_AFTER_FIRST_COMPLETION)).solve()
 ```
-This will allow both LLMs to speak one last time before the chat ends.
+This will allow both LLMs to speak one last time before the chat ends.  
+ℹ️ This option is more useful when doing GroupSolve with more than 2 agents.  
 
 Output:
 ```
@@ -2371,8 +2380,6 @@ Let's decompose the graph piece by piece. There are two columns: one for Agent1'
     * To control the content of the shift message, use the `shift_content="<Some message>"` optional parameter from the GroupSolve() class. Note that not specifying this parameter results in the message being copied from the opposite Task (cf graph). Use it like this: `GroupSolve([task1, task2], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION), shift_content="List is empty").solve()`
     * Both parameters can be set at the same time. Also, not specifying any of them will output the same result as shown in the above graph.
 
-ℹ️ About the `max_iterations=<int>` optional parameter from the GroupSolve(...) class: Note that the iteration starts counting only after the shift message has been generated and history is synced. Resulting in one more message in one of the agent's History and two more in the other's (initial task solving + shift message).
-
 Output
 ```
 [ Not showing INFO debug]
@@ -2538,6 +2545,41 @@ Here's the updated list:
 [5, 8, 9, 2, 7, 11, 15, 3, 6]
 Please confirm before I proceed with the next set of additions!
 ```
+
+#### Reconciling initial messages
+
+Let's take another look at the diagram of one past conversation:
+![gs2B](https://github.com/user-attachments/assets/5ffed0d2-5d26-4fe8-83c2-c0700da98014)
+
+Messages 1 & 2 are only available to their respective agent. Meaning that history reconciliation comes only at message 4 (after the damn "shift message"). When history is *reconcyled* both agents share the same history.  
+
+It could be represented like this:  
+![GS5A](https://github.com/user-attachments/assets/649fe22c-3a2a-48d2-b18a-43d62819793b)
+
+But what if you wanted messages 1 & 2 to be available in both histories? Well, there is an option for that too... I know... Too many parameters!  
+It's called `reconcile_first_message` and can be set to `True` inside the GroupSolve class.  
+For instance:  
+```python
+GroupSolve([player_task, game_master_task], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION), reconcile_first_message=True).solve()
+```
+
+It does the following:  
+![GS6](https://github.com/user-attachments/assets/51e1143c-3aa1-40e0-acf6-5ac014d83282)
+
+* The first Task is solved and the output arrives in Agent1's History. It's messages 1 & 2 ;
+* The prompt and answer are then copied to the agent2's History as you can see in messages 3 & 4 ;
+* Next Task2 is solved. Note that it now has access to the input and output of Agent1's solving task as it was put in its History. It's Message 5 & 6 ;
+* The messages 5 & 6 are copied back to agent1's History as shown in messages 7 & 8 ;
+* We now reach the shift message, at message 9, configured by default to copy message 8. 🚨You should set the shift message yourself as the Histories are now merged from the start. **This will create a message duplication!** ;
+* Messages from 10 to 12 are already merged as being part of the GroupSolve loop ;
+
+We could represent this merged workflow in the following unified form:
+
+@here
+
+
+#### Using self-reflection when LLMs are struggling
+
 
 ### Using tools inside GroupSolve
 
