@@ -2,7 +2,8 @@
 Tasks-driven agentic framework that gives you the building blocks to create AI workflows for local LLMs.  
 
 # Functionalities
-* Built for getting the best results with local opensource LLMs ;  
+* Developer friendly API ;
+* Built for getting the best results from local open source LLMs ;  
 * Multi-Agent workflows ;  
 * Tool calling for all models, even dumb ones ;
 * Multi-turn chat between Agents ;
@@ -10,23 +11,26 @@ Tasks-driven agentic framework that gives you the building blocks to create AI w
 
 ...and many more!
 
+"""Built for getting things done / No silly web UIs required"""
+
 # Why choose Yacana over other frameworks?
 
-Yacana was built to make local LLMs great! It won't work with chatGPT, and we don't intend to make it. An important part of the future lies in local open source models. Many companies cannot afford paid subscriptions to proprietary models or won't for privacy issues. Also, agentic frameworks tend to cost way more than simple chat, generating cloud bills that could ruin a business. But why pay for AI when you can have it for only a fraction of the cost hosted on a single GPU machine or the device itself? This is where Yacana can help you harness the power of LLMs whatever the size and achieve production-grade results.
+Yacana was built to make local LLMs great! It probably won't work with chatGPT and we don't intend on making this a priority. Yacana was created to get the best results from self-hosted open source LLMs and not frontier proprietary models. 
+Many companies cannot afford paid subscriptions to proprietary models or won't for privacy issues. Also, agentic frameworks tend to cost way more than simple user-chat interactions, generating cloud bills that could ruin a business. But why pay for AI when you can have it for only a fraction of the cost hosted on a single GPU machine or the device itself? This is where Yacana can help you harness the power of LLMs whatever the size and achieve production-grade results.  
 
 > What other good frameworks are out there?  
-* **CrewAI** is very simple to use but is terrible when dealing with local models. This is because most of the heavy lifting is left to the LLM and if chatGPT or any other proprietary frontier models can deal with complex prompting, local LLMs cannot. Can we expect the same performance from 8 Billion parameters proprietary models with over 1000 Billion parameters? it's impossible. That's why CrewAI doesn't do well with local LLMs and also. This means that it cannot call tools! And calling tool is the most useful functionality a framework should offer.  
+* **CrewAI** is very simple to use but is terrible when dealing with local models. This is because most of the heavy lifting is left to the LLM and if proprietary models can deal with complex prompting, local LLMs cannot. Can we expect the same performance from 8 Billion parameters LLM than proprietary LLMs with over 1000 Billion parameters? It's impossible. That's why CrewAI doesn't do well with local LLMs. It was built for frontier LLMs and nothing else. Also, it cannot call tools correctly! And calling tools is the most useful functionality a framework should offer.  
 
-➡️**Why would Yacana be better suited ?** We loved how easy creating agents in CrewAI was. So when building Yacana it was clear to us that it needed the same level of simplicity. Learning to program with Yacana is very easy and only takes a few minutes. Also, the tool-calling feature was of paramount importance. That's why we worked on making Yacana's tool-calling ability so good that even tiny LLMs like Phi can call tools with almost a 100% chance of success.
+➡️**Why would Yacana be better suited ?** We love how easy creating agents in CrewAI is. So when building Yacana it was clear to us that it needed the same level of simplicity. Learning to program with Yacana is very easy and only takes a few minutes to get up and running. Also, the tool-calling feature was of paramount importance. That's why we worked on making Yacana's tool-calling ability so good that even tiny LLMs like Phi can call tools with almost a 100% chance of success. This makes Yacana one of the best frameworks for IoT.  
 
-* **LangGraph** is one of the best tools of 2024 to work with local models. It allows to creation of complex workflows that guide the LLM along a specific route to achieve a specific result. The problem with langGraph is its learning curve that is far above many developers and the spotty documentation doesn't help. It does allow tool calling but only with models that support function calling natively. Learning LangGraph has a one in three chance to give you a burnout. Also, the graph definition, besides being a great conceptual idea, is poorly implemented (IMHO) and the fact that they introduced a web UI to control the framework seems like an admission of failure (even though the UI looks great). But as a developer, I don't want to rely on yet another tool.
+* **LangGraph** is one of the best tools of 2024 to work with local LLMs. It helps create complex workflows that guide the LLM along a specific route to achieve specific results. The problem with langGraph is its learning curve, far above what many developers can sustain. Also, the spotty documentation doesn't help... It does allow tool calling but only with models that support function calling natively. Learning LangGraph has a one in three chance to give you a burnout. On top of that, the graph definition, besides being a great conceptual idea, is poorly implemented (IMHO) and the fact they introduced a web UI to help control the framework seems like an admission of failure (even though the UI looks great). But as a developer, I don't want to rely on yet another tool.  
 
-➡️**Why would Yacana be better suited?** The LangGraph nodes system that guides LLMs in a graph is great and is the reason why it succeeds with local LLMs. Knowing this we build Yacana with the same concept. But instead of having a complex graph system Yacana provides a classic programming interface in Python that can be leveraged by any developers regardless of their level of expertise. No burnouts here. So, Yacana provides its own way to chain Tasks and achieve a computable result in the end that can be used in classic programming products. This makes Yacana a production-ready tool that can be easily integrated with any software.
+➡️**Why would Yacana be better suited?** The LangGraph nodes system that guides LLMs in a graph is great and is the reason why it succeeds with local LLMs. Knowing this we build Yacana with the same concept. But instead of having a complex graph system where each interaction is hardcoded, Yacana provides a classic programming interface in Python that can be leveraged by any developer regardless of their level of expertise. No burnouts here! Yacana provides its own way to chain Tasks and achieve a computable result that can be integrated into "classic" programming production-ready products.  
 
-**In summary...** Yacana took the simplicity of CrewAI, and its capability to have multi-agent chats but followed the LangGraph principle of guidance using a dedicated Task system that guarantees a computable result at the end of the workflow. Also, Yacana is the only Framework proposing a tool-calling system with a high success rate.  
-Also, it's free and open source (MIT) forever. It is made by the community, for the community.  
+**In short...** Yacana took the simplicity of CrewAI, and its capability to have multi-agent chats but followed the LangGraph principle of guidance using a dedicated Task system that guarantees a computable result at the end of the workflow. Also, Yacana is the only Framework proposing a tool-calling system with a high success rate.  
+Moreover, it's free and open source (MIT) forever. It is made with love by the community, for the community.  
 
-**What's the catch ?** Well nothing really. But for transparency, you must understand that this version has only been tested with Ollama as an inference server. We know that you guys out there are also using other inference technologies like VLLM, etc. Yacana has not been tested with this type of tech... Yet! The next update will focus on making sure that performance when connected to something other than Ollama doesn't degrade in any way. Stay tuned. This will be addressed in the next few weeks. Also, note that we are not saying that it's not compatible with other inference servers. We're saying that we don't know yet. ^^
+**What's the catch ?** Well nothing really. However, you should acknowledge that the current version has only been tested with Ollama as inference server. We know that you guys out there are also using other inference technologies like VLLM, etc. Yacana has not been tested with this type of tech... Yet! The next update will focus on making sure that you get the same level of performance when connected to something other than Ollama. Stay tuned. This will be addressed in the next few weeks. Besides, we are not saying that it's not compatible with other inference servers. We're saying that we don't know, yet. ^^  
 
 # Quickstart
 
@@ -36,13 +40,13 @@ Also, it's free and open source (MIT) forever. It is made by the community, for 
 
 ![image](https://github.com/user-attachments/assets/f3c45d0e-efca-4853-8237-3e56d90e1747)
 
-As mentioned previously, the current version of Yacana has only been tested on Ollama. This will be sorted out in the next few weeks.  
-To work with Yacana you'll need an Ollama server. If your computer is performant enough you can use it to run LLMs directly on your machine. Ollama is a great inference server and the most simple to install. Click [here](https://ollama.com/download) to get the latest release.
-Ollama is:
+As mentioned previously, the currently released version of Yacana has only been tested on Ollama. This will be sorted out in the next few weeks.  
+To work with Yacana you'll need an Ollama server. If your computer is performant enough you can use it to run LLMs directly on your machine. Ollama is a great inference server and the most simple to install. Click [here](https://ollama.com/download) to get the latest release.  
+Ollama is:  
 * Compatible with all operating systems Windows/Max/Linux ;  
-* Gets installed using one command ;  
+* Installed in seconds using one command ;  
 * Has a great CLi that even a 4-year-old can use to download models ;  
-* Tons of tutorials out there if you run into any type of trouble ;
+* Has tons of tutorials out there if you run into any type of trouble ;
 
 ℹ️ You can connect Yacana to a remote Ollama instance. Read forward.  
 
@@ -59,11 +63,11 @@ For reference, if you don't know what LLM model to choose (we've all been there)
 
 ---
 
-If you have access to a GPU VM with A LOT of RAM then you should try the state of the art 'llama3.1:405b' model.
+If you have access to a GPU VM with A LOT of RAM then you should try the state-of-the-art 'llama3.1:405b' model. HF  
 
 ### Running the model
 
-When you have chosen your model it is time to use Ollama CLI to pull it on your computer. Simply do `ollama pull <model_name>`. The download will start immediately. When finished you can test the model locally by doing `ollama run <model_name>` which will start a conversation with the LLM.
+When you have chosen your model it is time to use Ollama CLI to pull it on your computer. Simply do `ollama pull <model_name>`. The download will start immediately. List installed models using `ollama list`. When ready, test the model locally by doing `ollama run <model_name>` which will start a conversation with the LLM.  
 
 ### Installing Yacana
 
@@ -73,24 +77,25 @@ pip3 install yacana
 
 ## II. Imports
 
-When using other frameworks 'import hell' quickly appears. To prevent this bothersome problem we propose that you import all of Yacana's modules and when finished developing let the IDE remove the unused imports. Unused imports generally appear grayed. Thus we recommend that you prepend these imports in all your files and clean them later. This way the IDE will have auto-completion available and will help you develop 10 times faster.
+When using other frameworks 'import hell' quickly appears. To prevent this bothersome problem we propose that you always import all of Yacana's modules and when finished developing let the IDE remove the unused imports. Unused imports generally appear grayed. Thus we recommend that you prepend these imports in all your files and clean them later. This way the IDE will have auto-completion available and will help you develop 10 times faster.  
 
 ## III. Creating your first Agent
 
 ### Initializing the Agent
+
 Now that you have an Ollama server running and Yacana installed let's create our first agent!  
 
 Create a Python file with this content:
 ```python
 agent1 = Agent("AI assistant", "llama3.1:8b", system_prompt="You are a helpful AI assistant", endpoint="http://127.0.0.1:11434")
 ```
-The Agent(...) class takes 2 mandatory parameters:
-1. **The agent name**: Choose something short about the agent's global focus
-2. **A model name**: The Ollama model that this Agent will use. You may have multiple Agents running different models. Some models are better suited for some specific jobs so it can be interesting to mix LLM models.
+The Agent(...) class takes 2 mandatory parameters:  
+1. **The agent name**: Choose something short about the agent's global focus  
+2. **A model name**: The Ollama model that this Agent will use. You may have multiple Agents running different models. Some models are better suited for some specific jobs so it can be interesting to mix LLM models. Use `ollama list` to list the models you have downloaded.  
 
 The Agent(...) class has many optional parameters that we will discover in this tutorial. Here we can see 2 of them:  
-1. **The system prompt**: Helps define the personality of the Agent.
-2. **The endpoint**: The URL of your Ollama instance. It points by default to your localhost and on the Ollama default port. If you are using Ollama on your computer you can remove this optional parameter and the default value will be used.
+1. **The system prompt**: Helps define the personality of the Agent.  
+2. **The endpoint**: The URL of your Ollama instance. It points by default to your localhost and on the Ollama default port. If you are using Ollama on your computer you can remove this optional parameter and the default value will be used.  
 
 ### Testing Yacana and Ollama's interaction
 
@@ -98,7 +103,7 @@ This framework is not meant for basic roleplay. However, for people starting the
 ```python
 agent1.simple_chat()
 ```
-When running this python file you should enter a chat with the LLM. The Agent keeps track of the history so that it can answer using past information.
+When running this python file you should enter a chat with the LLM. The Agent keeps track of the history so that it can answer using past information.  
 ```shell
 $ python3 simple_chat_demo.py
 ```
@@ -110,7 +115,7 @@ Hey! It's nice to meet you. Is there something I can help you with, or would you
 >
 ```
 
-Let's change the **system prompt** and have some fun!
+Let's change the **system prompt** and have some fun!  
 ```python
 agent1 = Agent("Pirate", "llama3:8b", system_prompt="You are a pirate", endpoint="http://127.0.0.1:11434")
 ```
@@ -132,7 +137,7 @@ agent1 = Agent("Pirate", "llama3:8b", system_prompt="You are a pirate", endpoint
 agent1.simple_chat()
 ```
 
-⚠️From now on we will not set the *endpoint* attribute anymore for clarity and will resort to the defaults. If your LLM is not served by Ollama or isn't on your localhost you should continue setting this value.
+⚠️From now on we will not set the *endpoint* attribute anymore for clarity and will resort to the defaults. If your LLM is not served by Ollama or isn't on your localhost you should continue setting this value.  
 
 ## IV. Creating Tasks
 
