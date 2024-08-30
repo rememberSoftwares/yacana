@@ -1820,7 +1820,7 @@ It utilizes the Task system that you already know and allows some Tasks to be wo
 ### Stopping chat using 'maximum iterations'
 
 We'll be using a new class called [GroupSolve]() @todo url. It takes a list of Tasks (at least two) and an [EndChat]() object.  
-1. The list of tasks will be the center of conversation for the LLM agents. The order in the list matters as the first task in the list will be the first to be evaluated and could be considered as the main task.
+1. The list of tasks will be the center of conversation for the LLM agents. The order in the list matters as the tasks will be solved in the same order.
 2. The EndChat object will allow you to configure when/how the conversation stops.
 3. The GroupSolve class uses a `.solve()` method like the Task themselves. So don't forget about it.
 
@@ -1839,11 +1839,13 @@ GroupSolve([task1, task2], EndChat(EndChatMode.MAX_ITERATIONS_ONLY)).solve()
 ```
 
 In the above code, we can see that the end of the chat condition is `EndChatMode.MAX_ITERATIONS_ONLY`. This means that both agents will exit the conversation after a predefined number of iterations. **By default set to 5**.  
+
 You can set the max iteration level in the EndChat object with the `max_iterations=10` parameter:    
 ```
+# Note the .solve()
 GroupSolve([task1, task2], EndChat(EndChatMode.MAX_ITERATIONS_ONLY, max_iterations=10)).solve()
 ```
-ℹ️ Don't forget the `.solve()`
+ℹ️ An "iteration" corresponds to the two agents having talked once. Also, note that each agent solves its initial Task and THEN enters the groupSolve. So even when setting the `max_iterations` to 1 you'll get 2 messages. The initial message of each Task and then one message from GroupSolve.  
 
 Output:
 ```
@@ -1915,17 +1917,17 @@ I won't show the full 5 iterations as it's useless. However, I'm sure you have o
 > Why do I get the logging twice ??
 
 Well... This is because of how the conversation pattern is implemented. Let me explain... Have you ever read the documentation for the Microsoft Autogen framework? If you have, I hope you're having a better time with Yacana than I did with Autogen. That said, the conversational patterns they show are a series of dual-agent conversations. And never did I understand the mess they did before Yacana came to life. The reason why they chain two-agent conversations is because LLMs have been trained to speak in alternation with a user. It's how all "instruct" models have been fine-tuned.   
-So to get the best performance out of the LLMs they chose to limit the number of participants to two. If more than two was ever needed then the context of the first conversation would be given to a new dual-chat with one of the agents remaining from the previous conversation (hence keeping the state from one conversation to the other). Then it goes on and on.  
+So to get the best performance out of the LLMs they chose to limit the number of participants to two. If more than two was ever needed then the context of the first conversation would be given to a new dual chat with one of the agents remaining from the previous conversation (hence keeping the state from one conversation to the other). Then it goes on and on.  
 ![image](https://github.com/user-attachments/assets/c8c4d958-2ffc-4eca-8d4a-aef576627572)
 *Source: Microsoft Autogen*  
 I honestly think that it's smart but is a stinking mess that lost many people. Worst, it's the simpler pattern they provide...   
 
-However, This two-chat-based conversations must still alternate between USER and ASSISTANT, so to make it work, each Agent thinks it's speaking to you (the human USER) even though it's speaking to the other Agent (ASSISTANT) instead.  
-Yacana does not do things exactly in the same way but is bound to the same limitations. Two agents' chats give the best results so the alternation between USER and ASSISTANT must also be achieved! This is why you are seeing duplicated logs in the de INFO logging system. **It's the answer of one agent being used as a prompt for the other one.**
+Yacana does not do things exactly in the same way but is bound to the same limitations. We must alternate between USER and ASSISTANT!  
+To achieve this we take the output of the Agent1 and give it as prompt to Agent2. Then the answer of Agent2 is given back as prompt to Agent1 and round it goes! This is the reason you are seeing each log twice. **It's the answer of one agent being used as a prompt for the other one.**  
 
 ### Letting Agents in charge of ending the chat
 
-The [EndChatMode]() @todo url enum provides multiple ways to stop a chat. These are the available values:
+The [EndChatMode]() @todo url enum provides multiple ways to stop a chat. These are the available values:  
 | Mode              | Needs Task annotation | Description |
 | :---------------- | :------: | :----- |
 | MAX_ITERATIONS_ONLY | False  | Chat ends when we reach the maximum number of rounds. *Defaults to 5.* |
@@ -2068,7 +2070,13 @@ Right after this answer, the chat ended because of the `END_CHAT_AFTER_FIRST_COM
 
 In summary, the conversation looks like this:
 
-![GS3B](https://github.com/user-attachments/assets/2fde0c79-1a03-492d-8d9d-94e2b628e2bc)
+![GS4B](https://github.com/user-attachments/assets/5ee88012-659d-4af1-87e3-0ea7dd1b31c2)
+
+* **Message 1 & 2**: Result of the solo Task that precedes the GroupSolve  
+* **Message 3 & 4**: Are called "init messages". They are the prompt set in the two Tasks of GroupSolve. Agent1 does not see the answer of Agent2 (4) and Agent2 does not see the answer of Agent1 (4).  
+* **Message 5**: This is a shift message. You will learn about them later. For now, just acknowledge that you can configure this message in either Agent and that in this case, it spoils the secret to Agent2 which is bad luck. The shift message can be set to some hardcoded string if you want. You'll see that later.  
+* **Message 6**: History is now synced. All messages beyond this point will be shared with both agents.  
+* **Message 7**: This is the response of Agent1's input. It says that the game is won hence terminating the chat. There is no message 7 for Agent2 because message 6 was already an output and as the game finishes it won't take Agent's 1 answer as prompt.  
 
 ℹ️ You will learn what is a shift message later on and how it can be improved. 
 
