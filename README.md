@@ -1093,20 +1093,65 @@ Allowing the LLM to call a tool is the most important thing an agent can do! But
 
 For instance, let's say you want a calculator powered by an LLM. You cannot rely on the LLM doing the math because even though it knows how to decompose equations to an extent and basic arithmetics, it will fail on more advanced calculous. Therefore we do not expect the LLM to perform the operation itself. We already have the CPU to do this task perfectly. On the other hand, we expect the LLM to decompose correctly the equation and call tools for each arithmetic operation needed to get the result.  
 
-#### In what way is Yacana different than other frameworks ?
+#### In what way is Yacana different than other frameworks?
 
-Other frameworks assign their tools to the agent during it's initialisation. This creates a hard link between the tools and the agents. In our opinion, this implementation tends to confuse the agent because it's getting access to many tools which may not be relevant to the immediate task it is given. In Yacana tools are only available at the Task level. Thus no noise is generated before having to solve a particluar task. The tool is made available to the LLM only when it's needed and not before. Also the Agent doesn't keep the memory of having used the tool so it wont be tempted to use it elsewhere, where it would not have been appropriate.  
+Other frameworks assign their tools to the agent during its initialization. This creates a hard link between the tools and the agents. In our opinion, this implementation tends to confuse the agent because it's getting access to many tools that may not be relevant to the immediate task it is given. In Yacana tools are only available at the Task level. Thus no noise is generated before having to solve a particular task. The tool is made available to the LLM only when it's needed and not before. Also, the Agent doesn't keep the memory of having used the tool so it won't be tempted to use it elsewhere, where it would not have been appropriate.  
 
 #### Understanding the underlying mechanism of tool calling in LLMs
 
 As an aside for those interested...
 
-If you don't understand how a text to text neural network can call a python function let me tell you: It doesn't.  
-When we refer to *tool calling* we also refer to *function calling* which is very poorly named. Function calling is the ability of an inference server to make the LLM output the text in a particular format. As of today only JSON is supported but there is no doubt that more formats will be available soon.  
-However, now that we have the ability to control how the LLM answers, we can parse a JSON that we know the structure. Therefore we can ask the LLM for a JSON that matches the prototype of a python function. For instance the name and parameters value.  
-Some LLMs have been trained to ouput JSON in a particular way that matches a particular JSON structure. This particular JSON structure is becoming a convention and was pushed by big AI players likes OpenAI.  
-Unfortunatly, the size and complexity of this JSON doesn't work very well with our dumb 8B LLMs. A problem that ChatGPT, claude, Grok and other smart LLMs don't have.  
-To overcome this particular issue, Yacana comes with it's own JSON to call python functions. It's way lighter than the OpenAI standard and Yacana uses [percussive maintenance]() @todo url to force the model to output the JSON in a way that the tool expects.  
+If you don't understand how a text-to-text neural network can call a Python function let me tell you: It doesn't.  
+When we refer to *tool calling* we also refer to *function calling* which is very poorly named. Function calling is the ability of an inference server to make the LLM output the text in a particular format. As of today, only JSON is supported but there is no doubt that more formats will be available soon.  
+However, now that we can control how the LLM answers, we can parse a JSON that we know the structure. Therefore we can ask the LLM for a JSON that matches the prototype of a Python function. For instance the name and parameter value.  
+Some LLMs have been trained to output JSON in a particular way that matches a particular JSON structure. This particular JSON structure is becoming a convention and was pushed by big AI players like OpenAI.  
+Unfortunately, the size and complexity of this JSON doesn't work very well with our dumb 8B LLMs. This a problem that ChatGPT, Claude, Grok and other smart LLMs don't have.  
+To overcome this particular issue, Yacana comes with its own JSON to call Python functions. It's way lighter than the OpenAI standard and Yacana uses [percussive maintenance]() @todo url to force the model to output the JSON in a way that the tool expects.  
+
+#### How to write a prompt for a tool?
+
+The title spoils one of the most important things about tool calling in Yacana.  
+**The prompt is to guide the LLM on how to use the tool and not what to do with the tool result!**
+It is of the utmost importance that you understand this concept. This implies that you will have to create a second Task to deal with the output of the first one.
+
+This is a step-by-step of the internal mechanism:
+1. The Task is asked to be solved ;
+2. There is a Tool assigned, so the Agent must use it ;
+3. Yacana provides examples of how the tool is used ;
+4. Giving the initial Task prompt to the Agent ;
+5. The agent decides what values to send the Tool based on the prompt and previous History ;
+6. The Tool is called with the previously mentioned parameters ;
+7. The tool returns a value ;
+8. The tool's value is the final output of the Task
+
+As you can see, nothing was made with the tool result itself. This means that the tool return value must carry all the necessary information that a next Task can work with.
+
+Example of a **bad** prompt with a Tool that gets the current weather of a city:
+* Task(f"I give you the following city: '{city}'. Get the current weather there and output 'sunny' if there is some sun else say 'rainy'", some_agent, tools=[get_weather])
+=> You'll never get the output 'sunny' or 'rainy'. The result of this Task will be the result of the Tool output. The prompt only served the Agent to know what city to give to the tool.
+ℹ️ In some next update we might add a "post tool prompt" so that you get a way to control the output of the task once the tool has answered.
+
+To fix the above scenario you have two options
+
+1. Split the Task in two:
+* Task(f"I give you the following city: '{city}'. Get the current weather there.", some_agent, tools=[get_weather])
+* Task(f"Output 'sunny' if there is some sun else say 'rainy'", some_agent)
+
+Splitting the tasks into two allows the second Task to work on the output of the first one (the tool output)
+
+2. Make the tool do the work:
+* Let's write a pseudo code get_weather tool
+```python
+def get_weather(city: str) -> str:
+  some_json = curl weather.com?city=$city
+  if some_json["sun_level_percent"] > 50:
+     return "sunny"
+  else:
+     return "rainy"
+```
+
+This tool would return either "sunny" or "rainy" based on the output of some fake weather API. **However**, the prompt is still bad. The part *" output 'sunny' if there is some sun else say 'rainy'"* is still useless
+
 
 ### Calling a tool
 
@@ -1253,22 +1298,22 @@ Output the tool 'Adder' as valid JSON.
 4
 ```
 
-It worked !
-ℹ️ Note that the multiu-shot prompt are not shown in the info logs. This is because no actual request is made to the LLM they are appended to the Hystory() like show in the multi-shot example. However, if you do a `agent1.history.pretty_print()` at the end you'll see both examples given to the LLM as history context.  
+It worked!
+ℹ️ Note that the multi-shot prompts are not shown in the info logs. This is because no actual request is made to the LLM they are appended to the History() like shown in the multi-shot example. However, if you do a `agent1.history.pretty_print()` at the end you'll see both examples given to the LLM as history context.  
 
 Seeing in the examples that the tool needed integers in input, it called the tool with the correct types therefore the adder tool returned `4` as it was expected. Houra.  
 
-⚠️ Do not abuse of this technic as it tends to create noise. Trying to manage too many hypothetical use cases might, in the end, degrade performances.  
+⚠️ Do not abuse this technic as it tends to create noise. Trying to manage too many hypothetical use cases might, in the end, degrade performances.  
 
-#### Tool validation
+#### Adding validation inside the Tool
 
-The previous trick is good to nudge the LLM into the right direction. But it's not the best way to get accurate results. The technic presented here is by far more effective and should be prefered over the previous one.  
+The previous trick is good to nudge the LLM in the right direction. But it's not the best way to get accurate results. The technique presented here is by far more effective and should be preferred over the previous one.  
 
-As LLM are not deterministic we can never assure what will be given to our tool. Therefore, you should look at a tool like you would a web server route. I'm talking here of server side validation. Your tool must check that what is given to it is valid and raise an error if not.  
+As LLM are not deterministic we can never assure what will be given to our tool. Therefore, you should look at a tool like you would a web server route. I'm talking here of server-side validation. Your tool must check that what is given to it is valid and raise an error if not.  
 
-This means adding heavy checks on our tool. Thus, when the LLM sends an incorrect value an error will be raised. But not any error ! Specificaly a ToolError(...). This exception will be catch by Yacana which will instruct the LLM that something bad happened while calling the tool. This also means that you must give precise error messages in the exception because the LLM will try to change his tool calling based on this message.  
+This means adding heavy checks on our tool. Thus, when the LLM sends an incorrect value an error will be raised. But not any error! Specifically a ToolError(...). This exception will be caught by Yacana which will instruct the LLM that something bad happened while calling the tool. This also means that you must give precise error messages in the exception because the LLM will try to change his tool calling based on this message.  
 
-Let's upgrade our adder tool !
+Let's upgrade our adder tool!
 ```python
     # Adding type validation
     if not (isinstance(first_number, int)):
@@ -2449,7 +2494,26 @@ Please confirm before I proceed with the next set of additions!
 
 ### Using tools inside GroupSolve
 
-As GroupSolve uses the common Task class, this means that tools are also available while agents are chatting.  
+#### Description
+
+GroupSolve uses the common Task class. This means that Tools are also available while agents are chatting. However, the given prompt will be used to guide the LLM on how to use the tool but NOT what to do after the tool has returned a value.  
+This is an important concept because it means that the task's prompt will not be part of the conversation but the tool output will. Meaning that your tools must always return some computable knowledge that will be used by the other agent! 
+
+#### How it works ?
+
+A Task inside a GroupSolve() is called in a loop. The tool call goes like this:
+1. The Task is asked to be solved ;
+2. There is a Tool assigned, so the Agent must use it ;
+3. Provide examples of how the tool is used
+4. Giving the initial task prompt set in the Task and ask the Agent what values to send the Tool based on this prompt and previous History
+5. The Tool is called with some parameters
+6. Tool returns a value
+7. The tool's value is the answer from the Task
+As you can see, nothing was made of the tool result. This means that the tool return must carry all the necessary value so that the other agent can do something with it.
+
+If you like diagrams, this is how it looks:
+
+
 
 Let's play a new game:  
 The first agent will think of a number. The second agent will try to guess it based on indications like "higher" or "lower" given by the first agent.  
