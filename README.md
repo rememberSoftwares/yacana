@@ -2580,7 +2580,7 @@ Using general, meaningless prompts as shift messages is good as it won't disturb
 Adding the shift message to Agent1 instead of Agent2 (default) would look like this:  
 
 ```python
-GroupSolve([task1, task2], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION), shift_owner=task1).solve()
+GroupSolve([task1, task2], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION), shift_message_owner=task1).solve()
 ```
 
 The diagram now looks like this:  
