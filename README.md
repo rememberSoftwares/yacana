@@ -143,7 +143,7 @@ agent1.simple_chat()
 
 ### Introduction example
 
-The whole concept of the framework lies here. If you understand this following section then you have mastered 80% of Yacana's building principle. Like in LangGraph, where you create nodes that you link together, Yacana has a Task() class which takes as arguments a task to solve. There are no hardcoded links between the Tasks so it's easy to refactor and move things around. The important concept to grasp here is that through these Task() classes you will give instructions to the LLM in a way that the result must be a computable result. So instructions must be clear and the prompt to use must reflect that. It's a Task, it's a job, it's something that needs solving but written like it is given as an order! Let's see some examples :
+The whole concept of the framework lies here. If you understand this following section then you have mastered 80% of Yacana's building principle. Like in LangGraph, where you create nodes that you link together, Yacana has a Task() class which takes as arguments a task to solve. There are no hardcoded links between the Tasks so it's easy to refactor and move things around. The important concept to grasp here is that through these Tasks you will give instructions to the LLM in a way that the result must be computable. meaning instructions must be clear and the prompt to use must reflect that. It's a Task, it's a job, it's something that needs solving but written like it is given as an order! Let's see some examples :
 
 ```python
 # First, let's make a basic AI agent
@@ -152,18 +152,18 @@ agent1 = Agent("AI assistant", "llama3:8b", system_prompt="You are a helpful AI 
 # Now we create a task and assign the agent1 to the task
 task1 = Task(f"Solve the equation 2 + 2 and output the result", agent1)
 
-# So that something actually happens you must call the .solve() method on your task
+# For something to happen, you must call the .solve() method on your task.
 task1.solve()
 ```
 
 What's happening above?  
-* First, we instantiated an Agent with the `llama3:8b` model. You might need to update that depending on what LLM you downloaded from Ollama ;
-* Second, we instantiated a Task ;
-* Third, we asked that the Task be solved ;
+* First, we instantiated an Agent with the `llama3:8b` model. You might need to update that depending on what LLM you downloaded from Ollama ;  
+* Second, we instantiated a Task ;  
+* Third, we asked that the Task be solved ;  
 
-ℹ️ For easing the learning curve the default logging level is INFO. It will show what is going on in Yacana. Note that not ALL intermediary prompts are shown.
+ℹ️ For easing the learning curve the default logging level is INFO. It will show what is going on in Yacana. Note that not ALL prompts are shown.  
 
-The output of execution should look like this:
+The output should look like this:  
 ```
 INFO: [PROMPT]: Solve the equation 2 + 2 and output the result
 
@@ -177,22 +177,22 @@ If your terminal is working normally you should see the task's prompts in green 
 ### About Task parameters
 
 The Task class takes 2 mandatory parameters:
-* The prompt: It is the task to be solved. Use imperative language, be precise, and ask for step-by-step thinking for complex Tasks and expected outputs if needed.
-* The Agent: The agent that will be assigned to this task. The agent will be in charge of solving the task.
+* The prompt: It is the task to be solved. Use imperative language, be precise, and ask for step-by-step thinking for complex Tasks and expected outputs if needed.  
+* The Agent: The agent that will be assigned to this task. The agent will be in charge of solving the task.  
 
-ℹ️ Many other parameters can be given to a Task. We will see some of them in the following sections of this tutorial. But you can check out the Task class documentation @todo URL
+ℹ️ Many other parameters can be given to a Task. We will see some of them in the following sections of this tutorial. But you can already check out the Task class documentation @todo URL
 
-### Do you see how disruptive this is compared to other frameworks?
+### In what way is this disruptive compared to other frameworks?
 
-In the above code snippet, we assigned the agent to the Task. So it's the Task that leads the direction that the AI takes. In most other frameworks it's the opposite, where you assign some work to an existing agent. This reversed way allows to have fined grained control on each resolution step as the LLM only follows bread crumb (the Tasks). The pattern will become even more obvious as we get to the Tool section of this tutorial. As you'll see the Tools are also assigned at the Task level and not to the Agent directly.  
+In the above code snippet, we assigned the agent to the Task. So it's the Task that leads the direction that the AI takes. In most other frameworks it's the opposite. You assign work to an existing agent. This reversed way allows to have fined grained control on each resolution step as the LLM only follows bread crumb (the tasks). The pattern will become even more obvious as we get to the Tool section of this tutorial. As you'll see the Tools are also assigned at the Task level and not to the Agent directly.  
 
-To compare with LangGraph, we indeed cannot make a call graph as we don't bind the Task together explicitly. However, Yacana's way gives more flexibility and allows a hierarchical programming way or scheduling the Task and keeping control of the flow. It also allows creating new Task dynamically if the need arises. You shall rely on your programming skills and good OOP to have a clean code and good Task ordering.
+To compare with LangGraph, we indeed cannot generate a call graph as an image because we don't bind the tasks together explicitly. However, Yacana's way gives more flexibility and allows a hierarchical programming way of scheduling the tasks and keeping control of the flow. It also allows creating new Task dynamically if the need arises. You shall rely on your programming skills and good OOP to have a clean code and good Task ordering. There aren't and will never be any pre-hardcoded interactions and no flat config. This is a framework for developers.  
 
 ### Getting the result of a Task
 
-Even though we get logs on the standard output of the terminal, we still need to extract the answer of the LLM that solved that Task to actually do something with it.  
-Getting the string message is quite easy as the .solve() method returns a Message() class.  
-Maybe you are thinking "Ho noo another class to deal with". Well, let me tell you that it's always better to have an OOP class than some semi-random Python dictionary where you'll forget what keys it contains. Also, the Message class is very straightforward. It exposes a `content` attribute. Modify the current code like this:
+Even though we get logs on the standard output of the terminal, we still need to extract the answer of the LLM that solved that Task in order to do something with it.    
+Getting the string message out of it is quite easy as the .solve() method returns a Message() @todo URL class.  
+Maybe you are thinking "Ho nooo, another class to deal with". Well, let me tell you that it's always better to have an OOP class than some semi-random Python dictionary where you'll forget what keys it contains in ten minutes. Also, the Message @todo url class is very straightforward. It exposes a `content` attribute. Modify the current code like this:  
 ```python
 # So that something actually happens you must call the .solve() method on your task
 my_message: Message = task1.solve()
@@ -202,24 +202,24 @@ print(f"The AI response to our task is : {my_message.content}")
 ```
 There you go! Give it a try.
 
-ℹ️ Note that we used duck typing, which is postfixing all variables declaration with their type `my_message: Message`. Yacana's source code is entirely duck-typed so that your IDE always knows what type it's dealing with and proposes you with the best methods and arguments. We recommend that you do the same as  it's the industry's best standards.
+ℹ️ Note that we used duck typing, which is postfixing all variables declaration with their type `my_message: Message`. Yacana's source code is entirely duck-typed so that your IDE always knows what type it's dealing with and proposes the best methods and arguments. We recommend that you do the same as it's the industry's best standards.  
 
 ---
 
-Don't like having 100 lines of code for something simple? Then chain them all in one line!
+Don't like having 100 lines of code for something simple? Then chain them all in one line!  
 ```
 # First, let's make a basic AI agent
 agent1 = Agent("AI assistant", "llama3:8b", system_prompt="You are a helpful AI assistant")
 
-# Creating the task, solving it, extracting the result, printint the result
+# Creating the task, solving it, extracting the result and printing it all in one line
 print(f"The AI response to our task is: {Task(f'Solve the equation 2 + 2 and output the result', agent1).solve().content}")
 ```
-🤔 If I were you I would do the message extraction on one line and the print on a new one. Let's not one-line things that much 😅.
+🤔 However, if I were you I would do the message extraction on one line and the print on a new one. Let's not one-line things too much 😅.
 
 
 ### Chaining Tasks
 
-Chaining Tasks is nothing more than just calling a second Task with the same Agent. Agents keep track of the History of what they did (aka the Tasks they solved). So just call a second Task and assign the same Agent. For instance, let's multiply by 2 the result of the initial Task. Append this to our current script:
+Chaining Tasks is nothing more than just calling a second Task with the same Agent. Agents keep track of the History of what they did (aka, all the Tasks they solved). So just call a second Task and assign the same Agent. For instance, let's multiply by 2 the result of the initial Task. Append this to our current script:
 
 ```
 task2_result: str = Task(f'Multiply by 2 our previous result', agent1).solve().content
@@ -232,30 +232,30 @@ The AI response to our task is: If we multiply the previous result of 4 by 2, we
 8
 ```
 
-ℹ️ Without tools this only relies on the LLM's ability to do the maths and is dependent on its training.
+ℹ️ Without tools this only relies on the LLM's ability to do the maths and is dependent on its training.  
 
 ---
 
-See? The assigned Agent remembered that it had solved the task1 previously and used this information to solve the second task.  
-You can chain as many Tasks as you need. Also, you should create other Agents that don't have the knowledge of previous Task and make them do things based on the output of your first agent. You can build anything now!    
+See? The assigned Agent remembered that it had solved the Task1 previously and used this information to solve the second task.  
+You can chain as many Tasks as you need. Also, you should create other Agents that don't have the knowledge of previous tasks and make them do things based on the output of your first agent. You can build anything now!  
 
 ## V. Routing
 
-Other frameworks have the tendency to make abstractions for everything. Even things that don't need any. That's why I'll show you how to do routing with only what we have seen earlier. Yacana doesn't provide routing abstraction because there is no need to do so.  
+Other frameworks tend to make abstractions for everything. Even things that don't need any. That's why I'll show you how to do routing with only what we have seen earlier. Yacana doesn't provide routing abstraction because there is no need to do so.  
 
-But what is routing? Well, having LLMs solve a Task and then chaining many others in a sequence is good but to be efficient you have to create conditional workflows. In particular when using local LLMs that don't have the power to solve all Tasks with only one prompt. You have to create an AI workflow in advance that will go forward step by step and converge to some expected result. AI allows you to deal with some level of unknown but expecting that you can have a master brain (like in crewAI) that distributes Tasks to agents and achieves an expected result is IMPOSSIBLE with local LLMs. They are too dumb! Therefore they need you to help them along their path. This is why LangGraph works well with local LLMs and Yacana does too. You create a workflow and when conditions are met you switch from one branch to another that treats more specific cases, etc.
+But what is routing? Well, having LLMs solve a Task and then chaining many others in a sequence is good but to be efficient you have to create conditional workflows. In particular when using local LLMs that don't have the power to solve all Tasks with only one prompt. You must create an AI workflow in advance that will go forward step by step and converge to some expected result. AI allows you to deal with some level of unknown but you can't expect having a master brain (like in crewAI) that distributes tasks to agents and achieves an expected result. It's IMPOSSIBLE with local LLMs. They are too dumb! Therefore they need you to help them along their path. This is why LangGraph works well with local LLMs and Yacana does too. You create a workflow and when conditions are met you switch from one branch to another that treats more specific cases, etc.  
 
 ---
 
-The most common routing mechanic is "yes" / "no". Depending on the result your program can do different things next. Let's see an example:  
+The most common routing mechanic is "yes" / "no". Depending on the result, your program can do different things next. Let's see an example:  
 
 ```
 agent1 = Agent("AI assistant", "llama3:8b", system_prompt="You are a helpful AI assistant")
 
-# Let's invent a question about 'leaves'
+# Let's invent a question about 'plants'
 question: str = "Why do leaves fall in autumn ?"
 
-# Ask if the question is plant related, yes or no
+# Ask if the question is plant related: yes or no
 router_answer: str = Task(f"Is the following question about plants ? <question>{question}</question> Answer ONLY by 'yes' or 'no'.", agent1).solve().content
 
 if "yes" in router_answer.lower():
@@ -275,11 +275,11 @@ INFO: [AI_RESPONSE]: yes
 Question is about plants
 ```
 
-▶️ Many things are happening here. We didn't implement an abstraction to simplify things but the downside is that you must learn a few tricks:
-1. **Always compare with lower case string**: Because LLMs have their own mind they do not always answer a straight `yes`. Sometimes you get "Yes" or "No" or even full cap "YES" for no reason.
-2. **Always start by searching for "yes"**: We do a substring match using the `in` keyword of Python because the LLM doesn't always respect the instructions of outputting "ONLY 'yes' or 'no'". Sometimes you'll get "yes!" or "Great idea, I say yes". Substring match will match "yes" anywhere in the LLM answer. But what if you matched "no" first and the LLM generated "Not sure but I would say yes". Because we search for substrings the condition would match the "no" part of the word "Not" even though the LLM said yes. We could use regexe to fix this but it's easier to just start the condition by looking for "yes" as there are no English words that contains "yes" in the substring (at least no common ones ^^).
-3. **Push the model to respect the instruction**: Tell it to "answer ONLY with 'xx'". See the use of upper cap to "ONLY"? Also, the single quotes around the possible choices 'yes' | 'no' helps the LLM that sees them as delimiters.
-4. **Use formatting tags**: The question that is mentioned in the prompt is then given in custom `<question>` tags. LLMs love delimiters. This way the LLM knows when the question starts and when the question ends. This technique helps to differentiate your prompt and the dynamic part. You don't have to add tags everywhere but they can prove useful. Do not abuse them or the LLM might start using them in its response.
+▶️ Many things are happening here. We didn't implement an abstraction to simplify things but the downside is that you must learn a few tricks:  
+1. **Always compare with lower case string**: Because LLMs have their own mind they do not always answer a straight `yes`. Sometimes you get "Yes" or even full cap "YES" for no reason.  
+2. **Always start by searching for "yes"**: We do a substring match using the `in` keyword of Python because the LLM doesn't always respect the instructions of outputting "ONLY 'yes' or 'no'". Sometimes you'll get "yes!" or "Great idea, I say yes". Substring match will match "yes" anywhere in the LLM answer. But what if you matched "no" first and the LLM generated "Not sure but I would say yes". Because we search for substrings the condition would match the "no" part of the word "Not" even though the LLM said yes. We could use regexe to fix this but it's easier to just start the condition by looking for "yes" as there are no English words that contain "yes" in the substring (at least no common ones ^^).
+3. **Force the LLM to respect the instruction**: Tell it to "answer ONLY with 'xx'". See the use of the upper cap on "ONLY"? Also, the single quotes around the possible choices 'yes' and 'no' help the LLM that sees them as delimiters.  
+4. **Use formatting tags**: The question that is mentioned in the prompt is then given in custom `<question>` tags. LLMs love delimiters. This way the LLM knows when the question starts and when the question ends. This technique helps to differentiate your prompt and the dynamic part. You don't have to add tags everywhere but they can prove useful. Do not abuse them or the LLM might start using them in its response. Just keep this trick in mind.  
 
 ℹ️ This is all basic prompt engineering. If you wish to build an app with local models you will definitely have to learn those tricks. LLMs are unpredictable. It's why we built them.  
 
