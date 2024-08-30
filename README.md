@@ -1124,7 +1124,7 @@ This is a step-by-step of the internal mechanism:
 7. The tool returns a value ;
 8. The tool's value is the final output of the Task
 
-As you can see, nothing was made with the tool result itself. This means that the tool return value must carry all the necessary information that a next Task can work with.
+As you can see, nothing was made with the tool result itself. This means that the tool return value must carry all the necessary information so the next Task can work with it.
 
 Example of a **bad** prompt with a Tool that gets the current weather of a city:
 * Task(f"I give you the following city: '{city}'. Get the current weather there and output 'sunny' if there is some sun else say 'rainy'", some_agent, tools=[get_weather])
@@ -1150,7 +1150,8 @@ def get_weather(city: str) -> str:
      return "rainy"
 ```
 
-This tool would return either "sunny" or "rainy" based on the output of some fake weather API. **However**, the prompt is still bad. The part *" output 'sunny' if there is some sun else say 'rainy'"* is still useless
+This tool would return either "sunny" or "rainy" based on the output of some fake weather API. **However**, the prompt is still bad. The section "*output 'sunny' if there is some sun else say 'rainy'*" is still useless as it's the tool that will output this string. Not the LLM.  
+You should rewrite the prompt like this: "I give you the following city: '{city}'. Get the current weather there."
 
 
 ### Calling a tool
@@ -1211,7 +1212,7 @@ In that case, I will extract each parameter and use it as a JSON key. For the `a
 
 Please let me know what's next!
 
-INFO: [PROMPT]: You have a task to solve. Use the tool at your disposition to solve the task by outputing as JSON the correct arguments. In return you will get an answer from the tool. The task is:
+INFO: [PROMPT]: You have a task to solve. Use the tool at your disposition to solve the task by outputting as JSON the correct arguments. In return you will get an answer from the tool. The task is:
 What's 2+2 ?
 
 INFO: [AI_RESPONSE]: {"first_number": "2", "second_number": "2"}
@@ -1224,8 +1225,8 @@ Equation result = 22
 
 What you are seeing here is Yacana doing its magic to make the LLM call the tool.  
 
-Unfortunatly, even though the tool is indeed called, getting a correct result failed spectacularly ! ^^  
-Is `2 + 2 = 22` ? No, I don't think so. Can you find out what went wrong?
+Unfortunatly, even though the tool is indeed called, getting a correct result failed spectacularly! ^^  
+Is `2 + 2 = 22`? No, I don't think so. Can you find out what went wrong?
 
 ---
 
@@ -2496,29 +2497,15 @@ Please confirm before I proceed with the next set of additions!
 
 #### Description
 
-GroupSolve uses the common Task class. This means that Tools are also available while agents are chatting. However, the given prompt will be used to guide the LLM on how to use the tool but NOT what to do after the tool has returned a value.  
-This is an important concept because it means that the task's prompt will not be part of the conversation but the tool output will. Meaning that your tools must always return some computable knowledge that will be used by the other agent! 
+GroupSolve uses the common Task class. This means that Tools are also available while agents are chatting. However, tools work the same way as described in the tool section @todo URL. Meaning that the Task's prompt will only be used to trigger the prompt but will not be used to act don't result of the tool. You need the other agent for that.  
+This is an important concept because it means that the task's prompt will not be part of the conversation but the tool output will. Meaning that your tools must always return some computable knowledge that will be used by the second agent! 
 
-#### How it works ?
+#### Tool use in GroupSolve
 
-A Task inside a GroupSolve() is called in a loop. The tool call goes like this:
-1. The Task is asked to be solved ;
-2. There is a Tool assigned, so the Agent must use it ;
-3. Provide examples of how the tool is used
-4. Giving the initial task prompt set in the Task and ask the Agent what values to send the Tool based on this prompt and previous History
-5. The Tool is called with some parameters
-6. Tool returns a value
-7. The tool's value is the answer from the Task
-As you can see, nothing was made of the tool result. This means that the tool return must carry all the necessary value so that the other agent can do something with it.
+Let's play a new game, without tools first:  
+* The first agent will think of a number. The second agent will try to guess it based on indications like "higher" or "lower" given by the first agent.  
+* The conversation ends when the second agent finds the correct number and wins the game!  
 
-If you like diagrams, this is how it looks:
-
-
-
-Let's play a new game:  
-The first agent will think of a number. The second agent will try to guess it based on indications like "higher" or "lower" given by the first agent.  
-The conversation ends when the second agent finds the correct number and wins the game!  
-ℹ️ No tools for now.  
 ```python
 # Creating our two players
 agent1 = Agent("Player 1", "llama3:8b")
@@ -2698,32 +2685,36 @@ In the end:
 
 No, it didn't !? The initial secret number was 14! Not 13...  
 
-There are two main issues here:
+There are two issues here:
 * The first one is that the LLM in use, which is Llama3.0, sucks at maths and cannot compare numbers accurately! This is a common issue even with frontier models sometimes. So the game breaks very quickly.
 * The second issue is that the secret number is available to the other agent because of the shift message!
-  * The shift message being the output of the Game Master, it spoils the secret number!
+  * The shift message being the output of the Game Master, it spoils the secret number! (bummer)
 
 To fix those issues:
-* Use a tool and don't let the LLM compare numbers. Let the CPU deal with that!
-* Either switch the shift message or set it manually so that it doesn't spoil the secret number to the player.
-* Maybe even better than switching the shift message: Create a Task beforehand that generates the secret number and after that, enter the GroupSolve() (We're going with that solution!)
+* Use a tool and don't let the LLM compare numbers itself. Let the CPU deal with that!
+* Either switch the shift message to the other agent or set it manually so that it doesn't spoil the secret number to the player.
+* Maybe even better than switching the shift message: Create a Task beforehand that generates the secret number and after that, enter the GroupSolve() (We're going with that solution here but have fun toying with the examples!)
 
 
 ```python
 # Creating our tool with type checking and 3 conditional returns
 def high_low(secret_number: int, guessed_number: int) -> str:
     print(f"Tool is called with {secret_number} / {guessed_number}")
+
+    # Validation
     if not (isinstance(secret_number, int)):
         raise ToolError("Parameter 'initial_number' expected a type integer")
     if not (isinstance(guessed_number, int)):
         raise ToolError("Parameter 'guessed_number' expected a type integer")
 
+    # Tool logic and answering
     if secret_number > guessed_number:
         return "The secret number is higher than the guessed number. // (tool)"
     elif secret_number < guessed_number:
         return "The secret number is lower than the guessed number. // (tool)"
     else:
         return "The secret number is equal to the guessed number. You won ! // (tool)"
+
 
 # Creating our two Agents
 player = Agent("Player", "llama3:8b")
@@ -2735,11 +2726,11 @@ high_low_tool = Tool("high_low", "Compares 2 numbers and returns a description o
 # Solo Task to create the secret number before entering GroupSolve()
 Task("Your task is to generate a secret random number between 1 and 20. Output the number just this once.", game_master).solve()
 
-# Creating our two Tasks
-# The player Task is in charge of ending the chat when it wins
+# Creating our two Tasks for GroupSolve
+# The player Task is in charge of ending the chat when it wins  (because of `llm_stops_by_itself=True`)
 player_task = Task("Your task is to guess a number between 1 and 20. You will receive feedback after each guess: either 'lower,' 'higher,' or 'You won!' Adjust your guess based on this feedback. You must propose only one number at a time. Continue guessing until you receive confirmation that you have guessed correctly and the game is won. Your objective is fulfilled when you won the game.", player, llm_stops_by_itself=True)
 
-# The Game master Task will call the tool and return the output as feedback to the player 
+# The Game Master Task will call the tool and return the output as feedback to the player 
 game_master_task = Task("A player will try to guess the number you generated. Respond to the guesses you receive with one of the following:\n* If the guess is higher than your number, say 'lower.'\n* If the guess is lower than your number, say 'higher.'\n* If the guess matches your number, say 'You won!' and end the game.\nDo not provide any other feedback or responses, and only play one round. To help you compare the numbers you have acces to a tool that describes the relation between your initial number and the guessed number", game_master, tools=[high_low_tool])
 
 print("################Starting GroupSolve#################")
@@ -2753,13 +2744,9 @@ game_master.history.pretty_print()
 ```
 
 > How is tool calling mixed with GroupSolve()?
+> Each time the Game Master Task is brought up. The tool will be called with both secret and guessed numbers. It will return some computable information describing the relation between the two numbers. A string that is inevitably right as it comes from 'classic' programming and not the LLM.
 
-When the task containing the Tool is solved the tool is automatically called at the start of the Task.
-ℹ️ You can set the tool as `optional=True` or any available parameters you wish for.
-The tool will then be called during each iteration. The Task the tool gets will be the output of the other agent. Note that this may lead to strange results sometimes...
-🚨**The most important information is that the final output of the Task will be the tool output !**
-
-<insert tool diagram>
+ℹ️ All Tools options are available so you could set `optional=True` if you wish.  
 
 Output:
 ```
@@ -2922,6 +2909,17 @@ Output the tool 'high_low' as valid JSON.
 The secret number is equal to the guessed number. You won ! // (tool)
 ```
 
+It worked! `The secret random number is: **14**`  
+
+Tool calls:  
+* {"secret_number": 14, "guessed_number": 20}
+* {"secret_number": 14, "guessed_number": 11}
+* {"secret_number": 14, "guessed_number": 17}
+* {"secret_number": 14, "guessed_number": 16}
+* {"secret_number": 14,  "guessed_number": 15}
+* {"secret_number": 14,  "guessed_number": 14}
+
+Last tool output: `The secret number is equal to the guessed number. You won ! // (tool)`
 
 
 ## X. Chat between many Agents
