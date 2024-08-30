@@ -2961,3 +2961,6 @@ Last tool output: `The secret number is equal to the guessed number. You won ! /
 
 
 ## X. Chat between many Agents
+
+Yacana provides a way to make more than two agents speak one after the other. Better yet, there is no limit to the number of agents that you can add. However, note that the dual conversation pattern should be the one giving the best results as LLM were trained to speak to one user. Not be part of a multi user conversation.  
+Still, the functionality is here for you to use.
