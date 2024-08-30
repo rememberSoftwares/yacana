@@ -1111,10 +1111,10 @@ To overcome this particular issue, Yacana comes with its own JSON to call Python
 #### How to write a prompt for a tool?
 
 The title spoils one of the most important things about tool calling in Yacana.  
-**The prompt is to guide the LLM on how to use the tool and not what to do with the tool result!**
-It is of the utmost importance that you understand this concept. This implies that you will have to create a second Task to deal with the output of the first one.
+**The prompt is to guide the LLM on how to use the tool and not what to do with the tool result!**  
+It is of the utmost importance that you understand this concept. This implies that you will have to create a second Task to deal with the output of the first one.  
 
-This is a step-by-step of the internal mechanism:
+This is a step-by-step of the internal mechanism:  
 1. The Task is asked to be solved ;
 2. There is a Tool assigned, so the Agent must use it ;
 3. Yacana provides examples of how the tool is used ;
@@ -1126,32 +1126,70 @@ This is a step-by-step of the internal mechanism:
 
 As you can see, nothing was made with the tool result itself. This means that the tool return value must carry all the necessary information so the next Task can work with it.
 
-Example of a **bad** prompt with a Tool that gets the current weather of a city:
-* Task(f"I give you the following city: '{city}'. Get the current weather there and output 'sunny' if there is some sun else say 'rainy'", some_agent, tools=[get_weather])
-=> You'll never get the output 'sunny' or 'rainy'. The result of this Task will be the result of the Tool output. The prompt only served the Agent to know what city to give to the tool.
-ℹ️ In some next update we might add a "post tool prompt" so that you get a way to control the output of the task once the tool has answered.
+Example of a **bad** prompt with a Tool that gets the current weather of a city:  
+* `Task(f"I give you the following city: '{city}'. Get the current weather there and output 'So much sun !' if there is some sun else say 'So  much rain !'", some_agent, tools=[get_weather_tool]).solve()` 
+=> You'll never get the output 'sunny' or 'rainy'. The result of this Task will be the result of the Tool output. The prompt only served the Agent to know what city to give to the tool.  
 
-To fix the above scenario you have two options
+ℹ️ In some next update we might add a "post tool prompt" so that you get a way to control the output of the task once the tool has answered.  
 
-1. Split the Task in two:
-* Task(f"I give you the following city: '{city}'. Get the current weather there.", some_agent, tools=[get_weather])
-* Task(f"Output 'sunny' if there is some sun else say 'rainy'", some_agent)
+To fix the above scenario you have two options:  
 
-Splitting the tasks into two allows the second Task to work on the output of the first one (the tool output)
+1. Split the Task in two:  
+* `Task(f"I give you the following city: '{city}'. Get the current weather there.", some_agent, tools=[get_weather_tool]).solve()`  
+* `Task(f"Output 'So much sun !' if there is some sun else say 'So  much rain !'", some_agent).solve()`  
+Splitting the tasks into two allows the second Task to work on the output of the first one (the tool output)  
 
-2. Make the tool do the work:
+2. Make the tool do the work:  
 * Let's write a pseudo code get_weather tool
 ```python
 def get_weather(city: str) -> str:
-  some_json = curl weather.com?city=$city
-  if some_json["sun_level_percent"] > 50:
-     return "sunny"
-  else:
-     return "rainy"
+    some_json = curl weather.com?city=$city
+    if some_json["sun_level_percent"] > 50:
+      return "So much sun !"
+    else:
+      return "So much rain !"
 ```
 
-This tool would return either "sunny" or "rainy" based on the output of some fake weather API. **However**, the prompt is still bad. The section "*output 'sunny' if there is some sun else say 'rainy'*" is still useless as it's the tool that will output this string. Not the LLM.  
-You should rewrite the prompt like this: "I give you the following city: '{city}'. Get the current weather there."
+This tool would return either "So much sun !" or "So much rain !" based on the output of some fake weather API. **However**, the original prompt it's still bad! The section "*output 'sunny' if there is some sun else say 'rainy'*" of the initial *bad* prompt is still useless as it's the tool that will output this string. Not the LLM.  
+You should rewrite the prompt like this: "I give you the following city: '{city}'. Get the current weather there."  
+
+
+---
+
+The complete example for those who wish to test IRL. Though, we didn't even show a real tool example so this section should be optional!  
+
+Bad prompt:  
+```python
+agent1 = Agent("AI assistant", "llama3:8b")
+
+def get_weather(city: str) -> str:
+    return "Sunny"
+
+get_weather_tool = Tool("get_weather", "Returns the weather for a given city.", get_weather)
+
+Task(f"I give you the following city: LA. Get the current weather there and output 'So much sun !' if there is some sun else say 'So  much rain !'", agent1, tools=[get_weather_tool]).solve()
+
+print("--history--")
+agent1.history.pretty_print()
+```
+
+Good prompt:  
+```python
+agent1 = Agent("AI assistant", "llama3:8b")
+
+def get_weather(city: str) -> str:
+    return "Sunny"
+
+
+get_weather_tool = Tool("get_weather", "Returns the weather for a given city.", get_weather)
+
+Task(f"I give you the following city: LA. Get the current weather there.", agent1, tools=[get_weather_tool]).solve()
+Task(f"Output 'So much sun !' if there is some sun else say 'So  much rain !'", agent1).solve()
+
+print("--history--")
+agent1.history.pretty_print()
+```
+
 
 
 ### Calling a tool
