@@ -2966,6 +2966,345 @@ Last tool output: `The secret number is equal to the guessed number. You won ! /
 
 Yacana provides a way to make more than two agents speak one after the other. Better yet, there is no limit to the number of agents that you can add. However, note that the dual conversation pattern should be the one giving the best results as LLM were trained to speak to one user. Not be part of a multi-user conversation...  
 Still, the functionality is here for you to use!  
-To make this happen Yacana makes the Agents enter a role-play situation. It will heavily rely on the agent's name so be sure that each of them has a concise, yet meaningful, name/title. 
+To make this happen Yacana makes the Agents enter a role-play situation. It will heavily rely on the agent's name, so be sure that each of them has a concise, yet meaningful, name/title. 
 
+Let's play another dumb game where 3 players must output one letter each. The game is won when the fourth player (the game master) can make a valid 4-letter word from the previously outputted letters.  
+```python
+agent1 = Agent("James", "llama3:8b")
+agent2 = Agent("Emily", "llama3:8b")
+agent3 = Agent("Michael", "llama3:8b")
+game_master = Agent("Game master", "llama3:8b")
 
+task1 = Task("You play a game where each player must add ONE letter. The goal is to form an existing word of 4 letters long. You can only say one letter in each message.", agent1)
+task2 = Task("You play a game where each player must add ONE letter. The goal is to form an existing word of 4 letters long. You can only say one letter in each message.", agent2)
+task3 = Task("You play a game where each player must add ONE letter. The goal is to form an existing word of 4 letters long. You can only say one letter in each message.", agent3)
+game_master_task = Task("Your task is to check if the word created by the other players is composed of 4 letters. Your objective is complete when a valid 4 letter word is found.", game_master, llm_stops_by_itself=True)
+
+print("################Starting GroupSolve#################")
+GroupSolve([task1, task2, task3, game_master_task], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION)).solve()
+
+print("------ agent1 --------")
+agent1.history.pretty_print()
+
+print("------agent2----------")
+agent1.history.pretty_print()
+
+print("------agent3----------")
+agent1.history.pretty_print()
+
+print("------game_master----------")
+game_master.history.pretty_print()
+```
+
+Output:
+```
+################Starting GroupSolve#################
+
+INFO: [PROMPT][To: James]: [TaskManager]: James: this is your main task: `You play a game where each player must add ONE letter. The goal is to form an existing word of 4 letters long. You can only say one letter in each message.`
+
+INFO: [AI_RESPONSE][From: James]: [James]: T
+
+INFO: [PROMPT][To: Emily]: [TaskManager]: Emily: this is your main task: `You play a game where each player must add ONE letter. The goal is to form an existing word of 4 letters long. You can only say one letter in each message.`
+
+INFO: [AI_RESPONSE][From: Emily]: [Emily]: E
+
+INFO: [PROMPT][To: Michael]: [TaskManager]: Michael: this is your main task: `You play a game where each player must add ONE letter. The goal is to form an existing word of 4 letters long. You can only say one letter in each message.`
+
+INFO: [AI_RESPONSE][From: Michael]: [Michael]: H
+
+INFO: [PROMPT][To: Game master]: [TaskManager]: Game master: this is your main task: `Your task is to check if the word created by the other players is composed of 4 letters. Your objective is complete when a valid 4 letter word is found.`
+
+INFO: [AI_RESPONSE][From: Game master]: [Game master]: After analyzing the letters provided so far (T-E-H), I can see that they don't form a valid 4-letter word. The game continues!
+
+INFO: [PROMPT][To: Game master]: [TaskManager]: In your opinion, what objectives from your initial task have you NOT completed ?
+
+INFO: [AI_RESPONSE][From: Game master]: [Game master]: As the Game master, my only objective was to check if the word created by the other players is composed of 4 letters. Since I've checked and it's not a valid 4-letter word yet, my objective remains incomplete.
+
+INFO: [PROMPT][To: Game master]: To summarize in one word, did you still had some objectives to fulfill ? Answer ONLY by 'yes' or 'no'. Do not output anything else !
+
+INFO: [AI_RESPONSE][From: Game master]: yes
+
+INFO: [PROMPT][To: James]: [TaskManager]: James it's your turn to speak now.
+
+INFO: [AI_RESPONSE][From: James]: [James]: A
+
+INFO: [PROMPT][To: Emily]: [TaskManager]: Emily it's your turn to speak now.
+
+INFO: [AI_RESPONSE][From: Emily]: [Emily]: L
+
+INFO: [PROMPT][To: Michael]: [TaskManager]: Michael it's your turn to speak now.
+
+INFO: [AI_RESPONSE][From: Michael]: [Michael]: S
+
+INFO: [PROMPT][To: Game master]: [TaskManager]: Game master it's your turn to speak now.
+
+INFO: [AI_RESPONSE][From: Game master]: [Game master]: After analyzing the letters provided so far (T-E-H-A-L-S), I can see that they form a valid 4-letter word: HALE! Congratulations, the game is complete!
+
+INFO: [PROMPT][To: Game master]: [TaskManager]: In your opinion, what objectives from your initial task have you NOT completed ?
+
+INFO: [AI_RESPONSE][From: Game master]: [Game master]: Upon reviewing my original task, I realize that I was supposed to check if the word created by the other players is composed of 4 letters. However, since the game has been completed and a valid 4-letter word "HALE" has been formed, I can say that this objective has indeed been met. Therefore, in my opinion, I have NOT left any objectives from my initial task uncompleted.
+
+INFO: [PROMPT][To: Game master]: To summarize in one word, did you still had some objectives to fulfill ? Answer ONLY by 'yes' or 'no'. Do not output anything else !
+
+INFO: [AI_RESPONSE][From: Game master]: no
+------ agent1 --------
+[user]:
+[TaskManager]: You are entering a roleplay with multiple speakers where each one has his own objectives to fulfill. Each message must follow this syntax '[speaker_name]: message'.
+The other speakers are: [Emily],[Michael],[Game master].
+Your speaker name is [James].
+I will give you your task in the next message.
+
+[assistant]:
+[James]: Received and acknowledged. I'm ready to execute my tasks as James. Please proceed with my assignment.
+
+[user]:
+[TaskManager]: James: this is your main task: `You play a game where each player must add ONE letter. The goal is to form an existing word of 4 letters long. You can only say one letter in each message.`
+
+[assistant]:
+[James]: T
+
+[user]:
+[TaskManager]: Emily: this is your main task: `You play a game where each player must add ONE letter. The goal is to form an existing word of 4 letters long. You can only say one letter in each message.`
+
+[assistant]:
+[Emily]: E
+
+[user]:
+[TaskManager]: Michael: this is your main task: `You play a game where each player must add ONE letter. The goal is to form an existing word of 4 letters long. You can only say one letter in each message.`
+
+[assistant]:
+[Michael]: H
+
+[user]:
+[TaskManager]: Game master: this is your main task: `Your task is to check if the word created by the other players is composed of 4 letters. Your objective is complete when a valid 4 letter word is found.`
+
+[assistant]:
+[Game master]: After analyzing the letters provided so far (T-E-H), I can see that they don't form a valid 4-letter word. The game continues!
+
+[user]:
+[TaskManager]: James it's your turn to speak now.
+
+[assistant]:
+[James]: A
+
+[user]:
+[TaskManager]: Emily it's your turn to speak now.
+
+[assistant]:
+[Emily]: L
+
+[user]:
+[TaskManager]: Michael it's your turn to speak now.
+
+[assistant]:
+[Michael]: S
+
+[user]:
+[TaskManager]: Game master it's your turn to speak now.
+
+[assistant]:
+[Game master]: After analyzing the letters provided so far (T-E-H-A-L-S), I can see that they form a valid 4-letter word: HALE! Congratulations, the game is complete!
+
+------agent2----------
+[user]:
+[TaskManager]: You are entering a roleplay with multiple speakers where each one has his own objectives to fulfill. Each message must follow this syntax '[speaker_name]: message'.
+The other speakers are: [Emily],[Michael],[Game master].
+Your speaker name is [James].
+I will give you your task in the next message.
+
+[assistant]:
+[James]: Received and acknowledged. I'm ready to execute my tasks as James. Please proceed with my assignment.
+
+[user]:
+[TaskManager]: James: this is your main task: `You play a game where each player must add ONE letter. The goal is to form an existing word of 4 letters long. You can only say one letter in each message.`
+
+[assistant]:
+[James]: T
+
+[user]:
+[TaskManager]: Emily: this is your main task: `You play a game where each player must add ONE letter. The goal is to form an existing word of 4 letters long. You can only say one letter in each message.`
+
+[assistant]:
+[Emily]: E
+
+[user]:
+[TaskManager]: Michael: this is your main task: `You play a game where each player must add ONE letter. The goal is to form an existing word of 4 letters long. You can only say one letter in each message.`
+
+[assistant]:
+[Michael]: H
+
+[user]:
+[TaskManager]: Game master: this is your main task: `Your task is to check if the word created by the other players is composed of 4 letters. Your objective is complete when a valid 4 letter word is found.`
+
+[assistant]:
+[Game master]: After analyzing the letters provided so far (T-E-H), I can see that they don't form a valid 4-letter word. The game continues!
+
+[user]:
+[TaskManager]: James it's your turn to speak now.
+
+[assistant]:
+[James]: A
+
+[user]:
+[TaskManager]: Emily it's your turn to speak now.
+
+[assistant]:
+[Emily]: L
+
+[user]:
+[TaskManager]: Michael it's your turn to speak now.
+
+[assistant]:
+[Michael]: S
+
+[user]:
+[TaskManager]: Game master it's your turn to speak now.
+
+[assistant]:
+[Game master]: After analyzing the letters provided so far (T-E-H-A-L-S), I can see that they form a valid 4-letter word: HALE! Congratulations, the game is complete!
+
+------agent3----------
+[user]:
+[TaskManager]: You are entering a roleplay with multiple speakers where each one has his own objectives to fulfill. Each message must follow this syntax '[speaker_name]: message'.
+The other speakers are: [Emily],[Michael],[Game master].
+Your speaker name is [James].
+I will give you your task in the next message.
+
+[assistant]:
+[James]: Received and acknowledged. I'm ready to execute my tasks as James. Please proceed with my assignment.
+
+[user]:
+[TaskManager]: James: this is your main task: `You play a game where each player must add ONE letter. The goal is to form an existing word of 4 letters long. You can only say one letter in each message.`
+
+[assistant]:
+[James]: T
+
+[user]:
+[TaskManager]: Emily: this is your main task: `You play a game where each player must add ONE letter. The goal is to form an existing word of 4 letters long. You can only say one letter in each message.`
+
+[assistant]:
+[Emily]: E
+
+[user]:
+[TaskManager]: Michael: this is your main task: `You play a game where each player must add ONE letter. The goal is to form an existing word of 4 letters long. You can only say one letter in each message.`
+
+[assistant]:
+[Michael]: H
+
+[user]:
+[TaskManager]: Game master: this is your main task: `Your task is to check if the word created by the other players is composed of 4 letters. Your objective is complete when a valid 4 letter word is found.`
+
+[assistant]:
+[Game master]: After analyzing the letters provided so far (T-E-H), I can see that they don't form a valid 4-letter word. The game continues!
+
+[user]:
+[TaskManager]: James it's your turn to speak now.
+
+[assistant]:
+[James]: A
+
+[user]:
+[TaskManager]: Emily it's your turn to speak now.
+
+[assistant]:
+[Emily]: L
+
+[user]:
+[TaskManager]: Michael it's your turn to speak now.
+
+[assistant]:
+[Michael]: S
+
+[user]:
+[TaskManager]: Game master it's your turn to speak now.
+
+[assistant]:
+[Game master]: After analyzing the letters provided so far (T-E-H-A-L-S), I can see that they form a valid 4-letter word: HALE! Congratulations, the game is complete!
+
+------game_master----------
+[user]:
+[TaskManager]: You are entering a roleplay with multiple speakers where each one has his own objectives to fulfill. Each message must follow this syntax '[speaker_name]: message'.
+The other speakers are: [James],[Emily],[Michael].
+Your speaker name is [Game master].
+I will give you your task in the next message.
+
+[assistant]:
+[Game master]: Received and acknowledged. I'm ready to execute my tasks as Game master. Please proceed with my assignment.
+
+[user]:
+[TaskManager]: James: this is your main task: `You play a game where each player must add ONE letter. The goal is to form an existing word of 4 letters long. You can only say one letter in each message.`
+
+[assistant]:
+[James]: T
+
+[user]:
+[TaskManager]: Emily: this is your main task: `You play a game where each player must add ONE letter. The goal is to form an existing word of 4 letters long. You can only say one letter in each message.`
+
+[assistant]:
+[Emily]: E
+
+[user]:
+[TaskManager]: Michael: this is your main task: `You play a game where each player must add ONE letter. The goal is to form an existing word of 4 letters long. You can only say one letter in each message.`
+
+[assistant]:
+[Michael]: H
+
+[user]:
+[TaskManager]: Game master: this is your main task: `Your task is to check if the word created by the other players is composed of 4 letters. Your objective is complete when a valid 4 letter word is found.`
+
+[assistant]:
+[Game master]: After analyzing the letters provided so far (T-E-H), I can see that they don't form a valid 4-letter word. The game continues!
+
+[user]:
+[TaskManager]: James it's your turn to speak now.
+
+[assistant]:
+[James]: A
+
+[user]:
+[TaskManager]: Emily it's your turn to speak now.
+
+[assistant]:
+[Emily]: L
+
+[user]:
+[TaskManager]: Michael it's your turn to speak now.
+
+[assistant]:
+[Michael]: S
+
+[user]:
+[TaskManager]: Game master it's your turn to speak now.
+
+[assistant]:
+[Game master]: After analyzing the letters provided so far (T-E-H-A-L-S), I can see that they form a valid 4-letter word: HALE! Congratulations, the game is complete!
+```
+
+The proposed letters are "T - E - H". The game master responds to this with: `After analyzing the letters provided so far (T-E-H), I can see that they don't form a valid 4-letter word. The game continues!`  
+Then new letters are added "A - L - S". To which the game master responds: `After analyzing the letters provided so far (T-E-H-A-L-S), I can see that they form a valid 4-letter word: HALE! Congratulations, the game is complete!`. After which the chat ends!
+
+ℹ️ Note that all types of ["end chat" modes]() @todo url are still valid. Tools and all their parameters are also available in this mode and follow the same tools principles.
+
+### Pros and cons of multi-LLM group chat
+
+**Dual chat**
+Pros:
+* The dual group chat may have better accuracy with "dumb" LLMs assuming that you don't use tools as this may plumber the model's limited reasoning skills.
+* Many options to configure conversation kick-off (shift message, first message reconciliation)
+
+Cons:
+* Control of the "shift message" and "first message reconciliation" may be a burden for new users ;
+* Logs readability is not great at the moment ;
+
+---
+
+**Multi chat (>2)**
+
+Pros:
+* Logs readability is good ;
+* No use for "shift message" nor "first message reconciliation"
+
+Multi (>2) chat cons:
+* LLMs that don't perform well with role-play may experience difficulties like impersonation ;
+
+ℹ️ We might consider adding an option to also use role-play for dual chat mode.
