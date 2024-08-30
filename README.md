@@ -285,17 +285,19 @@ Question is about plants
 
 ### Self-reflection routing
 
-As local models are a bit dumb you need to leave them think on their own before making a decision. This is called self-reflection. It will cost one more Task to solve but you'll get significantly better results during routing, in particular when routing on more complex things (other than "yes"|"no").
+As local models are a bit dumb you need to let them think on their own before making a decision. This is called self-reflection. It will cost one more Task to solve but you'll get significantly better results during routing, in particular when routing on more complex things (other than "yes"|"no").
 
 Let's change the routing code like this:
 ```python
 question: str = "Why do leaves fall in autumn ?"
 
-Task(f"Is the following question about plants ? <question>{question}</question>\nExplain your reasoning.",
-     agent1).solve()
+# Asking for a reasoning step
+Task(f"Is the following question about plants ? <question>{question}</question>\nExplain your reasoning.", agent1).solve()
 
-router_answer: str = Task(f"To summarize in one word, was the question about plants ? Answer ONLY by 'yes' or 'no'.",
-     agent1).solve().content
+# Basic yes/no routing based on the previous reasoning
+router_answer: str = Task(f"To summarize in one word, was the question about plants ? Answer ONLY by 'yes' or 'no'.", agent1).solve().content
+
+# Check if @router_answer is yes or no.
 ```
 
 You should get this type of output:
@@ -324,30 +326,29 @@ Question is about plants
 See how the LLM had an "intense" reflection on the subject. This is very good. You want LLMs to do reasoning like this. It will improve the overall result for the next Tasks to solve.  
 
 ▶️The prompt engineering techniques used here are:
-1. **Make it think**: Using the expression "Explain your reasoning." makes it generate a logical answer. Note that if the model is bad at reasoning or makes a mistake during this step it may result in extremely bad situations. But fear not, failsafe can be built to limit bad reasoning. For instance, having another LLM check the logic and interacting with the original Agent (see GroupSolve later on) to show it its mistake or you can give tools to the Agent that will help it achieve the truth and not rely soly on his reasoning abilities (see Tools later on).
-2. **Making it two shots**: Now that we have 2 Tasks instead of one, the second one only focuses on one task: "yes" or "no" interpretation of the result of Task1. Cutting objectives in multiple Tasks gives better performance. This why using an agentic framework is great but it's also why it's consuming a lot of tokens and having "free to run" local LLMs is great!
+1. **Make it think**: Using the expression "Explain your reasoning." makes it generate a logical answer. Note that if the model is bad at reasoning or makes a mistake during this step it may result in extremely bad situations. But fear not, failsafes can be built to limit bad reasoning. For instance, having another LLM check the logic and interact with the original Agent (see GroupSolve later on) to show it its mistake. You could also give tools to the Agent that will help it achieve the truth and not rely solely on his reasoning abilities (see Tools later on).  
+2. **Making it two shots**: Now that we have 2 Tasks instead of one, the second one only focuses on one task: "yes" or "no" interpretation of the result of Task1. Cutting objectives in multiple sub-tasks gives better performance. This why using an agentic framework is great but it's also why it's consuming a lot of tokens and having "free to run" local LLMs is great!  
 
 ### Cleaning the history
 
-Keeping the self-reflection prompt and the associated answer is always good. It helps gardrailing the model. But the "yes"/"no" router on the other hand adds unnecessary noise in the Agent's history. Moreover, local models don't have huge context window sizes, so removing useless interactions is always good.  
-The "yes"/"no" router is only useful on the moment but we should make the Agent forget it ever happened after it answered. No need to keep that. This is why the Task class offers an optional parameter: `forget=False`.
+Keeping the self-reflection prompt and the associated answer is always good. It helps guardrailing the LLM. But the "yes"/"no" router on the other hand adds unnecessary noise to the Agent's history. Moreover, local models don't have huge context window sizes, so removing useless interactions is always good.  
+The "yes"/"no" router is only useful once. Then we should make the Agent forget it ever happened after it answered. No need to keep that... This is why the Task class offers an optional parameter: `forget=<bool>`.  
 
 Update the router line with this new parameter:
 ```python
-router_answer: str = Task(f"To summarize in one word, was the question about plants ? Answer ONLY by 'yes' or 'no'.",
-     agent1, forget=True).solve().content
+router_answer: str = Task(f"To summarize in one word, was the question about plants ? Answer ONLY by 'yes' or 'no'.", agent1, forget=True).solve().content
 ```
-Now, even though you cannot see it, the Agent doesn't remember solving this Task. In the next section, we'll see how to access and manipulate the history. Then, you'll be able to see what the Agent remembers!
+Now, even though you cannot see it, the Agent doesn't remember solving this Task. In the next section, we'll see how to access and manipulate the history. Then, you'll be able to see what the Agent remembers!  
 
 ### Demo time
 
-For this demo, we'll make a simple app that takes a user query (HF replacing the static string by a Python `input()` if you wish) that checks if the query is about plants.
-If it is not we end the workflow there. However, if it is about plants the flow will branch and search if a plant type/name was given. If it was then it is extracted and knowledge about the plant will be shown before answering the original question. If not it will simply answer the query as is.
+For this demo, we'll make a simple app that takes a user query (HF replacing the static string by a Python `input()` if you wish) that checks if the query is about plants.  
+If it is not we end the workflow there. However, if it is about plants the flow will branch and search if a plant type/name was given. If it was then it is extracted and knowledge about the plant will be shown before answering the original question. If not it will simply answer the query as is.  
 
 ![plant1B](https://github.com/user-attachments/assets/e479e74c-c4f4-4942-a8b5-bd06b377af8c)
 
 
-Read from bottom ⬇️ to top ⬆️. (Although the Agent and question are defined globally at the top)
+Read from bottom ⬇️ to top ⬆️. (Though, the Agent and question variables are defined globally at the top)
 
 ```python
 @todo imports
@@ -508,10 +509,10 @@ As these factors combine, the leaves' ability to carry out photosynthesis decrea
 So, there you have it! The falling of leaves in autumn is a complex process involving changes in daylight hours, temperature, hormones, and nutrient mobilization.
 ```
 
-ℹ️ Later we'll see how to remove the automatic "[INFO]" prints so that only YOUR prints are shown. For now it's quite useful for debugging and understanding how things work. So I'll leave them in this tutorial section.
+ℹ️ Later we'll see how to remove the automatic "[INFO]" prints so that only YOUR prints are shown. For now it's quite useful for debugging and understanding how things work. So we'll leave them in this tutorial section.  
 
 
-**Upating question to match the "specific plant info" workflow:**
+**Upating question to match the "specific plant info" workflow:**  
 
 ```python
 question: str = "Why do poppies fade so quickly ?"
@@ -575,7 +576,7 @@ These factors combined might contribute to the perception that poppies fade quic
 ```
 
 
-**Updating question to match the "Not related to plants" workflow:**
+**Updating question to match the "Not related to plants" workflow:**  
 
 ```python
 question: str = "Why is the sky blue ?"
@@ -597,8 +598,8 @@ Question is NOT about plants sorry.
 
 ### Logging levels
 
-As entering the AI landscape can get a bit hairy we decided to leave the INFO log level by default. This allows to log to the standard output all the request made to the LLM.  
-Note that not everything of Yacana's internal magic appears in these logs. We don't show everything because there are many time-traveling things going around the history of an Agent and printing a log at the time it is generated wouldn't make sense for you.  
+As entering the AI landscape can get a bit hairy we decided to leave the INFO log level by default. This allows to log to the standard output all the requests made to the LLM.  
+Note that NOT everything of Yacana's internal magic appears in these logs. We don't show everything because many time-traveling things are going around the history of an Agent and printing a log at the time it is generated wouldn't always make sense.  
 However, we try to log a maximum of information to help you understand what is happening internally and allow you to tweak your prompts accordingly.  
 
 Nonetheless, you are the master of what is logged and what isn't. You cannot let Yacana logs activated when working with an app in production.  
@@ -615,9 +616,9 @@ To configure the log simply add this line at the start of your program:
 LoggerManager.set_log_level("INFO")
 ```
 
-ℹ️ Note that Yacana utilizes the python logging package. This means that setting de level to "DEBUG" will print other libraries' logs on the debug level too.
+ℹ️ Note that Yacana utilizes the Python logging package. This means that setting the level to "DEBUG" will print other libraries' logs on the debug level too.  
 
-If you need a library to stop spamming could do:
+If you need a library to stop spamming, you can try the following:  
 ```python
 LoggerManager.set_library_log_level("httpx", "WARNING")
 ```
@@ -625,10 +626,11 @@ The above example sets the logging level of the network httpx library to warning
 
 ### Configuring the LLM internal settings
 
-LLMs have settings that can be tweaked through Ollama but also many inference servers. For instance, lowering the `temperature` setting makes the model less creative in its responses. On the contrary, raising this setting will make the LLM more chatty and creative.  
+For advanced users, Yacana provides a way to tweak the LLM runtime behavior!  
+For instance, lowering the `temperature` setting makes the model less creative in its responses. On the contrary, raising this setting will make the LLM more chatty and creative.  
 Yacana provides you with a class that exposes all the possible LLM properties. Look at them [here]() @todo url and if you need a good explanation of each of them I would recommend the [excellent video](https://youtu.be/QfFRNF5AhME?si=lpSYUq2WoidYiqzP) Matt Williams did on this subject.  
 
-These settings are set at the Agent level so that you can have the same model used by two separate agents and have them behave differently.  
+ℹ️ These settings are set at the Agent level so that you can have the same model used by two separate agents and have them behave differently.  
 
 We use the [ModelSettings]() @todo url class to configure the settings we need. 
 
@@ -638,9 +640,9 @@ ms = ModelSettings(temperature=0.4)
 
 agent1 = Agent("Ai assistant", "llama3:8b", model_settings=ms)
 ```
-If you're wondering what are the default values of these when not set. Well, Ollama sets the default for you. They can also be overridden in the Model config file (looks like a dockerfile but for LLM) and finally, you can set them through Yacana during runtime.  
+If you're wondering what are the default values of these when not set. Well, Ollama sets the default for you. They can also be overridden in the Model config file (looks like a dockerfile but for LLMs) and finally, you can set them through Yacana during runtime.  
 
-A good way to show how this can have a real impact on the output, is by setting the `num_predict` parameter. This one allows control of how many tokens should be generated by the LLM. Let's make the same Task twice but with different `num_predict` values:
+A good way to show how this can have a real impact on the output is by setting the `num_predict` parameter. This one allows control of how many tokens should be generated by the LLM. Let's make the same Task twice but with different `num_predict` values:  
 ```python
 # Setting temperature and max token to 100
 ms = ModelSettings(temperature=0.4, num_predict=100)
@@ -672,23 +674,30 @@ INFO: [PROMPT]: Why is the sky blue ?
 
 INFO: [AI_RESPONSE]: The sky appears blue because of a phenomenon called Rayleigh scattering, named after
 ```
-As you can see above the two agents didn't output the same number of tokens.
+As you can see above the two agents didn't output the same number of tokens.  
 
 ## VI. Managing Agents history
 
-As you saw in the previous examples, each agent has his own history of messages that compose its memory. When a new request is made to the LLM the whole history is sent to the inference server (ie: Ollama) and the LLM responds to the last prompt in the chain but bases its answer on the context it gets from the previous messages ( and the initial system prompt if present). 
+As you saw in the previous examples, each agent has his own history of messages that compose its memory. When a new request is made to the LLM the whole history is sent to the inference server (ie: Ollama) and the LLM responds to the last prompt in the chain but bases its answer on the context it gets from the previous messages (and the initial system prompt if present). 
 
-This is what a history looks like:
+This is what an history looks like:
 
 ![history1A](https://github.com/user-attachments/assets/631b634a-8699-4fff-9ac4-06b403c06ae1)
 
-There are 3 types of prompts. The optional system prompt that, if present, always go first. Then it's only an alternation between the "User prompts" that come from the Task you set and the "Assistant message" which is the answer from the LLM.
+There are 3 types of prompts.  
+* The optional system prompt that, if present, always goes first.
 
-However, sending the whole history to the LLM for each Task to solve has some disadvantages that can not be overturned:
-* The longer the history the longer the LLM takes to analyze it and return an answer.
-* Each LLM comes with a maximum token window size. This is the maximum number of words an LLM can analyze in one run, therefore it's maximum memory. One token roughly represents one word or 3/4 of a word. More information on token count per word [here](https://winder.ai/calculating-token-counts-llm-context-windows-practical-guide/) or [here](https://help.openai.com/en/articles/4936856-what-are-tokens-and-how-to-count-them).  
+Then it's only an alternation between these two:  
+* The "User" prompts coming from the Task you set.  
+* The "Assistant" message which is the answer from the LLM.  
 
-To counteract these negative effects it is recommended you clean the history when possible. You can use the `forget=True` parameter in the Task() class so the prompt and the LLM response do not get saved to the history ([see here]() @todo). There are other ways to preserve the history from useless noise. But first, we'll look at viewing one's Agent history. Fortunately, Yacana got you covered.
+However, sending the whole history to the LLM for each Task to solve has some disadvantages that can not be overturned:  
+* The longer the history the longer the LLM takes to analyze it and return an answer.  
+* Each LLM comes with a maximum token window size. This is the maximum number of words an LLM can analyze in one run, therefore it's maximum memory.
+  * One token roughly represents one word or 3/4 of a word. More information on token count per word [here](https://winder.ai/calculating-token-counts-llm-context-windows-practical-guide/) or [here](https://help.openai.com/en/articles/4936856-what-are-tokens-and-how-to-count-them).  
+
+To counteract those negative effects it is recommended you clean the history when possible. You can use the `forget=True` parameter in the Task() class so the prompt and the LLM response do not get saved to the history ([see here]() @todo url). You'll see there are other ways to preserve the history from useless noise.  
+But first, we'll look at viewing one's Agent history. Fortunately, Yacana got you covered.  
 
 ### Printing History
 
@@ -753,7 +762,7 @@ Let me know if you have any other questions!
 ############## END ##################
 ```
 
-Output speaks for itself.
+Output speaks for itself.  
 
 
 ### Creating and loading checkpoints
