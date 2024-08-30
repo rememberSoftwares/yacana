@@ -2390,8 +2390,8 @@ Let's decompose the graph piece by piece. There are two columns: one for Agent1'
 * In line 3 we add the *"shift"* ! The singular most important message here. As we need both Agents to speak to each other we need to initiate some kind of shift in the message so that the "USER" of one agent becomes the "ASSISTANT" of the other.
   * The shift message is very important because it must not throw off the LLM with a strange message. By default, it is copied from Agent1's answer from line 2 (see the red arrow). In general, the conversation still makes sense. But if it doesn't then you'll have to take control of the shift message!
   * Taking control of the shift message is fairly simple. You have 2 types of control. The first control is where the shift message should be placed. Either in Agent1 or in Agent2 (default) point of view. The second control is the content of the shift message. It can either come from the opposite side (default) or be set by you.
-    * To control who gets the shift, use the `shift_owner=<task instance>` optionnal parameter from the GroupSolve() class, like this: `GroupSolve([task1, task2], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION), shift_owner=task2).solve()`
-    * To control the content of the shift message, use the `shift_content="<Some message>"` optional parameter from the GroupSolve() class. Note that not specifying this parameter results in the message being copied from the opposite Task (cf graph). Use it like this: `GroupSolve([task1, task2], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION), shift_content="List is empty").solve()`
+    * To control who gets the shift, use the `shift_message_owner=<task instance>` optionnal parameter from the GroupSolve() class, like this: `GroupSolve([task1, task2], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION), shift_message_owner=task2).solve()`
+    * To control the content of the shift message, use the `shift_message_content="<Some message>"` optional parameter from the GroupSolve() class. Not specifying this parameter results in the message being automatically copied from the first Agent answer to the second Agent (cf graph). Use it like this: `GroupSolve([task1, task2], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION), shift_message_content="List is empty").solve()`
     * Both parameters can be set at the same time. Also, not specifying any of them will output the same result as shown in the above graph.
 
 Output
@@ -2559,6 +2559,37 @@ Here's the updated list:
 [5, 8, 9, 2, 7, 11, 15, 3, 6]
 Please confirm before I proceed with the next set of additions!
 ```
+
+---
+
+Specifying the content of the shift message would look like this:  
+```python
+GroupSolve([task1, task2], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION), shift_message_content="Let's go").solve()
+```
+
+The diagram now looks like this:  
+
+![GS8](https://github.com/user-attachments/assets/856ee958-c2a1-487e-8789-bdecc8115156)
+
+Using general, meaningless prompts as shift messages is good as it won't disturb the LLM in its task.  
+
+⚠️ We haven't actually reran the program 😁. Therefore, message content after the shift message may be different.  
+
+---
+
+Adding the shift message to Agent1 instead of Agent2 (default) would look like this:  
+
+```python
+GroupSolve([task1, task2], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION), shift_owner=task1).solve()
+```
+
+The diagram now looks like this:  
+![GS9](https://github.com/user-attachments/assets/4afa64f1-ab1e-4dd9-8530-f36355e05089)
+
+Note how User and Assistant are now reversed.
+
+⚠️ We haven't actually reran the program 😁. Therefore, message content after the shift message may be different now that it's assigned to Agent1.
+
 
 #### Reconciling initial messages
 
