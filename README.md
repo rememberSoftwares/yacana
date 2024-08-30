@@ -1033,7 +1033,7 @@ In this case, it didn't work very well as only one name was extracted as JSON. B
 
 ### Saving an Agent state
 
-Maybe your program needs to start, stop, and resume where it stopped. For this usecase Yacana provides a way to store an Agent state on file and load it later. All of the Agent's properties are saved including the History. Only checkpoints are lost as they are more of a runtime thing. We might include them in the save file if the need arises.
+Maybe your program needs to start, stop, and resume where it stopped. For this use case Yacana provides a way to store an Agent state on file and load it later. All of the Agent's properties are saved including the History. Only checkpoints are lost as they are more of a runtime thing. We might include them in the save file if the need arises.
 
 To save an Agent do the following:
 ```python
@@ -2575,11 +2575,57 @@ It does the following:
 
 We could represent this merged workflow in the following unified form:
 
-@here
+![GS7](https://github.com/user-attachments/assets/82513dee-9763-4328-ad8b-b2d08ddba05d)
 
+This diagram and the previous one are the same just represented differently. In this form 2 things are glaring:
+1. Agent2 has one more message (8) than Agent1 (7) due to the shift message.  
+2. Both agents have the same History for the first four messages but they also share the same "USER" / "ASSISTANT" scheme. This means that from Agent1's POV, you addressed to it with message 3 and it responded with message 4. Which is false. The same problem arises with Agent2 POV which sees message 1 as me addressing to it and message 2 as its response. Which is also not true as they were meant for the other Agent.  
 
-#### Using self-reflection when LLMs are struggling
+#### Using self-reflection when LLMs are struggling to terminate chat
 
+When an LLM has the option `llm_stops_by_itself=True` it is in charge to stop the chat by itself.  
+But reasoning is hard for LLMs. Still, Yacana forces them to reflect on many occasions so that they make better judgment calls. However, by default, this self-reflection is not kept in the final history. That said, if the LLM struggles it might be a good move to keep the self-reflection step inside the History so that the LLM can use it to improve its reasoning.  
+This step is used when asked if all the objectives are fulfilled. Having stored more reasoning can help the LLM that all objectives are complete and end the chat, or... Sometimes it can also worthen the issue. You would have to live test this to actually see if there are any benefits.  
+
+This optional parameter is `use_self_reflection` and should be set to `True` in the Task constructor.  
+ℹ️ It is only useful when a Task is part of a GroupSolve. Outside a GroupSolve it has no effect.  
+
+```python
+agent1 = Agent("Ai assistant 1", "llama3:8b")
+agent2 = Agent("Ai assistant 2", "llama3:8b")
+
+task1 = Task(f"A bat and a ball together cost $1.10. The bat costs $1 more than the ball. How much does the ball cost? Your objective is complete when you are confident that you solved the problem correctly.", agent1, use_self_reflection=True, llm_stops_by_itself=True)
+task2 = Task(f"What do you think of the reasoning ?", agent2)
+GroupSolve([task1, task2], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION), reconcile_first_message=True).solve()
+
+print("------ Agent1 --------")
+task1.agent.history.pretty_print()
+
+print("------Agent2----------")
+task2.agent.history.pretty_print()
+```
+ℹ️ Note the use of `reconcile_first_message=True` making Agent2 aware of the Agent1's prompt.   
+
+I'll only show the relevant section of the output:  
+```
+------ Agent1 --------
+[BLABLA]
+
+[user]:
+In your opinion, what objectives from your initial task have you NOT completed ?
+
+[assistant]:
+When I initially stated that my objective was "complete when you are confident that you solved the problem correctly," I had not explicitly mentioned considering alternative approaches or exploring different paths to solve the problem.
+
+Upon reflection, I realize that I only presented one solution method and did not explore alternative approaches. This is an area where I can improve, especially for more complex problems where multiple solutions or pathways may exist.
+
+So, in hindsight, I have not fully completed the objective of considering alternative approaches or exploring different paths to solve the problem. However, I'm glad that our conversation allowed me to reflect on my own reasoning and identify areas for improvement!
+
+[BLABLA]
+```
+The above output is part of the Agent's History. Without the `use_self_reflection=True` it wouldn't.  
+
+ℹ️ Because this setting helps the LLM end chats by itself it won't have any effects when used with the "end chat" mode `MAX_ITERATIONS_ONLY`.  
 
 ### Using tools inside GroupSolve
 
