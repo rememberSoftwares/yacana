@@ -768,7 +768,9 @@ Output speaks for itself.
 ### Creating and loading checkpoints
 
 As mentioned earlier it's better to keep the History clean. Too many prompts and unrelated questions will lead to poorer results so if you have the opportunity to scratch some portion then you should.  
-Yacana allows you to make a history snapshot and rollback to any of them. This is in particullary useful when you are reaching the end of a flow branch and want to go back onto another branch.  
+Yacana allows you to make history snapshots and rollback to any of them. This is particularly useful when reaching the end of a flow branch and wanting to go back onto another.  
+
+![Checkpoint1A](https://github.com/user-attachments/assets/824d7fa1-c1b1-4434-85e9-dfa261c2c8e3)
 
 It is as simple as this:  
 ```python
@@ -781,21 +783,21 @@ The checkpoint_id is only a unique identifier that you can use to load back a sa
 agent1.history.load_check_point(checkpoint_id)
 ```
 
-ℹ️ Note that nothing prevents you from making a snapshot before rolling back to a previous save. This way you could return... to the future. ^^  
+ℹ️ Note that nothing prevents you from making a snapshot before rolling back to a previous save. This way you could go back... to the future. ^^  
 Are you okay Marty?  
 
-Let's take a concrete example. You have a pastry website that generates pastry recipes (using real data from a tool would be better, continue the tutorial). 
-The flow will look like this:
+Let's take a concrete example. You have a pastry website that generates pastry recipes.  
+The flow will look like this:  
 1. Propose 5 pastry names ;
 2. Create a checkpoint ;
 3. The user chooses one of the pastries ;
 4. We show the associated calories of the selected pastry ;
 5. If the user is okay with it we end the program ;
-6. If the user is not okay with the calorie count we load back the checkpoint and propose to choose from the the list again ;
+6. If the user is not okay with the calorie count we go back to the checkpoint and propose to choose from the the list again ;
 7. Repeat until satisfied ;
 8. We'll show the final agent's History and make sure that it ONLY stored the selected pastry ;
 
-With a bit of color, it would look like this:
+With a bit of color, it would look like this:  
 
 ![pastry1B](https://github.com/user-attachments/assets/3a4952aa-18f3-4b6d-93c1-85b909cf24f4)
 
@@ -890,21 +892,19 @@ yes
 ############## END ##################
 ```
 
-As you can see in the above output. I went for "the creamy one" but when shown the calories I said no... Then chose the Golden Galettes was satisfied and the program ended with an output of the agent's history.  
-We can see in the agent output that it only remembers me choosing the Golden Galettes but not the Creamy Confections. This is because we loaded the checkpoint that was made before the user choice.
+As you can see in the above output, we went for "the creamy one" but when shown the calories, refused to continue... After that, we chose the Golden Galettes which was satisfying. Then the program ended with an output of the agent's history.  
+We can see in the agent's output that it only remembered us choosing the Golden Galettes but not the Creamy Confections. This is because we loaded the last checkpoint which rolled us back to making our choice again.  
 
-ℹ️ Note that the Task asking to replace the variables might not work very well with dumb LLMs. It could be reworked by splitting the Task into two. One that would extract the name of the chosen pastry from the user's input and a second one that would generate the associated calories. Finally, print the sentence with the variables pre-generated. Using local models is all about knowing the maximum performance of your LLM and adapting the prompts to match that performance. The dumber, the more guidance it needs!  
+ℹ️ Note that the Task replacing the variables might not work very well with dumb LLMs. It could be reworked by splitting it into two. One that would extract the name of the chosen pastry from the user's input and a second one that would generate the associated calories. Finally, print the sentence with the variables pre-generated. Using local models is all about knowing the maximum performance of your LLM and adapting the prompts to match that performance. The dumber, the more guidance it needs!  
 
 ### Multi prompt shot VS 0 prompt shot
 
-When a LLM struggles to solve a complex Task and achieve a good success rate it may be time to give it a little help.  
+When an LLM struggles to solve a complex task and achieve a good success rate it may be time to give it a little help.  
 
-In large language models, the approach to prompting can significantly influence the model's performance. *Zero-shot prompting* asks the model to complete a task without any prior examples, relying solely on its pre-existing knowledge. This can lead to varied results, especially in more complex tasks. *One-shot prompting* improves accuracy by providing the model with a single example, offering some guidance on how to approach the task. *Few-shot prompting* further enhances performance by supplying multiple examples, allowing the model to better understand the task's nuances and produce more reliable and accurate results.
-
-In other words:
-* Zero-Shot Prompting: The model must rely on its general knowledge, which may result in varied performance depending on the task's complexity.
-* One-Shot Prompting: A single example helps guide the model, improving its performance over zero-shot prompting.
-* Few-Shot Prompting: Multiple examples give the model a better understanding of the task, significantly increasing accuracy and performance.
+In large language models, the approach to prompting can significantly influence the model's performance.  
+* *Zero-shot prompting* asks the model to complete a task without any prior examples, relying solely on its pre-existing knowledge. This can lead to varied results, especially in more complex tasks.
+* *One-shot prompting* improves accuracy by providing the model with a single example, offering some guidance on how to approach the task.
+* *Few-shot prompting* further enhances performance by supplying multiple examples, allowing the model to have a better understanding of the task's nuances and producing more reliable and accurate results.
 
 Yacana provides you with a way to add new Messages to the History manually. The History class exposes a `.add(...)` method.  
 This method takes an argument of type `Message()` ([[see here]() @todo) taking two parameters: a [MessageRole]() @todo url enum and the string message itself.
