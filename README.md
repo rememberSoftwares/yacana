@@ -1133,29 +1133,28 @@ The title spoils one of the most important things about tool calling in Yacana.
 It is of the utmost importance that you understand this concept. This implies that you will have to create a second Task to deal with the output of the first one.  
 
 This is a step-by-step of the internal mechanism:  
-1. The Task is asked to be solved ;
+1. The Task is called upon to be solved ;
 2. There is a Tool assigned, so the Agent must use it ;
 3. Yacana provides examples of how the tool is used ;
-4. Giving the initial Task prompt to the Agent ;
+4. Giving the initial Task prompt to the Agent so that it knows what to do with the tool ;
 5. The agent decides what values to send the Tool based on the prompt and previous History ;
 6. The Tool is called with the previously mentioned parameters ;
 7. The tool returns a value ;
-8. The tool's value is the final output of the Task
+8. **The Task's final output is the tool's value** ;
 
-As you can see, nothing was made with the tool result itself. This means that the tool return value must carry all the necessary information so the next Task can work with it.
+As you can see, nothing was made with the tool result itself. This means that the tool return value must carry all the necessary information so the next Task can work with it!  
+That said, not all tools must return something useful. Thus removing the need to create a second Task to act upon the result of the tool call. For instance, an LLM might be of paramount importance to call a function with complex arguments but as it would only make minor adjustments to some variable in your code, there might be no point in the tool returning any information to the LLM.  
 
 Example of a **bad** prompt with a Tool that gets the current weather of a city:  
 * `Task(f"I give you the following city: '{city}'. Get the current weather there and output 'So much sun !' if there is some sun else say 'So  much rain !'", some_agent, tools=[get_weather_tool]).solve()` 
-=> You'll never get the output 'sunny' or 'rainy'. The result of this Task will be the result of the Tool output. The prompt only served the Agent to know what city to give to the tool.  
-
-ℹ️ In some next update we might add a "post tool prompt" so that you get a way to control the output of the task once the tool has answered.  
+=> You'll never get the output 'sunny' or 'rainy'. **The result of this Task will be the result of the Tool output.** The prompt is ONLY useful to the Agent to extract the city name that must be given to the tool.  
 
 To fix the above scenario you have two options:  
 
 1. Split the Task in two:  
 * `Task(f"I give you the following city: '{city}'. Get the current weather there.", some_agent, tools=[get_weather_tool]).solve()`  
 * `Task(f"Output 'So much sun !' if there is some sun else say 'So  much rain !'", some_agent).solve()`  
-Splitting the tasks into two allows the second Task to work on the output of the first one (the tool output)  
+Splitting the tasks into two allows the second Task to work on the output of the first one (the tool output). It's also a kind of self-reflection.  
 
 2. Make the tool do the work:  
 * Let's write a pseudo code get_weather tool
@@ -1168,13 +1167,13 @@ def get_weather(city: str) -> str:
       return "So much rain !"
 ```
 
-This tool would return either "So much sun !" or "So much rain !" based on the output of some fake weather API. **However**, the original prompt it's still bad! The section "*output 'sunny' if there is some sun else say 'rainy'*" of the initial *bad* prompt is still useless as it's the tool that will output this string. Not the LLM.  
+This tool would return either "So much sun !" or "So much rain !" based on the output of some fake weather API. This was the output we needed. **However**, the original prompt it's still bad! The section "*output 'sunny' if there is some sun else say 'rainy'*" of the initial *bad* prompt is still useless as it's the Tool itself that will output this string. Not the LLM!  
 You should rewrite the prompt like this: "I give you the following city: '{city}'. Get the current weather there."  
 
 
 ---
 
-The complete example for those who wish to test IRL. Though, we didn't even show a real tool example so this section should be optional!  
+The full example for those who wish to test IRL. However, we haven't even shown a real tool example yet, so this section should be optional!  
 
 Bad prompt:  
 ```python
@@ -1212,9 +1211,9 @@ agent1.history.pretty_print()
 
 ### Calling a tool
 
-Let's do our first tool calling with a simple addition!
+Let's write our first tool call to perform a simple addition!  
 
-First, let's define our tool:
+First, let's define our tool:  
 ```python
 def adder(first_number: int, second_number: int) -> int:
     print(f"Tool adder was called with param {first_number}) ({type(first_number)} and {second_number} ({type(second_number)})")
@@ -1223,14 +1222,15 @@ def adder(first_number: int, second_number: int) -> int:
 
 What do we have here?
 * The name of the function must be relevant to what the function does. Here the function performs an addition so we'll call it `adder` ;
-* The same thing goes for the parameters. The name you choose is very important as it will help the LLM to know what value to give this argument ;
-* Duck typing the prototype is very important! You must define the type of each parameter and also the return type ;
-* We perform the operation between the two parameters and return the result ;
+* The same thing goes for the parameters. The name you choose is very important as it will help the LLM to know what value to give this parameter ;
+* Duck typing the prototype is very important! You must set the type of each parameter and also the return type of the function ;
+* We perform the operation between the two parameters and return the final result ;
 
-⚠️ Be aware that whatever the return of your function, Yacana will cast it to string using the built-in `str(...)` function. LLMs can only understand the text so make sure that whatever you send back can be cast correctly (override the __str__ if needed).  
+⚠️ Be aware that whatever the return of your function, Yacana will cast it to string using the built-in `str(...)` function. LLMs can only understand text so make sure that whatever you send back can be cast correctly (override the __str__ if needed).  
 
-Let's create a [Tool]() @todo url using the Yacana Tool constructor. It takes a name, a description, and a reference to the actual function.  
-ℹ️ I can only emphasize the importance of providing an accurate description.  
+Let's create a [Tool]() @todo url instance using the Yacana Tool constructor. It takes a name, a description, and a reference to the actual function.  
+ℹ️ I can only emphasize once more on the importance of providing an accurate description.  
+
 ```python
 adder_tool: Tool = Tool("Adder", "Adds two numbers and returns the result", adder)
 ```
@@ -1240,17 +1240,21 @@ Now let's assign our *adder_tool* to a Task. How to do that? It's simple, the Ta
 Task(f"What's 2+2 ?", agent1, tools=[adder_tool]).solve()
 ```
 
-Complete code:
+Full code:  
 ```python
 def adder(first_number: int, second_number: int) -> int:
-    print(f"Tool adder was called with param {first_number}) ({type(first_number)} and {second_number} ({type(second_number)})")
+    print(f"Tool adder was called with param {first_number} {type(first_number)} and {second_number} ({type(second_number)})")
     return first_number + second_number
 
+agent1 = Agent("Ai assistant", "llama3:8b")
+
 adder_tool: Tool = Tool("Adder", "Adds two numbers and returns the result", adder)
-Task(f"What's 2+2 ?", agent1, tools=[adder_tool]).solve()
+result: str = Task(f"What's 2+2 ?", agent1, tools=[adder_tool]).solve().content
+
+print("Equation result = ", result)
 ```
 
-let's run it:
+Output:  
 ```
 INFO: [PROMPT]: I give you the following tool definition that you must use to fulfill a future task: adder(first_number: int, second_number: int) -> int - Adds two numbers and returns the result. Please acknowledge the given tool.
 
@@ -1274,40 +1278,37 @@ What's 2+2 ?
 INFO: [AI_RESPONSE]: {"first_number": "2", "second_number": "2"}
 
 Tool adder was called with param '2' (<class 'str'>) and '2' (<class 'str'>)
-Result of added tool is: 22
-
-Equation result = 22
+Equation result =  22
 ```
 
-What you are seeing here is Yacana doing its magic to make the LLM call the tool.  
+The multiple INFO logs you are seeing here is Yacana doing its magic to make the LLM call the tool.  
 
-Unfortunatly, even though the tool is indeed called, getting a correct result failed spectacularly! ^^  
-Is `2 + 2 = 22`? No, I don't think so. Can you find out what went wrong?
+Unfortunately, even though the tool is indeed called, getting a correct result failed spectacularly! ^^  
+Is `2 + 2 = 22`? No, I don't think so. Can you find out what went wrong?  
 
 ---
 
-When looking at the logs we can see that the tool was called with the following JSON: `{"first_number": "2", "second_number": "2"}`. The given values are of type `string`. Later confirmed by the print() inside the tool itself: `param '2' (<class 'str'>) and '2' (<class 'str'>)`.  
-So instead of having integers, we got string and what's the result of "2" + "2" in Python? Not 4 but "22" (concatenation of strings).  
+When looking at the logs we can see that the tool was called with the following JSON: `{"first_number": "2", "second_number": "2"}`. The values are of type `string`. Later confirmed by the print() inside the tool itself: `param '2' (<class 'str'>) and '2' (<class 'str'>)`.  
+So instead of having integers, we got strings and what's the result of "2" + "2" in Python? Not 4 but "22" (concatenation of strings). Bummer! ^^  
 
-Fortunately, we can fix this easily in different ways.
+Fortunately, we can fix this easily in several ways.  
 
 ### Getting better tool-calling results
 
-As you saw in the previous adder example we ran into trouble with the `2 + 2` call sent as a string. Let's fix that.
+As you saw in the previous adder example we ran into trouble with the `2 + 2` call sent as a string. Let's fix that.  
 
 #### Providing tool call examples
 
-If you followed this tutorial from the start you saw that multi-shot prompting yields good results. The Tool class allows this too, using the `usage_examples=[]` optional parameter. You have to provide a Python dictionary where each key is equal to the argument name and the associated value, a valid value for the tool. You can add as many examples as you want in the array. In general one or two is enough.  
-These dictionaries will be presented by Yacana to the LLM as examples of how to call the tool correctly.  
+If you followed this tutorial from the start you saw that multi-shot prompting yields good results. The Tool class allows this too, using the `usage_examples=[]` optional parameter. You can provide a Python dictionary where each key corresponds to a function's parameter and the value, a valid value. It's inside an array so you can provide multiple examples if needed. In general one or two is enough.  
+These dictionaries will be presented by Yacana to the LLM as examples on how to call the tool correctly.  
 
-Let's look at an example with our adder tool:
+Let's look at an example with this new tool instance:
 ```
 adder_tool: Tool = Tool("Adder", "Adds two numbers and returns the result", adder, usage_examples=[{"first_number": 2, "second_number": 4}, {"first_number": 8, "second_number": -2}])
 ```
+We provided above two examples for the LLM to look at. Each time giving `first_number` and `second_number` different integer values. No strings. Actual integers!
 
-Replace the previous adder_tool definition with this one. You see the that we provided two examples. Each time giving `first_number` and `second_number` have different integer values. No strings. Actual integers.
-
-Let's run our program again and see if we get input types this time:
+Let's run our program again and see if we get the correct input types this time:  
 ```python
 INFO: [PROMPT]: I give you the following tool definition that you must use to fulfill a future task: adder(first_number: int, second_number: int) -> int - Adds two numbers and returns the result. Please acknowledge the given tool.
 
@@ -1337,30 +1338,15 @@ What's 2+2 ?
 INFO: [AI_RESPONSE]: {"first_number": 2, "second_number": 2}
 
 Tool adder was called with param '2' (<class 'int'>) and '2' (<class 'int'>)
-Result of added tool is:  4
-Equation result = 4
-[user]:
-What's 2+2 ?
-
-[assistant]:
-I can use the tool 'Adder' related to the task to solve it correctly.
-
-[user]:
-Output the tool 'Adder' as valid JSON.
-
-[assistant]:
-{"first_number": 2, "second_number": 2}
-
-[user]:
-4
+Equation result =  4
 ```
 
-It worked!
-ℹ️ Note that the multi-shot prompts are not shown in the info logs. This is because no actual request is made to the LLM they are appended to the History() like shown in the multi-shot example. However, if you do a `agent1.history.pretty_print()` at the end you'll see both examples given to the LLM as history context.  
+It worked!  
+The LLM saw that the tool needed integers in input. As such, it called the tool with the correct types therefore the adder tool returned `4` as it was expected. Houra!  
 
-Seeing in the examples that the tool needed integers in input, it called the tool with the correct types therefore the adder tool returned `4` as it was expected. Houra.  
+⚠️ Do not abuse this technic as it tends to create some noise. Trying to manage too many hypothetical use cases might, in the end, degrade the performance of the tool call.  
 
-⚠️ Do not abuse this technic as it tends to create noise. Trying to manage too many hypothetical use cases might, in the end, degrade performances.  
+ℹ️ Note that the multi-shot prompts (the JSON examples) are not shown in the INFO logs. This is because no actual request is made to the LLM. They are appended to the History() programmatically like shown in the multi-shot example. However, if you add an `agent1.history.pretty_print()` at the end of the script, you'll see both JSON examples given to the LLM as history context.  
 
 #### Adding validation inside the Tool
 
