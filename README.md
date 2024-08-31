@@ -1350,11 +1350,11 @@ The LLM saw that the tool needed integers in input. As such, it called the tool 
 
 #### Adding validation inside the Tool
 
-The previous trick is good to nudge the LLM in the right direction. But it's not the best way to get accurate results. The technique presented here is by far more effective and should be preferred over the previous one.  
+The previous trick is good to nudge the LLM in the right direction. But it's not the best way to get accurate results. The technique presented here is by far the more effective and should be preferred over the previous one.  
 
-As LLM are not deterministic we can never assure what will be given to our tool. Therefore, you should look at a tool like you would a web server route. I'm talking here of server-side validation. Your tool must check that what is given to it is valid and raise an error if not.  
+As LLM are not deterministic we can never assure what will be given to our tool. Therefore, you should look at a tool like you would a web server route. I'm talking here about server-side validation. Your tool must check that what is given to it is valid and raise an error if not.  
 
-This means adding heavy checks on our tool. Thus, when the LLM sends an incorrect value an error will be raised. But not any error! Specifically a ToolError(...). This exception will be caught by Yacana which will instruct the LLM that something bad happened while calling the tool. This also means that you must give precise error messages in the exception because the LLM will try to change his tool calling based on this message.  
+This means adding heavy checks on our tool. Thus, when the LLM sends an incorrect value an error will be raised. But not any error! Specifically a `ToolError(...)`. This exception will be caught by Yacana which will instruct the LLM that something bad happened while calling the tool. This also means that you must give precise error messages in the exception because the LLM will try to change his next tool call based on this message.  
 
 Let's upgrade our adder tool!
 ```python
@@ -1365,9 +1365,9 @@ Let's upgrade our adder tool!
         raise ToolError("Parameter 'second_number' expected a type integer")
 ```
 
-We added type validation on both parameters. But you should also check for None values, etc. As I said. Think of this as server side validation. You cannot trust AI more than humans...  
+We added type validation on both parameters. But you should also check for None values, etc. As I said. Think of this as server-side validation. You cannot trust AI more than humans...  
 
-Let's remove the examples set in the previous section. The LLM will be blind once again. As such, he will probably make mistakes but the ToolError exception will guide it onto the correct path. Let's see:
+Let's remove the examples set in the previous section. The LLM will be blind once again. As such, he will probably make mistakes but the ToolError exception will guide it onto the correct path. Let's see:  
 
 *Complete code*
 ```python
@@ -1445,14 +1445,16 @@ Result of added tool is:  4
 Equation result = 4
 ```
 
-It worked!
+It worked!  
 
-2 errors happened here:
+2 "errors" happened here:
 * "WARNING: Yacana failed to call tool 'Adder' correctly based on the LLM output"
 * "WARNING: Tool 'Adder' raised an error"
 
-- **Error 1**: Regarding the first one if you look closely at the output you can see a strange malformation in the JSON: `{"first__number": "arg 0", "second__number": "arg 1"}`. The first parameter was called with two underscores for some reason (LLMs...). Fortunately Yacana banged on the LLM's head and it was fixed in the next iteration.  
-- **Error 2**: Concerning the second error, it was definitely the tool that raised the exception: `The tool returned an error: `Parameter 'first_number' expected a type integer`. This is only logical as the LLM sent catastrophic values to the tool: `{'first_number': 'arg 0', 'second_number': 'arg 1'}`. When the ToolError was sent the error message was given to the LLM and a third iteration started. This time all was correct: `{"first_number": 2, "second_number": 2}` and we got our result which is 4.
+- **Error 1**: Regarding the first one if you look closely at the output you can see a strange malformation in the JSON: `{"first__number": "arg 0", "second__number": "arg 1"}`. The first parameter was called with two underscores for some reason (LLMs...). Fortunately, Yacana banged on the LLM's head and it was fixed in the next iteration.  
+- **Error 2**: Concerning the second error, it was the tool itself that raised the exception: `The tool returned an error: Parameter 'first_number' expected a type integer`. This is only logical as the LLM sent catastrophic values to the tool: `{'first_number': 'arg 0', 'second_number': 'arg 1'}`. When the ToolError was raised the error message was given to the LLM and a third iteration started. This time all was correct: `{"first_number": 2, "second_number": 2}` and we got our result from the tool which is 4.
+
+ℹ️ You should use both technics. Providing one example could prevent one tool call failure hence less lost CPU time but adding many validation checks in your tool raising explicit error messages is the best way to ensure that nothing breaks. Nothing beats good all fashion `if` checks!   
 
 #### Maximum tool errors
 
