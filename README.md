@@ -1049,9 +1049,9 @@ In this case, it didn't work very well as only one name was extracted as JSON. B
 
 ### Saving an Agent state
 
-Maybe your program needs to start, stop, and resume where it stopped. For this use case Yacana provides a way to store an Agent state on file and load it later. All of the Agent's properties are saved including the History. Only checkpoints are lost as they are more of a runtime thing. We might include them in the save file if the need arises.
+Maybe your program needs to start, stop, and resume where it stopped. For this use case, Yacana provides a way to store an Agent state into a file and load it later. All of the Agent's properties are saved including the History. Only checkpoints are lost as they are more of a runtime thing. We might include them in the save file one day if the need arises.  
 
-To save an Agent do the following:
+To save an Agent do the following:  
 ```python
 agent1 = Agent("Ai assistant", "llama3:8b")
 
@@ -1083,7 +1083,7 @@ If you look at the file `agent1_save.json` you'll see something like this:
 ```
 
 Now let's load back this agent from the dead using `.get_agent_from_state()`!  
-In another file add this bit of code:
+In another Python file add this bit of code:  
 ```python
 agent2: Agent = Agent.get_agent_from_state("./agent1_save.json")
 
@@ -1107,24 +1107,26 @@ As you can see when asked to multiply by 2 the previous result, it remembered ag
 
 Allowing the LLM to call a tool is the most important thing an agent can do! But what is a "tool"? A "tool" simply refers to a Python function. This function can be the entry point to any level of underlying complexity. But it doesn't matter. What matters is that the LLM can call the tool with parameters that match the function. This way, LLMs can interact with *classic* programming interfaces that produce deterministic results (aka normal programming).  
 
-For instance, let's say you want a calculator powered by an LLM. You cannot rely on the LLM doing the math because even though it knows how to decompose equations to an extent and basic arithmetics, it will fail on more advanced calculous. Therefore we do not expect the LLM to perform the operation itself. We already have the CPU to do this task perfectly. On the other hand, we expect the LLM to decompose correctly the equation and call tools for each arithmetic operation needed to get the result.  
+For instance, let's say you want a calculator powered by an LLM. You cannot rely on the LLM doing the math because even though it knows how to decompose equations to an extent and basic arithmetics, it will fail on more advanced calculous. Therefore we do not expect the LLM to perform the operation itself. We already have the CPU to do this task perfectly. On the other hand, we expect the LLM to decompose correctly the equation and call tools for each arithmetic operation needed to solve it.  
 
 #### In what way is Yacana different than other frameworks?
 
-Other frameworks assign their tools to the agent during its initialization. This creates a hard link between the tools and the agents. In our opinion, this implementation tends to confuse the agent because it's getting access to many tools that may not be relevant to the immediate task it is given. In Yacana tools are only available at the Task level. Thus no noise is generated before having to solve a particular task. The tool is made available to the LLM only when it's needed and not before. Also, the Agent doesn't keep the memory of having used the tool so it won't be tempted to use it elsewhere, where it would not have been appropriate.  
+Other frameworks assign their tools to the agent during its initialization. This creates a hard link between the tools and the agents. In our opinion, this implementation tends to confuse the agent because it's getting access to many tools that may not be relevant to the immediate task it is given. In Yacana tools are only available at the Task level. Thus no noise is generated before having to solve a particular task. The tool is made available to the LLM only when it's needed and not before. Also, the Agent doesn't keep the memory of the available tools so it won't be tempted to use them elsewhere, where it wouldn't be appropriate.  
 
 #### Understanding the underlying mechanism of tool calling in LLMs
 
-As an aside for those interested...
+A side note for those interested...    
 
 If you don't understand how a text-to-text neural network can call a Python function let me tell you: It doesn't.  
-When we refer to *tool calling* we also refer to *function calling* which is very poorly named. Function calling is the ability of an inference server to make the LLM output the text in a particular format. As of today, only JSON is supported but there is no doubt that more formats will be available soon.  
-However, now that we can control how the LLM answers, we can parse a JSON that we know the structure. Therefore we can ask the LLM for a JSON that matches the prototype of a Python function. For instance the name and parameter value.  
-Some LLMs have been trained to output JSON in a particular way that matches a particular JSON structure. This particular JSON structure is becoming a convention and was pushed by big AI players like OpenAI.  
-Unfortunately, the size and complexity of this JSON doesn't work very well with our dumb 8B LLMs. This a problem that ChatGPT, Claude, Grok and other smart LLMs don't have.  
-To overcome this particular issue, Yacana comes with its own JSON to call Python functions. It's way lighter than the OpenAI standard and Yacana uses [percussive maintenance]() @todo url to force the model to output the JSON in a way that the tool expects.  
 
-#### How to write a prompt for a tool?
+When we refer to *tool calling* we also refer to *function calling* which is very poorly named. Function calling is the ability of an inference server to make the LLM output the text in a particular format. As of today, only JSON is supported but there is no doubt that more formats will be available soon.  
+However, now that we can control how the LLM answers, we can parse a JSON of which we know the structure. Therefore we can ask the LLM for a JSON that matches the prototype of a Python function. For instance the name and some parameter values.  
+
+Some LLMs have been trained to output JSON in a particular way that matches a particular JSON structure. This particular JSON structure has become a convention and was pushed by big AI players like OpenAI.  
+Unfortunately, the size and complexity of this JSON doesn't work very well with our dumb 8B LLMs. This a problem that ChatGPT, Claude, Grok and other smart LLMs don't have.  
+To overcome this particular issue, Yacana comes with its own JSON structure to call Python functions! It's way lighter than the OpenAI standard and Yacana uses [percussive maintenance]() @todo url to force the LLM to output the JSON in a way that the tool expects.  
+
+#### How to write tool prompts?
 
 The title spoils one of the most important things about tool calling in Yacana.  
 **The prompt is to guide the LLM on how to use the tool and not what to do with the tool result!**  
