@@ -906,18 +906,18 @@ In large language models, the approach to prompting can significantly influence 
 * *One-shot prompting* improves accuracy by providing the model with a single example, offering some guidance on how to approach the task.
 * *Few-shot prompting* further enhances performance by supplying multiple examples, allowing the model to have a better understanding of the task's nuances and producing more reliable and accurate results.
 
-Yacana provides you with a way to add new Messages to the History manually. The History class exposes a `.add(...)` method.  
-This method takes an argument of type `Message()` ([[see here]() @todo) taking two parameters: a [MessageRole]() @todo url enum and the string message itself.
+Yacana provides you with a way to add new Messages to the History manually. The History class exposes an `.add(...)` method.  
+It takes an argument of type `Message()` ([[see here]() @todo) with two parameters: a [MessageRole]() @todo url enum and the string message itself.  
 
-For example:
+For example:  
 ```python
 # Creating a basic agent with an empty history
 agent1 = Agent("AI assistant", "llama3:8b")
 
-# We create a fake prompt identified as coming the user (MessageRole.USER)
+# We create a fake prompt identified as coming from the user (Thx to `MessageRole.USER`)
 user_message = Message(MessageRole.USER, "What's 2+2 ?")
 
-# We create a fake answer identified as coming from the LLM (MessageRole.ASSISTANT)
+# We create a fake answer identified as coming from the LLM (Thx to `MessageRole.ASSISTANT`)
 fake_ai_response = Message(MessageRole.ASSISTANT, "The answer is 4")
 
 # Let's add these two Messages to the Agent's History
@@ -937,13 +937,15 @@ What's 2+2 ?
 The answer is 4
 ```
 
-The Agent's History contains the two messages we manualy added.  
-ℹ️ Note that the History doesn't have to be empty to use this. The .add() method only appends your messages to the end of the current History.  
-⚠️ Though, try to keep the alternation of USER and ASSISTANT as this is how "instruct" LLMs have been trained.  
+The Agent's History successfully contains the two messages we manually added.  
+
+ℹ️ The `.add()` method can only **append** messages to the end of the History.  
+
+⚠️ Try to keep the alternation of USER and ASSISTANT as this is how "instruct" LLMs have been trained.  
 
 ---
 
-Let's see a 0 shot example asking for a json output extracted from a given sentence:
+Let's see a 0-shot example asking for a JSON output extracted from a given sentence:  
 
 ```python
 agent1 = Agent("Ai assistant", "llama3:8b")
@@ -979,11 +981,11 @@ INFO: [AI_RESPONSE]: Here is the sentence rewritten in JSON format:
 Let me know if you'd like me to help with anything else!
 ```
 
-Not bad but there's is noise. We would like to output the JSON and nothing else. No bedside manners.  
+Not bad but there's noise. We would like to output the JSON and nothing else. No bedside manners. The `Let me know if you'd like me to help with anything else!` must go.  
 Let's introduce another optional Task() parameter: `json_output=True`. This relies on Ollama to force the output as JSON.  
-⚠️ It is preferable to prompt the LLM to output as JSON in addition to this option.
+⚠️ It is preferable to prompt the LLM to output as JSON in addition to this option.  
 
-Replace our Task with this one:
+Replace the Task with this one:
 ```python
 Task(f"Print the following sentence as JSON extracting the names and rephrasing the actions: 'Marie is walking her dog. Ryan is watching them through the window. The dark sky is pouring down heavy raindrops.'", agent1, json_output=True).solve()
 ```
@@ -996,13 +998,13 @@ INFO: [AI_RESPONSE]: {"names": ["Marie", "Ryan"], "actions": {"Marie": "is walki
 ```
 
 Way better. No more noise.  
-However, we would prefer having an array of `name` and `action`, even for the weather (the name would be *sky* and action *raining*).
+However, we would prefer having an array of `name` and `action`, even for the weather (the name would be *sky* and the action *raining*).
 
-To achieve this let's give the LLM an example of what we expect by making it believe it outputted it correctly once:
+To achieve this let's give the LLM an example of what we expect by making it believe it already outputted it correctly once:  
 ```python
 agent1 = Agent("Ai assistant", "llama3:8b")
 
-# Making a fake interaction that is correct
+# Making a fake valid interaction
 agent1.history.add(Message(MessageRole.USER, "Print the following sentence as json extracting the names and rephrasing the actions: 'John is reading a book on the porch while the cold wind blows through the trees.'"))
 agent1.history.add(Message(MessageRole.ASSISTANT, '[{"name": "John", "action": "Reading a book.", "Cold wind": "Blowing through the trees."]'))
 
@@ -1016,8 +1018,8 @@ INFO: [PROMPT]: Print the following sentence as JSON extracting the names and re
 INFO: [AI_RESPONSE]: [{"name": "Marie", "action": "Walking her dog."}, {"name": "Ryan", "action": "Watching Marie and her dog through the window."}, {"name": "The dark sky", "action": "Pouring down heavy raindrops."}]
 ```
 
-This is perfect.  
-You can add multiple fake interactions like this one to cover more advanced cases and train the LLM on how to react when they happen. It would become multi-shot prompting.  
+This is perfect!  
+You can add multiple fake interactions like this one to cover more advanced use cases and train the LLM on how to react when they happen. It would become multi-shot prompting.  
 
 ---
 
@@ -1043,7 +1045,7 @@ INFO: [PROMPT]: Marie is walking her dog. Ryan is watching them through the wind
 INFO: [AI_RESPONSE]: {"name": "Marie", "action": "Walking with her dog."}
 ```
 :-(  
-In this case, it didn't work very well as only one name was extracted as JSON. But in more complex scenarios I can assure you that letting the LLM reflect on the guideline beforehand, can be very beneficial to solving the task.  
+In this case, it didn't work very well as only one name was extracted as JSON. But in more complex scenarios we can assure you that letting the LLM reflect on the guideline beforehand, can be very beneficial to solving the task.  
 
 ### Saving an Agent state
 
