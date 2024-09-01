@@ -1819,12 +1819,16 @@ I've used all the necessary tools (Multiplier, Adder, and Substractor) to break 
 
 ## IX. Chat between two Agents
 
-One of the best functionalities available in some other frameworks like CrewAI is to allow Agents to speak with one another. Yacana also has this functionality.  
-This allows Agents to brainstorm and come up with solutions by themselves. However, where other frameworks propose many ways to schedule interactions, Yacana emphasizes on providing developers with ways to make them stop talking!
+A crucial functionality available in some other frameworks like CrewAI is allowing Agents to speak with one another. Yacana also has this functionality.  
+This allows Agents to brainstorm and come up with solutions by themselves. However, where other frameworks propose many ways to schedule interactions, Yacana emphasizes on providing developers with ways to make them stop talking!  
 
-Making agents speak is not an issue. But making them stop is a whole other thing. How do you stop a conversation at the exact right moment without monitoring the chat yourself? There are only 2 ways. Either use a maximum number of iterations and stop the chat when it is reached or let one or more LLMs decide when the conversation should end.  
-Yacana provides both.  
-It utilizes the Task system that you already know and allows some Tasks to be worked on by the Agents. But be aware that using the Task system implies this mechanism had to be implemented differently than what you may have seen elsewhere. Even though the result is the same if done correctly...  
+Making agents speak is not an issue. But making them stop is a whole other thing. How do you stop a conversation at the exact right moment without monitoring the chat yourself?  
+There are only 2 ways.
+* Use a maximum number of iterations and stop the chat when it is reached.
+* Let one or more LLMs decide when the conversation should end.  
+
+Yacana provides both:  
+It utilizes the Task system that you already know and allows some Tasks to be worked on by the Agents.    
 
 ### Stopping chat using 'maximum iterations'
 
@@ -1833,7 +1837,7 @@ We'll be using a new class called [GroupSolve]() @todo url. It takes a list of T
 2. The EndChat object will allow you to configure when/how the conversation stops.
 3. The GroupSolve class uses a `.solve()` method like the Task themselves. So don't forget about it.
 
-Let's look at an example:
+Let's look at an example:  
 ```python
 # Creating two agents
 agent1 = Agent("Ai assistant 1", "llama3:8b")
@@ -1849,14 +1853,14 @@ GroupSolve([task1, task2], EndChat(EndChatMode.MAX_ITERATIONS_ONLY)).solve()
 
 In the above code, we can see that the end of the chat condition is `EndChatMode.MAX_ITERATIONS_ONLY`. This means that both agents will exit the conversation after a predefined number of iterations. **By default set to 5**.  
 
-You can set the max iteration level in the EndChat object with the `max_iterations=10` parameter:    
+You can set the max iteration level in the EndChat object with the `max_iterations=10` parameter:  
 ```
 # Note the .solve()
 GroupSolve([task1, task2], EndChat(EndChatMode.MAX_ITERATIONS_ONLY, max_iterations=10)).solve()
 ```
-ℹ️ An "iteration" corresponds to the two agents having talked once. Also, note that each agent solves its initial Task and THEN enters the groupSolve. So even when setting the `max_iterations` to 1 you'll get 2 messages. The initial message of each Task and then one message from GroupSolve.  
+ℹ️ An "iteration" corresponds to the two agents having talked once. Also, note that each agent solves its initial Task and THEN enters the groupSolve. So even when setting the `max_iterations` to 1 you'll get 2 messages in each AGent's History. The initial message of each Task and then one message from the GroupSolve.  
 
-Output:
+Output:  
 ```
 INFO: [PROMPT]: Your task is to create a list of attractions for an amusement park.
 
@@ -1921,9 +1925,9 @@ Some potential themes that could tie everything together:
 These are just a few ideas to get you started! What do you think? Would you like to add or modify any attractions or themes?
 [BLABLA]
 ```
-I won't show the full 5 iterations as it's useless. However, I'm sure you have one question at this point if you ran the program yourself...  
 
-> Why do I get the logging twice ??
+I won't show the full round of iterations as it's useless. However, I'm sure you have one question:  
+> Why do I get the logging twice ?? (Not shown above, run the example yourself and you'll see)
 
 Well... This is because of how the conversation pattern is implemented. Let me explain... Have you ever read the documentation for the Microsoft Autogen framework? If you have, I hope you're having a better time with Yacana than I did with Autogen. That said, the conversational patterns they show are a series of dual-agent conversations. And never did I understand the mess they did before Yacana came to life. The reason why they chain two-agent conversations is because LLMs have been trained to speak in alternation with a user. It's how all "instruct" models have been fine-tuned.   
 So to get the best performance out of the LLMs they chose to limit the number of participants to two. If more than two was ever needed then the context of the first conversation would be given to a new dual chat with one of the agents remaining from the previous conversation (hence keeping the state from one conversation to the other). Then it goes on and on.  
