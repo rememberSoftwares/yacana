@@ -1454,30 +1454,29 @@ It worked!
 - **Error 1**: Regarding the first one if you look closely at the output you can see a strange malformation in the JSON: `{"first__number": "arg 0", "second__number": "arg 1"}`. The first parameter was called with two underscores for some reason (LLMs...). Fortunately, Yacana banged on the LLM's head and it was fixed in the next iteration.  
 - **Error 2**: Concerning the second error, it was the tool itself that raised the exception: `The tool returned an error: Parameter 'first_number' expected a type integer`. This is only logical as the LLM sent catastrophic values to the tool: `{'first_number': 'arg 0', 'second_number': 'arg 1'}`. When the ToolError was raised the error message was given to the LLM and a third iteration started. This time all was correct: `{"first_number": 2, "second_number": 2}` and we got our result from the tool which is 4.
 
-ℹ️ You should use both technics. Providing one example could prevent one tool call failure hence less lost CPU time but adding many validation checks in your tool raising explicit error messages is the best way to ensure that nothing breaks. Nothing beats good all fashion `if` checks!   
+ℹ️ You should combine both technics. Providing one example could prevent one tool call failure hence less lost CPU time but adding many validation checks in your tool raising with explicit error messages is the best way to ensure that nothing breaks. Nothing beats good all fashion `if` checks!   
 
 #### Maximum tool errors
 
-You should combine both methods described above. But adding heavy tool validation with great error messages on what went wrong is always what yields the best results and is also the safest option.  
+What happens if the LLM is stubborn and gets stuck in a loop? Even though Yacana's percussive maintenance should avoid that by shifting LLM internal configuration during runtime more or less randomly, the LLM still might go into an infinite loop. And this is NOT a viable option!  
+Fortunately, Yacana comes with a default of 5 iterations (tries) for each of the 2 types of errors we encountered earlier.  
+* Either the calling error like the `"first__number"` error seen above
+* Or the custom ToolError that the tool threw.
+This means that if one of these two counters gets to 5 then an error is raised. One that is not caught by Yacana.  
+Specifically a `MaxToolErrorIter` exception. You should try/catch all of your Tasks that utilize Tools as they might loop too many times and trigger this exception.  
 
-So what happens if the LLM is stubborn and gets stuck in a loop? Even though Yacana's percussive maintenance should avoid that by shifting LLM internal configuration during runtime more or less randomly, the LLM still might go into an infinite loop. And this is NOT a viable option!  
-Fortunately Yacana come with a default of 5 iterations (tries) for each of the 2 types of errors. Either the calling error like the `"first__number"` error seen above or the custom ToolError that the tool throws. This means that if one of these two counters gets to 5 then an error is raised.  
-Specifically a `MaxToolErrorIter` exception. You should try/catch all of your Tasks that utilise Tools as they might loop too many times and trigger an exception.  
-
-However, you can also set these counters to the value you wish. Move them higher or lower with the following Tool optional parameters: `max_custom_error: int = 5, max_call_error: int = 5`
+However, you can also set these counters to the value you wish... Move them higher or lower with the following Tool optional parameters: ` max_call_error: int = 5, max_custom_error: int = 5`
 For instance:
 ```
-# Doubling the number of iterations the LLM can do before raising: 5 -> 10
+# Doubling the number of iterations the LLM can do before raising `MaxToolErrorIter`: 5 -> 10
 adder_tool: Tool = Tool("Adder", "Adds two numbers and returns the result", adder, max_custom_error=10, max_call_error=10)
 ```
 
-ℹ️ Note that showing the Agent's history with `agent1.history.pretty_print()` won't show you all the shenanigans that are shown in the logs. Many prompts get rid of the final history once the tool call is successful. It's always in the interest of the LLM to keep a clean History. 
-
 ### Making a tool optional
 
-Sometimes you assign a Tool to a Task without knowing for sure that the tool will be useful. If you have a fine-tuned model or doing basic operations you may want to rely on the LLM's reasoning to choose if it really needs to call the tool or use his own training knowledge. Setting the `optional: bool = True` will tweak how Yacana proposes the Tools to the LLM, leaving it a chance to pass on the offer of the tool and use its own knowledge instead.
+Sometimes you assign a Tool to a Task without knowing for sure that the tool will be useful. If you have a fine-tuned model or doing basic operations you may want to rely on the LLM's reasoning to choose if it really needs to call the tool or use his own training knowledge. Setting the `optional: bool = True` will tweak how Yacana proposes the Tools to the LLM, leaving it a chance to pass on the offer of the tool and use its own knowledge instead.  
 
-To demonstrate this let's make a tool that returns a temperature from a city. It will return a fake temperature as we don't care. We won't set `optionnal=True` so it will be forced to use the tool.
+To demonstrate this, let's make a tool that returns a temperature from a city. It will return a fake temperature as we don't really care. We **won't** set `optionnal=True` so it will be forced to use the tool:  
 ```python
 def get_temperature(city: str) -> int:
     return 20
@@ -1518,7 +1517,7 @@ What's the temperature in NY ?
 INFO: [AI_RESPONSE]: { "city": "NY" }
 Temperature = 20
 ```
-The tool was called with `{ "city": "NY" }` which returned 20. Good !
+The tool was called with `{ "city": "NY" }` which returned 20. Good!  
 
 ---
 
@@ -1553,11 +1552,11 @@ Why is the sky blue ?
 INFO: [AI_RESPONSE]: {"city": "Paris"}
 Temperature = 20
 ```
-It asked the tool for the temperature in Paris without any reason. We can't blame it. The tool we provided and the Task to solve have nothing to do with each other. So it's making things up, like the city name.  
+It asked the tool for the temperature in the city 'Paris' without any particular reason. We can't blame it. The tool we provided and the Task to solve have nothing to do with each other. So it's making things up, like this city name.  
 
 ---
 
-Now let's make the tool optional and keep our unrelated Task:
+Now let's make the tool optional with `optional=True` and keep our unrelated Task:  
 ```python
 result: str = Task(f"Why is the sky blue ?", agent1, tools=[Tool("get_temp", "Returns the celsius temperature of a given city", get_temperature, optional=True)]).solve().content
 ```
@@ -1605,29 +1604,33 @@ The sky appears blue because of a phenomenon called Rayleigh scattering, named a
 So, to summarize: the sky appears blue because of the selective scattering of shorter wavelengths (like blue and violet) by tiny molecules in the atmosphere, which dominates the colors we see when looking up at the sky.
 ```
 
-As you can see it chose to ignore the tool when Yacana proposed it. It said:
+As you can see it chose to ignore the tool when Yacana proposed it. It said:  
 ```
 In my opinion, using the `get_temperature` tool is NOT relevant to solving this task. The task asks about why the sky is blue, and temperature doesn't seem to be directly related to that.
 ```
 
 ## VIII. Assigning multiple Tools
 
-In this section, we will see that you can assign more than one tool to a Task. You can add as many Tools as you want and the LLM will be asked what tool it wants to use. After using one of the tools it will be asked if it considers its Task complete. If it says "no" then Yacana will propose the list of tools again and a new iteration is started.  
+In this section, we will see that you can assign more than one tool to a Task. You can add as many Tools as you wish and the LLM will be asked what tool it wants to use. After using one of the tools it will be asked if it considers its Task complete. If it says "no" then Yacana will propose the list of tools again and a new iteration starts.  
 
-This is roughly what the tool-calling mechanism looks like:
+This is roughly what the tool-calling mechanism looks like:  
 ![toolcall1B](https://github.com/user-attachments/assets/bfaec298-44e9-4177-bfb8-e25bdfd01fe6)
-ℹ️ This doesn't take into account many tweaks Yacana makes like: model config updates (in case of infinite loops), optional tools, self-reflection, multi-shot tool call examples, history cleaning, exiting when reaching max iterations, etc. However, it's definitely the *classic* process of calling tools one after the other.
 
-> Additionnal behavior information: When only one tool is assigned the Agent won't be proposed to use it again. One tool is one shot !
-> When giving multiple tools, the agent will this time be proposed to use another tool. He could choose to always use the same one though.
-> In the future Yacana may allow you to have more control on how the tools are being used. For instance, allowing one tool to be re-called or when using multiple tools, each tool being used would be removed from the tool list, ensuring that each tool can only be used once.
-> Also we could add a setting to force the LLM to use all the given tools from the list.
-> Currently, giving more than one tool only ensure it makes use of one of them but could decide to stop after the first use if it wished to.
-> Stay tuned for the next patch.
+ℹ️ This doesn't take into account many tweaks Yacana makes like model's runtime config updates (in case of infinite loops), optional tools, self-reflection, multi-shot tool call examples, history cleaning, exiting when reaching max iterations, etc. However, it definitely is the *classic* process of calling tools one after the other.  
+
+*Additional behavior information:*
+> When only one tool is assigned, the Agent won't be proposed to use it again. One tool is one shot!
+> When giving multiple tools, the agent will then be proposed to use another tool. He could choose to always use the same one though.  
+> In the future, Yacana may allow you to have more control over how the tools are being chosen:
+> * Allowing one tool to be re-called (when assigning only one tool) ;
+> * When using multiple tools, each tool being used would be removed from the tool list, ensuring that each tool can only be used once ;
+> * Add a setting to force the LLM to use all the given tools from the list before exiting the Task ;
+> Currently, giving more than one tool only ensures it makes use of one of them but could decide to stop after the first use if it wished to.
+> Stay tuned for the next patch!
  
-⚠️ For this next section we assume that you have already read section **Assigning a tool to a Task** of the documentation.
+⚠️ For this next section we assume that you have already read section **Assigning a tool to a Task** of the documentation.  
 
-Let's make a more advance calculator. We'll add the missing tools and give them some "server side" checking to help the LLM use them properly.
+Let's make a more advanced calculator. We'll add the missing tools and give them some "server-side" checking to help the LLM use them properly.  
 
 ```python
 def adder(first_number: int, second_number: int) -> int:
@@ -1666,7 +1669,7 @@ adder_tool: Tool = Tool("Adder", "Adds two numbers and returns the result", adde
 substractor_tool: Tool = Tool("Substractor", "Subtracts two numbers and returns the result. When having, for instance, 2 - 6 the arguments are 2 and 6 and not 2 and -6. The tool does the subtraction.", substractor, usage_examples=[{"first_number": 2, "second_number": 4}])
 multiplier_tool: Tool = Tool("Multiplier", "Multiplies two numbers and returns the result.", multiplier)
 
-# Creating a Task to solve and assiging tools to it
+# Creating a Task to solve and assigning tools to it
 result: str = Task(
     f"What's the result of '2 + 2 - 6 * 8'. Decompose the math before trying to solve it. Start with the multiplication. Use the tools at your disposal and do not do the maths yourself.",
     agent1, tools=[
@@ -1812,7 +1815,7 @@ The result of -44 is the final answer for the original expression: "2 + 2 - 6 * 
 I've used all the necessary tools (Multiplier, Adder, and Substractor) to break down the math expression and get the correct answer!
 ```
 
--44 is the correct answer. You could throw in maybe one more operation. However, in our tests using Llama 3.0 going over 4 operations does not guarantee a correct result anymore. It may be about prompt engineering but we also think that Yacana should continue improving. For the moment the LLM tends to contradict itself at some point which sends the final result off. In the next update, Yacana will try to detect errors in reasoning and self-correct. Stay tuned for updates.  
+-44 is the correct answer. You could throw in maybe one more operation. However, in our tests using Llama 3.0, going over 4 operations does not guarantee a correct result anymore. It may be about prompt engineering but we also think that Yacana should continue improving. For the moment the LLM tends to contradict itself at some point which sends the final result off. In the next update, Yacana will try to detect errors in reasoning and self-correct between each tool call. Stay tuned for updates.  
 
 ## IX. Chat between two Agents
 
