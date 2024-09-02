@@ -46,7 +46,7 @@ Ollama is:
 * Compatible with all operating systems Windows/Max/Linux ;  
 * Installed in seconds using one command ;  
 * Has a great CLi that even a 4-year-old can use to download models ;  
-* Has tons of tutorials out there if you run into any type of trouble ;
+* Has tons of tutorials out there if you run into any trouble ;
 
 ℹ️ You can connect Yacana to a remote Ollama instance. Read forward.  
 
@@ -1929,14 +1929,17 @@ These are just a few ideas to get you started! What do you think? Would you like
 I won't show the full round of iterations as it's useless. However, I'm sure you have one question:  
 > Why do I get the logging twice ?? (Not shown above, run the example yourself and you'll see)
 
-Well... This is because of how the conversation pattern is implemented. Let me explain... Have you ever read the documentation for the Microsoft Autogen framework? If you have, I hope you're having a better time with Yacana than I did with Autogen. That said, the conversational patterns they show are a series of dual-agent conversations. And never did I understand the mess they did before Yacana came to life. The reason why they chain two-agent conversations is because LLMs have been trained to speak in alternation with a user. It's how all "instruct" models have been fine-tuned.   
+Well... This is because of how the conversation pattern is implemented. Let me explain... Have you ever read the documentation of the Microsoft Autogen framework? If you have, I hope you're having a better time with Yacana than I did with Autogen. That said, the conversational patterns they show are a series of dual-agent conversations. And never did I understand the mess they did before Yacana came to life. The reason why they chain two-agent conversations is because LLMs have been trained to speak in alternation with a user. It's how all "instruct" models have been fine-tuned.   
 So to get the best performance out of the LLMs they chose to limit the number of participants to two. If more than two was ever needed then the context of the first conversation would be given to a new dual chat with one of the agents remaining from the previous conversation (hence keeping the state from one conversation to the other). Then it goes on and on.  
 ![image](https://github.com/user-attachments/assets/c8c4d958-2ffc-4eca-8d4a-aef576627572)
 *Source: Microsoft Autogen*  
 I honestly think that it's smart but is a stinking mess that lost many people. Worst, it's the simpler pattern they provide...   
 
 Yacana does not do things exactly in the same way but is bound to the same limitations. We must alternate between USER and ASSISTANT!  
-To achieve this we take the output of the Agent1 and give it as a prompt to Agent2. Then the answer of Agent2 is given back as a prompt to Agent1 and round it goes! This is the reason you are seeing each log twice. **It's the answer of one agent being used as a prompt for the other one.**  
+To achieve this we take the output of Agent1 and give it as a prompt to Agent2. Then the answer of Agent2 is given back as a prompt to Agent1 and round it goes! This is the reason you are seeing each log twice. **It's the answer of one agent being used as a prompt for the other one.**  
+
+![doublelogs](https://github.com/user-attachments/assets/6720bef9-c2b0-401a-9f4f-455e42aaa050)
+
 
 ### Letting Agents in charge of ending the chat
 
