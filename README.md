@@ -1609,6 +1609,12 @@ As you can see it chose to ignore the tool when Yacana proposed it. It said:
 In my opinion, using the `get_temperature` tool is NOT relevant to solving this task. The task asks about why the sky is blue, and temperature doesn't seem to be directly related to that.
 ```
 
+### Tools that don't return anything
+
+If you write a tool that doesn't have a reason to answer anything to the LLM, you could be tempted to let it return `None`.  
+We wouldn't encourage this behavior as LLMs generally expect some kind of answer to guide them. You should preferably return some kind of success message. It will act as some kind of positive reinforcement.  
+However, if your tool doesn't return anything, a default message will be added automatically: "Tool {tool.tool_name} was called successfully. It didn't return anything.".  
+
 ## VIII. Assigning multiple Tools
 
 In this section, we will see that you can assign more than one tool to a Task. You can add as many Tools as you wish and the LLM will be asked what tool it wants to use. After using one of the tools it will be asked if it considers its Task complete. If it says "no" then Yacana will propose the list of tools again and a new iteration starts.  
