@@ -2641,8 +2641,8 @@ This diagram and the previous one are the same just represented differently. The
 #### Using self-reflection when LLMs are struggling to terminate chat
 
 When an LLM has the option `llm_stops_by_itself=True` it is in charge to stop the chat by itself.  
-But reasoning is hard for LLMs. Still, Yacana forces them to reflect on many occasions so that they make better judgment calls. However, by default, this self-reflection is not kept in the final history. That said, if the LLM struggles it might be a good move to keep the self-reflection step inside the History so that the LLM can use it to improve its reasoning.  
-This step is used when asked if all the objectives are fulfilled. Having stored more reasoning can help the LLM that all objectives are complete and end the chat, or... Sometimes it can also worthen the issue. You would have to live test this to actually see if there are any benefits.  
+But reasoning is hard for LLMs. Still, Yacana forces them to reflect on many occasions so that they make better judgment calls. However, by default, this self-reflection is not kept in the final history. That said, if the LLM struggles it might be a good move to keep the self-reflection step inside the History so that the LLM can use it to improve its reasoning later on.  
+This step is used when asked if all the objectives are fulfilled. Having stored more reasoning can help the LLM decide that all objectives are complete and end the chat, or... Sometimes it can also worthen the issue. You would have to live test this to actually see if there are any benefits.  
 
 This optional parameter is `use_self_reflection` and should be set to `True` in the Task constructor.  
 ℹ️ It is only useful when a Task is part of a GroupSolve. Outside a GroupSolve it has no effect.  
@@ -2688,12 +2688,12 @@ The above output is part of the Agent's History. Without the `use_self_reflectio
 
 #### Description
 
-GroupSolve uses the common Task class. This means that Tools are also available while agents are chatting. However, tools work the same way as described in the tool section @todo URL. Meaning that the Task's prompt will only be used to trigger the prompt but will not be used to act don't result of the tool. You need the other agent for that.  
-This is an important concept because it means that the task's prompt will not be part of the conversation but the tool output will. Meaning that your tools must always return some computable knowledge that will be used by the second agent! 
+GroupSolve uses the common Task class. This means that Tools are also available while agents are chatting. However, tools work the same way as described in the tool section @todo URL. Meaning that the Task's prompt will only be used to trigger the tool but will not be used to act upon its result. You need the other agent for that.  
+This is an important concept because it means that the task's prompt will not be part of the conversation but the tool output will. This means that your tools must always return some computable knowledge that will be used by the second agent! 
 
 #### Tool use in GroupSolve
 
-Let's play a new game, without tools first:  
+Let's play a new game, **first without tools**:  
 * The first agent will think of a number. The second agent will try to guess it based on indications like "higher" or "lower" given by the first agent.  
 * The conversation ends when the second agent finds the correct number and wins the game!  
 
@@ -2866,7 +2866,7 @@ Let's do it again sometime soon!
 ```
 
 It's a complete failure... :-( But why is that?  
-First, let's analyze the output:
+First, let's analyze the output:  
 * Agent1 generates the initial secret number: it's 14!
 * Agent2 tries 12 which is lower than 14. In theory, Agent1 should tell him "higher" to guide it toward the correct number
 * Agent1 tells Agent2: "lower" which is wrong!
@@ -2881,10 +2881,10 @@ There are two issues here:
 * The second issue is that the secret number is available to the other agent because of the shift message!
   * The shift message being the output of the Game Master, it spoils the secret number! (bummer)
 
-To fix those issues:
+To fix those issues:  
 * Use a tool and don't let the LLM compare numbers itself. Let the CPU deal with that!
 * Either switch the shift message to the other agent or set it manually so that it doesn't spoil the secret number to the player.
-* Maybe even better than switching the shift message: Create a Task beforehand that generates the secret number and after that, enter the GroupSolve() (We're going with that solution here but have fun toying with the examples!)
+  * Maybe even better than switching the shift message: Create a Task beforehand that generates the secret number and after that, enter the GroupSolve() (We're going with that solution here but have fun toying with the examples!)
 
 
 ```python
@@ -2934,12 +2934,12 @@ print("------Game master----------")
 game_master.history.pretty_print()
 ```
 
-> How is tool calling mixed with GroupSolve()?
+How is tool calling mixing with GroupSolve()?  
 > Each time the Game Master Task is brought up. The tool will be called with both secret and guessed numbers. It will return some computable information describing the relation between the two numbers. A string that is inevitably right as it comes from 'classic' programming and not the LLM.
 
 ℹ️ All Tools options are available so you could set `optional=True` if you wish.  
 
-Output:
+Output:  
 ```
 ------ Player --------
 [user]:
@@ -3119,7 +3119,7 @@ Last tool output: `The secret number is equal to the guessed number. You won ! /
 
 Yacana provides a way to make more than two agents speak one after the other. Better yet, there is no limit to the number of agents that you can add. However, note that the dual conversation pattern should be the one giving the best results as LLM were trained to speak to one user. Not be part of a multi-user conversation...  
 Still, the functionality is here for you to use!  
-To make this happen Yacana makes the Agents enter a role-play situation. It will heavily rely on the agent's name, so be sure that each of them has a concise, yet meaningful, name/title. 
+To make this happen Yacana makes the Agents enter a role-play situation. It will heavily rely on the agent's name, so be sure that each of them has a concise, yet meaningful, name/title.  
 
 Let's play another dumb game where 3 players must output one letter each. The game is won when the fourth player (the game master) can make a valid 4-letter word from the previously outputted letters.  
 ```python
@@ -3433,31 +3433,31 @@ I will give you your task in the next message.
 [Game master]: After analyzing the letters provided so far (T-E-H-A-L-S), I can see that they form a valid 4-letter word: HALE! Congratulations, the game is complete!
 ```
 
-The proposed letters are "T - E - H". The game master responds to this with: `After analyzing the letters provided so far (T-E-H), I can see that they don't form a valid 4-letter word. The game continues!`  
-Then new letters are added "A - L - S". To which the game master responds: `After analyzing the letters provided so far (T-E-H-A-L-S), I can see that they form a valid 4-letter word: HALE! Congratulations, the game is complete!`. After which the chat ends!
+During the first round the proposed letters are "T - E - H". The game master responds to this with: `After analyzing the letters provided so far (T-E-H), I can see that they don't form a valid 4-letter word. The game continues!`  
+During the second round new letters are added: "A - L - S". To which the game master responds: `After analyzing the letters provided so far (T-E-H-A-L-S), I can see that they form a valid 4-letter word: HALE! Congratulations, the game is complete!`. After which the chat ends!
 
-ℹ️ Note that all types of ["end chat" modes]() @todo url are still valid. Tools and all their parameters are also available in this mode and follow the same tools principles.
+ℹ️ Note that all types of ["end chat" modes]() @todo url are still valid in multi-user chat too. Tools and all their parameters are also available in this mode and follow the same tools principles.  
 
 ### Pros and cons of multi-LLM group chat
 
-**Dual chat**
-Pros:
+**Dual chat**  
+Pros:  
 * The dual group chat may have better accuracy with "dumb" LLMs assuming that you don't use tools as this may plumber the model's limited reasoning skills.
 * Many options to configure conversation kick-off (shift message, first message reconciliation)
 
-Cons:
+Cons:  
 * Control of the "shift message" and "first message reconciliation" may be a burden for new users ;
 * Logs readability is not great at the moment ;
 
 ---
 
-**Multi chat (>2)**
+**Multi chat (>2)**  
 
-Pros:
+Pros:  
 * Logs readability is good ;
-* No use for "shift message" nor "first message reconciliation"
+* No "shift message" nor "first message reconciliation" to deal with 
 
-Multi (>2) chat cons:
+Multi (>2) chat cons:  
 * LLMs that don't perform well with role-play may experience difficulties like impersonation ;
 
 ℹ️ We might consider adding an option to also use role-play for dual chat mode.
