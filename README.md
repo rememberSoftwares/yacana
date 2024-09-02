@@ -1952,29 +1952,30 @@ The [EndChatMode]() @todo url enum provides multiple ways to stop a chat. These 
 | ONE_LAST_GROUP_CHAT_AFTER_FIRST_COMPLETION | True| When a Task is marked as complete, one whole table turn will be allowed before the chat ends |
 | ALL_TASK_MUST_COMPLETE | True | All tasks must be marked as complete before the chat is ended |
 
-⚠️ To prevent infinite loops ALL chat modes still have a maximum iteration count (defaults to 5) which can be change in the GroupSolve() class with the optionnal parameter `max_iterations=<int>`.
+What's the **Needs task annotation** column in the table?  
+> To let an agent know that it's in charge of ending the chat, its Task() must be given an optional parameter `llm_stops_by_itself=True`. All Task() constructors setting this, make their assigned Agent in charge of stopping the conversation.  
 
-> What is the **Needs task annotation** column above ?  
-> To let an agent know that it's in charge of ending the chat, its Task() must be given an optionnal parameter `llm_stops_by_itself=True`. All Task() constructors setting this, makes their assigned Agent potentially in charge of stopping the conversation.
+⚠️ To prevent infinite loops ALL chat modes still have a maximum iteration count (defaults to 5) which can be changed in the GroupSolve() class with the optional parameter `max_iterations=<int>`.  
+
 
 #### Defining task completion objective
 
-Now that LLMs can stop the conversation by themselve you must set clear objectives for this to happen. The conditions to which the objectives are met must be precise and consise. You will quickly see how prompt engineering is important in this matter.  
+Now that LLMs can stop the conversation by themselves you must set clear objectives for this to happen. The conditions to which the objectives are met must be precise and concise. You will quickly see how prompt engineering is important in this matter.  
 Yacana uses the following wording:  
-> In your opinion, what objectives from your initial task have you 'NOT completed ?
-Therefore you should use the same prompt style in your Task prompt. For instance *"The task is fulfilled when the objective <insert here>"*.
-You should try different version of this "objective completed" prompt to find one that matches your task and LLM.
+> "In your opinion, what objectives from your initial task have you 'NOT completed?"  
+Therefore you should use the same prompt style in your Task prompt. For instance *"The task is fulfilled when the objective <insert here> is completed."*.
+You should try different versions of this "objective completed" prompt to find one that matches your task and LLM best.  
 
 #### Testing chat ending modes
 
-We'll test the different mode with simple games between two Agents.  
+We'll test the different modes with simple games between two Agents.  
 
 **END_CHAT_AFTER_FIRST_COMPLETION**
 
 Let's play a simple guessing game where an agent thinks of a number ranging from 1 to 3. The other agent must guess the number correctly.
 
-⚠️ ❗ Although this game feels simple. Most 8B models will fail at it. As you can see below I upgraded the model to something superior to the classic llama:3.0 that lacks in reasoning. You will need to adjust the model to your computer.  
-But, a word of advice: don't expect any kind of great results with this approach. Local LLMs can brainstorm conceptual ideas but when it comes to logic and reasoning they are very bad. Even with this upgraded model, I often get illogical answers. Moreover, LLMs dislike numbers and have great difficulty to compare them.  
+⚠️ ❗ Although this game feels simple. Most 8B models will fail at it. As you can see below we upgraded the model to something superior to the classic llama:3.0 which lacks in reasoning.    
+But, a word of advice: don't expect any kind of great results with this approach. Local LLMs can brainstorm conceptual ideas but when it comes to logic and reasoning they are very bad. Even with this upgraded model, we often get illogical answers. Moreover, LLMs dislike numbers and have great difficulty to compare them. However, this is just to demonstrate this particular functionality so it's okay.  
 
 ```python
 agent1 = Agent("Ai assistant 1", "dolphin-mixtral:8x7b-v2.7-q4_K_M")
@@ -1996,7 +1997,7 @@ print("------Agent2----------")
 task2.agent.history.pretty_print()
 ```
 
-❕The most important line is the `task1` line with the `llm_stops_by_itself=True` parameter. This means that the assigned Agent is in charge of stopping the conversation.
+❕ The most important line is the `task1` line with the `llm_stops_by_itself=True` parameter. This means that the assigned Agent is in charge of stopping the conversation.  
 
 Output:
 ```
@@ -2082,30 +2083,30 @@ INFO: [PROMPT][To: Ai assistant 1]: To summarize in one word, did you still had 
 INFO: [AI_RESPONSE][From: Ai assistant 1]: no
 ```
 
-Right after this answer, the chat ended because of the `END_CHAT_AFTER_FIRST_COMPLETION` setting.
+Right after this answer, the chat ended because of the `END_CHAT_AFTER_FIRST_COMPLETION` setting.  
 
-In summary, the conversation looks like this:
+In summary, the conversation looks like this:  
 
 ![GS4B](https://github.com/user-attachments/assets/5ee88012-659d-4af1-87e3-0ea7dd1b31c2)
 
-* **Message 1 & 2**: Result of the solo Task that precedes the GroupSolve  
-* **Message 3 & 4**: Are called "init messages". They are the prompt set in the two Tasks of GroupSolve. Agent1 does not see the answer of Agent2 (4) and Agent2 does not see the answer of Agent1 (4).  
-* **Message 5**: This is a shift message. You will learn about them later. For now, just acknowledge that you can configure this message in either Agent and that in this case, it spoils the secret to Agent2 which is bad luck. The shift message can be set to some hardcoded string if you want. You'll see that later.  
+* **Message 1 & 2**: are the result of the solo Task that precedes the GroupSolve  
+* **Message 3 & 4**: are called "init messages". They are the prompt set in the two Tasks of GroupSolve. Agent1 does not see the answer of Agent2 (4) and Agent2 does not see the answer of Agent1 (4).  
+* **Message 5**: is a shift message. You will learn about them later. For now, just acknowledge that you can configure this message in either Agent and that in this case, it spoils the secret to Agent2 which is bad luck. The shift message can be set to some hardcoded string if you want. You'll see that later don't worry.  
 * **Message 6**: History is now synced. All messages beyond this point will be shared with both agents.  
-* **Message 7**: This is the response of Agent1's. It says that the game is won hence terminating the chat. There is no message 7 for Agent2 because message 6 was already an output and as the game finishes it won't take Agent's 1 answer as input.  
+* **Message 7**: is the response of Agent1. It says that the game is won hence terminating the chat. There is no message 7 for Agent2 because message 6 was already an output and as the game finishes it won't take Agent's 1 answer as input to continue the loop.  
 
 ℹ️ You will learn what is a shift message later on and how it can be improved. 
 
-**ONE_LAST_CHAT_AFTER_FIRST_COMPLETION**
+**ONE_LAST_CHAT_AFTER_FIRST_COMPLETION**  
 
-This "end chat" mode allows one more Agent to speak after registering the first Task success.
+This "end chat" mode allows one more Agent to speak after registering the first Task success.  
 
-Update the GroupSolve line like this:
+Update the GroupSolve line like this:  
 ```python
 GroupSolve([task1, task2], EndChat(EndChatMode.ONE_LAST_CHAT_AFTER_FIRST_COMPLETION)).solve()
 ```
 
-Output:
+Output:  
 
 ```
 ------ Agent1 --------
@@ -2194,9 +2195,9 @@ Agent2 now has the opportunity to speak one last time after Agent1 completes its
  Thank you for your cooperation! I'm glad we found the secret number together. Have a great day!
 ```
 
-**ONE_LAST_GROUP_CHAT_AFTER_FIRST_COMPLETION**
+**ONE_LAST_GROUP_CHAT_AFTER_FIRST_COMPLETION**  
 
-Update the GroupSolve() line to this:
+Update the GroupSolve() line to this:  
 ```
 GroupSolve([task1, task2], EndChat(EndChatMode.ONE_LAST_GROUP_CHAT_AFTER_FIRST_COMPLETION)).solve()
 ```
@@ -2227,13 +2228,13 @@ After the initial success, two more chats were generated.
 ```
 
 
-**ALL_TASK_MUST_COMPLETE**
+**ALL_TASK_MUST_COMPLETE**  
 
-This "end chat" mode is useful when more than one Agent has the `llm_stops_by_itself=True`. This means that the conversation will only end when all the agent with this parameter have decided that their objectives are completed.  
+This "end chat" mode is useful when more than one Agent has the `llm_stops_by_itself=True`. This means that the conversation will only end when all the agents with this parameter have decided that their objectives are completed.  
 
-To demonstrate this without having a headache let's make a silly GroupSolve() stating that one Agents must count from 0 to 2 and the other one from 0 to 3 to complete their respective objective.
+To demonstrate this without having a headache let's make a silly GroupSolve() stating that one Agent must count from 0 to 2 and the other one from 0 to 3 to complete their respective objective.  
 
-❗ Shifting back to llama:3.0. Dolphin always wants to execute Python code when it has to do maths...
+❕ Shifting back to "llama:3.0" because "Dolphin" always wants to execute Python code when it has to do maths...  
 
 ```
 agent1 = Agent("Ai assistant 1", "llama3:8b")
@@ -2352,6 +2353,7 @@ Looks like we've completed the task successfully! Well done! Would you like to s
 ```
 
 As you can see, Agent2 cheated. It counted from 0 to 3 in one message. But who cares? Both of them carried on till both had their achievement completed.  
+This parameter works like the `promise.all` of javascript that waits for all promises to end before continuing execution.  
 
 
 ### Getting better results by controlling the "shift message"
@@ -2381,22 +2383,30 @@ print("------Agent2----------")
 task2.agent.history.pretty_print()
 ```
 
-The execution flow looks like this: 
+The execution flow looks like this:  
 
 ![gs2B](https://github.com/user-attachments/assets/e1e8e1eb-5c31-40ac-b044-e505deaa5219)
 
-Let's decompose the graph piece by piece. There are two columns: one for Agent1's point of view and one for Agent's 2 point of view. Like in any conversation, each speaker has its own point of view. This is why you shouldn't rely on the debugging logs only but also print each Agent's History.    
-* In line 1 we have the blue messages which are the initial 2 `Task(...)` that were given to the GroupSolve (We summarized the prompts so that they fit the graph a bit better)
+Let's decompose the graph piece by piece.  
+There are two columns: one for Agent1's point of view and one for Agent's 2 point of view. Like in any conversation, each speaker has its own point of view. This is why you shouldn't rely on the debugging logs only but also print each Agent's History. It's easier to debug.  
+* In line 1 we have the blue messages which are the initial 2 `Task(...)` that were given to the GroupSolve (We summarized the prompts so that they would fit the graph)
 * In line 2 we have the AI answers to the prompts of line 1. What's very interesting here is that each initial prompt is solved by their respective Agent and isn't shared between them! This means that Agent2 doesn't know what Agent1's task is and vice versa. This is important because it must be taken into account when writing the prompt for the second Task.
   * In our example the Task2's prompt starts with *"You will have access to a list of numbers. ..."*. This demonstrates the importance of using the future because when this task is solved it won't know that there is any list whatsoever.
 * In line 3 we add the *"shift"* ! The singular most important message here. As we need both Agents to speak to each other we need to initiate some kind of shift in the message so that the "USER" of one agent becomes the "ASSISTANT" of the other.
-  * The shift message is very important because it must not throw off the LLM with a strange message. By default, it is copied from Agent1's answer from line 2 (see the red arrow). In general, the conversation still makes sense. But if it doesn't then you'll have to take control of the shift message!
-  * Taking control of the shift message is fairly simple. You have 2 types of control. The first control is where the shift message should be placed. Either in Agent1 or in Agent2 (default) point of view. The second control is the content of the shift message. It can either come from the opposite side (default) or be set by you.
-    * To control who gets the shift, use the `shift_message_owner=<task instance>` optionnal parameter from the GroupSolve() class, like this: `GroupSolve([task1, task2], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION), shift_message_owner=task2).solve()`
-    * To control the content of the shift message, use the `shift_message_content="<Some message>"` optional parameter from the GroupSolve() class. Not specifying this parameter results in the message being automatically copied from the first Agent answer to the second Agent (cf graph). Use it like this: `GroupSolve([task1, task2], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION), shift_message_content="List is empty").solve()`
-    * Both parameters can be set at the same time. Also, not specifying any of them will output the same result as shown in the above graph.
+  * The shift message is very important because it must not throw off the LLM with a strange message. By default, it is copied from Agent1's answer from line 2 (see the red arrow). In general, the conversation still makes sense. But if it doesn't then you'll have to take control of the shift message yourself!
 
-Output
+
+Taking control of the shift message is fairly simple. You have 2 types of control.  
+* The first control is where the shift message should be placed. Either in Agent1 or in Agent2 (default) point of view.
+  * To control who gets the shift, use the `shift_message_owner=<task instance>` optionnal parameter from the GroupSolve() class
+  * For instance: `GroupSolve([task1, task2], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION), shift_message_owner=task2).solve()`
+* The second control is the content of the shift message. It can either come from the opposite side (default) or be set by you.
+    * To control the content of the shift message, use the `shift_message_content="<Some message>"` optional parameter from the GroupSolve() class. Not specifying this parameter results in the message being automatically copied from the first Agent answer to the second Agent (cf graph).
+    * For instance: `GroupSolve([task1, task2], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION), shift_message_content="List is empty").solve()`
+
+Both parameters can be set at the same time. Not specifying any of them will trigger the default behavior as shown in the above graph.  
+
+Output  
 ```
 [ Not showing INFO debug]
 ------ Agent1 --------
@@ -2588,22 +2598,22 @@ GroupSolve([task1, task2], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION),
 The diagram now looks like this:  
 ![GS9](https://github.com/user-attachments/assets/4afa64f1-ab1e-4dd9-8530-f36355e05089)
 
-Note how User and Assistant are now reversed.
+Note how User and Assistant are now reversed.  
 
 ⚠️ We haven't actually reran the program 😁. Therefore, message content after the shift message may be different now that it's assigned to Agent1.
 
 
 #### Reconciling initial messages
 
-Let's take another look at the diagram of one past conversation:
+Let's take another look at the diagram of one past conversation:  
 ![gs2B](https://github.com/user-attachments/assets/5ffed0d2-5d26-4fe8-83c2-c0700da98014)
 
-Messages 1 & 2 are only available to their respective agent. Meaning that history reconciliation comes only at message 4 (after the damn "shift message"). When history is *reconcyled* both agents share the same history.  
+Messages 1 & 2 are only available to their respective agent. Meaning that history reconciliation comes only at message 4 (after the damn "shift message"). When history is *reconciled* both agents share the same history.  
 
 It could be represented like this:  
 ![GS5A](https://github.com/user-attachments/assets/649fe22c-3a2a-48d2-b18a-43d62819793b)
 
-But what if you wanted messages 1 & 2 to be available in both histories? Well, there is an option for that too... I know... Too many parameters!  
+But what if you wanted messages 1 & 2 to be available in both histories? Well, there is an option for that too... I know... Sooo many parameters!  
 It's called `reconcile_first_message` and can be set to `True` inside the GroupSolve class.  
 For instance:  
 ```python
@@ -2613,20 +2623,20 @@ GroupSolve([player_task, game_master_task], EndChat(EndChatMode.END_CHAT_AFTER_F
 It does the following:  
 ![GS6](https://github.com/user-attachments/assets/51e1143c-3aa1-40e0-acf6-5ac014d83282)
 
-* The first Task is solved and the output arrives in Agent1's History. It's messages 1 & 2 ;
+* The first Task is solved and the output ends up in Agent1's History. It's messages 1 & 2 ;
 * The prompt and answer are then copied to the agent2's History as you can see in messages 3 & 4 ;
 * Next Task2 is solved. Note that it now has access to the input and output of Agent1's solving task as it was put in its History. It's Message 5 & 6 ;
 * The messages 5 & 6 are copied back to agent1's History as shown in messages 7 & 8 ;
-* We now reach the shift message, at message 9, configured by default to copy message 8. 🚨You should set the shift message yourself as the Histories are now merged from the start. **This will create a message duplication!** ;
+* We now reach the shift message, at message 9, configured by default to copy message 8. 🚨You should set the shift message yourself as the histories are now merged from the beginning. **This will create a message duplication if you don't!** ;
 * Messages from 10 to 12 are already merged as being part of the GroupSolve loop ;
 
-We could represent this merged workflow in the following unified form:
+We could represent this merged workflow in the following unified form:  
 
 ![GS7](https://github.com/user-attachments/assets/82513dee-9763-4328-ad8b-b2d08ddba05d)
 
-This diagram and the previous one are the same just represented differently. In this form 2 things are glaring:
+This diagram and the previous one are the same just represented differently. There are two glaring elements in this diagram:  
 1. Agent2 has one more message (8) than Agent1 (7) due to the shift message.  
-2. Both agents have the same History for the first four messages but they also share the same "USER" / "ASSISTANT" scheme. This means that from Agent1's POV, you addressed to it with message 3 and it responded with message 4. Which is false. The same problem arises with Agent2 POV which sees message 1 as me addressing to it and message 2 as its response. Which is also not true as they were meant for the other Agent.  
+2. Both agents have the same History for the first four messages but they also share the same "USER" / "ASSISTANT" scheme. This means that from Agent1's POV, you addressed it with message 3 and it responded with message 4. Which is false. The same problem arises with Agent2 POV which sees message 1 as us addressing it and message 2 as its response. Which is also not true as they were meant for the other Agent.  
 
 #### Using self-reflection when LLMs are struggling to terminate chat
 
