@@ -87,7 +87,9 @@ Now that you have an Ollama server running and Yacana installed let's create our
 
 Create a Python file with this content:
 ```python
-agent1 = Agent("AI assistant", "llama3.1:8b", system_prompt="You are a helpful AI assistant", endpoint="http://127.0.0.1:11434")
+from yacana import Agent
+
+agent1 = Agent("AI assistant", "llama3:8b", system_prompt="You are a helpful AI assistant", endpoint="http://127.0.0.1:11434")
 ```
 The Agent(...) class takes 2 mandatory parameters:  
 1. **The agent name**: Choose something short about the agent's global focus  
@@ -99,7 +101,7 @@ The Agent(...) class has many optional parameters that we will discover in this 
 
 ### Testing Yacana and Ollama's interaction
 
-This framework is not meant for basic roleplay. However, for people starting their journey in the realm of AI and for debugging purposes, we added a simple chat system. Add this line to test it :
+This framework is not meant for basic roleplay. However, for people starting their journey in the realm of AI and for debugging purposes, we added a simple chat system. Add this new line to test it :
 ```python
 agent1.simple_chat()
 ```
@@ -131,7 +133,7 @@ Red Beard's treasure, ye say? (puffs on pipe) Well, I be knowin' a thing or two 
 ### Complete section code 
 
 ```python
-# @todo Imports
+from yacana import Agent
 
 agent1 = Agent("Pirate", "llama3:8b", system_prompt="You are a pirate", endpoint="http://127.0.0.1:11434")
 agent1.simple_chat()
@@ -146,6 +148,8 @@ agent1.simple_chat()
 The whole concept of the framework lies here. If you understand this following section then you have mastered 80% of Yacana's building principle. Like in LangGraph, where you create nodes that you link together, Yacana has a Task() class which takes as arguments a task to solve. There are no hardcoded links between the Tasks so it's easy to refactor and move things around. The important concept to grasp here is that through these Tasks you will give instructions to the LLM in a way that the result must be computable. meaning instructions must be clear and the prompt to use must reflect that. It's a Task, it's a job, it's something that needs solving but written like it is given as an order! Let's see some examples :
 
 ```python
+from yacana import Agent, Task
+
 # First, let's make a basic AI agent
 agent1 = Agent("AI assistant", "llama3:8b", system_prompt="You are a helpful AI assistant")
 
@@ -192,8 +196,16 @@ To compare with LangGraph, we indeed cannot generate a call graph as an image be
 
 Even though we get logs on the standard output of the terminal, we still need to extract the answer of the LLM that solved that Task in order to do something with it.    
 Getting the string message out of it is quite easy as the .solve() method returns a Message() @todo URL class.  
-Maybe you are thinking "Ho nooo, another class to deal with". Well, let me tell you that it's always better to have an OOP class than some semi-random Python dictionary where you'll forget what keys it contains in ten minutes. Also, the Message @todo url class is very straightforward. It exposes a `content` attribute. Modify the current code like this:  
+Maybe you are thinking "Ho nooo, another class to deal with". Well, let me tell you that it's always better to have an OOP class than some semi-random Python dictionary where you'll forget what keys it contains in ten minutes. Also, the Message @todo url class is very straightforward. It exposes a `content` attribute. Update the current code to look like this:  
 ```python
+from yacana import Agent, Task, Message
+
+# First, let's make a basic AI agent
+agent1 = Agent("AI assistant", "llama3:8b", system_prompt="You are a helpful AI assistant")
+
+# Now we create a task and assign the agent1 to the task
+task1 = Task(f"Solve the equation 2 + 2 and output the result", agent1)
+
 # So that something actually happens you must call the .solve() method on your task
 my_message: Message = task1.solve()
 
@@ -202,19 +214,24 @@ print(f"The AI response to our task is : {my_message.content}")
 ```
 There you go! Give it a try.
 
-ℹ️ Note that we used duck typing, which is postfixing all variables declaration with their type `my_message: Message`. Yacana's source code is entirely duck-typed so that your IDE always knows what type it's dealing with and proposes the best methods and arguments. We recommend that you do the same as it's the industry's best standards.  
+ℹ️ Note that we used duck typing to postfix all variables declaration with their type `my_message: Message`. Yacana's source code is entirely duck-typed so that your IDE always knows what type it's dealing with and proposes the best methods and arguments. We recommend that you do the same as it's the industry's best standards.  
 
 ---
 
 Don't like having 100 lines of code for something simple? Then chain them all in one line!  
 ```
+from yacana import Agent, Task
+
 # First, let's make a basic AI agent
 agent1 = Agent("AI assistant", "llama3:8b", system_prompt="You are a helpful AI assistant")
+
+# Now we create a task and assign the agent1 to the task
+task1 = Task(f"Solve the equation 2 + 2 and output the result", agent1)
 
 # Creating the task, solving it, extracting the result and printing it all in one line
 print(f"The AI response to our task is: {Task(f'Solve the equation 2 + 2 and output the result', agent1).solve().content}")
 ```
-🤔 However, if I were you I would do the message extraction on one line and the print on a new one. Let's not one-line things too much 😅.
+🤔 However, splitting the output of the LLM and the print in two lines would probably look better. Let's not one-line things too much 😅.
 
 
 ### Chaining Tasks
@@ -223,7 +240,7 @@ Chaining Tasks is nothing more than just calling a second Task with the same Age
 
 ```
 task2_result: str = Task(f'Multiply by 2 our previous result', agent1).solve().content
-print(f"The AI response to our task is : {task2_result}")
+print(f"The AI response to our second task is : {task2_result}")
 ```
 You should get:
 ```
