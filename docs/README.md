@@ -219,7 +219,7 @@ There you go! Give it a try.
 ---
 
 Don't like having 100 lines of code for something simple? Then chain them all in one line!  
-```
+```python
 from yacana import Agent, Task
 
 # First, let's make a basic AI agent
@@ -267,6 +267,8 @@ But what is routing? Well, having LLMs solve a Task and then chaining many other
 The most common routing mechanic is "yes" / "no". Depending on the result, your program can do different things next. Let's see an example:  
 
 ```
+from yacana import Agent, Task
+
 agent1 = Agent("AI assistant", "llama3:8b", system_prompt="You are a helpful AI assistant")
 
 # Let's invent a question about 'plants'
@@ -276,11 +278,11 @@ question: str = "Why do leaves fall in autumn ?"
 router_answer: str = Task(f"Is the following question about plants ? <question>{question}</question> Answer ONLY by 'yes' or 'no'.", agent1).solve().content
 
 if "yes" in router_answer.lower():
-    print("Question is about plants")
+    print("Yes, question is about plants")
     # next step in the workflow that involves plants
 
 elif "no" in router_answer.lower():
-    print("Question is NOT about plants")
+    print("No, question is NOT about plants")
     # Next step in the workflow that DOESN'T involve plants
 ```
 
@@ -304,18 +306,15 @@ Question is about plants
 
 As local models are a bit dumb you need to let them think on their own before making a decision. This is called self-reflection. It will cost one more Task to solve but you'll get significantly better results during routing, in particular when routing on more complex things (other than "yes"|"no").
 
-Let's change the routing code like this:
+Let's update the routing section of our code to look like this:  
 ```python
-question: str = "Why do leaves fall in autumn ?"
-
 # Asking for a reasoning step
 Task(f"Is the following question about plants ? <question>{question}</question>\nExplain your reasoning.", agent1).solve()
 
 # Basic yes/no routing based on the previous reasoning
 router_answer: str = Task(f"To summarize in one word, was the question about plants ? Answer ONLY by 'yes' or 'no'.", agent1).solve().content
-
-# Check if @router_answer is yes or no.
 ```
+We added one more Task that executes BEFORE the router.  
 
 You should get this type of output:
 ```
@@ -346,6 +345,30 @@ See how the LLM had an "intense" reflection on the subject. This is very good. Y
 1. **Make it think**: Using the expression "Explain your reasoning." makes it generate a logical answer. Note that if the model is bad at reasoning or makes a mistake during this step it may result in extremely bad situations. But fear not, failsafes can be built to limit bad reasoning. For instance, having another LLM check the logic and interact with the original Agent (see GroupSolve later on) to show it its mistake. You could also give tools to the Agent that will help it achieve the truth and not rely solely on his reasoning abilities (see Tools later on).  
 2. **Making it two shots**: Now that we have 2 Tasks instead of one, the second one only focuses on one task: "yes" or "no" interpretation of the result of Task1. Cutting objectives in multiple sub-tasks gives better performance. This why using an agentic framework is great but it's also why it's consuming a lot of tokens and having "free to run" local LLMs is great!  
 
+Full code:
+```python
+from yacana import Agent, Task
+
+agent1 = Agent("AI assistant", "llama3:8b", system_prompt="You are a helpful AI assistant")
+
+# Let's invent a question about 'plants'
+question: str = "Why do leaves fall in autumn ?"
+
+# Asking for a reasoning step
+Task(f"Is the following question about plants ? <question>{question}</question>\nExplain your reasoning.", agent1).solve()
+
+# Basic yes/no routing based on the previous reasoning
+router_answer: str = Task(f"To summarize in one word, was the question about plants ? Answer ONLY by 'yes' or 'no'.", agent1).solve().content
+
+if "yes" in router_answer.lower():
+    print("Yes, question is about plants")
+    # next step in the workflow that involves plants
+
+elif "no" in router_answer.lower():
+    print("No, question is NOT about plants")
+    # Next step in the workflow that DOESN'T involve plants
+```
+
 ### Cleaning the history
 
 Keeping the self-reflection prompt and the associated answer is always good. It helps guardrailing the LLM. But the "yes"/"no" router on the other hand adds unnecessary noise to the Agent's history. Moreover, local models don't have huge context window sizes, so removing useless interactions is always good.  
@@ -359,16 +382,16 @@ Now, even though you cannot see it, the Agent doesn't remember solving this Task
 
 ### Demo time
 
-For this demo, we'll make a simple app that takes a user query (HF replacing the static string by a Python `input()` if you wish) that checks if the query is about plants.  
+For this demo, we'll make an app that takes a user query (HF replacing the static string by a Python `input()` if you wish) that checks if the query is about plants.  
 If it is not we end the workflow there. However, if it is about plants the flow will branch and search if a plant type/name was given. If it was then it is extracted and knowledge about the plant will be shown before answering the original question. If not it will simply answer the query as is.  
 
 ![plant1B](https://github.com/user-attachments/assets/e479e74c-c4f4-4942-a8b5-bd06b377af8c)
 
 
-Read from bottom ⬇️ to top ⬆️. (Though, the Agent and question variables are defined globally at the top)
+Read from bottom ⬇️ to top ⬆️. (Though, the Agent and the question variables are defined globally at the top)
 
 ```python
-@todo imports
+from yacana import Agent, Task
 
 # Declare agent
 agent1 = Agent("AI assistant", "llama3:8b", system_prompt="You are a helpful AI assistant")
@@ -630,6 +653,8 @@ There are 5 levels of logs:
 
 To configure the log simply add this line at the start of your program:
 ```python
+from yacana import LoggerManager
+
 LoggerManager.set_log_level("INFO")
 ```
 
@@ -637,6 +662,8 @@ LoggerManager.set_log_level("INFO")
 
 If you need a library to stop spamming, you can try the following:  
 ```python
+from yacana import LoggerManager
+
 LoggerManager.set_library_log_level("httpx", "WARNING")
 ```
 The above example sets the logging level of the network httpx library to warning, thus reducing the log spamming.  
@@ -652,7 +679,9 @@ Yacana provides you with a class that exposes all the possible LLM properties. L
 We use the [ModelSettings]() @todo url class to configure the settings we need. 
 
 For example, let's lower the temperature of an Agent to 0.4:
-```
+```python
+from yacana import ModelSettings, Agent
+
 ms = ModelSettings(temperature=0.4)
 
 agent1 = Agent("Ai assistant", "llama3:8b", model_settings=ms)
@@ -661,6 +690,8 @@ If you're wondering what are the default values of these when not set. Well, Oll
 
 A good way to show how this can have a real impact on the output is by setting the `num_predict` parameter. This one allows control of how many tokens should be generated by the LLM. Let's make the same Task twice but with different `num_predict` values:  
 ```python
+from yacana import ModelSettings, Agent, Task
+
 # Setting temperature and max token to 100
 ms = ModelSettings(temperature=0.4, num_predict=100)
 
@@ -722,6 +753,8 @@ The Agent class comes with a `.history` property of type `History` (@todo [see h
 
 Let's see a simple example:
 ```python
+from yacana import LoggerManager, Agent, Task
+
 # Let's deactivate automatic logging so that only OUR prints are shown
 LoggerManager.set_log_level(None)
 
@@ -820,6 +853,8 @@ With a bit of color, it would look like this:
 
 
 ```python
+from yacana import LoggerManager, Agent, Task
+
 # Let's deactivate automatic logging so that only OUR prints are shown; Maybe reactivate (to "info") if you want to see what's happening behind the scenes.
 LoggerManager.set_log_level(None)
 
@@ -928,6 +963,8 @@ It takes an argument of type `Message()` ([[see here]() @todo) with two paramete
 
 For example:  
 ```python
+from yacana import Agent, Message, MessageRole
+
 # Creating a basic agent with an empty history
 agent1 = Agent("AI assistant", "llama3:8b")
 
@@ -965,6 +1002,8 @@ The Agent's History successfully contains the two messages we manually added.
 Let's see a 0-shot example asking for a JSON output extracted from a given sentence:  
 
 ```python
+from yacana import Agent, Task
+
 agent1 = Agent("Ai assistant", "llama3:8b")
 
 Task(f"Print the following sentence as JSON, extracting the names and rephrasing the actions: 'Marie is walking her dog. Ryan is watching them through the window. The dark sky is pouring down heavy raindrops.'", agent1).solve()
@@ -1019,6 +1058,8 @@ However, we would prefer having an array of `name` and `action`, even for the we
 
 To achieve this let's give the LLM an example of what we expect by making it believe it already outputted it correctly once:  
 ```python
+from yacana import Agent, Task, MessageRole, Message
+
 agent1 = Agent("Ai assistant", "llama3:8b")
 
 # Making a fake valid interaction
@@ -1036,6 +1077,7 @@ INFO: [AI_RESPONSE]: [{"name": "Marie", "action": "Walking her dog."}, {"name": 
 ```
 
 This is perfect!  
+(❕ Model temperature may impact performance here. Consider using a low value.)  
 You can add multiple fake interactions like this one to cover more advanced use cases and train the LLM on how to react when they happen. It would become multi-shot prompting.  
 
 ---
@@ -1044,6 +1086,8 @@ You can also do multi-shot prompting with self-reflection. This takes more CPU t
 
 For example:  
 ```python
+from yacana import Agent, Task
+
 agent1 = Agent("Ai assistant", "llama3:8b")
 
 Task('I will give you a sentence where you must extract as JSON all the names and rephrase all the actions. For example in the following sentence: "John is reading a book on the porch while the cold wind blows through the trees." would result in this JSON output: [{"name": "John", "action": "Reading a book."}, {"name": "Cold wind", "action": "Blowing through the trees."}] ', agent1).solve()
@@ -1070,6 +1114,8 @@ Maybe your program needs to start, stop, and resume where it stopped. For this u
 
 To save an Agent do the following:  
 ```python
+from yacana import Agent, Task
+
 agent1 = Agent("Ai assistant", "llama3:8b")
 
 Task("What's 2+2 ?", agent1).solve()
@@ -1100,8 +1146,10 @@ If you look at the file `agent1_save.json` you'll see something like this:
 ```
 
 Now let's load back this agent from the dead using `.get_agent_from_state()`!  
-In another Python file add this bit of code:  
+**In another Python file** add this code snippet:  
 ```python
+from yacana import Agent, Task
+
 agent2: Agent = Agent.get_agent_from_state("./agent1_save.json")
 
 Task("Multiply by 2 the previous result", agent2).solve()
