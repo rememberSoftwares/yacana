@@ -2714,7 +2714,7 @@ But what if you wanted messages 1 & 2 to be available in both histories? Well, t
 It's called `reconcile_first_message` and can be set to `True` inside the GroupSolve class.  
 For instance:  
 ```python
-GroupSolve([player_task, game_master_task], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION), reconcile_first_message=True).solve()
+GroupSolve([task1, task2], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION), reconcile_first_message=True).solve()
 ```
 
 It does the following:  
@@ -2745,6 +2745,8 @@ This optional parameter is `use_self_reflection` and should be set to `True` in 
 ℹ️ It is only useful when a Task is part of a GroupSolve. Outside a GroupSolve it has no effect.  
 
 ```python
+from yacana import Agent, Task, GroupSolve, EndChat, EndChatMode
+
 agent1 = Agent("Ai assistant 1", "llama3:8b")
 agent2 = Agent("Ai assistant 2", "llama3:8b")
 
@@ -2779,7 +2781,7 @@ So, in hindsight, I have not fully completed the objective of considering altern
 ```
 The above output is part of the Agent's History. Without the `use_self_reflection=True` it wouldn't.  
 
-ℹ️ Because this setting helps the LLM end chats by itself it won't have any effects when used with the "end chat" mode `MAX_ITERATIONS_ONLY`.  
+ℹ️ Because this setting helps the LLM end chats by itself it won't have any effects when used with the "end chat" mode `MAX_ITERATIONS_ONLY` that simply counts rounds.  
 
 ### Using tools inside GroupSolve
 
@@ -2795,6 +2797,8 @@ Let's play a new game, **first without tools**:
 * The conversation ends when the second agent finds the correct number and wins the game!  
 
 ```python
+from yacana import Agent, Task, GroupSolve, EndChat, EndChatMode
+
 # Creating our two players
 agent1 = Agent("Player 1", "llama3:8b")
 agent2 = Agent("Player 2", "llama3:8b")
@@ -2985,6 +2989,8 @@ To fix those issues:
 
 
 ```python
+from yacana import Agent, Task, GroupSolve, EndChat, EndChatMode, ToolError, Tool
+
 # Creating our tool with type checking and 3 conditional returns
 def high_low(secret_number: int, guessed_number: int) -> str:
     print(f"Tool is called with {secret_number} / {guessed_number}")
@@ -3220,6 +3226,8 @@ To make this happen Yacana makes the Agents enter a role-play situation. It will
 
 Let's play another dumb game where 3 players must output one letter each. The game is won when the fourth player (the game master) can make a valid 4-letter word from the previously outputted letters.  
 ```python
+from yacana import Agent, Task, GroupSolve, EndChat, EndChatMode
+
 agent1 = Agent("James", "llama3:8b")
 agent2 = Agent("Emily", "llama3:8b")
 agent3 = Agent("Michael", "llama3:8b")
