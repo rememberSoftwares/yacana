@@ -71,7 +71,7 @@ When you have chosen your model it is time to use Ollama CLI to pull it on your 
 
 ### Installing Yacana
 
-```
+```shell
 pip3 install yacana
 ```
 
@@ -238,7 +238,7 @@ print(f"The AI response to our task is: {Task(f'Solve the equation 2 + 2 and out
 
 Chaining Tasks is nothing more than just calling a second Task with the same Agent. Agents keep track of the History of what they did (aka, all the Tasks they solved). So just call a second Task and assign the same Agent. For instance, let's multiply by 2 the result of the initial Task. Append this to our current script:
 
-```
+```python
 task2_result: str = Task(f'Multiply by 2 our previous result', agent1).solve().content
 print(f"The AI response to our second task is : {task2_result}")
 ```
@@ -266,7 +266,7 @@ But what is routing? Well, having LLMs solve a Task and then chaining many other
 
 The most common routing mechanic is "yes" / "no". Depending on the result, your program can do different things next. Let's see an example:  
 
-```
+```python
 from yacana import Agent, Task
 
 agent1 = Agent("AI assistant", "llama3:8b", system_prompt="You are a helpful AI assistant")
@@ -1125,7 +1125,7 @@ agent1.export_state("./agent1_save.json")
 ```
 
 If you look at the file `agent1_save.json` you'll see something like this:
-```
+```json
 {
     "name": "Ai assistant",
     "model_name": "llama3:8b",
@@ -1376,7 +1376,7 @@ If you followed this tutorial from the start you saw that multi-shot prompting y
 These dictionaries will be presented by Yacana to the LLM as examples of how to call the tool correctly.  
 
 Let's look at an example with this new tool instance:
-```
+```python
 adder_tool: Tool = Tool("Adder", "Adds two numbers and returns the result", adder, usage_examples=[{"first_number": 2, "second_number": 4}, {"first_number": 8, "second_number": -2}])
 ```
 We provided above two examples for the LLM to look at. Each time giving `first_number` and `second_number` different integer values. No strings. Actual integers!
@@ -1547,7 +1547,7 @@ Specifically a `MaxToolErrorIter` exception. You should try/catch all of your Ta
 
 However, you can also set these counters to the value you wish... Move them higher or lower with the following Tool optional parameters: ` max_call_error: int = 5, max_custom_error: int = 5`
 For instance:
-```
+```python
 # Doubling the number of iterations the LLM can do before raising `MaxToolErrorIter`: 5 -> 10
 adder_tool: Tool = Tool("Adder", "Adds two numbers and returns the result", adder, max_custom_error=10, max_call_error=10)
 ```
@@ -1947,7 +1947,7 @@ GroupSolve([task1, task2], EndChat(EndChatMode.MAX_ITERATIONS_ONLY)).solve()
 In the above code, we can see that the end of the chat condition is `EndChatMode.MAX_ITERATIONS_ONLY`. This means that both agents will exit the conversation after a predefined number of iterations. **By default set to 5**.  
 
 You can set the max iteration level in the EndChat object with the `max_iterations=10` parameter:  
-```
+```python
 # Note the .solve()
 GroupSolve([task1, task2], EndChat(EndChatMode.MAX_ITERATIONS_ONLY, max_iterations=10)).solve()
 ```
@@ -2293,7 +2293,7 @@ Agent2 now has the opportunity to speak one last time after Agent1 completes its
 **ONE_LAST_GROUP_CHAT_AFTER_FIRST_COMPLETION**  
 
 Update the GroupSolve() line to this:  
-```
+```python
 GroupSolve([task1, task2], EndChat(EndChatMode.ONE_LAST_GROUP_CHAT_AFTER_FIRST_COMPLETION)).solve()
 ```
 This will allow both LLMs to speak one last time before the chat ends.  
@@ -2331,7 +2331,7 @@ To demonstrate this without having a headache let's make a silly GroupSolve() st
 
 ❕ Shifting back to "llama:3.0" because "Dolphin" always wants to execute Python code when it has to do maths...  
 
-```
+```python
 from yacana import Agent, Task, GroupSolve, EndChat, EndChatMode
 
 agent1 = Agent("Ai assistant 1", "llama3:8b")
