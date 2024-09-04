@@ -1198,28 +1198,28 @@ The title spoils one of the most important things about tool calling in Yacana.
 It is of the utmost importance that you understand this concept. This implies that you will have to create a second Task to deal with the output of the first one.  
 
 This is a step-by-step of the internal mechanism:  
-1. The Task is called upon to be solved ;
+1. The Task is called upon to be solved: `.solve()` ;
 2. There is a Tool assigned, so the Agent must use it ;
-3. Yacana provides examples of how the tool is used ;
-4. Giving the initial Task prompt to the Agent so that it knows what to do with the tool ;
+3. Yacana provides examples of how to use the tool ;
+4. Yacana gives the initial Task prompt to the Agent so it knows what to do with the tool ;
 5. The agent decides what values to send the Tool based on the prompt and previous History ;
 6. The Tool is called with the previously mentioned parameters ;
 7. The tool returns a value ;
 8. **The Task's final output is the tool's value** ;
 
-As you can see, nothing was made with the tool result itself. This means that the tool return value must carry all the necessary information so the next Task can work with it!  
-That said, not all tools must return something useful. Thus removing the need to create a second Task to act upon the result of the tool call. For instance, an LLM might be of paramount importance to call a function with complex arguments but as it would only make minor adjustments to some variable in your code, there might be no point in the tool returning any information to the LLM.  
+As you can see, nothing was made with the tool result itself. This means the tool return value must carry all the necessary information so the next Task can work with it!  
+That said, not all tools must return something useful. Thus removing the need to create a second Task to act upon the result of the tool call. For instance, an LLM might be of paramount importance to call a function with complex arguments but as it may only make minor adjustments to some variable in your code, there might be no point in the tool returning any information to the LLM.  
 
 Example of a **bad** prompt with a Tool that gets the current weather of a city:  
 * `Task(f"I give you the following city: '{city}'. Get the current weather there and output 'So much sun !' if there is some sun else say 'So  much rain !'", some_agent, tools=[get_weather_tool]).solve()` 
-=> You'll never get the output 'sunny' or 'rainy'. **The result of this Task will be the result of the Tool output.** The prompt is ONLY useful to the Agent to extract the city name that must be given to the tool.  
+=> You'll never get the output 'So much sun !' or 'So  much rain !'. **The result of this task will be the tool output.** The prompt is ONLY useful to the Agent to extract the city name that must be given to the tool.  
 
-To fix the above scenario you have two options:  
+To actually use the result of the tool you have two options:  
 
 1. Split the Task in two:  
 * `Task(f"I give you the following city: '{city}'. Get the current weather there.", some_agent, tools=[get_weather_tool]).solve()`  
 * `Task(f"Output 'So much sun !' if there is some sun else say 'So  much rain !'", some_agent).solve()`  
-Splitting the tasks into two allows the second Task to work on the output of the first one (the tool output). It's also a kind of self-reflection.  
+Splitting the tasks into two allows the second Task to work on the output of the first one (the tool output). FYI, it's also a type of self-reflection.  
 
 2. Make the tool do the work:  
 * Let's write a pseudo code get_weather tool
@@ -1232,8 +1232,8 @@ def get_weather(city: str) -> str:
       return "So much rain !"
 ```
 
-This tool would return either "So much sun !" or "So much rain !" based on the output of some fake weather API. This was the output we needed. **However**, the original prompt it's still bad! The section "*output 'sunny' if there is some sun else say 'rainy'*" of the initial *bad* prompt is still useless as it's the Tool itself that will output this string. Not the LLM!  
-You should rewrite the prompt like this: "I give you the following city: '{city}'. Get the current weather there."  
+This tool would return either "So much sun !" or "So much rain !" based on the output of some fake weather API. This was the output we needed. **However**, the original prompt is still wrong! The section "*output 'So  much sun !' if there is some sun else say 'So  much rain !'*" of the initial *bad* prompt is still useless as it's the Tool itself that will output this string. Not the LLM!  
+You should rewrite the prompt like this: "I give you the following city: '{city}'. Get the current weather there.". The tool will return the correct string.    
 
 
 ---
@@ -1242,10 +1242,13 @@ The full example for those who wish to test IRL. However, we haven't even shown 
 
 Bad prompt:  
 ```python
+from yacana import Agent, Tool, Task
+
 agent1 = Agent("AI assistant", "llama3:8b")
 
 def get_weather(city: str) -> str:
-    return "Sunny"
+    # Faking the weather API response
+    return "So much sun !"
 
 get_weather_tool = Tool("get_weather", "Returns the weather for a given city.", get_weather)
 
@@ -1257,10 +1260,13 @@ agent1.history.pretty_print()
 
 Good prompt:  
 ```python
+from yacana import Agent, Tool, Task
+
 agent1 = Agent("AI assistant", "llama3:8b")
 
 def get_weather(city: str) -> str:
-    return "Sunny"
+    # Faking the weather API response
+    return "So much sun !"
 
 
 get_weather_tool = Tool("get_weather", "Returns the weather for a given city.", get_weather)
@@ -1307,6 +1313,8 @@ Task(f"What's 2+2 ?", agent1, tools=[adder_tool]).solve()
 
 Full code:  
 ```python
+from yacana import Agent, Tool, Task
+
 def adder(first_number: int, second_number: int) -> int:
     print(f"Tool adder was called with param {first_number} {type(first_number)} and {second_number} ({type(second_number)})")
     return first_number + second_number
@@ -1365,7 +1373,7 @@ As you saw in the previous adder example we ran into trouble with the `2 + 2` ca
 #### Providing tool call examples
 
 If you followed this tutorial from the start you saw that multi-shot prompting yields good results. The Tool class allows this too, using the `usage_examples=[]` optional parameter. You can provide a Python dictionary where each key corresponds to a function's parameter and the value, a valid value. It's inside an array so you can provide multiple examples if needed. In general one or two is enough.  
-These dictionaries will be presented by Yacana to the LLM as examples on how to call the tool correctly.  
+These dictionaries will be presented by Yacana to the LLM as examples of how to call the tool correctly.  
 
 Let's look at an example with this new tool instance:
 ```
@@ -1423,6 +1431,11 @@ This means adding heavy checks on our tool. Thus, when the LLM sends an incorrec
 
 Let's upgrade our adder tool!
 ```python
+from yacana import Agent, Tool, Task, ToolError
+
+
+def adder(first_number: int, second_number: int) -> int:
+    print(f"Tool adder was called with param {first_number} {type(first_number)} and {second_number} ({type(second_number)})")
     # Adding type validation
     if not (isinstance(first_number, int)):
         raise ToolError("Parameter 'first_number' expected a type integer")
@@ -1432,10 +1445,12 @@ Let's upgrade our adder tool!
 
 We added type validation on both parameters. But you should also check for None values, etc. As I said. Think of this as server-side validation. You cannot trust AI more than humans...  
 
-Let's remove the examples set in the previous section. The LLM will be blind once again. As such, he will probably make mistakes but the ToolError exception will guide it onto the correct path. Let's see:  
+Let's remove the "examples" set in the previous section. The LLM will be blind once again. As such, he will probably make mistakes but the ToolError exception will guide it onto the correct path. Let's see:  
 
 *Complete code*
 ```python
+from yacana import Agent, Tool, Task, ToolError
+
 agent1 = Agent("Ai assistant", "llama3:8b")
 
 def adder(first_number: int, second_number: int) -> int:
@@ -1543,9 +1558,12 @@ Sometimes you assign a Tool to a Task without knowing for sure that the tool wil
 
 To demonstrate this, let's make a tool that returns a temperature from a city. It will return a fake temperature as we don't really care. We **won't** set `optionnal=True` so it will be forced to use the tool:  
 ```python
+from yacana import Task, Agent, Tool
+
 def get_temperature(city: str) -> int:
     return 20
 
+agent1 = Agent("Ai assistant", "llama3:8b")
 
 result: str = Task(f"What's the temperature in NY ?", agent1, tools=[Tool("get_temp", "Returns the celsius temperature of a given city", get_temperature)]).solve().content
 
@@ -1704,6 +1722,8 @@ This is roughly what the tool-calling mechanism looks like:
 Let's make a more advanced calculator. We'll add the missing tools and give them some "server-side" checking to help the LLM use them properly.  
 
 ```python
+from yacana import Task, Agent, Tool, ToolError
+
 def adder(first_number: int, second_number: int) -> int:
     print("Adder was called with types = ", str(type(first_number)), str(type(second_number)))
     if not (isinstance(first_number, int)):
@@ -1910,6 +1930,8 @@ We'll be using a new class called [GroupSolve]() @todo url. It takes a list of T
 
 Let's look at an example:  
 ```python
+from yacana import Agent, Task, GroupSolve, EndChat, EndChatMode
+
 # Creating two agents
 agent1 = Agent("Ai assistant 1", "llama3:8b")
 agent2 = Agent("Ai assistant 2", "llama3:8b")
@@ -2049,6 +2071,8 @@ Let's play a simple guessing game where an agent thinks of a number ranging from
 But, a word of advice: don't expect any kind of great results with this approach. Local LLMs can brainstorm conceptual ideas but when it comes to logic and reasoning they are very bad. Even with this upgraded model, we often get illogical answers. Moreover, LLMs dislike numbers and have great difficulty to compare them. However, this is just to demonstrate this particular functionality so it's okay.  
 
 ```python
+from yacana import Agent, Task, GroupSolve, EndChat, EndChatMode
+
 agent1 = Agent("Ai assistant 1", "dolphin-mixtral:8x7b-v2.7-q4_K_M")
 agent2 = Agent("Ai assistant 2", "dolphin-mixtral:8x7b-v2.7-q4_K_M")
 
@@ -2308,6 +2332,8 @@ To demonstrate this without having a headache let's make a silly GroupSolve() st
 ❕ Shifting back to "llama:3.0" because "Dolphin" always wants to execute Python code when it has to do maths...  
 
 ```
+from yacana import Agent, Task, GroupSolve, EndChat, EndChatMode
+
 agent1 = Agent("Ai assistant 1", "llama3:8b")
 agent2 = Agent("Ai assistant 2", "llama3:8b")
 
