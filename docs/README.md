@@ -75,13 +75,13 @@ When you have chosen your model it is time to use Ollama CLI to pull it on your 
 pip3 install yacana
 ```
 
-## II. Imports
+### Imports
 
 When using other frameworks 'import hell' quickly appears. To prevent this bothersome problem we propose that you always import all of Yacana's modules and when finished developing let the IDE remove the unused imports. Unused imports generally appear grayed. Thus we recommend that you prepend these imports in all your files and clean them later. This way the IDE will have auto-completion available and will help you develop 10 times faster.  
 
-## III. Creating your first Agent
+## II. Agents & Tasks
 
-### Initializing the Agent
+### Creating your first Agent
 
 Now that you have an Ollama server running and Yacana installed let's create our first agent!  
 
@@ -130,7 +130,9 @@ Arrrr, shiver me timbers! What be bringin' ye to these fair waters? Are ye looki
 Red Beard's treasure, ye say? (puffs on pipe) Well, I be knowin' a thing or two about that scurvy dog and his loot. But, I'll only be tellin' ye if ye be willin' to share yer own booty... of information! (winks)
 ```
 
-### Complete section code 
+---
+
+Complete section code:
 
 ```python
 from yacana import Agent
@@ -141,7 +143,7 @@ agent1.simple_chat()
 
 ⚠️From now on we will not set the *endpoint* attribute anymore for clarity and will resort to the defaults. If your LLM is not served by Ollama or isn't on your localhost you should continue setting this value.  
 
-## IV. Creating Tasks
+### Creating Tasks
 
 ### Introduction example
 
