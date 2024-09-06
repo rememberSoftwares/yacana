@@ -40,8 +40,12 @@ Moreover, it's free and open source (MIT) forever. It is made with love by the c
 
 ![image](https://github.com/user-attachments/assets/f3c45d0e-efca-4853-8237-3e56d90e1747)
 
-As mentioned previously, the currently released version of Yacana has only been tested on Ollama. This will be sorted out in the next few weeks.  
-To work with Yacana you'll need an Ollama server. If your computer is performant enough you can use it to run LLMs directly on your machine. Ollama is a great inference server and the most simple to install. Click [here](https://ollama.com/download) to get the latest release.  
+The current release of Yacana was made to work with Ollama. We will extend supports to all other major inference servers in the next update.  
+The first step is to install Ollama. It will be used to serve AI models with an HTTP API.  
+If your computer is performant enough you can use it to run LLMs directly on your machine. Ollama is a great inference server and the most simple to install.  
+
+Click [here](https://ollama.com/download) to install the latest release.  
+
 Ollama is:  
 * Compatible with all operating systems Windows/Max/Linux ;  
 * Installed in seconds using one command ;  
@@ -56,9 +60,9 @@ After Ollama is installed you can browse the list of available LLMs on the [Olla
 For reference, if you don't know what LLM model to choose (we've all been there) here is a list of models you can try out on consumer hardware:  
 | Computer power   |      LLM models name to try      |  LLM quality |
 |----------|:-------------:|:------:|
-| **Out of this world** *(GC RTX 4090 / 64 GB RAM)* | 'llama3.1:70b' or 'mixtral:8x22b' | Excellent reasoning and instruction following. |
-| **Epic** *(GC RTX 4090 / 32 GB RAM)* | 'llama3.1:8b' or 'dolphin-mixtral:8x7b' or 'dolphin-mixtral:8x7b-v2.5-q6_K' | Good reasoning and instruction following. (q6_K model should be less consuming than the default Mixtral if you have any issues) |
-| **Gamer** *(GC GTX 1080TI / 16 GB RAM)* |    'llama3.1:8b' or 'mistral:7b'   | Llama still works but is slower. Expect limited reasoning and no more than 2 complex instructions at a time  |
+| **Out of this world** *(RTX 4090 / 64 GB RAM)* | 'llama3.1:70b' or 'mixtral:8x22b' | Excellent reasoning and instruction following. |
+| **Epic** *(RTX 4090 / 32 GB RAM)* | 'llama3.1:8b' or 'dolphin-mixtral:8x7b' or 'dolphin-mixtral:8x7b-v2.5-q6_K' | Good reasoning and instruction following. (q6_K model should be less consuming than the default Mixtral if you have any issues) |
+| **Gamer** *(GTX 1080TI / 16 GB RAM)* |    'llama3.1:8b' or 'mistral:7b'   | Llama still works but is slower. Expect limited reasoning and no more than 2 complex instructions at a time  |
 | **Potato** | 'phi:2.7b' or 'phi3:3.8b' or 'tinyllama:1.1b' | Almost no reasoning, incapable of following more than 1 instruction at a time, English bound only ; Dumb as a stone |
 
 ---
@@ -67,7 +71,10 @@ If you have access to a GPU VM with A LOT of RAM then you should try the state-o
 
 ### Running the model
 
-When you have chosen your model it is time to use Ollama CLI to pull it on your computer. Simply do `ollama pull <model_name>`. The download will start immediately. List installed models using `ollama list`. When ready, test the model locally by doing `ollama run <model_name>` which will start a conversation with the LLM.  
+When you have chosen your model it's time to use the Ollama CLI to pull it on your computer.  
+* To download the model do `ollama pull <model_name>` ;
+* Then list installed models using `ollama list` ;
+* When ready, test the model locally by doing `ollama run <model_name>` which will start a conversation with the LLM ;  
 
 ### Installing Yacana
 
