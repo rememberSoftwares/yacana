@@ -288,7 +288,7 @@ LoggerManager.set_library_log_level("httpx", "WARNING")
 ```
 The above example sets the logging level of the network httpx library to warning, thus reducing the log spamming.  
 
-### Configuring the LLM internal settings
+### Configuring LLM's settings
 
 For advanced users, Yacana provides a way to tweak the LLM runtime behavior!  
 For instance, lowering the `temperature` setting makes the model less creative in its responses. On the contrary, raising this setting will make the LLM more chatty and creative.  
@@ -1110,7 +1110,7 @@ INFO: [AI_RESPONSE]: {"name": "Marie", "action": "Walking with her dog."}
 :-(  
 In this case, it didn't work very well as only one name was extracted as JSON. But in more complex scenarios we can assure you that letting the LLM reflect on the guideline beforehand, can be very beneficial to solving the task.  
 
-### Saving an Agent state
+### Saving Agent state
 
 Maybe your program needs to start, stop, and resume where it stopped. For this use case, Yacana provides a way to store an Agent state into a file and load it later. All of the Agent's properties are saved including the History. Only checkpoints are lost as they are more of a runtime thing. We might include them in the save file one day if the need arises.  
 
