@@ -1191,7 +1191,7 @@ Some LLMs have been trained to output JSON in a particular way that matches a pa
 Unfortunately, the size and complexity of this JSON doesn't work very well with our dumb 8B LLMs. This a problem that ChatGPT, Claude, Grok and other smart LLMs don't have.  
 To overcome this particular issue, Yacana comes with its own JSON structure to call Python functions! It's way lighter than the OpenAI standard and Yacana uses [percussive maintenance]() @todo url to force the LLM to output the JSON in a way that the tool expects.  
 
-### How to write good tool prompts?
+### Writing good tool prompts
 
 The title spoils one of the most important things about tool calling in Yacana.  
 **The prompt is to guide the LLM on how to use the tool and not what to do with the tool result!**  
@@ -1366,7 +1366,7 @@ So instead of having integers, we got strings and what's the result of "2" + "2"
 
 Fortunately, we can fix this easily in several ways.  
 
-### Getting better tool-calling results
+### Improving tool-calling results
 
 As you saw in the previous adder example we ran into trouble with the `2 + 2` call sent as a string. Let's fix that.  
 
@@ -1552,7 +1552,7 @@ For instance:
 adder_tool: Tool = Tool("Adder", "Adds two numbers and returns the result", adder, max_custom_error=10, max_call_error=10)
 ```
 
-### Making a tool optional
+### Optionnal tools
 
 Sometimes you assign a Tool to a Task without knowing for sure that the tool will be useful. If you have a fine-tuned model or doing basic operations you may want to rely on the LLM's reasoning to choose if it really needs to call the tool or use his own training knowledge. Setting the `optional: bool = True` will tweak how Yacana proposes the Tools to the LLM, leaving it a chance to pass on the offer of the tool and use its own knowledge instead.  
 
@@ -1692,13 +1692,13 @@ As you can see it chose to ignore the tool when Yacana proposed it. It said:
 In my opinion, using the `get_temperature` tool is NOT relevant to solving this task. The task asks about why the sky is blue, and temperature doesn't seem to be directly related to that.
 ```
 
-### Tools that don't return anything
+#### Tools that don't return anything
 
 If you write a tool that doesn't have a reason to answer anything to the LLM, you could be tempted to let it return `None`.  
 We wouldn't encourage this behavior as LLMs generally expect some kind of answer to guide them. You should preferably return some kind of success message. It will act as some kind of positive reinforcement.  
 However, if your tool doesn't return anything, a default message will be added automatically: "Tool {tool.tool_name} was called successfully. It didn't return anything.".  
 
-## VIII. Assigning multiple Tools
+### Assigning multiple Tools
 
 In this section, we will see that you can assign more than one tool to a Task. You can add as many Tools as you wish and the LLM will be asked what tool it wants to use. After using one of the tools it will be asked if it considers its Task complete. If it says "no" then Yacana will propose the list of tools again and a new iteration starts.  
 
