@@ -145,8 +145,6 @@ agent1.simple_chat()
 
 ### Creating Tasks
 
-### Introduction example
-
 The whole concept of the framework lies here. If you understand this following section then you have mastered 80% of Yacana's building principle. Like in LangGraph, where you create nodes that you link together, Yacana has a Task() class which takes as arguments a task to solve. There are no hardcoded links between the Tasks so it's easy to refactor and move things around. The important concept to grasp here is that through these Tasks you will give instructions to the LLM in a way that the result must be computable. meaning instructions must be clear and the prompt to use must reflect that. It's a Task, it's a job, it's something that needs solving but written like it is given as an order! Let's see some examples :
 
 ```python
@@ -180,7 +178,7 @@ So, the result of solving the equation 2 + 2 is indeed 4.
 
 If your terminal is working normally you should see the task's prompts in green and starting with the '[PROMPT]' string. The LLM's answer should appear purple and start with the [AI_RESPONSE] string.  
 
-### About Task parameters
+### Task parameters
 
 The Task class takes 2 mandatory parameters:
 * The prompt: It is the task to be solved. Use imperative language, be precise, and ask for step-by-step thinking for complex Tasks and expected outputs if needed.  
