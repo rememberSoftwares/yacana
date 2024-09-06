@@ -1166,13 +1166,13 @@ INFO: [AI_RESPONSE]: If we multiply 4 by 2, we get...
 ```
 As you can see when asked to multiply by 2 the previous result, it remembered agent1's result which was 4. It then did 4 x 2 and got us 8.  
 
-## VII. Assigning a tool to a Task
+## VII. Tool calling
 
-### Introduction
+### Concept of calling tools
 
 Allowing the LLM to call a tool is the most important thing an agent can do! But what is a "tool"? A "tool" simply refers to a Python function. This function can be the entry point to any level of underlying complexity. But it doesn't matter. What matters is that the LLM can call the tool with parameters that match the function. This way, LLMs can interact with *classic* programming interfaces that produce deterministic results (aka normal programming).  
 
-For instance, let's say you want a calculator powered by an LLM. You cannot rely on the LLM doing the math because even though it knows how to decompose equations to an extent and basic arithmetics, it will fail on more advanced calculous. Therefore we do not expect the LLM to perform the operation itself. We already have the CPU to do this task perfectly. On the other hand, we expect the LLM to decompose correctly the equation and call tools for each arithmetic operation needed to solve it.  
+For instance, let's say you want a calculator powered by an LLM. You cannot rely on the LLM to do the math because even though it knows how to decompose equations to an extent and has basic arithmetics, it will fail on more advanced calculations. Therefore we do not expect the LLM to perform the operation itself. We already have the CPU to do this task perfectly. On the other hand, we expect the LLM to decompose the equation correctly and call tools for each arithmetic operation needed to solve it.  
 
 #### In what way is Yacana different than other frameworks?
 
@@ -1191,7 +1191,7 @@ Some LLMs have been trained to output JSON in a particular way that matches a pa
 Unfortunately, the size and complexity of this JSON doesn't work very well with our dumb 8B LLMs. This a problem that ChatGPT, Claude, Grok and other smart LLMs don't have.  
 To overcome this particular issue, Yacana comes with its own JSON structure to call Python functions! It's way lighter than the OpenAI standard and Yacana uses [percussive maintenance]() @todo url to force the LLM to output the JSON in a way that the tool expects.  
 
-#### How to write tool prompts?
+### How to write good tool prompts?
 
 The title spoils one of the most important things about tool calling in Yacana.  
 **The prompt is to guide the LLM on how to use the tool and not what to do with the tool result!**  
