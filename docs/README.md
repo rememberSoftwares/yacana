@@ -81,7 +81,7 @@ When using other frameworks 'import hell' quickly appears. To prevent this bothe
 
 ## II. Agents & Tasks
 
-### Creating your first Agent
+### Creating an Agent
 
 Now that you have an Ollama server running and Yacana installed let's create our first agent!  
 
@@ -99,7 +99,7 @@ The Agent(...) class has many optional parameters that we will discover in this 
 1. **The system prompt**: Helps define the personality of the Agent.  
 2. **The endpoint**: The URL of your Ollama instance. It points by default to your localhost and on the Ollama default port. If you are using Ollama on your computer you can remove this optional parameter and the default value will be used.  
 
-### Testing Yacana and Ollama's interaction
+### Basic roleplay
 
 This framework is not meant for basic roleplay. However, for people starting their journey in the realm of AI and for debugging purposes, we added a simple chat system. Add this new line to test it :
 ```python
@@ -178,7 +178,7 @@ So, the result of solving the equation 2 + 2 is indeed 4.
 
 If your terminal is working normally you should see the task's prompts in green and starting with the '[PROMPT]' string. The LLM's answer should appear purple and start with the [AI_RESPONSE] string.  
 
-### Task parameters
+#### Task parameters
 
 The Task class takes 2 mandatory parameters:
 * The prompt: It is the task to be solved. Use imperative language, be precise, and ask for step-by-step thinking for complex Tasks and expected outputs if needed.  
@@ -186,7 +186,7 @@ The Task class takes 2 mandatory parameters:
 
 ℹ️ Many other parameters can be given to a Task. We will see some of them in the following sections of this tutorial. But you can already check out the Task class documentation @todo URL
 
-### In what way is this disruptive compared to other frameworks?
+#### In what way is this disruptive compared to other frameworks?
 
 In the above code snippet, we assigned the agent to the Task. So it's the Task that leads the direction that the AI takes. In most other frameworks it's the opposite. You assign work to an existing agent. This reversed way allows to have fined grained control on each resolution step as the LLM only follows bread crumb (the tasks). The pattern will become even more obvious as we get to the Tool section of this tutorial. As you'll see the Tools are also assigned at the Task level and not to the Agent directly.  
 
@@ -256,7 +256,97 @@ The AI response to our task is: If we multiply the previous result of 4 by 2, we
 See? The assigned Agent remembered that it had solved the Task1 previously and used this information to solve the second task.  
 You can chain as many Tasks as you need. Also, you should create other Agents that don't have the knowledge of previous tasks and make them do things based on the output of your first agent. You can build anything now!  
 
-## V. Routing
+### Logging levels
+
+As entering the AI landscape can get a bit hairy we decided to leave the INFO log level by default. This allows to log to the standard output all the requests made to the LLM.  
+Note that NOT everything of Yacana's internal magic appears in these logs. We don't show everything because many time-traveling things are going around the history of an Agent and printing a log at the time it is generated wouldn't always make sense.  
+However, we try to log a maximum of information to help you understand what is happening internally and allow you to tweak your prompts accordingly.  
+
+Nonetheless, you are the master of what is logged and what isn't. You cannot let Yacana logs activated when working with an app in production.  
+There are 5 levels of logs:  
+1. "DEBUG"
+2. "INFO" <= Default
+3. "WARNING"
+4. "ERROR"
+5. "CRITICAL"
+6. None <= No logs
+
+To configure the log simply add this line at the start of your program:
+```python
+from yacana import LoggerManager
+
+LoggerManager.set_log_level("INFO")
+```
+
+ℹ️ Note that Yacana utilizes the Python logging package. This means that setting the level to "DEBUG" will print other libraries' logs on the debug level too.  
+
+If you need a library to stop spamming, you can try the following:  
+```python
+from yacana import LoggerManager
+
+LoggerManager.set_library_log_level("httpx", "WARNING")
+```
+The above example sets the logging level of the network httpx library to warning, thus reducing the log spamming.  
+
+### Configuring the LLM internal settings
+
+For advanced users, Yacana provides a way to tweak the LLM runtime behavior!  
+For instance, lowering the `temperature` setting makes the model less creative in its responses. On the contrary, raising this setting will make the LLM more chatty and creative.  
+Yacana provides you with a class that exposes all the possible LLM properties. Look at them [here]() @todo url and if you need a good explanation of each of them I would recommend the [excellent video](https://youtu.be/QfFRNF5AhME?si=lpSYUq2WoidYiqzP) Matt Williams did on this subject.  
+
+ℹ️ These settings are set at the Agent level so that you can have the same model used by two separate agents and have them behave differently.  
+
+We use the [ModelSettings]() @todo url class to configure the settings we need. 
+
+For example, let's lower the temperature of an Agent to 0.4:
+```python
+from yacana import ModelSettings, Agent
+
+ms = ModelSettings(temperature=0.4)
+
+agent1 = Agent("Ai assistant", "llama3:8b", model_settings=ms)
+```
+If you're wondering what are the default values of these when not set. Well, Ollama sets the default for you. They can also be overridden in the Model config file (looks like a dockerfile but for LLMs) and finally, you can set them through Yacana during runtime.  
+
+A good way to show how this can have a real impact on the output is by setting the `num_predict` parameter. This one allows control of how many tokens should be generated by the LLM. Let's make the same Task twice but with different `num_predict` values:  
+```python
+from yacana import ModelSettings, Agent, Task
+
+# Setting temperature and max token to 100
+ms = ModelSettings(temperature=0.4, num_predict=100)
+
+agent1 = Agent("Ai assistant", "llama3:8b", model_settings=ms)
+Task("Why is the sky blue ?", agent1).solve()
+
+print("-------------------")
+
+# Settings max token to 15
+ms = ModelSettings(num_predict=15)
+
+agent2 = Agent("Ai assistant", "llama3:8b", model_settings=ms)
+Task("Why is the sky blue ?", agent2).solve()
+```
+
+Output:
+```python
+INFO: [PROMPT]: Why is the sky blue ?
+
+INFO: [AI_RESPONSE]: The sky appears blue because of a phenomenon called Rayleigh scattering, named after the British physicist Lord Rayleigh. Here's what happens:
+
+1. **Sunlight**: When sunlight enters Earth's atmosphere, it contains all the colors of the visible spectrum (red, orange, yellow, green, blue, indigo, and violet).
+2. **Molecules**: The atmosphere is made up of tiny molecules of gases like nitrogen (N2) and oxygen (O2). These molecules are much smaller than
+
+-------------------
+
+INFO: [PROMPT]: Why is the sky blue ?
+
+INFO: [AI_RESPONSE]: The sky appears blue because of a phenomenon called Rayleigh scattering, named after
+```
+As you can see above the two agents didn't output the same number of tokens.  
+
+## III. Routing
+
+### Concepts of routing
 
 Other frameworks tend to make abstractions for everything. Even things that don't need any. That's why I'll show you how to do routing with only what we have seen earlier. Yacana doesn't provide routing abstraction because there is no need to do so.  
 
@@ -369,7 +459,7 @@ elif "no" in router_answer.lower():
     # Next step in the workflow that DOESN'T involve plants
 ```
 
-### Cleaning the history
+### Cleaning history
 
 Keeping the self-reflection prompt and the associated answer is always good. It helps guardrailing the LLM. But the "yes"/"no" router on the other hand adds unnecessary noise to the Agent's history. Moreover, local models don't have huge context window sizes, so removing useless interactions is always good.  
 The "yes"/"no" router is only useful once. Then we should make the Agent forget it ever happened after it answered. No need to keep that... This is why the Task class offers an optional parameter: `forget=<bool>`.  
@@ -380,7 +470,7 @@ router_answer: str = Task(f"To summarize in one word, was the question about pla
 ```
 Now, even though you cannot see it, the Agent doesn't remember solving this Task. In the next section, we'll see how to access and manipulate the history. Then, you'll be able to see what the Agent remembers!  
 
-### Demo time
+### Routing demonstration
 
 For this demo, we'll make an app that takes a user query (HF replacing the static string by a Python `input()` if you wish) that checks if the query is about plants.  
 If it is not we end the workflow there. However, if it is about plants the flow will branch and search if a plant type/name was given. If it was then it is extracted and knowledge about the plant will be shown before answering the original question. If not it will simply answer the query as is.  
@@ -636,95 +726,7 @@ INFO: [AI_RESPONSE]: No
 Question is NOT about plants sorry.
 ```
 
-### Logging levels
-
-As entering the AI landscape can get a bit hairy we decided to leave the INFO log level by default. This allows to log to the standard output all the requests made to the LLM.  
-Note that NOT everything of Yacana's internal magic appears in these logs. We don't show everything because many time-traveling things are going around the history of an Agent and printing a log at the time it is generated wouldn't always make sense.  
-However, we try to log a maximum of information to help you understand what is happening internally and allow you to tweak your prompts accordingly.  
-
-Nonetheless, you are the master of what is logged and what isn't. You cannot let Yacana logs activated when working with an app in production.  
-There are 5 levels of logs:  
-1. "DEBUG"
-2. "INFO" <= Default
-3. "WARNING"
-4. "ERROR"
-5. "CRITICAL"
-6. None <= No logs
-
-To configure the log simply add this line at the start of your program:
-```python
-from yacana import LoggerManager
-
-LoggerManager.set_log_level("INFO")
-```
-
-ℹ️ Note that Yacana utilizes the Python logging package. This means that setting the level to "DEBUG" will print other libraries' logs on the debug level too.  
-
-If you need a library to stop spamming, you can try the following:  
-```python
-from yacana import LoggerManager
-
-LoggerManager.set_library_log_level("httpx", "WARNING")
-```
-The above example sets the logging level of the network httpx library to warning, thus reducing the log spamming.  
-
-### Configuring the LLM internal settings
-
-For advanced users, Yacana provides a way to tweak the LLM runtime behavior!  
-For instance, lowering the `temperature` setting makes the model less creative in its responses. On the contrary, raising this setting will make the LLM more chatty and creative.  
-Yacana provides you with a class that exposes all the possible LLM properties. Look at them [here]() @todo url and if you need a good explanation of each of them I would recommend the [excellent video](https://youtu.be/QfFRNF5AhME?si=lpSYUq2WoidYiqzP) Matt Williams did on this subject.  
-
-ℹ️ These settings are set at the Agent level so that you can have the same model used by two separate agents and have them behave differently.  
-
-We use the [ModelSettings]() @todo url class to configure the settings we need. 
-
-For example, let's lower the temperature of an Agent to 0.4:
-```python
-from yacana import ModelSettings, Agent
-
-ms = ModelSettings(temperature=0.4)
-
-agent1 = Agent("Ai assistant", "llama3:8b", model_settings=ms)
-```
-If you're wondering what are the default values of these when not set. Well, Ollama sets the default for you. They can also be overridden in the Model config file (looks like a dockerfile but for LLMs) and finally, you can set them through Yacana during runtime.  
-
-A good way to show how this can have a real impact on the output is by setting the `num_predict` parameter. This one allows control of how many tokens should be generated by the LLM. Let's make the same Task twice but with different `num_predict` values:  
-```python
-from yacana import ModelSettings, Agent, Task
-
-# Setting temperature and max token to 100
-ms = ModelSettings(temperature=0.4, num_predict=100)
-
-agent1 = Agent("Ai assistant", "llama3:8b", model_settings=ms)
-Task("Why is the sky blue ?", agent1).solve()
-
-print("-------------------")
-
-# Settings max token to 15
-ms = ModelSettings(num_predict=15)
-
-agent2 = Agent("Ai assistant", "llama3:8b", model_settings=ms)
-Task("Why is the sky blue ?", agent2).solve()
-```
-
-Output:
-```python
-INFO: [PROMPT]: Why is the sky blue ?
-
-INFO: [AI_RESPONSE]: The sky appears blue because of a phenomenon called Rayleigh scattering, named after the British physicist Lord Rayleigh. Here's what happens:
-
-1. **Sunlight**: When sunlight enters Earth's atmosphere, it contains all the colors of the visible spectrum (red, orange, yellow, green, blue, indigo, and violet).
-2. **Molecules**: The atmosphere is made up of tiny molecules of gases like nitrogen (N2) and oxygen (O2). These molecules are much smaller than
-
--------------------
-
-INFO: [PROMPT]: Why is the sky blue ?
-
-INFO: [AI_RESPONSE]: The sky appears blue because of a phenomenon called Rayleigh scattering, named after
-```
-As you can see above the two agents didn't output the same number of tokens.  
-
-## VI. Managing Agents history
+## IV. Managing Agents history
 
 As you saw in the previous examples, each agent has his own history of messages that compose its memory. When a new request is made to the LLM the whole history is sent to the inference server (ie: Ollama) and the LLM responds to the last prompt in the chain but bases its answer on the context it gets from the previous messages (and the initial system prompt if present). 
 
@@ -949,7 +951,7 @@ We can see in the agent's output that it only remembered us choosing the Golden 
 
 ℹ️ Note that the Task replacing the variables might not work very well with dumb LLMs. It could be reworked by splitting it into two. One that would extract the name of the chosen pastry from the user's input and a second one that would generate the associated calories. Finally, print the sentence with the variables pre-generated. Using local models is all about knowing the maximum performance of your LLM and adapting the prompts to match that performance. The dumber, the more guidance it needs!  
 
-### Multi prompt shot VS 0 prompt shot
+### Zero-prompt shot vs multi-prompt shot
 
 When an LLM struggles to solve a complex task and achieve a good success rate it may be time to give it a little help.  
 
@@ -1166,7 +1168,7 @@ INFO: [AI_RESPONSE]: If we multiply 4 by 2, we get...
 ```
 As you can see when asked to multiply by 2 the previous result, it remembered agent1's result which was 4. It then did 4 x 2 and got us 8.  
 
-## VII. Tool calling
+## V. Tool calling
 
 ### Concept of calling tools
 
@@ -1277,7 +1279,6 @@ Task(f"Output 'So much sun !' if there is some sun else say 'So  much rain !'", 
 print("--history--")
 agent1.history.pretty_print()
 ```
-
 
 
 ### Calling a tool
@@ -1552,7 +1553,7 @@ For instance:
 adder_tool: Tool = Tool("Adder", "Adds two numbers and returns the result", adder, max_custom_error=10, max_call_error=10)
 ```
 
-### Optionnal tools
+### Optional tools
 
 Sometimes you assign a Tool to a Task without knowing for sure that the tool will be useful. If you have a fine-tuned model or doing basic operations you may want to rely on the LLM's reasoning to choose if it really needs to call the tool or use his own training knowledge. Setting the `optional: bool = True` will tweak how Yacana proposes the Tools to the LLM, leaving it a chance to pass on the offer of the tool and use its own knowledge instead.  
 
@@ -1908,7 +1909,7 @@ I've used all the necessary tools (Multiplier, Adder, and Substractor) to break 
 
 -44 is the correct answer. You could throw in maybe one more operation. However, in our tests using Llama 3.0, going over 4 operations does not guarantee a correct result anymore. It may be about prompt engineering but we also think that Yacana should continue improving. For the moment the LLM tends to contradict itself at some point which sends the final result off. In the next update, Yacana will try to detect errors in reasoning and self-correct between each tool call. Stay tuned for updates.  
 
-## IX. Chat between two Agents
+## VI. Dual-agents chat
 
 A crucial functionality available in some other frameworks like CrewAI is allowing Agents to speak with one another. Yacana also has this functionality.  
 This allows Agents to brainstorm and come up with solutions by themselves. However, where other frameworks propose many ways to schedule interactions, Yacana emphasizes on providing developers with ways to make them stop talking!  
@@ -2034,7 +2035,7 @@ To achieve this we take the output of Agent1 and give it as a prompt to Agent2. 
 ![doublelogs](https://github.com/user-attachments/assets/6720bef9-c2b0-401a-9f4f-455e42aaa050)
 
 
-### Letting Agents in charge of ending the chat
+### Letting Agents end the chat
 
 The [EndChatMode]() @todo url enum provides multiple ways to stop a chat. These are the available values:  
 | Mode              | Needs Task annotation | Description |
@@ -2059,7 +2060,7 @@ Yacana uses the following wording:
 Therefore you should use the same prompt style in your Task prompt. For instance *"The task is fulfilled when the objective <insert here> is completed."*.
 You should try different versions of this "objective completed" prompt to find one that matches your task and LLM best.  
 
-#### Testing chat ending modes
+#### Testing all available chat ending modes
 
 We'll test the different modes with simple games between two Agents.  
 
@@ -2453,7 +2454,7 @@ As you can see, Agent2 cheated. It counted from 0 to 3 in one message. But who c
 This parameter works like the `promise.all` of javascript that waits for all promises to end before continuing execution.  
 
 
-### Getting better results by controlling the "shift message"
+### Controlling the Shift Message
 
 To achieve two agents speaking with each other we had to pipe the output of the first one into the prompt of the second. For this to work, we have to create an intermediary message in one of the Agent's conversation history. This special message is called the *"shift message"*.  
 
@@ -2783,14 +2784,12 @@ The above output is part of the Agent's History. Without the `use_self_reflectio
 
 ℹ️ Because this setting helps the LLM end chats by itself it won't have any effects when used with the "end chat" mode `MAX_ITERATIONS_ONLY` that simply counts rounds.  
 
-### Using tools inside GroupSolve
+### Using tools in chat
 
-#### Description
+#### Tool use in GroupSolve
 
 GroupSolve uses the common Task class. This means that Tools are also available while agents are chatting. However, tools work the same way as described in the tool section @todo URL. Meaning that the Task's prompt will only be used to trigger the tool but will not be used to act upon its result. You need the other agent for that.  
 This is an important concept because it means that the task's prompt will not be part of the conversation but the tool output will. This means that your tools must always return some computable knowledge that will be used by the second agent! 
-
-#### Tool use in GroupSolve
 
 Let's play a new game, **first without tools**:  
 * The first agent will think of a number. The second agent will try to guess it based on indications like "higher" or "lower" given by the first agent.  
@@ -3218,7 +3217,7 @@ Tool calls:
 Last tool output: `The secret number is equal to the guessed number. You won ! // (tool)`
 
 
-## X. Chat between many Agents
+## VII. Chat between many Agents
 
 Yacana provides a way to make more than two agents speak one after the other. Better yet, there is no limit to the number of agents that you can add. However, note that the dual conversation pattern should be the one giving the best results as LLM were trained to speak to one user. Not be part of a multi-user conversation...  
 Still, the functionality is here for you to use!  
@@ -3543,7 +3542,7 @@ During the second round new letters are added: "A - L - S". To which the game ma
 
 ℹ️ Note that all types of ["end chat" modes]() @todo url are still valid in multi-user chat too. Tools and all their parameters are also available in this mode and follow the same tools principles.  
 
-### Pros and cons of multi-LLM group chat
+#### Pros and cons of multi-LLM group chat
 
 **Dual chat**  
 Pros:  
