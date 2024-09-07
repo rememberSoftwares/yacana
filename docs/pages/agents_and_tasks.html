@@ -7,26 +7,21 @@
 <html>
 
 <head>
-	<title>Generic - Editorial by HTML5 UP</title>
+	<title>Agents & Tasks</title>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 	<link rel="stylesheet" href="../assets/css/main.css" />
 	<link rel="stylesheet" href="../assets/css/codemirror.min.css">
 	<link rel="stylesheet" href="../assets/css/monokai.min.css">
 	<link rel="stylesheet" href="../assets/css/foldgutter.min.css">
+	<link rel="stylesheet" href="../assets/css/codemirror-custom.css">
+	<link rel="stylesheet" href="../assets/css/zenburn.min.css">
 	<script src="../assets/js/codemirror.min.js"></script>
 	<script src="../assets/js/python.min.js"></script>
 	<script src="../assets/js/foldcode.min.js"></script>
 	<script src="../assets/js/foldgutter.min.js"></script>
 	<script src="../assets/js/brace-fold.min.js"></script>
-	<style>
-        .CodeMirror {
-            font-family: "Fira Code", monospace;
-            font-size: 14px;
-            padding: 10px;
-			height: auto
-        }
-    </style>
+	<script src="../assets/js/codemirror-custom.js"></script>
 </head>
 
 <body class="is-preload">
@@ -65,92 +60,27 @@
 
 					<h2 id="creating-an-agent">Creating an Agent</h2>
 
-
-					<style>
-						/* Hide the <pre><code> block */
-						#hidden-code {
-							display: none;
-						}
-					</style>
-
-
-					<pre id="hidden-code"><code>
-def greet(name):
-	print(f"Hello, {name}!")
-						
-greet("World")
-</code></pre>
-
-					<!-- CodeMirror editor will be initialized here -->
-					<textarea id="editor"></textarea>
-
-					<script>
-						const pythonCode = document.getElementById("hidden-code").innerText.trim();
-						const editor = document.getElementById("editor");
-				
-						const cm = CodeMirror.fromTextArea(editor, {
-							mode: "text/x-python",
-							theme: "monokai",  // Dark theme
-							lineNumbers: true,
-							matchBrackets: true,
-							styleActiveLine: true,
-							lineWrapping: true,
-							tabSize: 4,
-							indentUnit: 4,
-							readOnly: true,
-							foldGutter: true,  // Enable code folding
-							gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
-						});
-						
-						cm.setValue(pythonCode);
-						//cm.setSize(500, 200);
-					</script>
-
-
-
-					<script>
-						/*
-						const editor = document.getElementById("test");
-
-						const cm = CodeMirror.fromTextArea(editor, {
-							mode: "text/x-python",  // Use Python syntax highlighting
-							lineNumbers: true,
-							matchBrackets: true,
-							styleActiveLine: true,
-							lineWrapping: true,
-							tabSize: 2,
-							value: `print("Hello, World")`,
-							readOnly: true
-						});
-
-						// Set the content after the editor is created
-						cm.setValue('print("Hello, World")');
-						cm.setSize(500, 500);
-						*/
-					</script>
-
-
-
-
 					<p>Now that you have an Ollama server running and Yacana installed let's create our first agent!</p>
 					<p>Create a Python file with this content:</p>
-					<pre><code class="language-python"><span class="hljs-keyword">from</span> yacana <span class="hljs-keyword">import</span> Agent
+					<pre><code class="language-python">
+from yacana import Agent
 
-						agent1 = Agent(<span class="hljs-string">&quot;AI assistant&quot;</span>, <span class="hljs-string">&quot;llama3:8b&quot;</span>, system_prompt=<span class="hljs-string">&quot;You are a helpful AI assistant&quot;</span>, endpoint=<span class="hljs-string">&quot;http://127.0.0.1:11434&quot;</span>)
-						</code></pre>
-					<p>The Agent(...) class takes 2 mandatory parameters:</p>
+agent1 = Agent("AI assistant", "llama3:8b", system_prompt="You are a helpful AI assistant", endpoint="http://127.0.0.1:11434")
+					</code></pre><br>
+					<p>The <code>Agent()</code> class takes...</p>
+					<span class="icon solid fa-chevron-right"> 2 <u>mandatory</u> parameters:</span>
 					<ol>
-						<li><strong>The agent name</strong>: Choose something short about the agent's global focus</li>
-						<li><strong>A model name</strong>: The Ollama model that this Agent will use. You may have
+						<li><strong>The agent name:</strong> Choose something short about the agent's global focus</li>
+						<li><strong>A model name:</strong> The Ollama model that this Agent will use. You may have
 							multiple Agents running different models. Some models are better suited for some specific
 							jobs so it can be interesting to mix LLM models. Use <code>ollama list</code> to list the
 							models you have downloaded.</li>
 					</ol>
-					<p>The Agent(...) class has many optional parameters that we will discover in this tutorial. Here we
-						can see 2 of them:</p>
+					<span class="icon solid fa-chevron-right"> many <u>optional</u> parameters that we will discover in this tutorial. Here we
+						can see 2 of them:</span>
 					<ol>
-						<li><strong>The system prompt</strong>: Helps define the personality of the Agent.</li>
-						<li><strong>The endpoint</strong>: The URL of your Ollama instance. It points by default to your
+						<li><strong>The system prompt:</strong> Helps define the personality of the Agent.</li>
+						<li><strong>The endpoint:</strong> The URL of your Ollama instance. It points by default to your
 							localhost and on the Ollama default port. If you are using Ollama on your computer you can
 							remove this optional parameter and the default value will be used.</li>
 					</ol>
@@ -158,35 +88,41 @@ greet("World")
 					<p>This framework is not meant for basic roleplay. However, for people starting their journey in the
 						realm of AI and for debugging purposes, we added a simple chat system. Add this new line to test
 						it :</p>
-					<pre><code class="language-python">agent1.simple_chat()
-							</code></pre>
+					<pre><code class="language-python">
+agent1.simple_chat()
+					</code></pre><br>
 					<p>When running this python file you should enter a chat with the LLM. The Agent keeps track of the
 						history so that it can answer using past information.</p>
-					<pre><code class="language-shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">python3 simple_chat_demo.py</span>
-							</code></pre>
-					<p>Output:</p>
-					<pre><code>Type 'quit' then enter to exit.
-							&gt; hey
-							Hey! It's nice to meet you. Is there something I can help you with, or would you like to chat about something in particular? I'm here to assist you with any questions or topics you'd like to discuss.
-							&gt;
-							</code></pre>
+					<pre><code class="language-shell">
+$ python3 simple_chat_demo.py
+					</code></pre><br>
+					<span>Output:</span>
+					<pre><code class="text-output">
+Type 'quit' then enter to exit.
+> hey
+Hey! It's nice to meet you. Is there something I can help you with, or would you like to chat about something in particular? I'm here to assist you with any questions or topics you'd like to discuss.
+>
+					</code></pre><br>
 					<p>Let's change the <strong>system prompt</strong> and have some fun!</p>
-					<pre><code class="language-python">agent1 = Agent(<span class="hljs-string">&quot;Pirate&quot;</span>, <span class="hljs-string">&quot;llama3:8b&quot;</span>, system_prompt=<span class="hljs-string">&quot;You are a pirate&quot;</span>, endpoint=<span class="hljs-string">&quot;http://127.0.0.1:11434&quot;</span>)
-							</code></pre>
-					<p>Output:</p>
-					<pre><code>Type 'quit' then enter to exit.
-							&gt; hey
-							Arrrr, shiver me timbers! What be bringin' ye to these fair waters? Are ye lookin' fer a swashbucklin' adventure or just passin' through?
-							&gt; Searching for the tresor of red beard any idea where it's hidden ?
-							Red Beard's treasure, ye say? (puffs on pipe) Well, I be knowin' a thing or two about that scurvy dog and his loot. But, I'll only be tellin' ye if ye be willin' to share yer own booty... of information! (winks)
-							</code></pre>
+					<pre><code class="language-python">
+agent1 = Agent("Pirate", "llama3:8b", system_prompt="You are a pirate", endpoint="http://127.0.0.1:11434")
+					</code></pre><br>
+					<span>Output:</span>
+					<pre><code class="text-output">
+Type 'quit' then enter to exit.
+> hey
+Arrrr, shiver me timbers! What be bringin' ye to these fair waters? Are ye lookin' fer a swashbucklin' adventure or just passin' through?
+> Searching for the tresor of red beard any idea where it's hidden ?
+Red Beard's treasure, ye say? (puffs on pipe) Well, I be knowin' a thing or two about that scurvy dog and his loot. But, I'll only be tellin' ye if ye be willin' to share yer own booty... of information! (winks)
+					</code></pre><br>
 					<hr>
 					<p>Complete section code:</p>
-					<pre><code class="language-python"><span class="hljs-keyword">from</span> yacana <span class="hljs-keyword">import</span> Agent
-							
-							agent1 = Agent(<span class="hljs-string">&quot;Pirate&quot;</span>, <span class="hljs-string">&quot;llama3:8b&quot;</span>, system_prompt=<span class="hljs-string">&quot;You are a pirate&quot;</span>, endpoint=<span class="hljs-string">&quot;http://127.0.0.1:11434&quot;</span>)
-							agent1.simple_chat()
-							</code></pre>
+					<pre><code class="language-python">
+from yacana import Agent
+
+agent1 = Agent("Pirate", "llama3:8b", system_prompt="You are a pirate", endpoint="http://127.0.0.1:11434")
+agent1.simple_chat()
+					</code></pre><br>
 					<p>⚠️From now on we will not set the <em>endpoint</em> attribute anymore for clarity and will resort
 						to the defaults. If your LLM is not served by Ollama or isn't on your localhost you should
 						continue setting this value.</p>
@@ -199,17 +135,18 @@ greet("World")
 						LLM in a way that the result must be computable. meaning instructions must be clear and the
 						prompt to use must reflect that. It's a Task, it's a job, it's something that needs solving but
 						written like it is given as an order! Let's see some examples :</p>
-					<pre><code class="language-python"><span class="hljs-keyword">from</span> yacana <span class="hljs-keyword">import</span> Agent, Task
-							
-							<span class="hljs-comment"># First, let&#x27;s make a basic AI agent</span>
-							agent1 = Agent(<span class="hljs-string">&quot;AI assistant&quot;</span>, <span class="hljs-string">&quot;llama3:8b&quot;</span>, system_prompt=<span class="hljs-string">&quot;You are a helpful AI assistant&quot;</span>)
-							
-							<span class="hljs-comment"># Now we create a task and assign the agent1 to the task</span>
-							task1 = Task(<span class="hljs-string">f&quot;Solve the equation 2 + 2 and output the result&quot;</span>, agent1)
-							
-							<span class="hljs-comment"># For something to happen, you must call the .solve() method on your task.</span>
-							task1.solve()
-							</code></pre>
+					<pre><code class="language-python">
+from yacana import Agent, Task
+
+# First, let's make a basic AI agent
+agent1 = Agent("AI assistant", "llama3:8b", system_prompt="You are a helpful AI assistant")
+
+# Now we create a task and assign the agent1 to the task
+task1 = Task(f"Solve the equation 2 + 2 and output the result", agent1)
+
+# For something to happen, you must call the .solve() method on your task.
+task1.solve()
+					</code></pre><br>
 					<p>What's happening above?</p>
 					<ul>
 						<li>First, we instantiated an Agent with the <code>llama3:8b</code> model. You might need to
@@ -217,15 +154,16 @@ greet("World")
 						<li>Second, we instantiated a Task ;</li>
 						<li>Third, we asked that the Task be solved ;</li>
 					</ul>
-					<p class="icon solid fa-info-circle">For easing the learning curve the default logging level is
+					<p class="icon solid fa-info-circle"> For easing the learning curve the default logging level is
 						INFO. It will show what is going on in Yacana. Note that not ALL prompts are shown.</p>
 					<p>The output should look like this:</p>
-					<pre><code>INFO: [PROMPT]: Solve the equation 2 + 2 and output the result
+					<pre><code class="text-output">
+INFO: [PROMPT]: Solve the equation 2 + 2 and output the result
 							
-							INFO: [AI_RESPONSE]: The answer to the equation 2 + 2 is... (drumroll please)... 4!
+INFO: [AI_RESPONSE]: The answer to the equation 2 + 2 is... (drumroll please)... 4!
 							
-							So, the result of solving the equation 2 + 2 is indeed 4.
-							</code></pre>
+So, the result of solving the equation 2 + 2 is indeed 4.
+							</code></pre><br>
 					<p>If your terminal is working normally you should see the task's prompts in green and starting with
 						the '[PROMPT]' string. The LLM's answer should appear purple and start with the [AI_RESPONSE]
 						string.</p>
@@ -237,7 +175,7 @@ greet("World")
 						<li>The Agent: The agent that will be assigned to this task. The agent will be in charge of
 							solving the task.</li>
 					</ul>
-					<p class="icon solid fa-info-circle">Many other parameters can be given to a Task. We will see some
+					<p class="icon solid fa-info-circle"> Many other parameters can be given to a Task. We will see some
 						of them in the following sections of this tutorial. But you can already check out the Task class
 						documentation @todo URL</p>
 					<h4 id="in-what-way-is-this-disruptive-compared-to-other-frameworks">In what way is this disruptive
@@ -264,20 +202,21 @@ greet("World")
 						you'll forget what keys it contains in ten minutes. Also, the Message @todo url class is very
 						straightforward. It exposes a <code>content</code> attribute. Update the current code to look
 						like this:</p>
-					<pre><code class="language-python"><span class="hljs-keyword">from</span> yacana <span class="hljs-keyword">import</span> Agent, Task, Message
-							
-							<span class="hljs-comment"># First, let&#x27;s make a basic AI agent</span>
-							agent1 = Agent(<span class="hljs-string">&quot;AI assistant&quot;</span>, <span class="hljs-string">&quot;llama3:8b&quot;</span>, system_prompt=<span class="hljs-string">&quot;You are a helpful AI assistant&quot;</span>)
-							
-							<span class="hljs-comment"># Now we create a task and assign the agent1 to the task</span>
-							task1 = Task(<span class="hljs-string">f&quot;Solve the equation 2 + 2 and output the result&quot;</span>, agent1)
-							
-							<span class="hljs-comment"># So that something actually happens you must call the .solve() method on your task</span>
-							my_message: Message = task1.solve()
-							
-							<span class="hljs-comment"># Printing the LLM&#x27;s response</span>
-							<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;The AI response to our task is : <span class="hljs-subst">{my_message.content}</span>&quot;</span>)
-							</code></pre>
+					<pre><code class="language-python">
+from yacana import Agent, Task, Message
+
+# First, let's make a basic AI agent
+agent1 = Agent("AI assistant", "llama3:8b", system_prompt="You are a helpful AI assistant")
+
+# Now we create a task and assign the agent1 to the task
+task1 = Task(f"Solve the equation 2 + 2 and output the result", agent1)
+
+# So that something actually happens you must call the .solve() method on your task
+my_message: Message = task1.solve()
+
+# Printing the LLM's response
+print(f"The AI response to our task is : {my_message.content}")
+						</code></pre><br>
 					<p>There you go! Give it a try.</p>
 					<p class="icon solid fa-info-circle"> Note that we used duck typing to postfix all variables
 						declaration with their type <code>my_message: Message</code>. Yacana's source code is entirely
@@ -286,17 +225,18 @@ greet("World")
 					</p>
 					<hr>
 					<p>Don't like having 100 lines of code for something simple? Then chain them all in one line!</p>
-					<pre><code class="language-python"><span class="hljs-keyword">from</span> yacana <span class="hljs-keyword">import</span> Agent, Task
-							
-							<span class="hljs-comment"># First, let&#x27;s make a basic AI agent</span>
-							agent1 = Agent(<span class="hljs-string">&quot;AI assistant&quot;</span>, <span class="hljs-string">&quot;llama3:8b&quot;</span>, system_prompt=<span class="hljs-string">&quot;You are a helpful AI assistant&quot;</span>)
-							
-							<span class="hljs-comment"># Now we create a task and assign the agent1 to the task</span>
-							task1 = Task(<span class="hljs-string">f&quot;Solve the equation 2 + 2 and output the result&quot;</span>, agent1)
-							
-							<span class="hljs-comment"># Creating the task, solving it, extracting the result and printing it all in one line</span>
-							<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;The AI response to our task is: <span class="hljs-subst">{Task(<span class="hljs-string">f&#x27;Solve the equation 2 + 2 and output the result&#x27;</span>, agent1).solve().content}</span>&quot;</span>)
-							</code></pre>
+					<pre><code class="language-python">
+from yacana import Agent, Task
+
+# First, let's make a basic AI agent
+agent1 = Agent("AI assistant", "llama3:8b", system_prompt="You are a helpful AI assistant")
+
+# Now we create a task and assign the agent1 to the task
+task1 = Task(f"Solve the equation 2 + 2 and output the result", agent1)
+
+# Creating the task, solving it, extracting the result and printing it all in one line
+print(f"The AI response to our task is: {Task(f'Solve the equation 2 + 2 and output the result', agent1).solve().content}")
+					</code></pre><br>
 					<p>🤔 However, splitting the output of the LLM and the print in two lines would probably look
 						better. Let's not one-line things too much 😅.</p>
 					<h2 id="chaining-tasks">Chaining Tasks</h2>
@@ -304,14 +244,16 @@ greet("World")
 						track of the History of what they did (aka, all the Tasks they solved). So just call a second
 						Task and assign the same Agent. For instance, let's multiply by 2 the result of the initial
 						Task. Append this to our current script:</p>
-					<pre><code class="language-python">task2_result: <span class="hljs-built_in">str</span> = Task(<span class="hljs-string">f&#x27;Multiply by 2 our previous result&#x27;</span>, agent1).solve().content
-							<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;The AI response to our second task is : <span class="hljs-subst">{task2_result}</span>&quot;</span>)
-							</code></pre>
+					<pre><code class="language-python">
+task2_result: str = Task(f'Multiply by 2 our previous result', agent1).solve().content
+print(f"The AI response to our second task is : {task2_result}")
+					</code></pre><br>
 					<p>You should get:</p>
-					<pre><code>The AI response to our task is: If we multiply the previous result of 4 by 2, we get:
+					<pre><code class="text-output">
+The AI response to our task is: If we multiply the previous result of 4 by 2, we get:
 							
-							8
-							</code></pre>
+8
+					</code></pre><br>
 					<p class="icon solid fa-info-circle"> Without tools this only relies on the LLM's ability to do the
 						maths and is dependent on its training.</p>
 					<hr>
@@ -332,26 +274,28 @@ greet("World")
 						activated when working with an app in production.<br>
 						There are 5 levels of logs:</p>
 					<ol>
-						<li>&quot;DEBUG&quot;</li>
-						<li>&quot;INFO&quot; &lt;= Default</li>
-						<li>&quot;WARNING&quot;</li>
-						<li>&quot;ERROR&quot;</li>
-						<li>&quot;CRITICAL&quot;</li>
-						<li>None &lt;= No logs</li>
+						<li><code>"DEBUG"</code></li>
+						<li><code>INFO</code> <span class="icon solid fa-chevron-left"></span> Default</li>
+						<li><code>WARNING</code></li>
+						<li><code>ERROR</code></li>
+						<li><code>CRITICAL</code></li>
+						<li><code>None</code> <span class="icon solid fa-chevron-left"></span>  No logs</li>
 					</ol>
 					<p>To configure the log simply add this line at the start of your program:</p>
-					<pre><code class="language-python"><span class="hljs-keyword">from</span> yacana <span class="hljs-keyword">import</span> LoggerManager
-							
-							LoggerManager.set_log_level(<span class="hljs-string">&quot;INFO&quot;</span>)
-							</code></pre>
+					<pre><code class="language-python">
+from yacana import LoggerManager
+
+LoggerManager.set_log_level("INFO")
+					</code></pre><br>
 					<p class="icon solid fa-info-circle">Note that Yacana utilizes the Python logging package. This
 						means that setting the level to &quot;DEBUG&quot; will print other libraries' logs on the debug
 						level too.</p>
 					<p>If you need a library to stop spamming, you can try the following:</p>
-					<pre><code class="language-python"><span class="hljs-keyword">from</span> yacana <span class="hljs-keyword">import</span> LoggerManager
-							
-							LoggerManager.set_library_log_level(<span class="hljs-string">&quot;httpx&quot;</span>, <span class="hljs-string">&quot;WARNING&quot;</span>)
-							</code></pre>
+					<pre><code class="language-python">
+from yacana import LoggerManager
+
+LoggerManager.set_library_log_level("httpx", "WARNING")
+					</code></pre><br>
 					<p>The above example sets the logging level of the network httpx library to warning, thus reducing
 						the log spamming.</p>
 					<h2 id="configuring-llms-settings">Configuring LLM's settings</h2>
@@ -366,12 +310,13 @@ greet("World")
 						the same model used by two separate agents and have them behave differently.</p>
 					<p>We use the <a href="">ModelSettings</a> @todo url class to configure the settings we need.</p>
 					<p>For example, let's lower the temperature of an Agent to 0.4:</p>
-					<pre><code class="language-python"><span class="hljs-keyword">from</span> yacana <span class="hljs-keyword">import</span> ModelSettings, Agent
-							
-							ms = ModelSettings(temperature=<span class="hljs-number">0.4</span>)
-							
-							agent1 = Agent(<span class="hljs-string">&quot;Ai assistant&quot;</span>, <span class="hljs-string">&quot;llama3:8b&quot;</span>, model_settings=ms)
-							</code></pre>
+					<pre><code class="language-python">
+from yacana import ModelSettings, Agent
+
+ms = ModelSettings(temperature=0.4)
+
+agent1 = Agent("Ai assistant", "llama3:8b", model_settings=ms)
+					</code></pre><br>
 					<p>If you're wondering what are the default values of these when not set. Well, Ollama sets the
 						default for you. They can also be overridden in the Model config file (looks like a dockerfile
 						but for LLMs) and finally, you can set them through Yacana during runtime.</p>
@@ -380,39 +325,40 @@ greet("World")
 						generated by the LLM. Let's make the same Task twice but with different <code>num_predict</code>
 						values:
 					</p>
-					<pre><code class="language-python"><span class="hljs-keyword">from</span> yacana <span class="hljs-keyword">import</span> ModelSettings, Agent, Task
-							
-							<span class="hljs-comment"># Setting temperature and max token to 100</span>
-							ms = ModelSettings(temperature=<span class="hljs-number">0.4</span>, num_predict=<span class="hljs-number">100</span>)
-							
-							agent1 = Agent(<span class="hljs-string">&quot;Ai assistant&quot;</span>, <span class="hljs-string">&quot;llama3:8b&quot;</span>, model_settings=ms)
-							Task(<span class="hljs-string">&quot;Why is the sky blue ?&quot;</span>, agent1).solve()
-							
-							<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;-------------------&quot;</span>)
-							
-							<span class="hljs-comment"># Settings max token to 15</span>
-							ms = ModelSettings(num_predict=<span class="hljs-number">15</span>)
-							
-							agent2 = Agent(<span class="hljs-string">&quot;Ai assistant&quot;</span>, <span class="hljs-string">&quot;llama3:8b&quot;</span>, model_settings=ms)
-							Task(<span class="hljs-string">&quot;Why is the sky blue ?&quot;</span>, agent2).solve()
-							</code></pre>
-					<p>Output:</p>
-					<pre><code class="language-python">INFO: [PROMPT]: Why <span class="hljs-keyword">is</span> the sky blue ?
-							
-							INFO: [AI_RESPONSE]: The sky appears blue because of a phenomenon called Rayleigh scattering, named after the British physicist Lord Rayleigh. Here<span class="hljs-string">&#x27;s what happens:
-							
-							1. **Sunlight**: When sunlight enters Earth&#x27;</span>s atmosphere, it contains <span class="hljs-built_in">all</span> the colors of the visible spectrum (red, orange, yellow, green, blue, indigo, <span class="hljs-keyword">and</span> violet).
-							<span class="hljs-number">2.</span> **Molecules**: The atmosphere <span class="hljs-keyword">is</span> made up of tiny molecules of gases like nitrogen (N2) <span class="hljs-keyword">and</span> oxygen (O2). These molecules are much smaller than
-							
-							-------------------
-							
-							INFO: [PROMPT]: Why <span class="hljs-keyword">is</span> the sky blue ?
-							
-							INFO: [AI_RESPONSE]: The sky appears blue because of a phenomenon called Rayleigh scattering, named after
-							</code></pre>
+					<pre><code class="language-python">
+from yacana import ModelSettings, Agent, Task
+
+# Setting temperature and max token to 100
+ms = ModelSettings(temperature=0.4, num_predict=100)
+
+agent1 = Agent("Ai assistant", "llama3:8b", model_settings=ms)
+Task("Why is the sky blue ?", agent1).solve()
+
+print("-------------------")
+
+# Settings max token to 15
+ms = ModelSettings(num_predict=15)
+
+agent2 = Agent("Ai assistant", "llama3:8b", model_settings=ms)
+Task("Why is the sky blue ?", agent2).solve()
+					</code></pre><br>
+					<span>Output:</span>
+					<pre><code class="text-output">
+INFO: [PROMPT]: Why is the sky blue ?
+
+INFO: [AI_RESPONSE]: The sky appears blue because of a phenomenon called Rayleigh scattering, named after the British physicist Lord Rayleigh. Here's what happens:
+
+1. **Sunlight**: When sunlight enters Earth's atmosphere, it contains all the colors of the visible spectrum (red, orange, yellow, green, blue, indigo, and violet).
+2. **Molecules**: The atmosphere is made up of tiny molecules of gases like nitrogen (N2) and oxygen (O2). These molecules are much smaller than
+
+-------------------
+
+INFO: [PROMPT]: Why is the sky blue ?
+
+INFO: [AI_RESPONSE]: The sky appears blue because of a phenomenon called Rayleigh scattering, named after
+					</code></pre><br>
 					<p>As you can see above the two agents didn't output the same number of tokens.</p>
 				</section>
-
 			</div>
 		</div>
 
