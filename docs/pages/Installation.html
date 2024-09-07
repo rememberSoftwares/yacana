@@ -42,7 +42,7 @@
 					</header>
 
 					<span class="image main"><img src="../images/ollama_yacana_banner.png"
-							alt="Yacana and ollama Installation" /></span>
+							alt="Yacana and Ollama installation" /></span>
 
 
 
@@ -51,7 +51,8 @@
 					<p style="text-align: center;"><img
 							src="https://github.com/user-attachments/assets/f3c45d0e-efca-4853-8237-3e56d90e1747"
 							alt="image"></p>
-					<p>The current release of Yacana was made to work with Ollama. We will extend support to all other
+					<p>The current release of Yacana was made to work with <strong>Ollama</strong>. We will extend
+						support to all other
 						major inference servers in the next update.<br>
 						The first step is to install Ollama. It will be used to serve AI models with an HTTP API. <br>
 						If your computer is performant enough you can use it to run LLMs directly on your machine.
@@ -146,21 +147,19 @@
 						<span class="image"><img style="width: 50%;" src="../images/yacana_round_small.png"
 								alt="" /></span>
 					</p>
-					<pre><code class="language-shell">pip3 install yacana
-								</code></pre>
+					<pre><code class="language-shell">pip install yacana</code></pre>
 
 					<hr class="major" />
 
 					<h2 id="imports">Imports</h2>
 					<p>When using other frameworks 'import hell' quickly appears. To prevent this bothersome problem we
-						propose that you
-						always import all of Yacana's modules and when finished developing let the IDE remove the unused
-						imports. Unused
-						imports generally appear grayed. Thus we recommend that you prepend these imports in all your
-						files and clean
-						them later. This way the IDE will have auto-completion available and will help you develop 10
-						times faster.</p>
-
+						propose that you always import all of Yacana's modules and when finished developing let the IDE
+						remove the unused imports.
+						Unused imports generally appear grayed. Thus we recommend that you prepend these imports in all
+						your files and clean them later. This way the IDE will have auto-completion available and will
+						help you develop 10 times faster.</p>
+					<pre><code class="language-python"><span class="hljs-keyword">from</span> yacana <span class="hljs-keyword">import</span> Agent, Task, Tool, Message, MessageRole, GroupSolve, EndChat, EndChatMode, ModelSettings, LoggerManager, ToolError, MaxToolErrorIter
+						</code></pre>
 				</section>
 
 			</div>

@@ -1,0 +1,526 @@
+<!DOCTYPE HTML>
+<!--
+	Editorial by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+
+<head>
+	<title>Generic - Editorial by HTML5 UP</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<link rel="stylesheet" href="../assets/css/main.css" />
+	<link rel="stylesheet" href="../assets/css/codemirror.min.css">
+	<link rel="stylesheet" href="../assets/css/monokai.min.css">
+	<link rel="stylesheet" href="../assets/css/foldgutter.min.css">
+	<script src="../assets/js/codemirror.min.js"></script>
+	<script src="../assets/js/python.min.js"></script>
+	<script src="../assets/js/foldcode.min.js"></script>
+	<script src="../assets/js/foldgutter.min.js"></script>
+	<script src="../assets/js/brace-fold.min.js"></script>
+	<style>
+        .CodeMirror {
+            font-family: "Fira Code", monospace;
+            font-size: 14px;
+            padding: 10px;
+			height: auto
+        }
+    </style>
+</head>
+
+<body class="is-preload">
+
+	<!-- Wrapper -->
+	<div id="wrapper">
+
+		<!-- Main -->
+		<div id="main">
+			<div class="inner">
+
+				<!-- Header -->
+				<header id="header">
+					<a href="index.html" class="logo"><strong>Yacana</strong>, powering open source LLMs</a>
+					<ul class="icons">
+						<li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+						<li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
+						<li><a href="#" class="icon brands fa-snapchat-ghost"><span class="label">Snapchat</span></a>
+						</li>
+						<li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+						<li><a href="#" class="icon brands fa-medium-m"><span class="label">Medium</span></a></li>
+					</ul>
+				</header>
+
+				<!-- Content -->
+				<section>
+					<header class="main">
+						<h1>II. Agents & Tasks</h1>
+					</header>
+
+					<span class="image main"><img src="../images/pic11.jpg"
+							alt="Creating Agents and Tasks to solve" /></span>
+
+
+
+
+					<h2 id="creating-an-agent">Creating an Agent</h2>
+
+
+					<style>
+						/* Hide the <pre><code> block */
+						#hidden-code {
+							display: none;
+						}
+					</style>
+
+
+					<pre id="hidden-code"><code>
+def greet(name):
+	print(f"Hello, {name}!")
+						
+greet("World")
+</code></pre>
+
+					<!-- CodeMirror editor will be initialized here -->
+					<textarea id="editor"></textarea>
+
+					<script>
+						const pythonCode = document.getElementById("hidden-code").innerText.trim();
+						const editor = document.getElementById("editor");
+				
+						const cm = CodeMirror.fromTextArea(editor, {
+							mode: "text/x-python",
+							theme: "monokai",  // Dark theme
+							lineNumbers: true,
+							matchBrackets: true,
+							styleActiveLine: true,
+							lineWrapping: true,
+							tabSize: 4,
+							indentUnit: 4,
+							readOnly: true,
+							foldGutter: true,  // Enable code folding
+							gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+						});
+						
+						cm.setValue(pythonCode);
+						//cm.setSize(500, 200);
+					</script>
+
+
+
+					<script>
+						/*
+						const editor = document.getElementById("test");
+
+						const cm = CodeMirror.fromTextArea(editor, {
+							mode: "text/x-python",  // Use Python syntax highlighting
+							lineNumbers: true,
+							matchBrackets: true,
+							styleActiveLine: true,
+							lineWrapping: true,
+							tabSize: 2,
+							value: `print("Hello, World")`,
+							readOnly: true
+						});
+
+						// Set the content after the editor is created
+						cm.setValue('print("Hello, World")');
+						cm.setSize(500, 500);
+						*/
+					</script>
+
+
+
+
+					<p>Now that you have an Ollama server running and Yacana installed let's create our first agent!</p>
+					<p>Create a Python file with this content:</p>
+					<pre><code class="language-python"><span class="hljs-keyword">from</span> yacana <span class="hljs-keyword">import</span> Agent
+
+						agent1 = Agent(<span class="hljs-string">&quot;AI assistant&quot;</span>, <span class="hljs-string">&quot;llama3:8b&quot;</span>, system_prompt=<span class="hljs-string">&quot;You are a helpful AI assistant&quot;</span>, endpoint=<span class="hljs-string">&quot;http://127.0.0.1:11434&quot;</span>)
+						</code></pre>
+					<p>The Agent(...) class takes 2 mandatory parameters:</p>
+					<ol>
+						<li><strong>The agent name</strong>: Choose something short about the agent's global focus</li>
+						<li><strong>A model name</strong>: The Ollama model that this Agent will use. You may have
+							multiple Agents running different models. Some models are better suited for some specific
+							jobs so it can be interesting to mix LLM models. Use <code>ollama list</code> to list the
+							models you have downloaded.</li>
+					</ol>
+					<p>The Agent(...) class has many optional parameters that we will discover in this tutorial. Here we
+						can see 2 of them:</p>
+					<ol>
+						<li><strong>The system prompt</strong>: Helps define the personality of the Agent.</li>
+						<li><strong>The endpoint</strong>: The URL of your Ollama instance. It points by default to your
+							localhost and on the Ollama default port. If you are using Ollama on your computer you can
+							remove this optional parameter and the default value will be used.</li>
+					</ol>
+					<h2 id="basic-roleplay">Basic roleplay</h2>
+					<p>This framework is not meant for basic roleplay. However, for people starting their journey in the
+						realm of AI and for debugging purposes, we added a simple chat system. Add this new line to test
+						it :</p>
+					<pre><code class="language-python">agent1.simple_chat()
+							</code></pre>
+					<p>When running this python file you should enter a chat with the LLM. The Agent keeps track of the
+						history so that it can answer using past information.</p>
+					<pre><code class="language-shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">python3 simple_chat_demo.py</span>
+							</code></pre>
+					<p>Output:</p>
+					<pre><code>Type 'quit' then enter to exit.
+							&gt; hey
+							Hey! It's nice to meet you. Is there something I can help you with, or would you like to chat about something in particular? I'm here to assist you with any questions or topics you'd like to discuss.
+							&gt;
+							</code></pre>
+					<p>Let's change the <strong>system prompt</strong> and have some fun!</p>
+					<pre><code class="language-python">agent1 = Agent(<span class="hljs-string">&quot;Pirate&quot;</span>, <span class="hljs-string">&quot;llama3:8b&quot;</span>, system_prompt=<span class="hljs-string">&quot;You are a pirate&quot;</span>, endpoint=<span class="hljs-string">&quot;http://127.0.0.1:11434&quot;</span>)
+							</code></pre>
+					<p>Output:</p>
+					<pre><code>Type 'quit' then enter to exit.
+							&gt; hey
+							Arrrr, shiver me timbers! What be bringin' ye to these fair waters? Are ye lookin' fer a swashbucklin' adventure or just passin' through?
+							&gt; Searching for the tresor of red beard any idea where it's hidden ?
+							Red Beard's treasure, ye say? (puffs on pipe) Well, I be knowin' a thing or two about that scurvy dog and his loot. But, I'll only be tellin' ye if ye be willin' to share yer own booty... of information! (winks)
+							</code></pre>
+					<hr>
+					<p>Complete section code:</p>
+					<pre><code class="language-python"><span class="hljs-keyword">from</span> yacana <span class="hljs-keyword">import</span> Agent
+							
+							agent1 = Agent(<span class="hljs-string">&quot;Pirate&quot;</span>, <span class="hljs-string">&quot;llama3:8b&quot;</span>, system_prompt=<span class="hljs-string">&quot;You are a pirate&quot;</span>, endpoint=<span class="hljs-string">&quot;http://127.0.0.1:11434&quot;</span>)
+							agent1.simple_chat()
+							</code></pre>
+					<p>⚠️From now on we will not set the <em>endpoint</em> attribute anymore for clarity and will resort
+						to the defaults. If your LLM is not served by Ollama or isn't on your localhost you should
+						continue setting this value.</p>
+					<h2 id="creating-tasks">Creating Tasks</h2>
+					<p>The whole concept of the framework lies here. If you understand this following section then you
+						have mastered 80% of Yacana's building principle. Like in LangGraph, where you create nodes that
+						you link together, Yacana has a Task() class which takes as arguments a task to solve. There are
+						no hardcoded links between the Tasks so it's easy to refactor and move things around. The
+						important concept to grasp here is that through these Tasks you will give instructions to the
+						LLM in a way that the result must be computable. meaning instructions must be clear and the
+						prompt to use must reflect that. It's a Task, it's a job, it's something that needs solving but
+						written like it is given as an order! Let's see some examples :</p>
+					<pre><code class="language-python"><span class="hljs-keyword">from</span> yacana <span class="hljs-keyword">import</span> Agent, Task
+							
+							<span class="hljs-comment"># First, let&#x27;s make a basic AI agent</span>
+							agent1 = Agent(<span class="hljs-string">&quot;AI assistant&quot;</span>, <span class="hljs-string">&quot;llama3:8b&quot;</span>, system_prompt=<span class="hljs-string">&quot;You are a helpful AI assistant&quot;</span>)
+							
+							<span class="hljs-comment"># Now we create a task and assign the agent1 to the task</span>
+							task1 = Task(<span class="hljs-string">f&quot;Solve the equation 2 + 2 and output the result&quot;</span>, agent1)
+							
+							<span class="hljs-comment"># For something to happen, you must call the .solve() method on your task.</span>
+							task1.solve()
+							</code></pre>
+					<p>What's happening above?</p>
+					<ul>
+						<li>First, we instantiated an Agent with the <code>llama3:8b</code> model. You might need to
+							update that depending on what LLM you downloaded from Ollama ;</li>
+						<li>Second, we instantiated a Task ;</li>
+						<li>Third, we asked that the Task be solved ;</li>
+					</ul>
+					<p class="icon solid fa-info-circle">For easing the learning curve the default logging level is
+						INFO. It will show what is going on in Yacana. Note that not ALL prompts are shown.</p>
+					<p>The output should look like this:</p>
+					<pre><code>INFO: [PROMPT]: Solve the equation 2 + 2 and output the result
+							
+							INFO: [AI_RESPONSE]: The answer to the equation 2 + 2 is... (drumroll please)... 4!
+							
+							So, the result of solving the equation 2 + 2 is indeed 4.
+							</code></pre>
+					<p>If your terminal is working normally you should see the task's prompts in green and starting with
+						the '[PROMPT]' string. The LLM's answer should appear purple and start with the [AI_RESPONSE]
+						string.</p>
+					<h4 id="task-parameters">Task parameters</h4>
+					<p>The Task class takes 2 mandatory parameters:</p>
+					<ul>
+						<li>The prompt: It is the task to be solved. Use imperative language, be precise, and ask for
+							step-by-step thinking for complex Tasks and expected outputs if needed.</li>
+						<li>The Agent: The agent that will be assigned to this task. The agent will be in charge of
+							solving the task.</li>
+					</ul>
+					<p class="icon solid fa-info-circle">Many other parameters can be given to a Task. We will see some
+						of them in the following sections of this tutorial. But you can already check out the Task class
+						documentation @todo URL</p>
+					<h4 id="in-what-way-is-this-disruptive-compared-to-other-frameworks">In what way is this disruptive
+						compared to other frameworks?</h4>
+					<p>In the above code snippet, we assigned the agent to the Task. So it's the Task that leads the
+						direction that the AI takes. In most other frameworks it's the opposite. You assign work to an
+						existing agent. This reversed way allows to have fined grained control on each resolution step
+						as the LLM only follows bread crumb (the tasks). The pattern will become even more obvious as we
+						get to the Tool section of this tutorial. As you'll see the Tools are also assigned at the Task
+						level and not to the Agent directly.</p>
+					<p>To compare with LangGraph, we indeed cannot generate a call graph as an image because we don't
+						bind the tasks together explicitly. However, Yacana's way gives more flexibility and allows a
+						hierarchical programming way of scheduling the tasks and keeping control of the flow. It also
+						allows creating new Task dynamically if the need arises. You shall rely on your programming
+						skills and good OOP to have a clean code and good Task ordering. There aren't and will never be
+						any pre-hardcoded interactions and no flat config. This is a framework for developers.</p>
+					<h2 id="getting-the-result-of-a-task">Getting the result of a Task</h2>
+					<p>Even though we get logs on the standard output of the terminal, we still need to extract the
+						answer of the LLM that solved that Task in order to do something with it.<br>
+						Getting the string message out of it is quite easy as the .solve() method returns a Message()
+						@todo URL class.<br>
+						Maybe you are thinking &quot;Ho nooo, another class to deal with&quot;. Well, let me tell you
+						that it's always better to have an OOP class than some semi-random Python dictionary where
+						you'll forget what keys it contains in ten minutes. Also, the Message @todo url class is very
+						straightforward. It exposes a <code>content</code> attribute. Update the current code to look
+						like this:</p>
+					<pre><code class="language-python"><span class="hljs-keyword">from</span> yacana <span class="hljs-keyword">import</span> Agent, Task, Message
+							
+							<span class="hljs-comment"># First, let&#x27;s make a basic AI agent</span>
+							agent1 = Agent(<span class="hljs-string">&quot;AI assistant&quot;</span>, <span class="hljs-string">&quot;llama3:8b&quot;</span>, system_prompt=<span class="hljs-string">&quot;You are a helpful AI assistant&quot;</span>)
+							
+							<span class="hljs-comment"># Now we create a task and assign the agent1 to the task</span>
+							task1 = Task(<span class="hljs-string">f&quot;Solve the equation 2 + 2 and output the result&quot;</span>, agent1)
+							
+							<span class="hljs-comment"># So that something actually happens you must call the .solve() method on your task</span>
+							my_message: Message = task1.solve()
+							
+							<span class="hljs-comment"># Printing the LLM&#x27;s response</span>
+							<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;The AI response to our task is : <span class="hljs-subst">{my_message.content}</span>&quot;</span>)
+							</code></pre>
+					<p>There you go! Give it a try.</p>
+					<p class="icon solid fa-info-circle"> Note that we used duck typing to postfix all variables
+						declaration with their type <code>my_message: Message</code>. Yacana's source code is entirely
+						duck-typed so that your IDE always knows what type it's dealing with and proposes the best
+						methods and arguments. We recommend that you do the same as it's the industry's best standards.
+					</p>
+					<hr>
+					<p>Don't like having 100 lines of code for something simple? Then chain them all in one line!</p>
+					<pre><code class="language-python"><span class="hljs-keyword">from</span> yacana <span class="hljs-keyword">import</span> Agent, Task
+							
+							<span class="hljs-comment"># First, let&#x27;s make a basic AI agent</span>
+							agent1 = Agent(<span class="hljs-string">&quot;AI assistant&quot;</span>, <span class="hljs-string">&quot;llama3:8b&quot;</span>, system_prompt=<span class="hljs-string">&quot;You are a helpful AI assistant&quot;</span>)
+							
+							<span class="hljs-comment"># Now we create a task and assign the agent1 to the task</span>
+							task1 = Task(<span class="hljs-string">f&quot;Solve the equation 2 + 2 and output the result&quot;</span>, agent1)
+							
+							<span class="hljs-comment"># Creating the task, solving it, extracting the result and printing it all in one line</span>
+							<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;The AI response to our task is: <span class="hljs-subst">{Task(<span class="hljs-string">f&#x27;Solve the equation 2 + 2 and output the result&#x27;</span>, agent1).solve().content}</span>&quot;</span>)
+							</code></pre>
+					<p>🤔 However, splitting the output of the LLM and the print in two lines would probably look
+						better. Let's not one-line things too much 😅.</p>
+					<h2 id="chaining-tasks">Chaining Tasks</h2>
+					<p>Chaining Tasks is nothing more than just calling a second Task with the same Agent. Agents keep
+						track of the History of what they did (aka, all the Tasks they solved). So just call a second
+						Task and assign the same Agent. For instance, let's multiply by 2 the result of the initial
+						Task. Append this to our current script:</p>
+					<pre><code class="language-python">task2_result: <span class="hljs-built_in">str</span> = Task(<span class="hljs-string">f&#x27;Multiply by 2 our previous result&#x27;</span>, agent1).solve().content
+							<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;The AI response to our second task is : <span class="hljs-subst">{task2_result}</span>&quot;</span>)
+							</code></pre>
+					<p>You should get:</p>
+					<pre><code>The AI response to our task is: If we multiply the previous result of 4 by 2, we get:
+							
+							8
+							</code></pre>
+					<p class="icon solid fa-info-circle"> Without tools this only relies on the LLM's ability to do the
+						maths and is dependent on its training.</p>
+					<hr>
+					<p>See? The assigned Agent remembered that it had solved the Task1 previously and used this
+						information to solve the second task.<br>
+						You can chain as many Tasks as you need. Also, you should create other Agents that don't have
+						the knowledge of previous tasks and make them do things based on the output of your first agent.
+						You can build anything now!</p>
+					<h2 id="logging-levels">Logging levels</h2>
+					<p>As entering the AI landscape can get a bit hairy we decided to leave the INFO log level by
+						default. This allows to log to the standard output all the requests made to the LLM.<br>
+						Note that NOT everything of Yacana's internal magic appears in these logs. We don't show
+						everything because many time-traveling things are going around the history of an Agent and
+						printing a log at the time it is generated wouldn't always make sense.<br>
+						However, we try to log a maximum of information to help you understand what is happening
+						internally and allow you to tweak your prompts accordingly.</p>
+					<p>Nonetheless, you are the master of what is logged and what isn't. You cannot let Yacana logs
+						activated when working with an app in production.<br>
+						There are 5 levels of logs:</p>
+					<ol>
+						<li>&quot;DEBUG&quot;</li>
+						<li>&quot;INFO&quot; &lt;= Default</li>
+						<li>&quot;WARNING&quot;</li>
+						<li>&quot;ERROR&quot;</li>
+						<li>&quot;CRITICAL&quot;</li>
+						<li>None &lt;= No logs</li>
+					</ol>
+					<p>To configure the log simply add this line at the start of your program:</p>
+					<pre><code class="language-python"><span class="hljs-keyword">from</span> yacana <span class="hljs-keyword">import</span> LoggerManager
+							
+							LoggerManager.set_log_level(<span class="hljs-string">&quot;INFO&quot;</span>)
+							</code></pre>
+					<p class="icon solid fa-info-circle">Note that Yacana utilizes the Python logging package. This
+						means that setting the level to &quot;DEBUG&quot; will print other libraries' logs on the debug
+						level too.</p>
+					<p>If you need a library to stop spamming, you can try the following:</p>
+					<pre><code class="language-python"><span class="hljs-keyword">from</span> yacana <span class="hljs-keyword">import</span> LoggerManager
+							
+							LoggerManager.set_library_log_level(<span class="hljs-string">&quot;httpx&quot;</span>, <span class="hljs-string">&quot;WARNING&quot;</span>)
+							</code></pre>
+					<p>The above example sets the logging level of the network httpx library to warning, thus reducing
+						the log spamming.</p>
+					<h2 id="configuring-llms-settings">Configuring LLM's settings</h2>
+					<p>For advanced users, Yacana provides a way to tweak the LLM runtime behavior!<br>
+						For instance, lowering the <code>temperature</code> setting makes the model less creative in its
+						responses. On the contrary, raising this setting will make the LLM more chatty and creative.<br>
+						Yacana provides you with a class that exposes all the possible LLM properties. Look at them <a
+							href="">here</a> @todo url and if you need a good explanation of each of them I would
+						recommend the <a href="https://youtu.be/QfFRNF5AhME?si=lpSYUq2WoidYiqzP">excellent video</a>
+						Matt Williams did on this subject.</p>
+					<p class="icon solid fa-info-circle"> These settings are set at the Agent level so that you can have
+						the same model used by two separate agents and have them behave differently.</p>
+					<p>We use the <a href="">ModelSettings</a> @todo url class to configure the settings we need.</p>
+					<p>For example, let's lower the temperature of an Agent to 0.4:</p>
+					<pre><code class="language-python"><span class="hljs-keyword">from</span> yacana <span class="hljs-keyword">import</span> ModelSettings, Agent
+							
+							ms = ModelSettings(temperature=<span class="hljs-number">0.4</span>)
+							
+							agent1 = Agent(<span class="hljs-string">&quot;Ai assistant&quot;</span>, <span class="hljs-string">&quot;llama3:8b&quot;</span>, model_settings=ms)
+							</code></pre>
+					<p>If you're wondering what are the default values of these when not set. Well, Ollama sets the
+						default for you. They can also be overridden in the Model config file (looks like a dockerfile
+						but for LLMs) and finally, you can set them through Yacana during runtime.</p>
+					<p>A good way to show how this can have a real impact on the output is by setting the
+						<code>num_predict</code> parameter. This one allows control of how many tokens should be
+						generated by the LLM. Let's make the same Task twice but with different <code>num_predict</code>
+						values:
+					</p>
+					<pre><code class="language-python"><span class="hljs-keyword">from</span> yacana <span class="hljs-keyword">import</span> ModelSettings, Agent, Task
+							
+							<span class="hljs-comment"># Setting temperature and max token to 100</span>
+							ms = ModelSettings(temperature=<span class="hljs-number">0.4</span>, num_predict=<span class="hljs-number">100</span>)
+							
+							agent1 = Agent(<span class="hljs-string">&quot;Ai assistant&quot;</span>, <span class="hljs-string">&quot;llama3:8b&quot;</span>, model_settings=ms)
+							Task(<span class="hljs-string">&quot;Why is the sky blue ?&quot;</span>, agent1).solve()
+							
+							<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;-------------------&quot;</span>)
+							
+							<span class="hljs-comment"># Settings max token to 15</span>
+							ms = ModelSettings(num_predict=<span class="hljs-number">15</span>)
+							
+							agent2 = Agent(<span class="hljs-string">&quot;Ai assistant&quot;</span>, <span class="hljs-string">&quot;llama3:8b&quot;</span>, model_settings=ms)
+							Task(<span class="hljs-string">&quot;Why is the sky blue ?&quot;</span>, agent2).solve()
+							</code></pre>
+					<p>Output:</p>
+					<pre><code class="language-python">INFO: [PROMPT]: Why <span class="hljs-keyword">is</span> the sky blue ?
+							
+							INFO: [AI_RESPONSE]: The sky appears blue because of a phenomenon called Rayleigh scattering, named after the British physicist Lord Rayleigh. Here<span class="hljs-string">&#x27;s what happens:
+							
+							1. **Sunlight**: When sunlight enters Earth&#x27;</span>s atmosphere, it contains <span class="hljs-built_in">all</span> the colors of the visible spectrum (red, orange, yellow, green, blue, indigo, <span class="hljs-keyword">and</span> violet).
+							<span class="hljs-number">2.</span> **Molecules**: The atmosphere <span class="hljs-keyword">is</span> made up of tiny molecules of gases like nitrogen (N2) <span class="hljs-keyword">and</span> oxygen (O2). These molecules are much smaller than
+							
+							-------------------
+							
+							INFO: [PROMPT]: Why <span class="hljs-keyword">is</span> the sky blue ?
+							
+							INFO: [AI_RESPONSE]: The sky appears blue because of a phenomenon called Rayleigh scattering, named after
+							</code></pre>
+					<p>As you can see above the two agents didn't output the same number of tokens.</p>
+				</section>
+
+			</div>
+		</div>
+
+		<!-- Sidebar -->
+		<div id="sidebar">
+			<div class="inner">
+
+				<!-- Search -->
+				<section id="search" class="alt">
+					<form method="post" action="#">
+						<input type="text" name="query" id="query" placeholder="Search" />
+					</form>
+				</section>
+
+				<!-- Menu -->
+				<nav id="menu">
+					<header class="major">
+						<h2>Menu</h2>
+					</header>
+					<ul>
+						<li><a href="index.html">Homepage</a></li>
+						<li><a href="generic.html">Generic</a></li>
+						<li><a href="elements.html">Elements</a></li>
+						<li>
+							<span class="opener">Submenu</span>
+							<ul>
+								<li><a href="#">Lorem Dolor</a></li>
+								<li><a href="#">Ipsum Adipiscing</a></li>
+								<li><a href="#">Tempus Magna</a></li>
+								<li><a href="#">Feugiat Veroeros</a></li>
+							</ul>
+						</li>
+						<li><a href="#">Etiam Dolore</a></li>
+						<li><a href="#">Adipiscing</a></li>
+						<li>
+							<span class="opener">Another Submenu</span>
+							<ul>
+								<li><a href="#">Lorem Dolor</a></li>
+								<li><a href="#">Ipsum Adipiscing</a></li>
+								<li><a href="#">Tempus Magna</a></li>
+								<li><a href="#">Feugiat Veroeros</a></li>
+							</ul>
+						</li>
+						<li><a href="#">Maximus Erat</a></li>
+						<li><a href="#">Sapien Mauris</a></li>
+						<li><a href="#">Amet Lacinia</a></li>
+					</ul>
+				</nav>
+
+				<!-- Section -->
+				<section>
+					<header class="major">
+						<h2>Ante interdum</h2>
+					</header>
+					<div class="mini-posts">
+						<article>
+							<a href="#" class="image"><img src="../images/pic07.jpg" alt="" /></a>
+							<p>Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore aliquam.</p>
+						</article>
+						<article>
+							<a href="#" class="image"><img src="../images/pic08.jpg" alt="" /></a>
+							<p>Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore aliquam.</p>
+						</article>
+						<article>
+							<a href="#" class="image"><img src="../images/pic09.jpg" alt="" /></a>
+							<p>Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore aliquam.</p>
+						</article>
+					</div>
+					<ul class="actions">
+						<li><a href="#" class="button">More</a></li>
+					</ul>
+				</section>
+
+				<!-- Section -->
+				<section>
+					<header class="major">
+						<h2>Get in touch</h2>
+					</header>
+					<p>Sed varius enim lorem ullamcorper dolore aliquam aenean ornare velit lacus, ac varius enim lorem
+						ullamcorper dolore. Proin sed aliquam facilisis ante interdum. Sed nulla amet lorem feugiat
+						tempus aliquam.</p>
+					<ul class="contact">
+						<li class="icon solid fa-envelope"><a href="#">information@untitled.tld</a></li>
+						<li class="icon solid fa-phone">(000) 000-0000</li>
+						<li class="icon solid fa-home">1234 Somewhere Road #8254<br />
+							Nashville, TN 00000-0000</li>
+					</ul>
+				</section>
+
+				<!-- Footer -->
+				<footer id="footer">
+					<p class="copyright">&copy; Untitled. All rights reserved. Demo Images: <a
+							href="https://unsplash.com">Unsplash</a>. Design: <a href="https://html5up.net">HTML5
+							UP</a>.</p>
+				</footer>
+
+			</div>
+		</div>
+
+	</div>
+
+	<!-- Scripts -->
+	<script src="../assets/js/jquery.min.js"></script>
+	<script src="../assets/js/browser.min.js"></script>
+	<script src="../assets/js/breakpoints.min.js"></script>
+	<script src="../assets/js/util.js"></script>
+	<script src="../assets/js/main.js"></script>
+
+</body>
+
+</html>
