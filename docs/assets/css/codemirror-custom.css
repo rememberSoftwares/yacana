@@ -1,0 +1,15 @@
+.CodeMirror {
+    font-family: "Fira Code", monospace;
+    font-size: 14px;
+    padding: 10px;
+    height: auto
+}
+
+.language-python {
+    display: none;
+}
+
+.text-output {
+    display: none;
+}
+

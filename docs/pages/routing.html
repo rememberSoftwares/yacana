@@ -1,0 +1,567 @@
+<!DOCTYPE HTML>
+<!--
+	Editorial by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+
+<head>
+	<title>Agents & Tasks</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<link rel="stylesheet" href="../assets/css/main.css" />
+	<link rel="stylesheet" href="../assets/css/codemirror.min.css">
+	<link rel="stylesheet" href="../assets/css/monokai.min.css">
+	<link rel="stylesheet" href="../assets/css/foldgutter.min.css">
+	<link rel="stylesheet" href="../assets/css/codemirror-custom.css">
+	<link rel="stylesheet" href="../assets/css/zenburn.min.css">
+	<script src="../assets/js/codemirror.min.js"></script>
+	<script src="../assets/js/python.min.js"></script>
+	<script src="../assets/js/foldcode.min.js"></script>
+	<script src="../assets/js/foldgutter.min.js"></script>
+	<script src="../assets/js/brace-fold.min.js"></script>
+	<script src="../assets/js/codemirror-custom.js"></script>
+</head>
+
+<body class="is-preload">
+
+	<!-- Wrapper -->
+	<div id="wrapper">
+
+		<!-- Main -->
+		<div id="main">
+			<div class="inner">
+
+				<!-- Header -->
+				<header id="header">
+					<a href="index.html" class="logo"><strong>Yacana</strong>, powering open source LLMs</a>
+					<ul class="icons">
+						<li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+						<li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
+						<li><a href="#" class="icon brands fa-snapchat-ghost"><span class="label">Snapchat</span></a>
+						</li>
+						<li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+						<li><a href="#" class="icon brands fa-medium-m"><span class="label">Medium</span></a></li>
+					</ul>
+				</header>
+
+				<!-- Content -->
+				<section>
+					<header class="main">
+						<h1>III. Routing</h1>
+					</header>
+
+					<span class="image main"><img src="../images/pic11.jpg" alt="Routing" /></span>
+
+					<h2>III. Routing</h2>
+					<h3>Concepts of routing</h3>
+					<p>Other frameworks tend to make abstractions for everything. Even things that don't need any.
+						That's why I'll show you how to do routing with only what we have seen earlier. Yacana doesn't
+						provide routing abstraction because there is no need to do so. </p>
+					<p>But what is routing? Well, having LLMs solve a Task and then chaining many others in a sequence
+						is good but to be efficient you have to create conditional workflows. In particular when using
+						local LLMs that don't have the power to solve all Tasks with only one prompt. You must create an
+						AI workflow in advance that will go forward step by step and converge to some expected result.
+						AI allows you to deal with some level of unknown but you can't expect having a master brain
+						(like in crewAI) that distributes tasks to agents and achieves an expected result. It's
+						IMPOSSIBLE with local LLMs. They are too dumb! Therefore they need you to help them along their
+						path. This is why LangGraph works well with local LLMs and Yacana does too. You create a
+						workflow and when conditions are met you switch from one branch to another that treats more
+						specific cases, etc. </p>
+					<hr />
+					<p>The most common routing mechanic is "yes" / "no". Depending on the result, your program can do
+						different things next. Let's see an example: </p>
+					<pre><code class="language-python">from yacana import Agent, Task
+
+agent1 = Agent("AI assistant", "llama3:8b", system_prompt="You are a helpful AI assistant")
+
+# Let's invent a question about 'plants'
+question: str = "Why do leaves fall in autumn ?"
+
+# Ask if the question is plant related: yes or no
+router_answer: str = Task(f"Is the following question about plants ? <question>{question}</question> Answer ONLY by 'yes' or 'no'.", agent1).solve().content
+
+if "yes" in router_answer.lower():
+    print("Yes, question is about plants")
+    # next step in the workflow that involves plants
+
+elif "no" in router_answer.lower():
+    print("No, question is NOT about plants")
+    # Next step in the workflow that DOESN'T involve plants
+</code></pre><br>
+					<p>You should get the following output:</p>
+					<pre><code class="text-output">INFO: [PROMPT]: Is the following question about plants? <question>Why do leaves fall in autumn ?</question> Answer ONLY by 'yes' or 'no'.
+
+INFO: [AI_RESPONSE]: yes
+Question is about plants
+</code></pre><br>
+					<p>▶️ Many things are happening here. We didn't implement an abstraction to simplify things but the
+						downside is that you must learn a few tricks: </p>
+					<ol>
+						<li><strong>Always compare with lower case string</strong>: Because LLMs have their own mind
+							they do not always answer a straight <code>yes</code>. Sometimes you get "Yes" or even full
+							cap "YES" for no reason. </li>
+						<li><strong>Always start by searching for "yes"</strong>: We do a substring match using the
+							<code>in</code> keyword of Python because the LLM doesn't always respect the instructions of
+							outputting "ONLY 'yes' or 'no'". Sometimes you'll get "yes!" or "Great idea, I say yes".
+							Substring match will match "yes" anywhere in the LLM answer. But what if you matched "no"
+							first and the LLM generated "Not sure but I would say yes". Because we search for substrings
+							the condition would match the "no" part of the word "Not" even though the LLM said yes. We
+							could use regexe to fix this but it's easier to just start the condition by looking for
+							"yes" as there are no English words that contain "yes" in the substring (at least no common
+							ones ^^).</li>
+						<li><strong>Force the LLM to respect the instruction</strong>: Tell it to "answer ONLY with
+							'xx'". See the use of the upper cap on "ONLY"? Also, the single quotes around the possible
+							choices 'yes' and 'no' help the LLM that sees them as delimiters. </li>
+						<li><strong>Use formatting tags</strong>: The question that is mentioned in the prompt is then
+							given in custom <code>&#60;question&#62;</code> tags. LLMs love delimiters. This way the LLM knows
+							when the question starts and when the question ends. This technique helps to differentiate
+							your prompt and the dynamic part. You don't have to add tags everywhere but they can prove
+							useful. Do not abuse them or the LLM might start using them in its response. Just keep this
+							trick in mind. </li>
+					</ol>
+					<p class="icon solid fa-info-circle"> This is all basic prompt engineering. If you wish to build an app with local models you will
+						definitely have to learn those tricks. LLMs are unpredictable. It's why we built them. </p>
+					<h3>Self-reflection routing</h3>
+					<p>As local models are a bit dumb you need to let them think on their own before making a decision.
+						This is called self-reflection. It will cost one more Task to solve but you'll get significantly
+						better results during routing, in particular when routing on more complex things (other than
+						"yes"|"no").</p>
+					<p>Let's update the routing section of our code to look like this: </p>
+					<pre><code># Asking for a reasoning step
+Task(f"Is the following question about plants ? <question>{question}</question>\nExplain your reasoning.", agent1).solve()
+
+# Basic yes/no routing based on the previous reasoning
+router_answer: str = Task(f"To summarize in one word, was the question about plants ? Answer ONLY by 'yes' or 'no'.", agent1).solve().content
+</code></pre><br>
+					<p>We added one more Task that executes BEFORE the router. </p>
+					<p>You should get this type of output:</p>
+					<pre><code class="text-output">INFO: [PROMPT]: Is the following question about plants ? <question>Why do leaves fall in autumn ?</question>
+Explain your reasoning
+
+INFO: [AI_RESPONSE]: A great question!
+
+Yes, I believe this question is indeed about plants. Specifically, it's related to the fascinating process of leaf senescence and abscission that occurs during autumn (or fall) in many plant species.
+
+Here's why:
+
+1. The question focuses on leaves, which are a crucial part of plant biology.
+2. The term "autumn" is a season when deciduous plants typically shed their leaves as the weather cools down and daylight hours shorten.
+3. The context suggests that the questioner wants to understand the underlying mechanism or reason behind this natural process.
+
+Given these cues, I'm confident that the question is about plant biology, specifically the behavior of leaves during autumn.
+
+INFO: [PROMPT]: To summarize in one word, was the question about plants ? Answer ONLY by 'yes' or 'no'.
+
+INFO: [AI_RESPONSE]: Yes
+Question is about plants
+</code></pre><br>
+					<p>See how the LLM had an "intense" reflection on the subject. This is very good. You want LLMs to
+						do reasoning like this. It will improve the overall result for the next Tasks to solve. </p>
+					<p>▶️The prompt engineering techniques used here are:</p>
+					<ol>
+						<li><strong>Make it think</strong>: Using the expression "Explain your reasoning." makes it
+							generate a logical answer. Note that if the model is bad at reasoning or makes a mistake
+							during this step it may result in extremely bad situations. But fear not, failsafes can be
+							built to limit bad reasoning. For instance, having another LLM check the logic and interact
+							with the original Agent (see GroupSolve later on) to show it its mistake. You could also
+							give tools to the Agent that will help it achieve the truth and not rely solely on his
+							reasoning abilities (see Tools later on). </li>
+						<li><strong>Making it two shots</strong>: Now that we have 2 Tasks instead of one, the second
+							one only focuses on one task: "yes" or "no" interpretation of the result of Task1. Cutting
+							objectives in multiple sub-tasks gives better performance. This why using an agentic
+							framework is great but it's also why it's consuming a lot of tokens and having "free to run"
+							local LLMs is great! </li>
+					</ol>
+					<p>Full code:</p>
+					<pre><code class="language-python">from yacana import Agent, Task
+
+agent1 = Agent("AI assistant", "llama3:8b", system_prompt="You are a helpful AI assistant")
+
+# Let's invent a question about 'plants'
+question: str = "Why do leaves fall in autumn ?"
+
+# Asking for a reasoning step
+Task(f"Is the following question about plants ? <question>{question}</question>\nExplain your reasoning.", agent1).solve()
+
+# Basic yes/no routing based on the previous reasoning
+router_answer: str = Task(f"To summarize in one word, was the question about plants ? Answer ONLY by 'yes' or 'no'.", agent1).solve().content
+
+if "yes" in router_answer.lower():
+    print("Yes, question is about plants")
+    # next step in the workflow that involves plants
+
+elif "no" in router_answer.lower():
+    print("No, question is NOT about plants")
+    # Next step in the workflow that DOESN'T involve plants
+</code></pre><br>
+					<h3>Cleaning history</h3>
+					<p>Keeping the self-reflection prompt and the associated answer is always good. It helps
+						guardrailing the LLM. But the "yes"/"no" router on the other hand adds unnecessary noise to the
+						Agent's history. Moreover, local models don't have huge context window sizes, so removing
+						useless interactions is always good. <br />
+						The "yes"/"no" router is only useful once. Then we should make the Agent forget it ever happened
+						after it answered. No need to keep that… This is why the Task class offers an optional
+						parameter: <code>forget=&#60;bool&#62;</code>. </p>
+					<p>Update the router line with this new parameter:</p>
+					<pre><code>router_answer: str = Task(f"To summarize in one word, was the question about plants ? Answer ONLY by 'yes' or 'no'.", agent1, forget=True).solve().content
+</code></pre><br>
+					<p>Now, even though you cannot see it, the Agent doesn't remember solving this Task. In the next
+						section, we'll see how to access and manipulate the history. Then, you'll be able to see what
+						the Agent remembers! </p>
+					<h3>Routing demonstration</h3>
+					<p>For this demo, we'll make an app that takes a user query (HF replacing the static string by a
+						Python <code>input()</code> if you wish) that checks if the query is about plants. <br />
+						If it is not we end the workflow there. However, if it is about plants the flow will branch and
+						search if a plant type/name was given. If it was then it is extracted and knowledge about the
+						plant will be shown before answering the original question. If not it will simply answer the
+						query as is. </p>
+					<p style="text-align: center;"><img src="https://github.com/user-attachments/assets/e479e74c-c4f4-4942-a8b5-bd06b377af8c"
+							alt="plant1B" /></p>
+					<p>Read from bottom ⬇️ to top ⬆️. (Though, the Agent and the question variables are defined globally
+						at the top)</p>
+					<pre><code class="language-python">from yacana import Agent, Task
+
+# Declare agent
+agent1 = Agent("AI assistant", "llama3:8b", system_prompt="You are a helpful AI assistant")
+
+
+# Asking a question
+question: str = "Why do leaves fall in autumn ?"
+
+
+# Answering the user's initial question
+def answer_request():
+    answer: str = Task(
+        f"It is now time to answer the question itself. The question was {question}. Answer it.",
+        agent1).solve().content
+    print(answer)
+
+
+# Getting info on the plant to brief the user beforehand
+def show_plant_information(plant_name: str):
+    # Getting info on the plant from the model's training (should be replaced by a call tool returning accurate plant info based on the name; We'll see that later.) 
+    plant_description: str = Task(
+        f"What do you know about the plant {plant_name} ? Get me the scientific name but stay concise.",
+        agent1).solve().content
+
+    # Printing the plant's info to the user
+    print("------ Plant info ------")
+    print(f"You are referring to the plant '{plant_name}'. Let me give you specific information about it before "
+          f"answering your question:")
+    print(plant_description)
+    print("------------------------")
+    answer_request()
+
+
+# Checking if the question has a specific plant specified
+def check_has_specific_plant():
+    # Self-reflection
+    Task(
+        f"In your opinion, does the question mention a specific plant name or one that you can identify ?",
+        agent1).solve()
+
+    # Yes / no routing again.
+    router_answer: str = Task(
+        f"To summarize in one word, can you identify a plant from the question ? Answer ONLY by 'yes' or 'no'.",
+        agent1, forget=True,).solve().content
+
+    # Routing
+    if "yes" in router_answer.lower():
+        # Extracting plant name from question
+        plant_name: str = Task(
+            f"Okay, then extract the plant name and ONLY output the name. Nothing else.",
+            agent1, forget=True).solve().content
+        show_plant_information(plant_name)
+
+    elif "no" in router_answer.lower():
+        # No plant name was found. Let's just answer the question.
+        print("No specific plant specification was given. I'll just answer your question then.")
+        answer_request()
+
+
+# Simple router checking if we are on tracks or not
+def check_is_about_plants():
+
+    # self-reflection
+    Task(f"Is the following question about plants ? <question>{question}</question>\nExplain your reasoning.",
+         agent1).solve()
+
+    # Actual router based on the previous reflection
+    router_answer: str = Task(
+        f"To summarize in one word, was the question about plants ? Answer ONLY by 'yes' or 'no'.",
+        agent1, forget=True,).solve().content
+
+    # yes / no routing
+    if "yes" in router_answer.lower():
+        print("Question is about plants !")
+        check_has_specific_plant()
+
+    elif "no" in router_answer.lower():
+        print("Question is NOT about plants sorry.")
+        # We stop here; This app is only about plants!
+
+
+# Starting point
+check_is_about_plants()
+</code></pre><br>
+					<p><strong>Let's try the "common plant" question that doesn't involve specifying a plant
+							name:</strong> </p>
+					<p>➡️ Outputs :</p>
+					<pre><code class="text-output">INFO: [PROMPT]: Is the following question about plants ? <question>Why do leaves fall in autumn ?</question>
+Explain your reasoning.
+
+INFO: [AI_RESPONSE]: A great question!
+
+Yes, I believe this question is indeed about plants! Here's why:
+
+* The term "autumn" specifically refers to a season when plants undergo changes, including the shedding of their leaves.
+* Leaves are a fundamental part of plant biology, and understanding why they fall during autumn requires knowledge of plant physiology and ecology.
+
+So, if I had to answer this question, I would explain that leaves fall in autumn due to a combination of factors, such as:
+
+1. Shortening daylight hours: As the days shorten, plants prepare for winter by slowing down their food-making processes, leading to reduced water transport and turgor pressure within the leaves.
+[BLABLA]
+4. Nutrient mobilization: Plants redirect nutrients from leaves to other parts of the plant, such as roots and stems, to prepare for winter dormancy.
+
+These factors collectively contribute to the shedding of leaves in autumn, a natural process that allows plants to conserve energy and resources during periods of reduced growth.
+
+INFO: [PROMPT]: To summarize in one word, was the question about plants ? Answer ONLY by 'yes' or 'no'.
+
+INFO: [AI_RESPONSE]: Yes
+Question is about plants !
+
+INFO: [PROMPT]: In your opinion, does the question mentions a specific plant name or one that you can identify ?
+
+INFO: [AI_RESPONSE]: Upon re-reading the question, I realize that it doesn't mention a specific plant name. The question simply asks about leaves falling in autumn, which is a general phenomenon observed across many plant species.
+
+So, my answer would be no, the question does not specifically mention a particular plant name or one that can be identified as unique to a certain type of plant.
+
+INFO: [PROMPT]: To summarize in one word, can you identify a plant from the question ? Answer ONLY by 'yes' or 'no'.
+
+INFO: [AI_RESPONSE]: no
+No specific plant specification was given. I'll just answer your question then.
+
+INFO: [PROMPT]: It is now time to answer the question itself. The question was Why do leaves fall in autumn ?. Answer it.
+
+INFO: [AI_RESPONSE]: I'd be delighted to!
+
+Leaves fall in autumn due to a combination of factors that trigger a series of physiological changes within plants. Here's a breakdown of the main reasons:
+
+1. **Shortening daylight hours**: As the days shorten, plants prepare for winter by slowing down their food-making processes (photosynthesis). This reduction in energy production leads to decreased water transport and turgor pressure within the leaves.
+[BLABLA]
+4. **Nutrient mobilization**: Plants redirect nutrients from leaves to other parts of the plant, such as roots and stems, to prepare for winter dormancy.
+
+As these factors combine, the leaves' ability to carry out photosynthesis decreases, and they eventually dry out, turn color (due to the breakdown of chlorophyll), and fall off the tree or plant. This process is a natural adaptation that allows plants to:
+
+* Conserve water and energy during winter
+* Redirect nutrients to support growth in other parts of the plant
+* Protect themselves from harsh weather conditions
+
+So, there you have it! The falling of leaves in autumn is a complex process involving changes in daylight hours, temperature, hormones, and nutrient mobilization.
+I'd be delighted to!
+
+Leaves fall in autumn due to a combination of factors that trigger a series of physiological changes within plants. Here's a breakdown of the main reasons:
+
+1. **Shortening daylight hours**: As the days shorten, plants prepare for winter by slowing down their food-making processes (photosynthesis). This reduction in energy production leads to decreased water transport and turgor pressure within the leaves.
+[BLABLA]
+4. **Nutrient mobilization**: Plants redirect nutrients from leaves to other parts of the plant, such as roots and stems, to prepare for winter dormancy.
+
+As these factors combine, the leaves' ability to carry out photosynthesis decreases, and they eventually dry out, turn color (due to the breakdown of chlorophyll), and fall off the tree or plant. This process is a natural adaptation that allows plants to:
+
+* Conserve water and energy during winter
+* Redirect nutrients to support growth in other parts of the plant
+* Protect themselves from harsh weather conditions
+
+So, there you have it! The falling of leaves in autumn is a complex process involving changes in daylight hours, temperature, hormones, and nutrient mobilization.
+</code></pre><br>
+					<p class="icon solid fa-info-circle"> Later we'll see how to remove the automatic "[INFO]" prints so that only YOUR prints are
+						shown. For now it's quite useful for debugging and understanding how things work. So we'll leave
+						them in this tutorial section. </p>
+					<p><strong>Upating question to match the "specific plant info" workflow:</strong> </p>
+					<pre><code class="language-python">question: str = "Why do poppies fade so quickly ?"
+</code></pre><br>
+					<p>➡️ Outputs :</p>
+					<pre><code class="text-output">INFO: [PROMPT]: Is the following question about plants ? <question>Why do poppies fade so quickly ?</question>
+Explain your reasoning.
+
+INFO: [AI_RESPONSE]: A lovely question!
+
+Based on the language used, I would categorize this question as being about plants. Here's why:
+
+1. The question mentions a specific type of plant: "poppies". This suggests that the inquiry is related to botany.
+2. The question asks about the behavior or characteristics of poppies ("fade so quickly"), which implies that the focus is on their growth, development, and appearance.
+
+Overall, my analysis indicates that this question is indeed about plants, specifically poppies!
+
+INFO: [PROMPT]: To summarize in one word, was the question about plants ? Answer ONLY by 'yes' or 'no'.
+
+INFO: [AI_RESPONSE]: Yes
+Question is about plants !
+
+INFO: [PROMPT]: In your opinion, does the question mentions a specific plant name or one that you can identify ?
+
+INFO: [AI_RESPONSE]: I'd say that the question does mention a specific plant name: "poppies". Poppies are a well-known type of flowering plant, and the name is distinctive enough to be easily identified.
+
+INFO: [PROMPT]: To summarize in one word, can you identify a plant from the question ? Answer ONLY by 'yes' or 'no'.
+
+INFO: [AI_RESPONSE]: Yes
+
+INFO: [PROMPT]: Okay, then extract the plant name and ONLY output the name. Nothing else.
+
+INFO: [AI_RESPONSE]: Poppies
+
+INFO: [PROMPT]: What do you know about the plant Poppies ? Get me the scientific name but stay concise.
+
+INFO: [AI_RESPONSE]: Poppies belong to the family Papaveraceae. The most common species is Papaver rhoeas, also known as the Common Poppy or Shirley Poppy. It's an annual flowering plant native to Europe and Asia.
+------ Plant info ------
+You are referring to the plant 'Poppies'. Let me give you specific information about it before answering your question:
+Poppies belong to the family Papaveraceae. The most common species is Papaver rhoeas, also known as the Common Poppy or Shirley Poppy. It's an annual flowering plant native to Europe and Asia.
+------------------------
+
+INFO: [PROMPT]: It is now time to answer the question itself. The question was Why do poppies fade so quickly ?. Answer it.
+
+INFO: [AI_RESPONSE]: Poppies are known for their ephemeral nature, and there are several reasons why they might appear to fade quickly:
+
+1. **Natural lifespan**: Poppies are annuals, which means they complete their life cycle within a year. As a result, their flowers typically bloom for only a short period before wilting.
+[BLABLA]
+5. **Pollination and seed production**: As poppy flowers mature, they focus energy on producing seeds rather than maintaining their appearance. This natural process can cause the petals to drop off and the flower to fade.
+
+These factors combined might contribute to the perception that poppies fade quickly. However, it's essential to remember that this is a natural part of the plant's life cycle, and their fleeting beauty is what makes them so special!
+Poppies are known for their ephemeral nature, and there are several reasons why they might appear to fade quickly:
+
+1. **Natural lifespan**: Poppies are annuals, which means they complete their life cycle within a year. As a result, their flowers typically bloom for only a short period before wilting.
+[BLABLA]
+5. **Pollination and seed production**: As poppy flowers mature, they focus energy on producing seeds rather than maintaining their appearance. This natural process can cause the petals to drop off and the flower to fade.
+
+These factors combined might contribute to the perception that poppies fade quickly. However, it's essential to remember that this is a natural part of the plant's life cycle, and their fleeting beauty is what makes them so special!
+</code></pre><br>
+					<p><strong>Updating question to match the "Not related to plants" workflow:</strong> </p>
+					<pre><code class="language-python">question: str = "Why is the sky blue ?"
+</code></pre><br>
+					<p>➡️ Outputs :</p>
+					<pre><code class="text-output">INFO: [PROMPT]: Is the following question about plants ? <question>Why is the sky blue ?</question>
+Explain your reasoning.
+
+INFO: [AI_RESPONSE]: No, the question "Why is the sky blue?" is not about plants. My reasoning is that the topic of the question is the color of the sky, which is a characteristic of the atmosphere and weather phenomena, rather than any aspect of plant biology or botany. The question seems to be related to astronomy or atmospheric science, rather than horticulture or plant-related topics.
+
+INFO: [PROMPT]: To summarize in one word, was the question about plants ? Answer ONLY by 'yes' or 'no'.
+
+INFO: [AI_RESPONSE]: No
+Question is NOT about plants sorry.
+</code></pre><br>
+
+
+				</section>
+			</div>
+		</div>
+
+		<!-- Sidebar -->
+		<div id="sidebar">
+			<div class="inner">
+
+				<!-- Search -->
+				<section id="search" class="alt">
+					<form method="post" action="#">
+						<input type="text" name="query" id="query" placeholder="Search" />
+					</form>
+				</section>
+
+				<!-- Menu -->
+				<nav id="menu">
+					<header class="major">
+						<h2>Menu</h2>
+					</header>
+					<ul>
+						<li><a href="index.html">Homepage</a></li>
+						<li><a href="generic.html">Generic</a></li>
+						<li><a href="elements.html">Elements</a></li>
+						<li>
+							<span class="opener">Submenu</span>
+							<ul>
+								<li><a href="#">Lorem Dolor</a></li>
+								<li><a href="#">Ipsum Adipiscing</a></li>
+								<li><a href="#">Tempus Magna</a></li>
+								<li><a href="#">Feugiat Veroeros</a></li>
+							</ul>
+						</li>
+						<li><a href="#">Etiam Dolore</a></li>
+						<li><a href="#">Adipiscing</a></li>
+						<li>
+							<span class="opener">Another Submenu</span>
+							<ul>
+								<li><a href="#">Lorem Dolor</a></li>
+								<li><a href="#">Ipsum Adipiscing</a></li>
+								<li><a href="#">Tempus Magna</a></li>
+								<li><a href="#">Feugiat Veroeros</a></li>
+							</ul>
+						</li>
+						<li><a href="#">Maximus Erat</a></li>
+						<li><a href="#">Sapien Mauris</a></li>
+						<li><a href="#">Amet Lacinia</a></li>
+					</ul>
+				</nav>
+
+				<!-- Section -->
+				<section>
+					<header class="major">
+						<h2>Ante interdum</h2>
+					</header>
+					<div class="mini-posts">
+						<article>
+							<a href="#" class="image"><img src="../images/pic07.jpg" alt="" /></a>
+							<p>Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore aliquam.</p>
+						</article>
+						<article>
+							<a href="#" class="image"><img src="../images/pic08.jpg" alt="" /></a>
+							<p>Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore aliquam.</p>
+						</article>
+						<article>
+							<a href="#" class="image"><img src="../images/pic09.jpg" alt="" /></a>
+							<p>Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore aliquam.</p>
+						</article>
+					</div>
+					<ul class="actions">
+						<li><a href="#" class="button">More</a></li>
+					</ul>
+				</section>
+
+				<!-- Section -->
+				<section>
+					<header class="major">
+						<h2>Get in touch</h2>
+					</header>
+					<p>Sed varius enim lorem ullamcorper dolore aliquam aenean ornare velit lacus, ac varius enim lorem
+						ullamcorper dolore. Proin sed aliquam facilisis ante interdum. Sed nulla amet lorem feugiat
+						tempus aliquam.</p>
+					<ul class="contact">
+						<li class="icon solid fa-envelope"><a href="#">information@untitled.tld</a></li>
+						<li class="icon solid fa-phone">(000) 000-0000</li>
+						<li class="icon solid fa-home">1234 Somewhere Road #8254<br />
+							Nashville, TN 00000-0000</li>
+					</ul>
+				</section>
+
+				<!-- Footer -->
+				<footer id="footer">
+					<p class="copyright">&copy; Untitled. All rights reserved. Demo Images: <a
+							href="https://unsplash.com">Unsplash</a>. Design: <a href="https://html5up.net">HTML5
+							UP</a>.</p>
+				</footer>
+
+			</div>
+		</div>
+
+	</div>
+
+	<!-- Scripts -->
+	<script src="../assets/js/jquery.min.js"></script>
+	<script src="../assets/js/browser.min.js"></script>
+	<script src="../assets/js/breakpoints.min.js"></script>
+	<script src="../assets/js/util.js"></script>
+	<script src="../assets/js/main.js"></script>
+
+</body>
+
+</html>
