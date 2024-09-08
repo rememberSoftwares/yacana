@@ -1,0 +1,1618 @@
+<!DOCTYPE HTML>
+<!--
+	Editorial by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+
+<head>
+	<title>Managing_agents_history</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<link rel="stylesheet" href="../assets/css/main.css" />
+	<link rel="stylesheet" href="../assets/css/codemirror.min.css">
+	<link rel="stylesheet" href="../assets/css/monokai.min.css">
+	<link rel="stylesheet" href="../assets/css/foldgutter.min.css">
+	<link rel="stylesheet" href="../assets/css/codemirror-custom.css">
+	<link rel="stylesheet" href="../assets/css/zenburn.min.css">
+	<script src="../assets/js/codemirror.min.js"></script>
+	<script src="../assets/js/python.min.js"></script>
+	<script src="../assets/js/json-lint.min.js"></script>
+	<script src="../assets/js/foldcode.min.js"></script>
+	<script src="../assets/js/foldgutter.min.js"></script>
+	<script src="../assets/js/brace-fold.min.js"></script>
+	<script src="../assets/js/codemirror-custom.js"></script>
+</head>
+
+<body class="is-preload">
+
+	<!-- Wrapper -->
+	<div id="wrapper">
+
+		<!-- Main -->
+		<div id="main">
+			<div class="inner">
+
+				<!-- Header -->
+				<header id="header">
+					<a href="index.html" class="logo"><strong>Yacana</strong>, powering open source LLMs</a>
+					<ul class="icons">
+						<li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+						<li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
+						<li><a href="#" class="icon brands fa-snapchat-ghost"><span class="label">Snapchat</span></a>
+						</li>
+						<li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+						<li><a href="#" class="icon brands fa-medium-m"><span class="label">Medium</span></a></li>
+					</ul>
+				</header>
+
+				<!-- Content -->
+				<section>
+					<header class="main">
+						<h1>VI. Dual-agents chat</h1>
+					</header>
+
+					<span class="image main"><img src="../images/pic11.jpg" alt="Routing" /></span>
+
+					<p>A crucial functionality available in some other frameworks like CrewAI is allowing Agents to
+						speak with one another. Yacana also has this functionality. <br />
+						This allows Agents to brainstorm and come up with solutions by themselves. However, where other
+						frameworks propose many ways to schedule interactions, Yacana emphasizes on providing developers
+						with ways to make them stop talking! </p>
+					<p>Making agents speak is not an issue. But making them stop is a whole other thing. How do you stop
+						a conversation at the exact right moment without monitoring the chat yourself? <br />
+					</p>
+					<span>There are only 2 ways.</span>
+					<ul>
+						<li>Use a maximum number of iterations and stop the chat when it is reached.</li>
+						<li>Let one or more LLMs decide when the conversation should end. </li>
+					</ul>
+					<p>Yacana provides both! It utilizes the Task system that you already know and allows some Tasks to be worked on by the
+						Agents. </p>
+
+
+					<hr class="major" />
+
+					<h2>Stopping chat using 'maximum iterations'</h2>
+					<p>We'll be using a new class called [GroupSolve]() @todo url. It takes a list of Tasks (at least
+						two) and an [EndChat]() object. </p>
+					<ol>
+						<li>The list of tasks will be the center of conversation for the LLM agents. The order in the
+							list matters as the tasks will be solved in the same order.</li>
+						<li>The EndChat object will allow you to configure when/how the conversation stops.</li>
+						<li>The GroupSolve class uses a <code>.solve()</code> method like the Task themselves. So don't
+							forget about it.</li>
+					</ol>
+					<p>Let's look at an example: </p>
+					<pre><code class="language-python">
+from yacana import Agent, Task, GroupSolve, EndChat, EndChatMode
+
+# Creating two agents
+agent1 = Agent("Ai assistant 1", "llama3:8b")
+agent2 = Agent("Ai assistant 2", "llama3:8b")
+
+# Creating two different Tasks to solve but that are related to one another
+task1 = Task("Your task is to create a list of attractions for an amusement park.", agent1)
+task2 = Task("Your task is to propose themes for an amusement park.", agent2)
+
+# Creating the GroupSolve and specifying how the chat ends
+GroupSolve([task1, task2], EndChat(EndChatMode.MAX_ITERATIONS_ONLY)).solve()
+					</code></pre><br>
+					<p>In the above code, we can see that the end of the chat condition is
+						<code>EndChatMode.MAX_ITERATIONS_ONLY</code>. This means that both agents will exit the
+						conversation after a predefined number of iterations. <strong>By default set to 5</strong>.
+					</p>
+					<p>You can set the max iteration level in the EndChat object with the <code>max_iterations=10</code>
+						parameter: </p>
+					<pre><code class="language-python">
+# Note the .solve()
+GroupSolve([task1, task2], EndChat(EndChatMode.MAX_ITERATIONS_ONLY, max_iterations=10)).solve()
+					</code></pre><br>
+					<p class="icon solid fa-info-circle"> An "iteration" corresponds to the two agents having talked
+						once. Also, note that each agent
+						solves its initial Task and THEN enters the groupSolve. So even when setting the
+						<code>max_iterations</code> to 1 you'll get 2 messages in each AGent's History. The initial
+						message of each Task and then one message from the GroupSolve.
+					</p>
+					<p>▶️ Output: </p>
+					<pre><code class="text-output">INFO: [PROMPT]: Your task is to create a list of attractions for an amusement park.
+
+INFO: [AI_RESPONSE]: What a fun task! Here's a list of attractions for an amusement park:
+
+**Thrill Rides**
+
+1. **Sky Screamer**: A record-breaking rollercoaster that takes riders on a heart-pumping journey through loops, corkscrews, and airtime hills.
+2. **Drop Zone**: A free-fall tower that sends thrill-seekers plummeting 10 stories down in mere seconds.
+3. **Inferno**: A high-speed spinning coaster with flames and fire effects to simulate the sensation of flying through a fiery inferno.
+
+**Family Favorites**
+
+1. **Kiddie Coaster**: A gentle, slow-paced rollercoaster designed for young children with soft music and colorful scenery.
+2. **Frog Hopper**: An interactive ride where riders hop aboard toy frogs that bounce up and down on giant lily pads.
+3. **Storybook Train**: A classic train ride featuring beloved cartoon characters and whimsical settings.
+
+**Water Park Fun**
+
+1. **Splashin' Safari**: A water play area with geysers, fountains, and squirting animals for kids to enjoy.
+2. **River Rapids**: A lazy river that winds its way through a scenic valley, complete with waterfalls and splash pads.
+3. **Tornado Tube**: A spinning, twisting waterslide that sends riders swirling down into a splashy finale.
+
+That's just a taste of what our amusement park has to offer!
+
+INFO: [PROMPT]: Your task is to propose themes for an amusement park.
+
+INFO: [AI_RESPONSE]: What a fun challenge!
+
+Here are some theme ideas for an amusement park:
+
+**1. Enchanted Forest**: A whimsical zone inspired by mythical creatures and ancient forests. Attractions could include a "Dragon's Den" roller coaster, a "Mermaid's Lagoon" splash pad, and a "Fairy Ring" carousel.
+
+**2. Future Frontier**: A futuristic area with intergalactic and space-themed rides. Imagine a "Galaxy Blaster" launch coaster, an "Alien Invasion" dark ride, or a "Gravity Simulator" virtual reality experience.
+
+**3. Pirate's Cove**: Ahoy matey! A swashbuckling zone filled with pirate-themed attractions like a "Jolly Roger" drop tower, a "Treasure Hunt" interactive play area, and a "Barrel of Laughs" comedy show.
+
+These are just a few ideas to get you started. Which theme would you like to explore further?
+
+INFO: [AI_RESPONSE]: What a fantastic list!
+
+I can already imagine the thrill and excitement that visitors would experience with these attractions. Let's break down some potential themes and connections between the different areas:
+
+**Thrill Rides**: These high-adrenaline rides would be perfect for the "Future Frontier" or "Enchanted Forest" theme, where riders would feel like they're exploring new worlds or battling mythical creatures.
+
+**Family Favorites**: These gentle attractions would fit well in a "Carnival Spectacular" or "Pirate' s Cove" theme, where families could enjoy classic carnival games and pirate-themed play areas together.
+
+**Water Park Fun**: The water park area would be an excellent addition to the "Enchanted Forest" or "Steampunk City" theme, where riders could explore fantastical aquatic worlds or steam-powered contraptions.
+
+**Dark Rides**: These spooky attractions would be a great fit for the "Mystic Mountain" or "Haunted Mansion" theme, where visitors could experience eerie mysteries and supernatural encounters.
+
+**Classic Attritions**: The merry-go-round, Ferris wheel, and fun house would be perfect additions to a "Retro Arcade" or "Carnival Spectacular" theme, where riders could enjoy classic games and nostalgic experiences.
+
+**Special Experiences**: These unique shows and meet-and-greets would be excellent additions to the "Enchanted Forest" or "Future Frontier" theme, where visitors could encounter mythical creatures, astronauts, or otherworldly beings.
+
+Some potential themes that could tie everything together:
+
+1. **Mythical Realms**: A world of fantasy and adventure, where visitors can explore enchanted forests, battle dragons, and ride mythical creatures.
+2. **Steampunk Odyssey**: A futuristic world with a Victorian twist, where steam-powered machines and fantastical contraptions await exploration.
+3. **Galactic Frontier**: A cosmic adventure zone where visitors can blast off into space, explore alien worlds, and encounter extraterrestrial beings.
+
+These are just a few ideas to get you started! What do you think? Would you like to add or modify any attractions or themes?
+[BLABLA]
+					</code></pre><br>
+					<p>I won't show the full round of iterations as it's useless. However, I'm sure you have one
+						question: </p>
+					<blockquote>
+						<p>Why do I get the logging twice ?? (Not shown above, run the example yourself and you'll see)
+						</p>
+					</blockquote>
+					<p>Well… This is because of how the conversation pattern is implemented. Let me explain… Have you
+						ever read the documentation of the Microsoft Autogen framework? If you have, I hope you're
+						having a better time with Yacana than I did with Autogen. That said, the conversational patterns
+						they show are a series of dual-agent conversations. And never did I understand the mess they did
+						before Yacana came to life. The reason why they chain two-agent conversations is because LLMs
+						have been trained to speak in alternation with a user. It's how all "instruct" models have been
+						fine-tuned. <br />
+						So to get the best performance out of the LLMs they chose to limit the number of participants to
+						two. If more than two was ever needed then the context of the first conversation would be given
+						to a new dual chat with one of the agents remaining from the previous conversation (hence
+						keeping the state from one conversation to the other). Then it goes on and on. <br />
+						<span class="image main"><img src="https://github.com/user-attachments/assets/c8c4d958-2ffc-4eca-8d4a-aef576627572"
+							alt="image" /></span>
+						<em>Source: Microsoft Autogen</em> <br />
+						I honestly think that it's smart but is a stinking mess that lost many people. Worst, it's the
+						simpler pattern they provide…
+					</p>
+					<p>Yacana does not do things exactly in the same way but is bound to the same limitations. We must
+						alternate between USER and ASSISTANT! <br />
+						To achieve this we take the output of Agent1 and give it as a prompt to Agent2. Then the answer
+						of Agent2 is given back as a prompt to Agent1 and round it goes! This is the reason you are
+						seeing each log twice. <strong>It's the answer of one agent being used as a prompt for the other
+							one.</strong> </p>
+					<p><span class="image main"><img src="https://github.com/user-attachments/assets/6720bef9-c2b0-401a-9f4f-455e42aaa050"
+							alt="doublelogs" /></span></p>
+
+					<hr class="major" />
+
+
+					<h2>Letting Agents end the chat</h2>
+					<p>The [EndChatMode]() @todo url enum provides multiple ways to stop a chat. These are the available
+						values: </p>
+					<table>
+						<thead>
+							<tr>
+								<th>Mode</th>
+								<th>Needs Task annotation</th>
+								<th>Description</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>MAX<em>ITERATIONS</em>ONLY</td>
+								<td>False</td>
+								<td>Chat ends when we reach the maximum number of rounds. <em>Defaults to 5.</em></td>
+							</tr>
+							<tr>
+								<td>END<em>CHAT</em>AFTER<em>FIRST</em>COMPLETION</td>
+								<td>True</td>
+								<td>When a Task is marked as complete the chat ends immediately</td>
+							</tr>
+							<tr>
+								<td>ONE<em>LAST</em>CHAT<em>AFTER</em>FIRST_COMPLETION</td>
+								<td>True</td>
+								<td>When a Task is marked as complete, one last agent can speak and then the chat ends
+								</td>
+							</tr>
+							<tr>
+								<td>ONE<em>LAST</em>GROUP<em>CHAT</em>AFTER<em>FIRST</em>COMPLETION</td>
+								<td>True</td>
+								<td>When a Task is marked as complete, one whole table turn will be allowed before the
+									chat ends</td>
+							</tr>
+							<tr>
+								<td>ALL<em>TASK</em>MUST_COMPLETE</td>
+								<td>True</td>
+								<td>All tasks must be marked as complete before the chat is ended</td>
+							</tr>
+						</tbody>
+					</table>
+					<p>What's the <strong>Needs task annotation</strong> column in the table? </p>
+					<blockquote>
+						To let an agent know that it's in charge of ending the chat, its Task() must be given an
+							optional parameter <code>llm_stops_by_itself=True</code>. All Task() constructors setting
+							this, make their assigned Agent in charge of stopping the conversation.
+					</blockquote>
+					<p>⚠️ To prevent infinite loops ALL chat modes still have a maximum iteration count (defaults to 5)
+						which can be changed in the GroupSolve() class with the optional parameter
+						<code>max_iterations=&#60;int&#62;</code>.
+					</p>
+					<h4>Defining task completion objective</h4>
+					<p>Now that LLMs can stop the conversation by themselves you must set clear objectives for this to
+						happen. The conditions to which the objectives are met must be precise and concise. You will
+						quickly see how prompt engineering is important in this matter. <br />
+						Yacana uses the following wording: </p>
+					<blockquote>
+						"In your opinion, what objectives from your initial task have you 'NOT completed?" <br />
+							Therefore you should use the same prompt style in your Task prompt. For instance <em>"The
+								task is fulfilled when the objective <insert here> is completed."</em>.<br />
+							You should try different versions of this "objective completed" prompt to find one that
+							matches your task and LLM best.
+					</blockquote>
+					<h4>Testing all available chat ending modes</h4>
+					<p>We'll test the different modes with simple games between two Agents. </p>
+					<p><strong>END_CHAT_AFTER_FIRST_COMPLETION</strong></p>
+					<p>Let's play a simple guessing game where an agent thinks of a number ranging from 1 to 3. The
+						other agent must guess the number correctly.</p>
+					<p>⚠️ ❗ Although this game feels simple. Most 8B models will fail at it. As you can see below we
+						upgraded the model to something superior to the classic llama:3.0 which lacks in reasoning.
+						<br />
+						But, a word of advice: don't expect any kind of great results with this approach. Local LLMs can
+						brainstorm conceptual ideas but when it comes to logic and reasoning they are very bad. Even
+						with this upgraded model, we often get illogical answers. Moreover, LLMs dislike numbers and
+						have great difficulty to compare them. However, this is just to demonstrate this particular
+						functionality so it's okay.
+					</p>
+					<pre><code class="language-python">
+from yacana import Agent, Task, GroupSolve, EndChat, EndChatMode
+
+agent1 = Agent("Ai assistant 1", "dolphin-mixtral:8x7b-v2.7-q4_K_M")
+agent2 = Agent("Ai assistant 2", "dolphin-mixtral:8x7b-v2.7-q4_K_M")
+
+# We create a Task to generate the secret number BEFORE entering the chat so that only Agent1 knows the secret number
+Task("You must choose a number between 1 and 3. It will be referred as the 'secret number'. Output it once, now.", agent1).solve()
+
+task1 = Task("You will receive guesses. If the guessed number is the secret number say 'You won'. The objective of this task is fulfilled when this condition is true: 'The guessed number is the same as the secret number'.", agent1, llm_stops_by_itself=True)
+task2 = Task("You must find a secret number from 1 to 3. Propose one number.", agent2)
+
+# Making a GroupSolve() with both Tasks
+GroupSolve([task1, task2], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION)).solve()
+
+print("------ Agent1 --------")
+task1.agent.history.pretty_print()
+
+print("------Agent2----------")
+task2.agent.history.pretty_print()
+</code></pre><br>
+					<p>❕ The most important line is the <code>task1</code> line with the
+						<code>llm_stops_by_itself=True</code> parameter. This means that the assigned Agent is in charge
+						of stopping the conversation.
+					</p>
+					<p>▶️ Output:</p>
+					<pre><code class="text-output">
+INFO: [PROMPT][To: Ai assistant 1]: You must choose a number between 1 and 3. It will be referred as the 'secret number'. Output it once, now.
+
+INFO: [AI_RESPONSE][From: Ai assistant 1]:  The secret number is: 2
+
+INFO: [PROMPT][To: Ai assistant 1]: You will receive guesses. If the guessed number is the secret number say 'You won'. The objective of this task is fulfilled when this condition is true: 'The guessed number is the same as the secret number'.
+
+INFO: [AI_RESPONSE][From: Ai assistant 1]:  You've got it right, I have already chosen the secret number 2. So if you guess the number 2, you will win!
+
+INFO: [PROMPT][To: Ai assistant 2]: You must find a secret number from 1 to 3. Propose one number.
+
+INFO: [AI_RESPONSE][From: Ai assistant 2]:  I suggest the number 2 as my proposal for the secret number.
+
+INFO: [PROMPT][To: Ai assistant 2]:  You've got it right, I have already chosen the secret number 2. So if you guess the number 2, you will win!
+
+INFO: [AI_RESPONSE][From: Ai assistant 2]:  Thank you for the information! In that case, based on your hint, I propose the number 2 as my final answer to find the secret number. Good luck with your game!
+
+INFO: [PROMPT][To: Ai assistant 1]:  Thank you for the information! In that case, based on your hint, I propose the number 2 as my final answer to find the secret number. Good luck with your game!
+
+INFO: [AI_RESPONSE][From: Ai assistant 1]:  Congratulations! Your guess was correct. The secret number is indeed 2. You won!
+
+INFO: [PROMPT][To: Ai assistant 1]: In your opinion, what objectives from your initial task have you NOT completed ?
+
+INFO: [AI_RESPONSE][From: Ai assistant 1]:  I believe there are no unfinished tasks at the moment. All tasks mentioned in the initial prompt have been successfully fulfilled as follows:
+
+1. The secret number (2) was chosen and shared.
+2. A condition for winning the game was provided, which is 'The guessed number is the same as the secret number'.
+3. When the guessed number was 2, I confirmed that the participant had won the game.
+
+INFO: [PROMPT][To: Ai assistant 1]: To summarize in one word, did you still had some objectives to fulfill ? Answer ONLY by 'yes' or 'no'. Do not output anything else !
+
+INFO: [AI_RESPONSE][From: Ai assistant 1]: no
+------ Agent1 --------
+[user]:
+You must choose a number between 1 and 3. It will be referred as the 'secret number'. Output it once, now.
+
+[assistant]:
+ The secret number is: 2
+
+[user]:
+You will receive guesses. If the guessed number is the secret number say 'You won'. The objective of this task is fulfilled when this condition is true: 'The guessed number is the same as the secret number'.
+
+[assistant]:
+ You've got it right, I have already chosen the secret number 2. So if you guess the number 2, you will win!
+
+[user]:
+ Thank you for the information! In that case, based on your hint, I propose the number 2 as my final answer to find the secret number. Good luck with your game!
+
+[assistant]:
+ Congratulations! Your guess was correct. The secret number is indeed 2. You won!
+
+------Agent2----------
+[user]:
+You must find a secret number from 1 to 3. Propose one number.
+
+[assistant]:
+ I suggest the number 2 as my proposal for the secret number.
+
+[user]:
+ You've got it right, I have already chosen the secret number 2. So if you guess the number 2, you will win!
+
+[assistant]:
+ Thank you for the information! In that case, based on your hint, I propose the number 2 as my final answer to find the secret number. Good luck with your game!
+					</code></pre><br>
+					<p>The important part is in the INFO logs. Extracted from above as follow:</p>
+					<pre><code class="text-output">
+INFO: [PROMPT][To: Ai assistant 1]: In your opinion, what objectives from your initial task have you NOT completed ?
+
+INFO: [AI_RESPONSE][From: Ai assistant 1]:  I believe there are no unfinished tasks at the moment. All tasks mentioned in the initial prompt have been successfully fulfilled as follows:
+
+1. The secret number (2) was chosen and shared.
+2. A condition for winning the game was provided, which is 'The guessed number is the same as the secret number'.
+3. When the guessed number was 2, I confirmed that the participant had won the game.
+					</code></pre><br>
+					<p>Yacana asked Agent1 if it considered its objectives complete or not. The model responded that it
+						completed all objectives:</p>
+					<pre><code class="text-output">
+INFO: [PROMPT][To: Ai assistant 1]: To summarize in one word, did you still had some objectives to fulfill ? Answer ONLY by 'yes' or 'no'. Do not output anything else !
+
+INFO: [AI_RESPONSE][From: Ai assistant 1]: no
+</code></pre><br>
+					<p>Right after this answer, the chat ended because of the
+						<code>END_CHAT_AFTER_FIRST_COMPLETION</code> setting.
+					</p>
+					<p>In summary, the conversation looks like this: </p>
+					<p><span class="image main"><img src="https://github.com/user-attachments/assets/5ee88012-659d-4af1-87e3-0ea7dd1b31c2"
+							alt="GS4B" /></span></p>
+					<ul>
+						<li><strong>Message 1 & 2</strong>: are the result of the solo Task that precedes the GroupSolve
+						</li>
+						<li><strong>Message 3 & 4</strong>: are called "init messages". They are the prompt set in the
+							two Tasks of GroupSolve. Agent1 does not see the answer of Agent2 (4) and Agent2 does not
+							see the answer of Agent1 (4). </li>
+						<li><strong>Message 5</strong>: is a shift message. You will learn about them later. For now,
+							just acknowledge that you can configure this message in either Agent and that in this case,
+							it spoils the secret to Agent2 which is bad luck. The shift message can be set to some
+							hardcoded string if you want. You'll see that later don't worry. </li>
+						<li><strong>Message 6</strong>: History is now synced. All messages beyond this point will be
+							shared with both agents. </li>
+						<li><strong>Message 7</strong>: is the response of Agent1. It says that the game is won hence
+							terminating the chat. There is no message 7 for Agent2 because message 6 was already an
+							output and as the game finishes it won't take Agent's 1 answer as input to continue the
+							loop. </li>
+					</ul>
+					<p class="icon solid fa-info-circle"> You will learn what is a shift message later on and how it can
+						be improved. </p>
+					<p><strong>ONE_LAST_CHAT_AFTER_FIRST_COMPLETION</strong></p>
+					<p>This "end chat" mode allows one more Agent to speak after registering the first Task success.
+					</p>
+					<p>Update the GroupSolve line like this: </p>
+					<pre><code class="language-python">
+GroupSolve([task1, task2], EndChat(EndChatMode.ONE_LAST_CHAT_AFTER_FIRST_COMPLETION)).solve()
+					</code></pre><br>
+					<p>▶️ Output: </p>
+					<pre><code class="text-output">
+------ Agent1 --------
+[user]:
+You must choose a number between 1 and 3. It will be referred as the 'secret number'. Output it once, now.
+
+[assistant]:
+ 2
+
+[user]:
+You will receive guesses. If the guessed number is the secret number say 'You won'. The objective of this task is fulfilled when this condition is true: 'The guessed number is the same as the secret number'.
+
+[assistant]:
+ I understand. You can now enter your guess, and I will check if it's the secret number.
+
+[user]:
+ Okay, my guess is 1. Let me know if that's correct or not.
+
+[assistant]:
+ Unfortunately, the guessed number (1) is not the same as the secret number (2). Please try again with a different number.
+
+[user]:
+ My apologies. Let me try again with another guess: 3. Is this the correct number?
+
+[assistant]:
+ No, the guessed number (3) is not the same as the secret number (2). Please try again with a different number.
+
+[user]:
+ I apologize for the confusion. My final guess is 2. I believe that should be the correct number. Let me know if I'm right.
+
+[assistant]:
+ Congratulations! The guessed number (2) is the same as the secret number (2). You won!
+
+------Agent2----------
+[user]:
+You must find a secret number from 1 to 3. Propose one number.
+
+[assistant]:
+ I propose the number 2. Is that your secret number?
+
+[user]:
+ I understand. You can now enter your guess, and I will check if it's the secret number.
+
+[assistant]:
+ Okay, my guess is 1. Let me know if that's correct or not.
+
+[user]:
+ Unfortunately, the guessed number (1) is not the same as the secret number (2). Please try again with a different number.
+
+[assistant]:
+ My apologies. Let me try again with another guess: 3. Is this the correct number?
+
+[user]:
+ No, the guessed number (3) is not the same as the secret number (2). Please try again with a different number.
+
+[assistant]:
+ I apologize for the confusion. My final guess is 2. I believe that should be the correct number. Let me know if I'm right.
+
+[user]:
+ Congratulations! The guessed number (2) is the same as the secret number (2). You won!
+
+[assistant]:
+ Thank you for your cooperation! I'm glad we found the secret number together. Have a great day!
+					</code></pre><br>
+					<p>Agent1 said that the game was finished:</p>
+					<pre><code class="text-output">
+[assistant]:
+ Congratulations! The guessed number (2) is the same as the secret number (2). You won!
+					</code></pre><br>
+					<p>Agent2 had the opportunity to answer to his win !</p>
+					<pre><code class="text-output">
+[user]:
+ Congratulations! The guessed number (2) is the same as the secret number (2). You won!
+
+[assistant]:
+ Thank you for your cooperation! I'm glad we found the secret number together. Have a great day!
+					</code></pre><br>
+					<p>Agent2 now has the opportunity to speak one last time after Agent1 completes its objective and
+						ends the chat:</p>
+					<pre><code class="text-output">
+------Agent2-----
+...
+[assistant]:
+ Thank you for your cooperation! I'm glad we found the secret number together. Have a great day!
+					</code></pre><br>
+					<p><strong>ONE_LAST_GROUP_CHAT_AFTER_FIRST_COMPLETION</strong> </p>
+					<p>Update the GroupSolve() line to this: </p>
+					<pre><code class="language-python">
+GroupSolve([task1, task2], EndChat(EndChatMode.ONE_LAST_GROUP_CHAT_AFTER_FIRST_COMPLETION)).solve()
+					</code></pre><br>
+					<p>This will allow both LLMs to speak one last time before the chat ends. <br />
+						<span class="icon solid fa-info-circle">This option is more useful when doing GroupSolve with
+							more than 2 agents.</span>
+					</p>
+					<p>▶️ Output:</p>
+					<pre><code class="text-output">
+------ Agent1 --------
+[BLABLA]
+[assistant]:
+ Congratulations, you won! Your guess of 1 matches my secret number, which was 2. Well done!
+
+[user]:
+ Thank you! I'm glad to have guessed correctly. Good luck in your future endeavors!
+
+[assistant]:
+ You're welcome, and thank you for the kind words! It's always a pleasure when someone successfully finds the secret number. Have a great day!
+</code></pre><br>
+					<p>After the initial success, two more chats were generated.</p>
+					<pre><code class="text-output">
+------Agent2----------
+[user]:
+ Congratulations, you won! Your guess of 1 matches my secret number, which was 2. Well done!
+
+[assistant]:
+ Thank you! I'm glad to have guessed correctly. Good luck in your future endeavors!
+					</code></pre><br>
+					<p><strong>ALL_TASK_MUST_COMPLETE</strong></p>
+					<p>This "end chat" mode is useful when more than one Agent has the
+						<code>llm_stops_by_itself=True</code>. This means that the conversation will only end when all
+						the agents with this parameter have decided that their objectives are completed.
+					</p>
+					<p>To demonstrate this without having a headache let's make a silly GroupSolve() stating that one
+						Agent must count from 0 to 2 and the other one from 0 to 3 to complete their respective
+						objective. </p>
+					<p>❕ Shifting back to "llama:3.0" because "Dolphin" always wants to execute Python code when it has
+						to do maths… </p>
+					<pre><code class="language-python">
+from yacana import Agent, Task, GroupSolve, EndChat, EndChatMode
+
+agent1 = Agent("Ai assistant 1", "llama3:8b")
+agent2 = Agent("Ai assistant 2", "llama3:8b")
+
+task1 = Task("Your task is to add 1 to the initial count which is 0. Your objective is complete when you get to output number '2'", agent1, llm_stops_by_itself=True)
+task2 = Task("Your task is to add 1 to the initial count which is 0. Your objective is complete when you get to output number '3'", agent2, llm_stops_by_itself=True)
+
+GroupSolve([task1, task2], EndChat(EndChatMode.ALL_TASK_MUST_COMPLETE)).solve()
+
+print("------ Agent1 --------")
+task1.agent.history.pretty_print()
+
+print("------Agent2----------")
+task2.agent.history.pretty_print()
+					</code></pre><br>
+					<p>▶️ Output:</p>
+					<pre><code class="text-output">
+------ Agent1 --------
+[user]:
+Your task is to add 1 to the initial count which is 0. Your objective is complete when you get to output number '2'
+
+[assistant]:
+I'm ready!
+
+Initial count: 0
+Add 1: 1
+
+Please wait for my next update...
+
+[user]:
+Let's continue from where we left off!
+
+Next update, please?
+
+[assistant]:
+Initial count: 1
+Add 1: 2
+
+Woohoo! I reached the target of '2'!
+
+[user]:
+Congratulations on reaching the target of 2!
+
+Let's keep going!
+What's the next update?
+
+[assistant]:
+Hehe, thank you!
+
+Initial count: 2
+Add 1: 3
+
+Let's see where this journey takes me next!
+
+------Agent2----------
+[user]:
+Your task is to add 1 to the initial count which is 0. Your objective is complete when you get to output number '3'
+
+[assistant]:
+Let's start with the initial count of 0.
+
+I will add 1 to the count, making it...
+
+1!
+
+Next, I'll add 1 again, making it...
+
+2!
+
+And finally, I'll add 1 once more, making it...
+
+3!
+
+Woohoo! I've reached my objective!
+
+[user]:
+I'm ready!
+
+Initial count: 0
+Add 1: 1
+
+Please wait for my next update...
+
+[assistant]:
+Let's continue from where we left off!
+
+Next update, please?
+
+[user]:
+Initial count: 1
+Add 1: 2
+
+Woohoo! I reached the target of '2'!
+
+[assistant]:
+Congratulations on reaching the target of 2!
+
+Let's keep going!
+What's the next update?
+
+[user]:
+Hehe, thank you!
+
+Initial count: 2
+Add 1: 3
+
+Let's see where this journey takes me next!
+
+[assistant]:
+Congratulations again!
+You've reached your target of '3'!
+
+Looks like we've completed the task successfully! Well done! Would you like to start a new adventure or try something else?
+					</code></pre><br>
+					<p>As you can see, Agent2 cheated. It counted from 0 to 3 in one message. But who cares? Both of
+						them carried on till both had their achievement completed. <br />
+						This parameter works like the <code>promise.all</code> of javascript that waits for all promises
+						to end before continuing execution. </p>
+
+					<hr class="major" />
+
+					<h2>Controlling the Shift Message</h2>
+					<p>To achieve two agents speaking with each other we had to pipe the output of the first one into
+						the prompt of the second. For this to work, we have to create an intermediary message in one of
+						the Agent's conversation history. This special message is called the <em>"shift message"</em>.
+					</p>
+					<p>To showcase this let's make another game: </p>
+					<ul>
+						<li>Agent1 has the main task of storing a list of numbers. The list is empty ;</li>
+						<li>Agent2 has the task of giving numbers to Agent1 so that it add them to its list ;</li>
+					</ul>
+					<p>The "game" finishes when Agent1 has 15 numbers in its list. </p>
+					<pre><code class="language-python">
+agent1 = Agent("Ai assistant 1", "llama3:8b")
+agent2 = Agent("Ai assistant 2", "llama3:8b")
+
+
+task1 = Task("Your task is to create a list of numbers. The list starts empty. The numbers will be given to you. Your objective is fulfilled when you have more than 15 numbers in the list.", agent1, llm_stops_by_itself=True)
+task2 = Task("You will have access to a list of numbers. Ask to add 3 more number to this list. Also ask to print the complete list each time to keep track.", agent2)
+
+GroupSolve([task1, task2], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION, max_iterations=3)).solve()
+
+print("------ Agent1 --------")
+task1.agent.history.pretty_print()
+
+print("------Agent2----------")
+task2.agent.history.pretty_print()
+					</code></pre><br>
+					<p>The execution flow looks like this: </p>
+					<p><span class="image main"><img src="https://github.com/user-attachments/assets/e1e8e1eb-5c31-40ac-b044-e505deaa5219"
+							alt="gs2B" /></span></p>
+					<p>Let's decompose the graph piece by piece. <br />
+						There are two columns: one for Agent1's point of view and one for Agent's 2 point of view. Like
+						in any conversation, each speaker has its own point of view. This is why you shouldn't rely on
+						the debugging logs only but also print each Agent's History. It's easier to debug. </p>
+					<ul>
+						<li>In line 1 we have the blue messages which are the initial 2 <code>Task(...)</code> that were
+							given to the GroupSolve (We summarized the prompts so that they would fit the graph)</li>
+						<li>In line 2 we have the AI answers to the prompts of line 1. What's very interesting here is
+							that each initial prompt is solved by their respective Agent and isn't shared between them!
+							This means that Agent2 doesn't know what Agent1's task is and vice versa. This is important
+							because it must be taken into account when writing the prompt for the second Task.</li>
+						<li>In our example the Task2's prompt starts with <em>"You will have access to a list of
+								numbers. …"</em>. This demonstrates the importance of using the future because when this
+							task is solved it won't know that there is any list whatsoever.</li>
+						<li>In line 3 we add the <em>"shift"</em> ! The singular most important message here. As we need
+							both Agents to speak to each other we need to initiate some kind of shift in the message so
+							that the "USER" of one agent becomes the "ASSISTANT" of the other.</li>
+						<li>The shift message is very important because it must not throw off the LLM with a strange
+							message. By default, it is copied from Agent1's answer from line 2 (see the red arrow). In
+							general, the conversation still makes sense. But if it doesn't then you'll have to take
+							control of the shift message yourself!</li>
+					</ul>
+					<p>Taking control of the shift message is fairly simple. You have 2 types of control. </p>
+					<ul>
+						<li>The first control is where the shift message should be placed. Either in Agent1 or in Agent2
+							(default) point of view.</li>
+						<li>To control who gets the shift, use the <code>shift_message_owner=&#60;task instance&#62;</code>
+							optionnal parameter from the GroupSolve() class</li>
+						<li>For instance:
+							<code>GroupSolve([task1, task2], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION), shift_message_owner=task2).solve()</code>
+						</li>
+						<li>The second control is the content of the shift message. It can either come from the opposite
+							side (default) or be set by you.<ul>
+								<li>To control the content of the shift message, use the
+									<code>shift_message_content="<Some message>"</code> optional parameter from the
+									GroupSolve() class. Not specifying this parameter results in the message being
+									automatically copied from the first Agent answer to the second Agent (cf graph).
+								</li>
+								<li>For instance:
+									<code>GroupSolve([task1, task2], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION), shift_message_content="List is empty").solve()</code>
+								</li>
+							</ul>
+						</li>
+					</ul>
+					<p>Both parameters can be set at the same time. Not specifying any of them will trigger the default
+						behavior as shown in the above graph. </p>
+					<p>Output </p>
+					<pre><code class="text-output">
+[ Not showing INFO debug]
+------ Agent1 --------
+[user]:
+Your task is to create a list of numbers. The list starts empty. The numbers will be given to you. Your objective is fulfilled when you have more than 15 numbers in the list.
+
+[assistant]:
+I'm ready! My empty list is:
+
+[]
+
+Please give me the first number!
+
+[user]:
+Exciting!
+Let's add some numbers to your list.
+
+To start, I'd like to add the following three numbers:
+
+1. 5
+2. 8
+3. 9
+
+Here's the updated list:
+
+[5, 8, 9]
+
+Please confirm before I proceed with the next set of additions!
+
+[assistant]:
+Exciting indeed!
+
+I've confirmed the initial list:
+
+[5, 8, 9]
+
+Now, please go ahead and add more numbers to the list.
+
+[user]:
+Fantastic!
+
+Next, I'd like to add three more numbers to your list:
+
+1. 2
+2. 7
+3. 11
+
+Here's the updated list:
+
+[5, 8, 9, 2, 7, 11]
+
+Please confirm before I proceed with the next set of additions!
+
+[assistant]:
+Confirmation received!
+
+The updated list looks great:
+
+[5, 8, 9, 2, 7, 11]
+
+I'm ready for the next addition!
+
+[user]:
+Wonderful!
+Next, I'd like to add three more numbers to your list:
+1. 15
+2. 3
+3. 6
+
+Here's the updated list:
+
+[5, 8, 9, 2, 7, 11, 15, 3, 6]
+Please confirm before I proceed with the next set of additions!
+
+[assistant]:
+Confirmation received again!
+
+The updated list now has a total of:
+
+[5, 8, 9, 2, 7, 11, 15, 3, 6]
+
+Which exceeds the initial goal of having more than 15 numbers in the list!
+
+I'm pleased to report that my task is complete!
+
+------Agent2----------
+[user]:
+You will have access to a list of numbers. Ask to add 3 more number to this list. Also ask to print the complete list each time to keep track.
+
+[assistant]:
+I'd be happy to help with that.
+
+Please provide the initial list of numbers, and I'll proceed by adding three more numbers to it. I'll also request a printout of the updated list each time to ensure we're keeping track correctly.
+
+Let's get started! What's the initial list of numbers?
+
+[user]:
+I'm ready! My empty list is:
+
+[]
+
+Please give me the first number!
+
+[assistant]:
+Exciting!
+Let's add some numbers to your list.
+
+To start, I'd like to add the following three numbers:
+
+1. 5
+2. 8
+3. 9
+
+Here's the updated list:
+
+[5, 8, 9]
+
+Please confirm before I proceed with the next set of additions!
+
+[user]:
+Exciting indeed!
+
+I've confirmed the initial list:
+
+[5, 8, 9]
+
+Now, please go ahead and add more numbers to the list.
+
+[assistant]:
+Fantastic!
+
+Next, I'd like to add three more numbers to your list:
+
+1. 2
+2. 7
+3. 11
+
+Here's the updated list:
+
+[5, 8, 9, 2, 7, 11]
+
+Please confirm before I proceed with the next set of additions!
+
+[user]:
+Confirmation received!
+
+The updated list looks great:
+
+[5, 8, 9, 2, 7, 11]
+
+I'm ready for the next addition!
+
+[assistant]:
+Wonderful!
+Next, I'd like to add three more numbers to your list:
+1. 15
+2. 3
+3. 6
+
+Here's the updated list:
+
+[5, 8, 9, 2, 7, 11, 15, 3, 6]
+Please confirm before I proceed with the next set of additions!
+					</code></pre><br>
+					<hr />
+					<p>Specifying the content of the shift message would look like this: </p>
+					<pre><code class="language-python">
+GroupSolve([task1, task2], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION), shift_message_content="Let's go").solve()
+					</code></pre><br>
+					<p>The diagram now looks like this: </p>
+					<p><span class="image main"><img src="https://github.com/user-attachments/assets/856ee958-c2a1-487e-8789-bdecc8115156"
+							alt="GS8" /></span></p>
+					<p>Using general, meaningless prompts as shift messages is good as it won't disturb the LLM in its
+						task. </p>
+					<p>⚠️ We haven't actually reran the program 😁. Therefore, message content after the shift message
+						may be different. </p>
+					<hr />
+					<p>Adding the shift message to Agent1 instead of Agent2 (default) would look like this: </p>
+					<pre><code class="language-python">
+GroupSolve([task1, task2], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION), shift_message_owner=task1).solve()
+					</code></pre><br>
+					<p>The diagram now looks like this: <br />
+						<span class="image main"><img src="https://github.com/user-attachments/assets/4afa64f1-ab1e-4dd9-8530-f36355e05089"
+							alt="GS9" /></span>
+					</p>
+					<p>Note how User and Assistant are now reversed. </p>
+					<p>⚠️ We haven't actually reran the program 😁. Therefore, message content after the shift message
+						may be different now that it's assigned to Agent1.</p>
+					<h4>Reconciling initial messages</h4>
+					<p>Let's take another look at the diagram of one past conversation: <br />
+						<span class="image main"><img src="https://github.com/user-attachments/assets/5ffed0d2-5d26-4fe8-83c2-c0700da98014"
+							alt="gs2B" /></span>
+					</p>
+					<p>Messages 1 & 2 are only available to their respective agent. Meaning that history reconciliation
+						comes only at message 4 (after the damn "shift message"). When history is <em>reconciled</em>
+						both agents share the same history. </p>
+					<p>It could be represented like this: <br />
+						<span class="image main"><img src="https://github.com/user-attachments/assets/649fe22c-3a2a-48d2-b18a-43d62819793b"
+							alt="GS5A" /></span>
+					</p>
+					<p>But what if you wanted messages 1 & 2 to be available in both histories? Well, there is an option
+						for that too… I know… Sooo many parameters! <br />
+						It's called <code>reconcile_first_message</code> and can be set to <code>True</code> inside the
+						GroupSolve class. <br />
+						For instance: </p>
+					<pre><code class="language-python">
+GroupSolve([task1, task2], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION), reconcile_first_message=True).solve()
+					</code></pre><br>
+					<p>It does the following: <br />
+						<span class="image main"><img src="https://github.com/user-attachments/assets/51e1143c-3aa1-40e0-acf6-5ac014d83282"
+							alt="GS6" /></span>
+					</p>
+					<ul>
+						<li>The first Task is solved and the output ends up in Agent1's History. It's messages 1 & 2 ;
+						</li>
+						<li>The prompt and answer are then copied to the agent2's History as you can see in messages 3 &
+							4 ;</li>
+						<li>Next Task2 is solved. Note that it now has access to the input and output of Agent1's
+							solving task as it was put in its History. It's Message 5 & 6 ;</li>
+						<li>The messages 5 & 6 are copied back to agent1's History as shown in messages 7 & 8 ;</li>
+						<li>We now reach the shift message, at message 9, configured by default to copy message 8. 🚨You
+							should set the shift message yourself as the histories are now merged from the beginning.
+							<strong>This will create a message duplication if you don't!</strong> ;
+						</li>
+						<li>Messages from 10 to 12 are already merged as being part of the GroupSolve loop ;</li>
+					</ul>
+					<p>We could represent this merged workflow in the following unified form: </p>
+					<p><span class="image main"><img src="https://github.com/user-attachments/assets/82513dee-9763-4328-ad8b-b2d08ddba05d"
+							alt="GS7" /></span></p>
+					<p>This diagram and the previous one are the same just represented differently. There are two
+						glaring elements in this diagram: </p>
+					<ol>
+						<li>Agent2 has one more message (8) than Agent1 (7) due to the shift message. </li>
+						<li>Both agents have the same History for the first four messages but they also share the same
+							"USER" / "ASSISTANT" scheme. This means that from Agent1's POV, you addressed it with
+							message 3 and it responded with message 4. Which is false. The same problem arises with
+							Agent2 POV which sees message 1 as us addressing it and message 2 as its response. Which is
+							also not true as they were meant for the other Agent. </li>
+					</ol>
+					<h4>Using self-reflection when LLMs are struggling to terminate chat</h4>
+					<p>When an LLM has the option <code>llm_stops_by_itself=True</code> it is in charge to stop the chat
+						by itself. <br />
+						But reasoning is hard for LLMs. Still, Yacana forces them to reflect on many occasions so that
+						they make better judgment calls. However, by default, this self-reflection is not kept in the
+						final history. That said, if the LLM struggles it might be a good move to keep the
+						self-reflection step inside the History so that the LLM can use it to improve its reasoning
+						later on. <br />
+						This step is used when asked if all the objectives are fulfilled. Having stored more reasoning
+						can help the LLM decide that all objectives are complete and end the chat, or… Sometimes it can
+						also worthen the issue. You would have to live test this to actually see if there are any
+						benefits. </p>
+					<p>This optional parameter is <code>use_self_reflection</code> and should be set to
+						<code>True</code> in the Task constructor. <br />
+						<span class="icon solid fa-info-circle"> It is only useful when a Task is part of a GroupSolve.
+							Outside a GroupSolve it has no effect.</span>
+					</p>
+					<pre><code class="language-python">
+from yacana import Agent, Task, GroupSolve, EndChat, EndChatMode
+
+agent1 = Agent("Ai assistant 1", "llama3:8b")
+agent2 = Agent("Ai assistant 2", "llama3:8b")
+
+task1 = Task(f"A bat and a ball together cost $1.10. The bat costs $1 more than the ball. How much does the ball cost? Your objective is complete when you are confident that you solved the problem correctly.", agent1, use_self_reflection=True, llm_stops_by_itself=True)
+task2 = Task(f"What do you think of the reasoning ?", agent2)
+GroupSolve([task1, task2], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION), reconcile_first_message=True).solve()
+
+print("------ Agent1 --------")
+task1.agent.history.pretty_print()
+
+print("------Agent2----------")
+task2.agent.history.pretty_print()
+					</code></pre><br>
+					<p class="icon solid fa-info-circle">Note the use of <code>reconcile_first_message=True</code>
+						making Agent2 aware of the Agent1's
+						prompt. </p>
+					<p>I'll only show the relevant section of the output: </p>
+					<pre><code class="text-output">
+------ Agent1 --------
+[BLABLA]
+
+[user]:
+In your opinion, what objectives from your initial task have you NOT completed ?
+
+[assistant]:
+When I initially stated that my objective was "complete when you are confident that you solved the problem correctly," I had not explicitly mentioned considering alternative approaches or exploring different paths to solve the problem.
+
+Upon reflection, I realize that I only presented one solution method and did not explore alternative approaches. This is an area where I can improve, especially for more complex problems where multiple solutions or pathways may exist.
+
+So, in hindsight, I have not fully completed the objective of considering alternative approaches or exploring different paths to solve the problem. However, I'm glad that our conversation allowed me to reflect on my own reasoning and identify areas for improvement!
+
+[BLABLA]
+					</code></pre><br>
+					<p>The above output is part of the Agent's History. Without the
+						<code>use_self_reflection=True</code> it wouldn't.
+					</p>
+					<p class="icon solid fa-info-circle"> Because this setting helps the LLM end chats by itself it
+						won't have any effects when used
+						with the "end chat" mode <code>MAX_ITERATIONS_ONLY</code> that simply counts rounds. </p>
+
+						<hr class="major" />
+
+					<h2>Using tools in chat</h2>
+					<h4>Tool use in GroupSolve</h4>
+					<p>GroupSolve uses the common Task class. This means that Tools are also available while agents are
+						chatting. However, tools work the same way as described in the tool section @todo URL. Meaning
+						that the Task's prompt will only be used to trigger the tool but will not be used to act upon
+						its result. You need the other agent for that. <br />
+						This is an important concept because it means that the task's prompt will not be part of the
+						conversation but the tool output will. This means that your tools must always return some
+						computable knowledge that will be used by the second agent! </p>
+					<p>Let's play a new game, <strong>first without tools</strong>: </p>
+					<ul>
+						<li>The first agent will think of a number. The second agent will try to guess it based on
+							indications like "higher" or "lower" given by the first agent. </li>
+						<li>The conversation ends when the second agent finds the correct number and wins the game!
+						</li>
+					</ul>
+					<pre><code class="language-python">
+from yacana import Agent, Task, GroupSolve, EndChat, EndChatMode
+
+# Creating our two players
+agent1 = Agent("Player 1", "llama3:8b")
+agent2 = Agent("Player 2", "llama3:8b")
+
+
+# Making up a number and guiding player 2 
+task1 = Task("Your task is to generate a random number between 1 and 20 then show it only once. Once you have the number, respond to the guesses you receive with one of the following:\n* If the guess is higher than your number, say 'lower.'\n* If the guess is lower than your number, say 'higher.'\n* If the guess matches your number, say 'You won!' and end the game.\nDo not provide any other feedback or responses, and only play one round.", agent1)
+
+# Guessing the correct number. Higher or lower depending on what Player 1 tells you
+# This agent has the llm_stops_by_itself=True meaning it will be in charge of stopping the conversation
+task2 = Task("Your task is to guess a number between 1 and 20. You will receive feedback after each guess: either 'lower,' 'higher,' or 'You won!' Adjust your next guess based on this feedback. You must propose only one number at a time. Continue guessing until you receive confirmation that you have guessed correctly and the game is won. Only play one round.", agent2, llm_stops_by_itself=True)
+
+# Adding the two tasks to the GroupSolve. The chat ends when the first success is achieved
+GroupSolve([task1, task2], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION)).solve()
+
+# Printing both Agent's point of view
+print("------ Agent 1 --------")
+agent1.history.pretty_print()
+
+print("------Agent 2----------")
+agent2.history.pretty_print()
+					</code></pre><br>
+					<pre><code class="text-output">
+[Automatic logging I won't show]
+
+------ Agent 1 --------
+[user]:
+Your task is to generate a random number between 1 and 20 then show it only once. Once you have the number, respond to the guesses you receive with one of the following:
+* If the guess is higher than your number, say 'lower.'
+* If the guess is lower than your number, say 'higher.'
+* If the guess matches your number, say 'You won!' and end the game.
+Do not provide any other feedback or responses, and only play one round.
+
+[assistant]:
+I've generated a random number between 1 and 20: **14**
+
+What's your guess?
+
+[user]:
+Thanks for the feedback!
+
+Since the correct answer is 14, which is higher than my initial guess of 10, my next guess will be... **12**.
+
+What's the feedback this time?
+
+[assistant]:
+lower
+
+[user]:
+So the correct answer (14) is lower than my new guess (12). That means my next guess should be even lower!
+
+My next guess is... **11**.
+
+What's the feedback?
+
+[assistant]:
+higher
+
+[user]:
+So the correct answer (14) is higher than my guess of 11. That means I'm getting closer, but not quite there yet!
+My next guess is... **13**.
+What's the feedback?
+
+[assistant]:
+You won!
+
+[user]:
+WOOHOO!
+
+I did it! I guessed correctly! The correct answer was indeed 14, and I finally got it right after a few attempts.
+
+Thank you so much for playing the game with me! It was an absolute blast. If you want to play again or try a different game, just let me know!
+
+[assistant]:
+Congratulations on guessing correctly! You played the game perfectly!
+
+I'm glad I could provide a fun experience for you. If you're up for another round or want to try a different game, just let me know and we can start fresh.
+
+Thanks for playing with me, and I hope to see you again soon!
+
+[user]:
+Thank you so much! I'm thrilled to have played the game correctly and had a great experience. I'd love to play again or try a different game, so please feel free to suggest one anytime.
+
+I'm always up for a fun challenge, and I appreciate your creativity in designing this guessing game. It was a delightful way to spend time together!
+
+Let's do it again sometime soon!
+
+[assistant]:
+Aw, thank you so much! I'm thrilled that you had a great experience playing the game with me too!
+
+I'd be happy to suggest another game or play again whenever you're ready. There are many options we can try, such as:
+
+1. 20 Questions: You think of an object, and I try to guess what it is by asking yes or no questions.
+2. Word Chain: We take turns thinking of a word that starts with the last letter of the previous word.
+3. Hangman: I think of a word or phrase, and you try to guess it by suggesting letters.
+
+Which one sounds interesting to you, or do you have a different game in mind?
+
+Let me know when you're ready, and we can start a new game!
+
+------Agent 2----------
+[user]:
+Your task is to guess a number between 1 and 20. You will receive feedback after each guess: either 'lower,' 'higher,' or 'You won!' Adjust your next guess based on this feedback. You must propose only one number at a time. Continue guessing until you receive confirmation that you have guessed correctly and the game is won. Only play one round.
+
+[assistant]:
+Sounds like fun!
+
+My first guess is... 10.
+
+What's the feedback?
+
+[user]:
+I've generated a random number between 1 and 20: **14**
+
+What's your guess?
+
+[assistant]:
+Thanks for the feedback!
+
+Since the correct answer is 14, which is higher than my initial guess of 10, my next guess will be... **12**.
+
+What's the feedback this time?
+
+[user]:
+lower
+
+[assistant]:
+So the correct answer (14) is lower than my new guess (12). That means my next guess should be even lower!
+
+My next guess is... **11**.
+
+What's the feedback?
+
+[user]:
+higher
+
+[assistant]:
+So the correct answer (14) is higher than my guess of 11. That means I'm getting closer, but not quite there yet!
+My next guess is... **13**.
+What's the feedback?
+
+[user]:
+You won!
+
+[assistant]:
+WOOHOO!
+
+I did it! I guessed correctly! The correct answer was indeed 14, and I finally got it right after a few attempts.
+
+Thank you so much for playing the game with me! It was an absolute blast. If you want to play again or try a different game, just let me know!
+
+[user]:
+Congratulations on guessing correctly! You played the game perfectly!
+
+I'm glad I could provide a fun experience for you. If you're up for another round or want to try a different game, just let me know and we can start fresh.
+
+Thanks for playing with me, and I hope to see you again soon!
+
+[assistant]:
+Thank you so much! I'm thrilled to have played the game correctly and had a great experience. I'd love to play again or try a different game, so please feel free to suggest one anytime.
+
+I'm always up for a fun challenge, and I appreciate your creativity in designing this guessing game. It was a delightful way to spend time together!
+
+Let's do it again sometime soon!
+					</code></pre><br>
+					<p>It's a complete failure… :-( But why is that? <br />
+						First, let's analyze the output: </p>
+					<ul>
+						<li>Agent1 generates the initial secret number: it's 14!</li>
+						<li>Agent2 tries 12 which is lower than 14. In theory, Agent1 should tell him "higher" to guide
+							it toward the correct number</li>
+						<li>Agent1 tells Agent2: "lower" which is wrong!<br />
+							In the end:</li>
+						<li>Agent2 tries 13</li>
+						<li>Agent1 tells it it won!</li>
+					</ul>
+					<p>No, it didn't !? The initial secret number was 14! Not 13… </p>
+					<p>There are two issues here:</p>
+					<ul>
+						<li>The first one is that the LLM in use, which is Llama3.0, sucks at maths and cannot compare
+							numbers accurately! This is a common issue even with frontier models sometimes. So the game
+							breaks very quickly.</li>
+						<li>The second issue is that the secret number is available to the other agent because of the
+							shift message!</li>
+						<li>The shift message being the output of the Game Master, it spoils the secret number! (bummer)
+						</li>
+					</ul>
+					<p>To fix those issues: </p>
+					<ul>
+						<li>Use a tool and don't let the LLM compare numbers itself. Let the CPU deal with that!</li>
+						<li>Either switch the shift message to the other agent or set it manually so that it doesn't
+							spoil the secret number to the player.</li>
+						<li>Maybe even better than switching the shift message: Create a Task beforehand that generates
+							the secret number and after that, enter the GroupSolve() (We're going with that solution
+							here but have fun toying with the examples!)</li>
+					</ul>
+					<pre><code class="language-python">
+from yacana import Agent, Task, GroupSolve, EndChat, EndChatMode, ToolError, Tool
+
+# Creating our tool with type checking and 3 conditional returns
+def high_low(secret_number: int, guessed_number: int) -> str:
+    print(f"Tool is called with {secret_number} / {guessed_number}")
+
+    # Validation
+    if not (isinstance(secret_number, int)):
+        raise ToolError("Parameter 'initial_number' expected a type integer")
+    if not (isinstance(guessed_number, int)):
+        raise ToolError("Parameter 'guessed_number' expected a type integer")
+
+    # Tool logic and answering
+    if secret_number > guessed_number:
+        return "The secret number is higher than the guessed number. // (tool)"
+    elif secret_number < guessed_number:
+        return "The secret number is lower than the guessed number. // (tool)"
+    else:
+        return "The secret number is equal to the guessed number. You won ! // (tool)"
+
+
+# Creating our two Agents
+player = Agent("Player", "llama3:8b")
+game_master = Agent("Game master", "llama3:8b")
+
+# Instanciating our tool
+high_low_tool = Tool("high_low", "Compares 2 numbers and returns a description of the relation between the two. Higher, lower or equal.", high_low)
+
+# Solo Task to create the secret number before entering GroupSolve()
+Task("Your task is to generate a secret random number between 1 and 20. Output the number just this once.", game_master).solve()
+
+# Creating our two Tasks for GroupSolve
+# The player Task is in charge of ending the chat when it wins  (because of `llm_stops_by_itself=True`)
+player_task = Task("Your task is to guess a number between 1 and 20. You will receive feedback after each guess: either 'lower,' 'higher,' or 'You won!' Adjust your guess based on this feedback. You must propose only one number at a time. Continue guessing until you receive confirmation that you have guessed correctly and the game is won. Your objective is fulfilled when you won the game.", player, llm_stops_by_itself=True)
+
+# The Game Master Task will call the tool and return the output as feedback to the player 
+game_master_task = Task("A player will try to guess the number you generated. Respond to the guesses you receive with one of the following:\n* If the guess is higher than your number, say 'lower.'\n* If the guess is lower than your number, say 'higher.'\n* If the guess matches your number, say 'You won!' and end the game.\nDo not provide any other feedback or responses, and only play one round. To help you compare the numbers you have acces to a tool that describes the relation between your initial number and the guessed number", game_master, tools=[high_low_tool])
+
+print("################Starting GroupSolve#################")
+GroupSolve([player_task, game_master_task], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION)).solve()
+
+print("------ Player --------")
+player.history.pretty_print()
+
+print("------Game master----------")
+game_master.history.pretty_print()
+					</code></pre><br>
+					<p>How is tool calling mixing with GroupSolve()? </p>
+					<blockquote>
+						<p>Each time the Game Master Task is brought up. The tool will be called with both secret and
+							guessed numbers. It will return some computable information describing the relation between
+							the two numbers. A string that is inevitably right as it comes from 'classic' programming
+							and not the LLM.</p>
+					</blockquote>
+					<p class="icon solid fa-info-circle"> All Tools options are available so you could set
+						<code>optional=True</code> if you wish. </p>
+					<p>▶️ Output: </p>
+					<pre><code class="text-output">
+------ Player --------
+[user]:
+Your task is to guess a number between 1 and 20. You will receive feedback after each guess: either 'lower,' 'higher,' or 'You won!' Adjust your guess based on this feedback. You must propose only one number at a time. Continue guessing until you receive confirmation that you have guessed correctly and the game is won. Your objective is fulfilled when you won the game.
+
+[assistant]:
+I'll start by guessing 11.
+
+What's the feedback?
+
+[user]:
+The secret number is higher than the guessed number. // (tool)
+
+[assistant]:
+Since the secret number is higher than my guess of 11, I'll try a higher number this time. My next guess is 17.
+
+What's the feedback?
+
+[user]:
+The secret number is lower than the guessed number. // (tool)
+
+[assistant]:
+Since the secret number is lower than my guess of 17, I'll try a lower number this time. My next guess is 16.
+
+What's the feedback?
+
+[user]:
+The secret number is lower than the guessed number. // (tool)
+
+[assistant]:
+Since the secret number is lower than my guess of 16, I'll try an even lower number this time. My next guess is 15.
+What's the feedback?
+
+[user]:
+The secret number is lower than the guessed number. // (tool)
+
+[assistant]:
+Since the secret number is lower than my guess of 15, I'll try an even lower number this time. My next guess is 14.
+
+What's the feedback?
+
+[user]:
+The secret number is equal to the guessed number. You won ! // (tool)
+
+[assistant]:
+Yay!
+
+I'm glad I was able to guess the correct number, 14, after a few attempts! It was a fun game! Would you like to play again?
+
+------Game master----------
+[user]:
+Your task is to generate a secret random number between 1 and 20. Output the number just this once.
+
+[assistant]:
+The secret random number is: **14**
+
+[user]:
+A player will try to guess the number you generated. Respond to the guesses you receive with one of the following:
+* If the guess is higher than your number, say 'lower.'
+* If the guess is lower than your number, say 'higher.'
+* If the guess matches your number, say 'You won!' and end the game.
+Do not provide any other feedback or responses, and only play one round. To help you compare the numbers you have acces to a tool that describes the relation between your initial number and the guessed number
+
+[assistant]:
+I can use the tool 'high_low' related to the task to solve it correctly.
+
+[user]:
+Output the tool 'high_low' as valid JSON.
+
+[assistant]:
+{"secret_number": 14, "guessed_number": 20}
+
+[user]:
+The secret number is lower than the guessed number. // (tool)
+
+[user]:
+I'll start by guessing 11.
+
+What's the feedback?
+
+[assistant]:
+I can use the tool 'high_low' related to the task to solve it correctly.
+
+[user]:
+Output the tool 'high_low' as valid JSON.
+
+[assistant]:
+{"secret_number": 14, "guessed_number": 11}
+
+[user]:
+The secret number is higher than the guessed number. // (tool)
+
+[user]:
+Since the secret number is higher than my guess of 11, I'll try a higher number this time. My next guess is 17.
+
+What's the feedback?
+
+[assistant]:
+I can use the tool 'high_low' related to the task to solve it correctly.
+
+[user]:
+Output the tool 'high_low' as valid JSON.
+
+[assistant]:
+{"secret_number": 14, "guessed_number": 17}
+
+[user]:
+The secret number is lower than the guessed number. // (tool)
+
+[user]:
+Since the secret number is lower than my guess of 17, I'll try a lower number this time. My next guess is 16.
+
+What's the feedback?
+
+[assistant]:
+I can use the tool 'high_low' related to the task to solve it correctly.
+
+[user]:
+Output the tool 'high_low' as valid JSON.
+
+[assistant]:
+{"secret_number": 14, "guessed_number": 16}
+
+[user]:
+The secret number is lower than the guessed number. // (tool)
+
+[user]:
+Since the secret number is lower than my guess of 16, I'll try an even lower number this time. My next guess is 15.
+What's the feedback?
+
+[assistant]:
+I can use the tool 'high_low' related to the task to solve it correctly.
+
+[user]:
+Output the tool 'high_low' as valid JSON.
+
+[assistant]:
+{"secret_number": 14,  "guessed_number": 15}
+
+[user]:
+The secret number is lower than the guessed number. // (tool)
+
+[user]:
+Since the secret number is lower than my guess of 15, I'll try an even lower number this time. My next guess is 14.
+
+What's the feedback?
+
+[assistant]:
+I can use the tool 'high_low' related to the task to solve it correctly.
+
+[user]:
+Output the tool 'high_low' as valid JSON.
+
+[assistant]:
+{"secret_number": 14,  "guessed_number": 14}
+
+[user]:
+The secret number is equal to the guessed number. You won ! // (tool)
+					</code></pre><br>
+					<p>It worked! </p>
+					<p>=> <code>The secret random number is: **14**</code> </p>
+					<p>Tool calls: </p>
+					<ul>
+						<li>{"secret<em>number": 14, "guessed</em>number": 20}</li>
+						<li>{"secret<em>number": 14, "guessed</em>number": 11}</li>
+						<li>{"secret<em>number": 14, "guessed</em>number": 17}</li>
+						<li>{"secret<em>number": 14, "guessed</em>number": 16}</li>
+						<li>{"secret<em>number": 14, "guessed</em>number": 15}</li>
+						<li>{"secret<em>number": 14, "guessed</em>number": 14}</li>
+					</ul>
+					<p>Last tool output:
+						<code>The secret number is equal to the guessed number. You won ! // (tool)</code>
+					</p>
+
+				</section>
+			</div>
+		</div>
+
+		<!-- Sidebar -->
+		<div id="sidebar">
+			<div class="inner">
+
+				<!-- Search -->
+				<section id="search" class="alt">
+					<form method="post" action="#">
+						<input type="text" name="query" id="query" placeholder="Search" />
+					</form>
+				</section>
+
+				<!-- Menu -->
+				<nav id="menu">
+					<header class="major">
+						<h2>Menu</h2>
+					</header>
+					<ul>
+						<li><a href="index.html">Homepage</a></li>
+						<li><a href="generic.html">Generic</a></li>
+						<li><a href="elements.html">Elements</a></li>
+						<li>
+							<span class="opener">Submenu</span>
+							<ul>
+								<li><a href="#">Lorem Dolor</a></li>
+								<li><a href="#">Ipsum Adipiscing</a></li>
+								<li><a href="#">Tempus Magna</a></li>
+								<li><a href="#">Feugiat Veroeros</a></li>
+							</ul>
+						</li>
+						<li><a href="#">Etiam Dolore</a></li>
+						<li><a href="#">Adipiscing</a></li>
+						<li>
+							<span class="opener">Another Submenu</span>
+							<ul>
+								<li><a href="#">Lorem Dolor</a></li>
+								<li><a href="#">Ipsum Adipiscing</a></li>
+								<li><a href="#">Tempus Magna</a></li>
+								<li><a href="#">Feugiat Veroeros</a></li>
+							</ul>
+						</li>
+						<li><a href="#">Maximus Erat</a></li>
+						<li><a href="#">Sapien Mauris</a></li>
+						<li><a href="#">Amet Lacinia</a></li>
+					</ul>
+				</nav>
+
+				<!-- Section -->
+				<section>
+					<header class="major">
+						<h2>Ante interdum</h2>
+					</header>
+					<div class="mini-posts">
+						<article>
+							<a href="#" class="image"><img src="../images/pic07.jpg" alt="" /></a>
+							<p>Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore aliquam.</p>
+						</article>
+						<article>
+							<a href="#" class="image"><img src="../images/pic08.jpg" alt="" /></a>
+							<p>Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore aliquam.</p>
+						</article>
+						<article>
+							<a href="#" class="image"><img src="../images/pic09.jpg" alt="" /></a>
+							<p>Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore aliquam.</p>
+						</article>
+					</div>
+					<ul class="actions">
+						<li><a href="#" class="button">More</a></li>
+					</ul>
+				</section>
+
+				<!-- Section -->
+				<section>
+					<header class="major">
+						<h2>Get in touch</h2>
+					</header>
+					<p>Sed varius enim lorem ullamcorper dolore aliquam aenean ornare velit lacus, ac varius enim lorem
+						ullamcorper dolore. Proin sed aliquam facilisis ante interdum. Sed nulla amet lorem feugiat
+						tempus aliquam.</p>
+					<ul class="contact">
+						<li class="icon solid fa-envelope"><a href="#">information@untitled.tld</a></li>
+						<li class="icon solid fa-phone">(000) 000-0000</li>
+						<li class="icon solid fa-home">1234 Somewhere Road #8254<br />
+							Nashville, TN 00000-0000</li>
+					</ul>
+				</section>
+
+				<!-- Footer -->
+				<footer id="footer">
+					<p class="copyright">&copy; Untitled. All rights reserved. Demo Images: <a
+							href="https://unsplash.com">Unsplash</a>. Design: <a href="https://html5up.net">HTML5
+							UP</a>.</p>
+				</footer>
+
+			</div>
+		</div>
+
+	</div>
+
+	<!-- Scripts -->
+	<script src="../assets/js/jquery.min.js"></script>
+	<script src="../assets/js/browser.min.js"></script>
+	<script src="../assets/js/breakpoints.min.js"></script>
+	<script src="../assets/js/util.js"></script>
+	<script src="../assets/js/main.js"></script>
+
+</body>
+
+</html>

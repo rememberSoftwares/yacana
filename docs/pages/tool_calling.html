@@ -252,7 +252,7 @@ result: str = Task(f"What's 2+2 ?", agent1, tools=[adder_tool]).solve().content
 
 print("Equation result = ", result)
 					</code></pre><br>
-					<p>Output:</p>
+					<p>▶️ Output:</p>
 					<pre><code class="text-output">
 INFO: [PROMPT]: I give you the following tool definition that you must use to fulfill a future task: adder(first_number: int, second_number: int) -&gt; int - Adds two numbers and returns the result. Please acknowledge the given tool.
 
@@ -407,7 +407,7 @@ result: str = Task(f"What's 2+2 ?", agent1, tools=[adder_tool]).solve().content
 
 print(f"Equation result = {result}")
 					</code></pre><br>
-					<p>Output:</p>
+					<p>▶️ Output:</p>
 					<pre><code class="text-output">
 INFO: [PROMPT]: I give you the following tool definition that you must use to fulfill a future task: adder(first_number: int, second_number: int) -> int - Adds two numbers and returns the result. Please acknowledge the given tool.
 
@@ -531,7 +531,7 @@ result: str = Task(f"What's the temperature in NY ?", agent1, tools=[Tool("get_t
 
 print(f"Temperature = {result}")						
 					</code></pre><br>
-					<p>Output:</p>
+					<p>▶️ Output:</p>
 					<pre><code class="text-output">
 INFO: [PROMPT]: I give you the following tool definition that you must use to fulfill a future task: get_temperature(city: str) -> int - Adds two numbers and returns the result. Please acknowledge the given tool.
 
@@ -567,7 +567,7 @@ Temperature = 20
 					<pre><code class="language-python"> 
 result: str = Task(f"Why is the sky blue ?", agent1, tools=[Tool("get_temp", "Returns the celsius temperature of a given city", get_temperature)]).solve().content					
 					</code></pre><br>
-					<p>Output:</p>
+					<p>▶️ Output:</p>
 					<pre><code class="text-output">
 INFO: [PROMPT]: I give you the following tool definition that you must use to fulfill a future task: get_temperature(city: str) -> int - Returns the celsius temperature of a given city. Please acknowledge the given tool.
 
@@ -601,7 +601,7 @@ Temperature = 20
 					<pre><code class="language-python">
 result: str = Task(f"Why is the sky blue ?", agent1, tools=[Tool("get_temp", "Returns the celsius temperature of a given city", get_temperature, optional=True)]).solve().content						
 					</code></pre><br>
-					<p>Output:</p>
+					<p>▶️ Output:</p>
 					<pre><code class="text-output">
 INFO: [PROMPT]: I give you the following tool definition that you may use to fulfill a future task: get_temperature(city: str) -> int - Returns the celsius temperature of a given city. Please acknowledge the given tool.
 
@@ -745,7 +745,7 @@ result: str = Task(
 
 print("Result = ", result)
 					</code></pre><br>
-					<p>Output:</p>
+					<p>▶️ Output:</p>
 					<pre><code class="text-output">
 INFO: [PROMPT]: You have access to this list of tools definitions you can use to fulfill tasks :
 * Name: 'Adder' - Usage: adder(first_number: int, second_number: int) -> int - Description: Adds two numbers and returns the result
