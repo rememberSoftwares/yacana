@@ -9,6 +9,10 @@
     display: none;
 }
 
+.language-json {
+    display: none;
+}
+
 .text-output {
     display: none;
 }

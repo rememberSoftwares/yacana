@@ -84,6 +84,9 @@ agent1 = Agent("AI assistant", "llama3:8b", system_prompt="You are a helpful AI 
 							localhost and on the Ollama default port. If you are using Ollama on your computer you can
 							remove this optional parameter and the default value will be used.</li>
 					</ol>
+
+					<hr class="major" />
+
 					<h2 id="basic-roleplay">Basic roleplay</h2>
 					<p>This framework is not meant for basic roleplay. However, for people starting their journey in the
 						realm of AI and for debugging purposes, we added a simple chat system. Add this new line to test
@@ -126,6 +129,9 @@ agent1.simple_chat()
 					<p>⚠️From now on we will not set the <em>endpoint</em> attribute anymore for clarity and will resort
 						to the defaults. If your LLM is not served by Ollama or isn't on your localhost you should
 						continue setting this value.</p>
+
+						<hr class="major" />
+
 					<h2 id="creating-tasks">Creating Tasks</h2>
 					<p>The whole concept of the framework lies here. If you understand this following section then you
 						have mastered 80% of Yacana's building principle. Like in LangGraph, where you create nodes that
@@ -192,6 +198,9 @@ So, the result of solving the equation 2 + 2 is indeed 4.
 						allows creating new Task dynamically if the need arises. You shall rely on your programming
 						skills and good OOP to have a clean code and good Task ordering. There aren't and will never be
 						any pre-hardcoded interactions and no flat config. This is a framework for developers.</p>
+
+						<hr class="major" />
+
 					<h2 id="getting-the-result-of-a-task">Getting the result of a Task</h2>
 					<p>Even though we get logs on the standard output of the terminal, we still need to extract the
 						answer of the LLM that solved that Task in order to do something with it.<br>
@@ -239,6 +248,9 @@ print(f"The AI response to our task is: {Task(f'Solve the equation 2 + 2 and out
 					</code></pre><br>
 					<p>🤔 However, splitting the output of the LLM and the print in two lines would probably look
 						better. Let's not one-line things too much 😅.</p>
+
+						<hr class="major" />
+
 					<h2 id="chaining-tasks">Chaining Tasks</h2>
 					<p>Chaining Tasks is nothing more than just calling a second Task with the same Agent. Agents keep
 						track of the History of what they did (aka, all the Tasks they solved). So just call a second
@@ -262,6 +274,9 @@ The AI response to our task is: If we multiply the previous result of 4 by 2, we
 						You can chain as many Tasks as you need. Also, you should create other Agents that don't have
 						the knowledge of previous tasks and make them do things based on the output of your first agent.
 						You can build anything now!</p>
+
+						<hr class="major" />
+
 					<h2 id="logging-levels">Logging levels</h2>
 					<p>As entering the AI landscape can get a bit hairy we decided to leave the INFO log level by
 						default. This allows to log to the standard output all the requests made to the LLM.<br>
@@ -298,6 +313,9 @@ LoggerManager.set_library_log_level("httpx", "WARNING")
 					</code></pre><br>
 					<p>The above example sets the logging level of the network httpx library to warning, thus reducing
 						the log spamming.</p>
+
+						<hr class="major" />
+
 					<h2 id="configuring-llms-settings">Configuring LLM's settings</h2>
 					<p>For advanced users, Yacana provides a way to tweak the LLM runtime behavior!<br>
 						For instance, lowering the <code>temperature</code> setting makes the model less creative in its

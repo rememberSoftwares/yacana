@@ -54,8 +54,7 @@
 
 					<span class="image main"><img src="../images/pic11.jpg" alt="Routing" /></span>
 
-					<h2>III. Routing</h2>
-					<h3>Concepts of routing</h3>
+					<h2>Concepts of routing</h2>
 					<p>Other frameworks tend to make abstractions for everything. Even things that don't need any.
 						That's why I'll show you how to do routing with only what we have seen earlier. Yacana doesn't
 						provide routing abstraction because there is no need to do so. </p>
@@ -104,16 +103,17 @@ Question is about plants
 							cap "YES" for no reason. </li>
 						<li><strong>Always start by searching for "yes"</strong>: We do a substring match using the
 							<code>in</code> keyword of Python because the LLM doesn't always respect the instructions of
-							outputting "ONLY 'yes' or 'no'". Sometimes you'll get "yes!" or "Great idea, I say yes".
-							Substring match will match "yes" anywhere in the LLM answer. But what if you matched "no"
-							first and the LLM generated "Not sure but I would say yes". Because we search for substrings
-							the condition would match the "no" part of the word "Not" even though the LLM said yes. We
+							outputting <code>ONLY 'yes' or 'no'</code>. Sometimes you'll get <i>"yes!"</i> or <i>"Great idea, I say yes"</i>.
+							Substring match will match <i>"yes"</i> anywhere in the LLM answer.<br>
+							But what if you looked for <i>"no"</i>
+							first and the LLM generated <i>"Not sure but I would say yes"</i>. Because we search for substrings
+							the condition would match the <i>"no"</i> part of the word <i>"Not"</i> even though the LLM said <i>yes</i>. We
 							could use regexe to fix this but it's easier to just start the condition by looking for
-							"yes" as there are no English words that contain "yes" in the substring (at least no common
+							<i>"yes"</i> as there are no English words that contain <i>"yes"</i> in a substring (at least no common
 							ones ^^).</li>
-						<li><strong>Force the LLM to respect the instruction</strong>: Tell it to "answer ONLY with
-							'xx'". See the use of the upper cap on "ONLY"? Also, the single quotes around the possible
-							choices 'yes' and 'no' help the LLM that sees them as delimiters. </li>
+						<li><strong>Force the LLM to respect the instruction</strong>: Tell it to <code>answer ONLY with
+							'xx'</code>. See the use of the upper cap on <i>"ONLY"</i>? Also, the single quotes around the possible
+							choices <code>'yes'</code> and <code>'no'</code> help the LLM that sees them as delimiters. </li>
 						<li><strong>Use formatting tags</strong>: The question that is mentioned in the prompt is then
 							given in custom <code>&#60;question&#62;</code> tags. LLMs love delimiters. This way the LLM knows
 							when the question starts and when the question ends. This technique helps to differentiate
@@ -123,13 +123,16 @@ Question is about plants
 					</ol>
 					<p class="icon solid fa-info-circle"> This is all basic prompt engineering. If you wish to build an app with local models you will
 						definitely have to learn those tricks. LLMs are unpredictable. It's why we built them. </p>
-					<h3>Self-reflection routing</h3>
+
+						<hr class="major" />
+
+					<h2>Self-reflection routing</h2>
 					<p>As local models are a bit dumb you need to let them think on their own before making a decision.
 						This is called self-reflection. It will cost one more Task to solve but you'll get significantly
 						better results during routing, in particular when routing on more complex things (other than
 						"yes"|"no").</p>
 					<p>Let's update the routing section of our code to look like this: </p>
-					<pre><code># Asking for a reasoning step
+					<pre><code class="language-python"># Asking for a reasoning step
 Task(f"Is the following question about plants ? <question>{question}</question>\nExplain your reasoning.", agent1).solve()
 
 # Basic yes/no routing based on the previous reasoning
@@ -196,7 +199,10 @@ elif "no" in router_answer.lower():
     print("No, question is NOT about plants")
     # Next step in the workflow that DOESN'T involve plants
 </code></pre><br>
-					<h3>Cleaning history</h3>
+
+<hr class="major" />
+
+					<h2>Cleaning history</h2>
 					<p>Keeping the self-reflection prompt and the associated answer is always good. It helps
 						guardrailing the LLM. But the "yes"/"no" router on the other hand adds unnecessary noise to the
 						Agent's history. Moreover, local models don't have huge context window sizes, so removing
@@ -205,12 +211,16 @@ elif "no" in router_answer.lower():
 						after it answered. No need to keep that… This is why the Task class offers an optional
 						parameter: <code>forget=&#60;bool&#62;</code>. </p>
 					<p>Update the router line with this new parameter:</p>
-					<pre><code>router_answer: str = Task(f"To summarize in one word, was the question about plants ? Answer ONLY by 'yes' or 'no'.", agent1, forget=True).solve().content
-</code></pre><br>
+					<pre><code class="language-python">
+router_answer: str = Task(f"To summarize in one word, was the question about plants ? Answer ONLY by 'yes' or 'no'.", agent1, forget=True).solve().content
+					</code></pre><br>
 					<p>Now, even though you cannot see it, the Agent doesn't remember solving this Task. In the next
 						section, we'll see how to access and manipulate the history. Then, you'll be able to see what
 						the Agent remembers! </p>
-					<h3>Routing demonstration</h3>
+
+						<hr class="major" />
+
+					<h2>Routing demonstration</h2>
 					<p>For this demo, we'll make an app that takes a user query (HF replacing the static string by a
 						Python <code>input()</code> if you wish) that checks if the query is about plants. <br />
 						If it is not we end the workflow there. However, if it is about plants the flow will branch and
