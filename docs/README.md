@@ -1041,7 +1041,6 @@ INFO: [AI_RESPONSE]: Here is the sentence rewritten in JSON format:
     "sky": "dark sky"
   }
 }
-```
 
 Let me know if you'd like me to help with anything else!
 ```
