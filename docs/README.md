@@ -1726,7 +1726,7 @@ This is roughly what the tool-calling mechanism looks like:
  
 ⚠️ For this next section we assume that you have already read section **Assigning a tool to a Task** of the documentation.  
 
-Let's make a more advanced calculator. We'll add the missing tools and give them some "server-side" checking to help the LLM use them properly.  
+Let's make a more advanced calculator and solve `'2 + 2 - 6 * 8`. We'll add the missing tools and give them some "server-side" checking to help the LLM use them properly.  
 
 ```python
 from yacana import Task, Agent, Tool, ToolError
