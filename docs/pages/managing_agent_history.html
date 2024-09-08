@@ -89,7 +89,7 @@
 						response do not get saved to the history ([see here]() @todo url). You'll see there are other
 						ways to preserve the history from useless noise. <br />
 						But first, we'll look at viewing one's Agent history. Fortunately, Yacana got you covered. </p>
-					<h2>Printing History</h2>
+					<h2 id="printing-history">Printing History</h2>
 					<p>The Agent class comes with a <code>.history</code> property of type <code>History</code> (@todo
 						<a href>see here</a>. It exposes methods so you can manipulate and view it (for debugging,
 						mostly) during runtime. For instance, it has a <code>.pretty_print()</code> method that prints
@@ -156,7 +156,7 @@ Let me know if you have any other questions!
 ############## END ##################
 					</code></pre><br>
 					<p>Output speaks for itself. </p>
-					<h2>Creating and loading checkpoints</h2>
+					<h2 id="creating-and-loading-checkpoints">Creating and loading checkpoints</h2>
 					<p>As mentioned earlier it's better to keep the History clean. Too many prompts and unrelated
 						questions will lead to poorer results so if you have the opportunity to scratch some portion
 						then you should. <br />
@@ -300,7 +300,7 @@ yes
 
 						<hr class="major" />
 
-					<h2>Zero-prompt shot vs multi-prompt shot</h2>
+					<h2 id="Zero-prompt-shot-vs-multi-prompt-shot">Zero-prompt shot vs multi-prompt shot</h2>
 					<p>When an LLM struggles to solve a complex task and achieve a good success rate it may be time to
 						give it a little help. </p>
 					<p>In large language models, the approach to prompting can significantly influence the model's
@@ -455,7 +455,7 @@ INFO: [AI_RESPONSE]: {"name": "Marie", "action": "Walking with her dog."}
 
 						<hr class="major" />
 
-					<h2>Saving Agent state</h2>
+					<h2 id="saving-agent-state">Saving Agent state</h2>
 					<p>Maybe your program needs to start, stop, and resume where it stopped. For this use case, Yacana
 						provides a way to store an Agent state into a file and load it later. All of the Agent's
 						properties are saved including the History. Only checkpoints are lost as they are more of a

@@ -54,7 +54,7 @@
 
 					<span class="image main"><img src="../images/pic11.jpg" alt="Routing" /></span>
 
-					<h2>Concepts of routing</h2>
+					<h2 id="concepts-of-routing">Concepts of routing</h2>
 					<p>Other frameworks tend to make abstractions for everything. Even things that don't need any.
 						That's why I'll show you how to do routing with only what we have seen earlier. Yacana doesn't
 						provide routing abstraction because there is no need to do so. </p>
@@ -90,12 +90,13 @@ elif "no" in router_answer.lower():
     # Next step in the workflow that DOESN'T involve plants
 </code></pre><br>
 					<p>You should get the following output:</p>
-					<pre><code class="text-output">INFO: [PROMPT]: Is the following question about plants? <question>Why do leaves fall in autumn ?</question> Answer ONLY by 'yes' or 'no'.
+					<pre><code class="text-output">
+INFO: [PROMPT]: Is the following question about plants? <question>Why do leaves fall in autumn ?</question> Answer ONLY by 'yes' or 'no'.
 
 INFO: [AI_RESPONSE]: yes
 Question is about plants
 </code></pre><br>
-					<p>▶️ Many things are happening here. We didn't implement an abstraction to simplify things but the
+					<p>➡️ Many things are happening here. We didn't implement an abstraction to simplify things but the
 						downside is that you must learn a few tricks: </p>
 					<ol>
 						<li><strong>Always compare with lower case string</strong>: Because LLMs have their own mind
@@ -126,7 +127,7 @@ Question is about plants
 
 						<hr class="major" />
 
-					<h2>Self-reflection routing</h2>
+					<h2 id="self-reflection-routing">Self-reflection routing</h2>
 					<p>As local models are a bit dumb you need to let them think on their own before making a decision.
 						This is called self-reflection. It will cost one more Task to solve but you'll get significantly
 						better results during routing, in particular when routing on more complex things (other than
@@ -140,7 +141,8 @@ router_answer: str = Task(f"To summarize in one word, was the question about pla
 </code></pre><br>
 					<p>We added one more Task that executes BEFORE the router. </p>
 					<p>You should get this type of output:</p>
-					<pre><code class="text-output">INFO: [PROMPT]: Is the following question about plants ? <question>Why do leaves fall in autumn ?</question>
+					<pre><code class="text-output">
+INFO: [PROMPT]: Is the following question about plants ? <question>Why do leaves fall in autumn ?</question>
 Explain your reasoning
 
 INFO: [AI_RESPONSE]: A great question!
@@ -162,7 +164,7 @@ Question is about plants
 </code></pre><br>
 					<p>See how the LLM had an "intense" reflection on the subject. This is very good. You want LLMs to
 						do reasoning like this. It will improve the overall result for the next Tasks to solve. </p>
-					<p>▶️The prompt engineering techniques used here are:</p>
+					<p>▶️ The prompt engineering techniques used here are:</p>
 					<ol>
 						<li><strong>Make it think</strong>: Using the expression "Explain your reasoning." makes it
 							generate a logical answer. Note that if the model is bad at reasoning or makes a mistake
@@ -202,7 +204,7 @@ elif "no" in router_answer.lower():
 
 <hr class="major" />
 
-					<h2>Cleaning history</h2>
+					<h2 id="cleaning-history">Cleaning history</h2>
 					<p>Keeping the self-reflection prompt and the associated answer is always good. It helps
 						guardrailing the LLM. But the "yes"/"no" router on the other hand adds unnecessary noise to the
 						Agent's history. Moreover, local models don't have huge context window sizes, so removing
@@ -220,7 +222,7 @@ router_answer: str = Task(f"To summarize in one word, was the question about pla
 
 						<hr class="major" />
 
-					<h2>Routing demonstration</h2>
+					<h2 id="routing-demonstration">Routing demonstration</h2>
 					<p>For this demo, we'll make an app that takes a user query (HF replacing the static string by a
 						Python <code>input()</code> if you wish) that checks if the query is about plants. <br />
 						If it is not we end the workflow there. However, if it is about plants the flow will branch and

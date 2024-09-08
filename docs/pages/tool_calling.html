@@ -55,7 +55,7 @@
 
 					<span class="image main"><img src="../images/pic11.jpg" alt="Routing" /></span>
 
-					<h2>Concept of calling tools</h2>
+					<h2 id="concept-of-calling-tools">Concept of calling tools</h2>
 					<p>Allowing the LLM to call a tool is the most important thing an agent can do! But what is a
 						"tool"? A "tool" simply refers to a Python function. This function can be the entry point to any
 						level of underlying complexity. But it doesn't matter. What matters is that the LLM can call the
@@ -98,7 +98,7 @@
 
 						<hr class="major" />
 
-					<h2>Writing good tool prompts</h2>
+					<h2 id="writing-good-tool-prompts">Writing good tool prompts</h2>
 					<p>The title spoils one of the most important things about tool calling in Yacana.<br>
 						<strong>The prompt is to guide the LLM on how to use the tool and not what to do with the tool
 							result!</strong><br>
@@ -204,7 +204,7 @@ agent1.history.pretty_print()
 
 					<hr class="major" />
 
-					<h2>Calling a tool</h2>
+					<h2 id="calling-a-tool">Calling a tool</h2>
 					<p>Let's write our first tool call to perform a simple addition!</p>
 					<p>First, let's define our tool:</p>
 					<pre><code class="language-python">
@@ -294,7 +294,7 @@ Equation result =  22
 
 					<hr class="major" />
 
-					<h2>Improving tool-calling results</h2>
+					<h2 id="improving-tool-calling-results">Improving tool-calling results</h2>
 					<p>As you saw in the previous adder example we ran into trouble with the <code>2 + 2</code> call
 						sent as a string. Let's fix that.</p>
 					<h4>Providing tool call examples</h4>
@@ -510,7 +510,7 @@ adder_tool: Tool = Tool("Adder", "Adds two numbers and returns the result", adde
 
 					<hr class="major" />
 
-					<h2>Optional tools</h2>
+					<h2 id="optional-tools">Optional tools</h2>
 					<p>Sometimes you assign a Tool to a Task without knowing for sure that the tool will be useful. If
 						you have a fine-tuned model or doing basic operations you may want to rely on the LLM's
 						reasoning to choose if it really needs to call the tool or use his own training knowledge.
@@ -658,7 +658,7 @@ So, to summarize: the sky appears blue because of the selective scattering of sh
 
 						<hr class="major" />
 
-					<h2>Assigning multiple Tools</h2>
+					<h2 id="assigning-multiple-tools">Assigning multiple Tools</h2>
 					<p>In this section, we will see that you can assign more than one tool to a Task. You can add as
 						many Tools as you wish and the LLM will be asked what tool it wants to use. After using one of
 						the tools it will be asked if it considers its Task complete. If it says "no" then Yacana will
