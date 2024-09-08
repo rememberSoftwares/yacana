@@ -104,28 +104,36 @@ Question is about plants
 							cap "YES" for no reason. </li>
 						<li><strong>Always start by searching for "yes"</strong>: We do a substring match using the
 							<code>in</code> keyword of Python because the LLM doesn't always respect the instructions of
-							outputting <code>ONLY 'yes' or 'no'</code>. Sometimes you'll get <i>"yes!"</i> or <i>"Great idea, I say yes"</i>.
+							outputting <code>ONLY 'yes' or 'no'</code>. Sometimes you'll get <i>"yes!"</i> or <i>"Great
+								idea, I say yes"</i>.
 							Substring match will match <i>"yes"</i> anywhere in the LLM answer.<br>
 							But what if you looked for <i>"no"</i>
-							first and the LLM generated <i>"Not sure but I would say yes"</i>. Because we search for substrings
-							the condition would match the <i>"no"</i> part of the word <i>"Not"</i> even though the LLM said <i>yes</i>. We
+							first and the LLM generated <i>"Not sure but I would say yes"</i>. Because we search for
+							substrings
+							the condition would match the <i>"no"</i> part of the word <i>"Not"</i> even though the LLM
+							said <i>yes</i>. We
 							could use regexe to fix this but it's easier to just start the condition by looking for
-							<i>"yes"</i> as there are no English words that contain <i>"yes"</i> in a substring (at least no common
-							ones ^^).</li>
+							<i>"yes"</i> as there are no English words that contain <i>"yes"</i> in a substring (at
+							least no common
+							ones ^^).
+						</li>
 						<li><strong>Force the LLM to respect the instruction</strong>: Tell it to <code>answer ONLY with
 							'xx'</code>. See the use of the upper cap on <i>"ONLY"</i>? Also, the single quotes around the possible
-							choices <code>'yes'</code> and <code>'no'</code> help the LLM that sees them as delimiters. </li>
+							choices <code>'yes'</code> and <code>'no'</code> help the LLM that sees them as delimiters.
+						</li>
 						<li><strong>Use formatting tags</strong>: The question that is mentioned in the prompt is then
-							given in custom <code>&#60;question&#62;</code> tags. LLMs love delimiters. This way the LLM knows
+							given in custom <code>&#60;question&#62;</code> tags. LLMs love delimiters. This way the LLM
+							knows
 							when the question starts and when the question ends. This technique helps to differentiate
 							your prompt and the dynamic part. You don't have to add tags everywhere but they can prove
 							useful. Do not abuse them or the LLM might start using them in its response. Just keep this
 							trick in mind. </li>
 					</ol>
-					<p class="icon solid fa-info-circle"> This is all basic prompt engineering. If you wish to build an app with local models you will
+					<p class="icon solid fa-info-circle"> This is all basic prompt engineering. If you wish to build an
+						app with local models you will
 						definitely have to learn those tricks. LLMs are unpredictable. It's why we built them. </p>
 
-						<hr class="major" />
+					<hr class="major" />
 
 					<h2 id="self-reflection-routing">Self-reflection routing</h2>
 					<p>As local models are a bit dumb you need to let them think on their own before making a decision.
@@ -202,7 +210,7 @@ elif "no" in router_answer.lower():
     # Next step in the workflow that DOESN'T involve plants
 </code></pre><br>
 
-<hr class="major" />
+					<hr class="major" />
 
 					<h2 id="cleaning-history">Cleaning history</h2>
 					<p>Keeping the self-reflection prompt and the associated answer is always good. It helps
@@ -220,7 +228,7 @@ router_answer: str = Task(f"To summarize in one word, was the question about pla
 						section, we'll see how to access and manipulate the history. Then, you'll be able to see what
 						the Agent remembers! </p>
 
-						<hr class="major" />
+					<hr class="major" />
 
 					<h2 id="routing-demonstration">Routing demonstration</h2>
 					<p>For this demo, we'll make an app that takes a user query (HF replacing the static string by a
@@ -229,7 +237,8 @@ router_answer: str = Task(f"To summarize in one word, was the question about pla
 						search if a plant type/name was given. If it was then it is extracted and knowledge about the
 						plant will be shown before answering the original question. If not it will simply answer the
 						query as is. </p>
-					<p style="text-align: center;"><img src="https://github.com/user-attachments/assets/e479e74c-c4f4-4942-a8b5-bd06b377af8c"
+					<p style="text-align: center;"><img
+							src="https://github.com/user-attachments/assets/e479e74c-c4f4-4942-a8b5-bd06b377af8c"
 							alt="plant1B" /></p>
 					<p>Read from bottom ⬇️ to top ⬆️. (Though, the Agent and the question variables are defined globally
 						at the top)</p>
@@ -388,7 +397,8 @@ As these factors combine, the leaves' ability to carry out photosynthesis decrea
 
 So, there you have it! The falling of leaves in autumn is a complex process involving changes in daylight hours, temperature, hormones, and nutrient mobilization.
 </code></pre><br>
-					<p class="icon solid fa-info-circle"> Later we'll see how to remove the automatic "[INFO]" prints so that only YOUR prints are
+					<p class="icon solid fa-info-circle"> Later we'll see how to remove the automatic "[INFO]" prints so
+						that only YOUR prints are
 						shown. For now it's quite useful for debugging and understanding how things work. So we'll leave
 						them in this tutorial section. </p>
 					<p><strong>Upating question to match the "specific plant info" workflow:</strong> </p>
@@ -480,7 +490,11 @@ Question is NOT about plants sorry.
 					</form>
 				</section>
 
-				<!-- Menu -->
+				<iframe id="main-menu" title="Main menu"
+					src="chunks/main_menu.html">
+				</iframe>
+
+				<!-- 
 				<nav id="menu">
 					<header class="major">
 						<h2>Menu</h2>
@@ -514,6 +528,7 @@ Question is NOT about plants sorry.
 						<li><a href="#">Amet Lacinia</a></li>
 					</ul>
 				</nav>
+				-->
 
 				<!-- Section -->
 				<section>
