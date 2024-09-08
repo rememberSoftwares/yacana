@@ -1534,12 +1534,12 @@ Equation result = 4
 
 It worked!  
 
-2 "errors" happened here:
+2 warnings happened here:
 * "WARNING: Yacana failed to call tool 'Adder' correctly based on the LLM output"
 * "WARNING: Tool 'Adder' raised an error"
 
-- **Error 1**: Regarding the first one if you look closely at the output you can see a strange malformation in the JSON: `{"first__number": "arg 0", "second__number": "arg 1"}`. The first parameter was called with two underscores for some reason (LLMs...). Fortunately, Yacana banged on the LLM's head and it was fixed in the next iteration.  
-- **Error 2**: Concerning the second error, it was the tool itself that raised the exception: `The tool returned an error: Parameter 'first_number' expected a type integer`. This is only logical as the LLM sent catastrophic values to the tool: `{'first_number': 'arg 0', 'second_number': 'arg 1'}`. When the ToolError was raised the error message was given to the LLM and a third iteration started. This time all was correct: `{"first_number": 2, "second_number": 2}` and we got our result from the tool which is 4.
+- **Warning 1**: Regarding the first one if you look closely at the output you can see a strange malformation in the JSON: `{"first__number": "arg 0", "second__number": "arg 1"}`. The first parameter was called with two underscores for some reason (LLMs...). Fortunately, Yacana banged on the LLM's head and it was fixed in the next iteration.  
+- **Warning 2**: Concerning the second warning, it was the tool itself that raised the exception: `The tool returned an error: Parameter 'first_number' expected a type integer`. This is only logical as the LLM sent catastrophic values to the tool: `{'first_number': 'arg 0', 'second_number': 'arg 1'}`. When the ToolError was raised the error message was given to the LLM and a third iteration started. This time all was correct: `{"first_number": 2, "second_number": 2}` and we got our result from the tool which is 4.
 
 ℹ️ You should combine both technics. Providing one example could prevent one tool call failure hence less lost CPU time but adding many validation checks in your tool raising with explicit error messages is the best way to ensure that nothing breaks. Nothing beats good all fashion `if` checks!   
 
@@ -1726,7 +1726,7 @@ This is roughly what the tool-calling mechanism looks like:
  
 ⚠️ For this next section we assume that you have already read section **Assigning a tool to a Task** of the documentation.  
 
-Let's make a more advanced calculator. We'll add the missing tools and give them some "server-side" checking to help the LLM use them properly.  
+Let's make a more advanced calculator and solve `'2 + 2 - 6 * 8`. We'll add the missing tools and give them some "server-side" checking to help the LLM use them properly.  
 
 ```python
 from yacana import Task, Agent, Tool, ToolError
