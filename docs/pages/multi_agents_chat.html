@@ -380,9 +380,12 @@ I will give you your task in the next message.
 						<code>After analyzing the letters provided so far (T-E-H), I can see that they don't form a valid 4-letter word. The game continues!</code>
 						<br />
 						During the second round new letters are added: "A - L - S".<br>
-						To which the game master responds: <code>After analyzing the letters provided so far (T-E-H-A-L-S), I can see that they form a valid 4-letter word: HALE! Congratulations, the game is complete!</code>.
-						After which the chat ends!</p>
-					<p class="icon solid fa-info-circle"> Note that all types of ["end chat" modes]() @todo url are still valid in multi-user chat too.
+						To which the game master responds:
+						<code>After analyzing the letters provided so far (T-E-H-A-L-S), I can see that they form a valid 4-letter word: HALE! Congratulations, the game is complete!</code>.
+						After which the chat ends!
+					</p>
+					<p class="icon solid fa-info-circle"> Note that all types of ["end chat" modes]() @todo url are
+						still valid in multi-user chat too.
 						Tools and all their parameters are also available in this mode and follow the same tools
 						principles. </p>
 					<h4>Pros and cons of multi-LLM group chat</h4>
@@ -412,7 +415,8 @@ I will give you your task in the next message.
 						<li>LLMs that don't perform well with role-play may experience difficulties like impersonation ;
 						</li>
 					</ul>
-					<p class="icon solid fa-info-circle"> We might consider adding an option to also use role-play for dual chat mode.</p>
+					<p class="icon solid fa-info-circle"> We might consider adding an option to also use role-play for
+						dual chat mode.</p>
 
 
 				</section>
@@ -436,32 +440,86 @@ I will give you your task in the next message.
 						<h2>Menu</h2>
 					</header>
 					<ul>
-						<li><a href="index.html">Homepage</a></li>
-						<li><a href="generic.html">Generic</a></li>
-						<li><a href="elements.html">Elements</a></li>
+						<li><a href="../index.html">Homepage</a></li>
 						<li>
-							<span class="opener">Submenu</span>
+							<span class="opener">I. Installation</span>
 							<ul>
-								<li><a href="#">Lorem Dolor</a></li>
-								<li><a href="#">Ipsum Adipiscing</a></li>
-								<li><a href="#">Tempus Magna</a></li>
-								<li><a href="#">Feugiat Veroeros</a></li>
+								<li><a href="installation.html#installing-ollama">Installing Ollama</a></li>
+								<li><a href="installation.html#choosing-an-llm-model">Choosing an LLM model</a>
+								</li>
+								<li><a href="installation.html#running-the-model">Running the model</a></li>
+								<li><a href="installation.html#installing-yacana">Installing Yacana</a></li>
+								<li><a href="installation.html#imports">Imports</a></li>
 							</ul>
 						</li>
-						<li><a href="#">Etiam Dolore</a></li>
-						<li><a href="#">Adipiscing</a></li>
 						<li>
-							<span class="opener">Another Submenu</span>
+							<span class="opener">II. Agents & Tasks</span>
 							<ul>
-								<li><a href="#">Lorem Dolor</a></li>
-								<li><a href="#">Ipsum Adipiscing</a></li>
-								<li><a href="#">Tempus Magna</a></li>
-								<li><a href="#">Feugiat Veroeros</a></li>
+								<li><a href="agents_and_tasks.html#creating-an-agent">Creating an Agent</a></li>
+								<li><a href="agents_and_tasks.html#basic-roleplay">Basic roleplay</a></li>
+								<li><a href="agents_and_tasks.html#creating-tasks">Creating Tasks</a></li>
+								<li><a href="agents_and_tasks.html#getting-the-result-of-a-task">Getting the
+										result of a Task</a></li>
+								<li><a href="agents_and_tasks.html#chaining-tasks">Chaining Tasks</a></li>
+								<li><a href="agents_and_tasks.html#logging-levels">Logging levels</a></li>
+								<li><a href="agents_and_tasks.html#configuring-llms-settings">Configuring LLM's
+										settings</a></li>
 							</ul>
 						</li>
-						<li><a href="#">Maximus Erat</a></li>
-						<li><a href="#">Sapien Mauris</a></li>
-						<li><a href="#">Amet Lacinia</a></li>
+						<li>
+							<span class="opener">III. Routing</span>
+							<ul>
+								<li><a href="routing.html#concepts-of-routing">Concepts of routing</a></li>
+								<li><a href="routing.html#self-reflection-routing">Self-reflection routing</a>
+								</li>
+								<li><a href="routing.html#cleaning-history">Cleaning history</a></li>
+								<li><a href="routing.html#routing-demonstration">Routing demonstration</a></li>
+							</ul>
+						</li>
+						<li>
+							<span class="opener">IV. Managing Agents history</span>
+							<ul>
+								<li><a href="managing_agent_history.html#printing-history">Printing history</a>
+								</li>
+								<li><a href="managing_agent_history.html#creating-and-loading-checkpoints">Creating
+										and loading checkpoints</a></li>
+								<li><a href="managing_agent_history.html#Zero-prompt-shot-vs-multi-prompt-shot">Zero-prompt
+										shot vs multi-prompt shot</a></li>
+								<li><a href="managing_agent_history.html#saving-agent-state">Saving Agent
+										state</a></li>
+							</ul>
+						</li>
+						<li>
+							<span class="opener">V. Tool calling</span>
+							<ul>
+								<li><a href="tool_calling.html#concept-of-calling-tools">Concepts of calling
+										tools</a></li>
+								<li><a href="tool_calling.html#writing-good-tool-prompts">Writing good tool
+										prompts</a></li>
+								<li><a href="tool_calling.html#calling-a-tool">Calling a tool</a></li>
+								<li><a href="tool_calling.html#improving-tool-calling-results">Improving
+										tool-calling results</a></li>
+								<li><a href="tool_calling.html#optional-tools">Optional tools</a></li>
+								<li><a href="tool_calling.html#assigning-multiple-tools">Assigning multiple
+										Tools</a></li>
+							</ul>
+						</li>
+						<li>
+							<span class="opener">VI. Dual-agents chat</span>
+							<ul>
+								<li><a href="dual_agents_chat.html#stopping-chat-using-maximum-iterations">Stopping
+										chat using 'maximum iterations'</a></li>
+								<li><a href="dual_agents_chat.html#letting-agents-end-the-chat">Letting Agents end
+										the chat</a></li>
+								<li><a href="dual_agents_chat.html#controlling-the-shift-message">Controlling the
+										Shift Message</a></li>
+								<li><a href="dual_agents_chat.html#using-tools-in-chat">Using tools in chat</a>
+								</li>
+							</ul>
+						</li>
+						<li><a href="multi_agents_chat.html#multi-agents-chat">VII. Multi-agents chat</a></li>
+
+
 					</ul>
 				</nav>
 

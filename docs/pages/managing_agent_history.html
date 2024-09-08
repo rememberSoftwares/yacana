@@ -50,7 +50,7 @@
 				<!-- Content -->
 				<section>
 					<header class="main">
-						<h1>IV. Managing Agents history</h1>
+						<h1 id="printing-history">IV. Managing Agents history</h1>
 					</header>
 
 					<span class="image main"><img src="../images/pic11.jpg" alt="Routing" /></span>
@@ -60,7 +60,8 @@
 						(ie: Ollama) and the LLM responds to the last prompt in the chain but bases its answer on the
 						context it gets from the previous messages (and the initial system prompt if present). </p>
 					<p>This is what an history looks like:</p>
-					<span class="image main"><img src="https://github.com/user-attachments/assets/631b634a-8699-4fff-9ac4-06b403c06ae1"
+					<span class="image main"><img
+							src="https://github.com/user-attachments/assets/631b634a-8699-4fff-9ac4-06b403c06ae1"
 							alt="history1A" /></span>
 					<p>There are 3 types of prompts: </p>
 					<ul>
@@ -89,14 +90,15 @@
 						response do not get saved to the history ([see here]() @todo url). You'll see there are other
 						ways to preserve the history from useless noise. <br />
 						But first, we'll look at viewing one's Agent history. Fortunately, Yacana got you covered. </p>
-					<h2 id="printing-history">Printing History</h2>
+					<h2>Printing History</h2>
 					<p>The Agent class comes with a <code>.history</code> property of type <code>History</code> (@todo
 						<a href>see here</a>. It exposes methods so you can manipulate and view it (for debugging,
 						mostly) during runtime. For instance, it has a <code>.pretty_print()</code> method that prints
 						on the standard output the content of the history using the classic color scheme. It's great for
 						debugging but not for parsing. If you need to parse the history there is a
 						<code>.get_as_dict()</code> method which as the name implies returns the History as a Python
-						dictionary. </p>
+						dictionary.
+					</p>
 					<p>Let's see a simple example:</p>
 					<pre><code class="language-python">
 from yacana import LoggerManager, Agent, Task
@@ -162,7 +164,8 @@ Let me know if you have any other questions!
 						then you should. <br />
 						Yacana allows you to make history snapshots and rollback to any of them. This is particularly
 						useful when reaching the end of a flow branch and wanting to go back onto another. </p>
-					<span class="image main"><img src="https://github.com/user-attachments/assets/824d7fa1-c1b1-4434-85e9-dfa261c2c8e3"
+					<span class="image main"><img
+							src="https://github.com/user-attachments/assets/824d7fa1-c1b1-4434-85e9-dfa261c2c8e3"
 							alt="Checkpoint1A" /></span>
 					<p>It is as simple as this: </p>
 					<pre><code class="language-python">
@@ -175,7 +178,8 @@ checkpoint_id: str = agent1.history.create_check_point()
 # Go back in time to when the checkpoint was created
 agent1.history.load_check_point(checkpoint_id)
 					</code></pre><br>
-					<p class="icon solid fa-info-circle"> Note that nothing prevents you from making a snapshot before rolling back to a previous save.
+					<p class="icon solid fa-info-circle"> Note that nothing prevents you from making a snapshot before
+						rolling back to a previous save.
 						This way you could go back… to the future. ^^ <br />
 						Are you okay Marty? </p>
 					<p>Let's take a concrete example. You have a pastry website that generates pastry recipes. <br />
@@ -193,7 +197,8 @@ agent1.history.load_check_point(checkpoint_id)
 						</li>
 					</ol>
 					<p>With a bit of color, it would look like this: </p>
-					<p style="text-align: center;"><img src="https://github.com/user-attachments/assets/3a4952aa-18f3-4b6d-93c1-85b909cf24f4"
+					<p style="text-align: center;"><img
+							src="https://github.com/user-attachments/assets/3a4952aa-18f3-4b6d-93c1-85b909cf24f4"
 							alt="pastry1B" /></p>
 					<pre><code class="language-python">
 from yacana import LoggerManager, Agent, Task
@@ -285,20 +290,25 @@ yes
 
 ############## END ##################
 					</code></pre><br>
-					<p>As you can see in the above output, we went for <i>"the creamy one"</i> but when shown the calories,
-						refused to continue… After that, we chose the <i>"Golden Galettes"</i> which was satisfying. Then the
+					<p>As you can see in the above output, we went for <i>"the creamy one"</i> but when shown the
+						calories,
+						refused to continue… After that, we chose the <i>"Golden Galettes"</i> which was satisfying.
+						Then the
 						program ended with an output of the agent's history. <br />
-						We can see in the agent's output that it only remembered us choosing the <i>"Golden Galettes"</i> but not
-						the <i>"Creamy Confections"</i>. This is because we loaded the last checkpoint which rolled us back to
+						We can see in the agent's output that it only remembered us choosing the <i>"Golden
+							Galettes"</i> but not
+						the <i>"Creamy Confections"</i>. This is because we loaded the last checkpoint which rolled us
+						back to
 						making our choice again.</p>
-					<p class="icon solid fa-info-circle"> Note that the Task replacing the variables might not work very well with dumb LLMs. It could
+					<p class="icon solid fa-info-circle"> Note that the Task replacing the variables might not work very
+						well with dumb LLMs. It could
 						be reworked by splitting it into two. One that would extract the name of the chosen pastry from
 						the user's input and a second one that would generate the associated calories. Finally, print
 						the sentence with the variables pre-generated. Using local models is all about knowing the
 						maximum performance of your LLM and adapting the prompts to match that performance. The dumber,
 						the more guidance it needs! </p>
 
-						<hr class="major" />
+					<hr class="major" />
 
 					<h2 id="Zero-prompt-shot-vs-multi-prompt-shot">Zero-prompt shot vs multi-prompt shot</h2>
 					<p>When an LLM struggles to solve a complex task and achieve a good success rate it may be time to
@@ -348,7 +358,8 @@ What's 2+2 ?
 The answer is 4
 					</code></pre><br>
 					<p>The Agent's History successfully contains the two messages we manually added. </p>
-					<p class="icon solid fa-info-circle"> The <code>.add()</code> method can only <strong>append</strong> messages to the end of the
+					<p class="icon solid fa-info-circle"> The <code>.add()</code> method can only
+						<strong>append</strong> messages to the end of the
 						History. </p>
 					<p>⚠️ Try to keep the alternation of USER and ASSISTANT as this is how "instruct" LLMs have been
 						trained. </p>
@@ -453,7 +464,7 @@ INFO: [AI_RESPONSE]: {"name": "Marie", "action": "Walking with her dog."}
 						complex scenarios we can assure you that letting the LLM reflect on the guideline beforehand,
 						can be very beneficial to solving the task. </p>
 
-						<hr class="major" />
+					<hr class="major" />
 
 					<h2 id="saving-agent-state">Saving Agent state</h2>
 					<p>Maybe your program needs to start, stop, and resume where it stopped. For this use case, Yacana
@@ -501,7 +512,8 @@ agent2: Agent = Agent.get_agent_from_state("./agent1_save.json")
 
 Task("Multiply by 2 the previous result", agent2).solve()
 					</code></pre><br>
-					<p class="icon solid fa-info-circle"> The <code>.get_agent_from_state(...)</code> works like a factory pattern, returning a new
+					<p class="icon solid fa-info-circle"> The <code>.get_agent_from_state(...)</code> works like a
+						factory pattern, returning a new
 						instance of an Agent.</p>
 					<p>▶️ Output:</p>
 					<pre><code class="text-output">
@@ -535,32 +547,86 @@ INFO: [AI_RESPONSE]: If we multiply 4 by 2, we get...
 						<h2>Menu</h2>
 					</header>
 					<ul>
-						<li><a href="index.html">Homepage</a></li>
-						<li><a href="generic.html">Generic</a></li>
-						<li><a href="elements.html">Elements</a></li>
+						<li><a href="../index.html">Homepage</a></li>
 						<li>
-							<span class="opener">Submenu</span>
+							<span class="opener">I. Installation</span>
 							<ul>
-								<li><a href="#">Lorem Dolor</a></li>
-								<li><a href="#">Ipsum Adipiscing</a></li>
-								<li><a href="#">Tempus Magna</a></li>
-								<li><a href="#">Feugiat Veroeros</a></li>
+								<li><a href="installation.html#installing-ollama">Installing Ollama</a></li>
+								<li><a href="installation.html#choosing-an-llm-model">Choosing an LLM model</a>
+								</li>
+								<li><a href="installation.html#running-the-model">Running the model</a></li>
+								<li><a href="installation.html#installing-yacana">Installing Yacana</a></li>
+								<li><a href="installation.html#imports">Imports</a></li>
 							</ul>
 						</li>
-						<li><a href="#">Etiam Dolore</a></li>
-						<li><a href="#">Adipiscing</a></li>
 						<li>
-							<span class="opener">Another Submenu</span>
+							<span class="opener">II. Agents & Tasks</span>
 							<ul>
-								<li><a href="#">Lorem Dolor</a></li>
-								<li><a href="#">Ipsum Adipiscing</a></li>
-								<li><a href="#">Tempus Magna</a></li>
-								<li><a href="#">Feugiat Veroeros</a></li>
+								<li><a href="agents_and_tasks.html#creating-an-agent">Creating an Agent</a></li>
+								<li><a href="agents_and_tasks.html#basic-roleplay">Basic roleplay</a></li>
+								<li><a href="agents_and_tasks.html#creating-tasks">Creating Tasks</a></li>
+								<li><a href="agents_and_tasks.html#getting-the-result-of-a-task">Getting the
+										result of a Task</a></li>
+								<li><a href="agents_and_tasks.html#chaining-tasks">Chaining Tasks</a></li>
+								<li><a href="agents_and_tasks.html#logging-levels">Logging levels</a></li>
+								<li><a href="agents_and_tasks.html#configuring-llms-settings">Configuring LLM's
+										settings</a></li>
 							</ul>
 						</li>
-						<li><a href="#">Maximus Erat</a></li>
-						<li><a href="#">Sapien Mauris</a></li>
-						<li><a href="#">Amet Lacinia</a></li>
+						<li>
+							<span class="opener">III. Routing</span>
+							<ul>
+								<li><a href="routing.html#concepts-of-routing">Concepts of routing</a></li>
+								<li><a href="routing.html#self-reflection-routing">Self-reflection routing</a>
+								</li>
+								<li><a href="routing.html#cleaning-history">Cleaning history</a></li>
+								<li><a href="routing.html#routing-demonstration">Routing demonstration</a></li>
+							</ul>
+						</li>
+						<li>
+							<span class="opener">IV. Managing Agents history</span>
+							<ul>
+								<li><a href="managing_agent_history.html#printing-history">Printing history</a>
+								</li>
+								<li><a href="managing_agent_history.html#creating-and-loading-checkpoints">Creating
+										and loading checkpoints</a></li>
+								<li><a href="managing_agent_history.html#Zero-prompt-shot-vs-multi-prompt-shot">Zero-prompt
+										shot vs multi-prompt shot</a></li>
+								<li><a href="managing_agent_history.html#saving-agent-state">Saving Agent
+										state</a></li>
+							</ul>
+						</li>
+						<li>
+							<span class="opener">V. Tool calling</span>
+							<ul>
+								<li><a href="tool_calling.html#concept-of-calling-tools">Concepts of calling
+										tools</a></li>
+								<li><a href="tool_calling.html#writing-good-tool-prompts">Writing good tool
+										prompts</a></li>
+								<li><a href="tool_calling.html#calling-a-tool">Calling a tool</a></li>
+								<li><a href="tool_calling.html#improving-tool-calling-results">Improving
+										tool-calling results</a></li>
+								<li><a href="tool_calling.html#optional-tools">Optional tools</a></li>
+								<li><a href="tool_calling.html#assigning-multiple-tools">Assigning multiple
+										Tools</a></li>
+							</ul>
+						</li>
+						<li>
+							<span class="opener">VI. Dual-agents chat</span>
+							<ul>
+								<li><a href="dual_agents_chat.html#stopping-chat-using-maximum-iterations">Stopping
+										chat using 'maximum iterations'</a></li>
+								<li><a href="dual_agents_chat.html#letting-agents-end-the-chat">Letting Agents end
+										the chat</a></li>
+								<li><a href="dual_agents_chat.html#controlling-the-shift-message">Controlling the
+										Shift Message</a></li>
+								<li><a href="dual_agents_chat.html#using-tools-in-chat">Using tools in chat</a>
+								</li>
+							</ul>
+						</li>
+						<li><a href="multi_agents_chat.html#multi-agents-chat">VII. Multi-agents chat</a></li>
+
+
 					</ul>
 				</nav>
 

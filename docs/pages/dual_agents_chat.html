@@ -50,7 +50,7 @@
 				<!-- Content -->
 				<section>
 					<header class="main">
-						<h1>VI. Dual-agents chat</h1>
+						<h1 id="stopping-chat-using-maximum-iterations">VI. Dual-agents chat</h1>
 					</header>
 
 					<span class="image main"><img src="../images/pic11.jpg" alt="Routing" /></span>
@@ -68,13 +68,14 @@
 						<li>Use a maximum number of iterations and stop the chat when it is reached.</li>
 						<li>Let one or more LLMs decide when the conversation should end. </li>
 					</ul>
-					<p>Yacana provides both! It utilizes the Task system that you already know and allows some Tasks to be worked on by the
+					<p>Yacana provides both! It utilizes the Task system that you already know and allows some Tasks to
+						be worked on by the
 						Agents. </p>
 
 
 					<hr class="major" />
 
-					<h2 id="stopping-chat-using-maximum-iterations">Stopping chat using 'maximum iterations'</h2>
+					<h2>Stopping chat using 'maximum iterations'</h2>
 					<p>We'll be using a new class called [GroupSolve]() @todo url. It takes a list of Tasks (at least
 						two) and an [EndChat]() object. </p>
 					<ol>
@@ -196,8 +197,9 @@ These are just a few ideas to get you started! What do you think? Would you like
 						two. If more than two was ever needed then the context of the first conversation would be given
 						to a new dual chat with one of the agents remaining from the previous conversation (hence
 						keeping the state from one conversation to the other). Then it goes on and on. <br />
-						<span class="image main"><img src="https://github.com/user-attachments/assets/c8c4d958-2ffc-4eca-8d4a-aef576627572"
-							alt="image" /></span>
+						<span class="image main"><img
+								src="https://github.com/user-attachments/assets/c8c4d958-2ffc-4eca-8d4a-aef576627572"
+								alt="image" /></span>
 						<em>Source: Microsoft Autogen</em> <br />
 						I honestly think that it's smart but is a stinking mess that lost many people. Worst, it's the
 						simpler pattern they provide…
@@ -208,8 +210,9 @@ These are just a few ideas to get you started! What do you think? Would you like
 						of Agent2 is given back as a prompt to Agent1 and round it goes! This is the reason you are
 						seeing each log twice. <strong>It's the answer of one agent being used as a prompt for the other
 							one.</strong> </p>
-					<p><span class="image main"><img src="https://github.com/user-attachments/assets/6720bef9-c2b0-401a-9f4f-455e42aaa050"
-							alt="doublelogs" /></span></p>
+					<p><span class="image main"><img
+								src="https://github.com/user-attachments/assets/6720bef9-c2b0-401a-9f4f-455e42aaa050"
+								alt="doublelogs" /></span></p>
 
 					<hr class="major" />
 
@@ -258,8 +261,8 @@ These are just a few ideas to get you started! What do you think? Would you like
 					<p>What's the <strong>Needs task annotation</strong> column in the table? </p>
 					<blockquote>
 						To let an agent know that it's in charge of ending the chat, its Task() must be given an
-							optional parameter <code>llm_stops_by_itself=True</code>. All Task() constructors setting
-							this, make their assigned Agent in charge of stopping the conversation.
+						optional parameter <code>llm_stops_by_itself=True</code>. All Task() constructors setting
+						this, make their assigned Agent in charge of stopping the conversation.
 					</blockquote>
 					<p>⚠️ To prevent infinite loops ALL chat modes still have a maximum iteration count (defaults to 5)
 						which can be changed in the GroupSolve() class with the optional parameter
@@ -272,10 +275,10 @@ These are just a few ideas to get you started! What do you think? Would you like
 						Yacana uses the following wording: </p>
 					<blockquote>
 						"In your opinion, what objectives from your initial task have you 'NOT completed?" <br />
-							Therefore you should use the same prompt style in your Task prompt. For instance <em>"The
-								task is fulfilled when the objective <insert here> is completed."</em>.<br />
-							You should try different versions of this "objective completed" prompt to find one that
-							matches your task and LLM best.
+						Therefore you should use the same prompt style in your Task prompt. For instance <em>"The
+							task is fulfilled when the objective <insert here> is completed."</em>.<br />
+						You should try different versions of this "objective completed" prompt to find one that
+						matches your task and LLM best.
 					</blockquote>
 					<h4>Testing all available chat ending modes</h4>
 					<p>We'll test the different modes with simple games between two Agents. </p>
@@ -402,8 +405,9 @@ INFO: [AI_RESPONSE][From: Ai assistant 1]: no
 						<code>END_CHAT_AFTER_FIRST_COMPLETION</code> setting.
 					</p>
 					<p>In summary, the conversation looks like this: </p>
-					<p><span class="image main"><img src="https://github.com/user-attachments/assets/5ee88012-659d-4af1-87e3-0ea7dd1b31c2"
-							alt="GS4B" /></span></p>
+					<p><span class="image main"><img
+								src="https://github.com/user-attachments/assets/5ee88012-659d-4af1-87e3-0ea7dd1b31c2"
+								alt="GS4B" /></span></p>
 					<ul>
 						<li><strong>Message 1 & 2</strong>: are the result of the solo Task that precedes the GroupSolve
 						</li>
@@ -707,8 +711,9 @@ print("------Agent2----------")
 task2.agent.history.pretty_print()
 					</code></pre><br>
 					<p>The execution flow looks like this: </p>
-					<p><span class="image main"><img src="https://github.com/user-attachments/assets/e1e8e1eb-5c31-40ac-b044-e505deaa5219"
-							alt="gs2B" /></span></p>
+					<p><span class="image main"><img
+								src="https://github.com/user-attachments/assets/e1e8e1eb-5c31-40ac-b044-e505deaa5219"
+								alt="gs2B" /></span></p>
 					<p>Let's decompose the graph piece by piece. <br />
 						There are two columns: one for Agent1's point of view and one for Agent's 2 point of view. Like
 						in any conversation, each speaker has its own point of view. This is why you shouldn't rely on
@@ -735,7 +740,8 @@ task2.agent.history.pretty_print()
 					<ul>
 						<li>The first control is where the shift message should be placed. Either in Agent1 or in Agent2
 							(default) point of view.</li>
-						<li>To control who gets the shift, use the <code>shift_message_owner=&#60;task instance&#62;</code>
+						<li>To control who gets the shift, use the
+							<code>shift_message_owner=&#60;task instance&#62;</code>
 							optionnal parameter from the GroupSolve() class</li>
 						<li>For instance:
 							<code>GroupSolve([task1, task2], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION), shift_message_owner=task2).solve()</code>
@@ -926,8 +932,9 @@ Please confirm before I proceed with the next set of additions!
 GroupSolve([task1, task2], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION), shift_message_content="Let's go").solve()
 					</code></pre><br>
 					<p>The diagram now looks like this: </p>
-					<p><span class="image main"><img src="https://github.com/user-attachments/assets/856ee958-c2a1-487e-8789-bdecc8115156"
-							alt="GS8" /></span></p>
+					<p><span class="image main"><img
+								src="https://github.com/user-attachments/assets/856ee958-c2a1-487e-8789-bdecc8115156"
+								alt="GS8" /></span></p>
 					<p>Using general, meaningless prompts as shift messages is good as it won't disturb the LLM in its
 						task. </p>
 					<p>⚠️ We haven't actually reran the program 😁. Therefore, message content after the shift message
@@ -938,23 +945,26 @@ GroupSolve([task1, task2], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION),
 GroupSolve([task1, task2], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION), shift_message_owner=task1).solve()
 					</code></pre><br>
 					<p>The diagram now looks like this: <br />
-						<span class="image main"><img src="https://github.com/user-attachments/assets/4afa64f1-ab1e-4dd9-8530-f36355e05089"
-							alt="GS9" /></span>
+						<span class="image main"><img
+								src="https://github.com/user-attachments/assets/4afa64f1-ab1e-4dd9-8530-f36355e05089"
+								alt="GS9" /></span>
 					</p>
 					<p>Note how User and Assistant are now reversed. </p>
 					<p>⚠️ We haven't actually reran the program 😁. Therefore, message content after the shift message
 						may be different now that it's assigned to Agent1.</p>
 					<h4>Reconciling initial messages</h4>
 					<p>Let's take another look at the diagram of one past conversation: <br />
-						<span class="image main"><img src="https://github.com/user-attachments/assets/5ffed0d2-5d26-4fe8-83c2-c0700da98014"
-							alt="gs2B" /></span>
+						<span class="image main"><img
+								src="https://github.com/user-attachments/assets/5ffed0d2-5d26-4fe8-83c2-c0700da98014"
+								alt="gs2B" /></span>
 					</p>
 					<p>Messages 1 & 2 are only available to their respective agent. Meaning that history reconciliation
 						comes only at message 4 (after the damn "shift message"). When history is <em>reconciled</em>
 						both agents share the same history. </p>
 					<p>It could be represented like this: <br />
-						<span class="image main"><img src="https://github.com/user-attachments/assets/649fe22c-3a2a-48d2-b18a-43d62819793b"
-							alt="GS5A" /></span>
+						<span class="image main"><img
+								src="https://github.com/user-attachments/assets/649fe22c-3a2a-48d2-b18a-43d62819793b"
+								alt="GS5A" /></span>
 					</p>
 					<p>But what if you wanted messages 1 & 2 to be available in both histories? Well, there is an option
 						for that too… I know… Sooo many parameters! <br />
@@ -965,8 +975,9 @@ GroupSolve([task1, task2], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION),
 GroupSolve([task1, task2], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION), reconcile_first_message=True).solve()
 					</code></pre><br>
 					<p>It does the following: <br />
-						<span class="image main"><img src="https://github.com/user-attachments/assets/51e1143c-3aa1-40e0-acf6-5ac014d83282"
-							alt="GS6" /></span>
+						<span class="image main"><img
+								src="https://github.com/user-attachments/assets/51e1143c-3aa1-40e0-acf6-5ac014d83282"
+								alt="GS6" /></span>
 					</p>
 					<ul>
 						<li>The first Task is solved and the output ends up in Agent1's History. It's messages 1 & 2 ;
@@ -983,8 +994,9 @@ GroupSolve([task1, task2], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION),
 						<li>Messages from 10 to 12 are already merged as being part of the GroupSolve loop ;</li>
 					</ul>
 					<p>We could represent this merged workflow in the following unified form: </p>
-					<p><span class="image main"><img src="https://github.com/user-attachments/assets/82513dee-9763-4328-ad8b-b2d08ddba05d"
-							alt="GS7" /></span></p>
+					<p><span class="image main"><img
+								src="https://github.com/user-attachments/assets/82513dee-9763-4328-ad8b-b2d08ddba05d"
+								alt="GS7" /></span></p>
 					<p>This diagram and the previous one are the same just represented differently. There are two
 						glaring elements in this diagram: </p>
 					<ol>
@@ -1055,7 +1067,7 @@ So, in hindsight, I have not fully completed the objective of considering altern
 						won't have any effects when used
 						with the "end chat" mode <code>MAX_ITERATIONS_ONLY</code> that simply counts rounds. </p>
 
-						<hr class="major" />
+					<hr class="major" />
 
 					<h2 id="using-tools-in-chat">Using tools in chat</h2>
 					<h4>Tool use in GroupSolve</h4>
@@ -1328,7 +1340,8 @@ game_master.history.pretty_print()
 							and not the LLM.</p>
 					</blockquote>
 					<p class="icon solid fa-info-circle"> All Tools options are available so you could set
-						<code>optional=True</code> if you wish. </p>
+						<code>optional=True</code> if you wish.
+					</p>
 					<p>▶️ Output: </p>
 					<pre><code class="text-output">
 ------ Player --------
@@ -1525,32 +1538,86 @@ The secret number is equal to the guessed number. You won ! // (tool)
 						<h2>Menu</h2>
 					</header>
 					<ul>
-						<li><a href="index.html">Homepage</a></li>
-						<li><a href="generic.html">Generic</a></li>
-						<li><a href="elements.html">Elements</a></li>
+						<li><a href="../index.html">Homepage</a></li>
 						<li>
-							<span class="opener">Submenu</span>
+							<span class="opener">I. Installation</span>
 							<ul>
-								<li><a href="#">Lorem Dolor</a></li>
-								<li><a href="#">Ipsum Adipiscing</a></li>
-								<li><a href="#">Tempus Magna</a></li>
-								<li><a href="#">Feugiat Veroeros</a></li>
+								<li><a href="installation.html#installing-ollama">Installing Ollama</a></li>
+								<li><a href="installation.html#choosing-an-llm-model">Choosing an LLM model</a>
+								</li>
+								<li><a href="installation.html#running-the-model">Running the model</a></li>
+								<li><a href="installation.html#installing-yacana">Installing Yacana</a></li>
+								<li><a href="installation.html#imports">Imports</a></li>
 							</ul>
 						</li>
-						<li><a href="#">Etiam Dolore</a></li>
-						<li><a href="#">Adipiscing</a></li>
 						<li>
-							<span class="opener">Another Submenu</span>
+							<span class="opener">II. Agents & Tasks</span>
 							<ul>
-								<li><a href="#">Lorem Dolor</a></li>
-								<li><a href="#">Ipsum Adipiscing</a></li>
-								<li><a href="#">Tempus Magna</a></li>
-								<li><a href="#">Feugiat Veroeros</a></li>
+								<li><a href="agents_and_tasks.html#creating-an-agent">Creating an Agent</a></li>
+								<li><a href="agents_and_tasks.html#basic-roleplay">Basic roleplay</a></li>
+								<li><a href="agents_and_tasks.html#creating-tasks">Creating Tasks</a></li>
+								<li><a href="agents_and_tasks.html#getting-the-result-of-a-task">Getting the
+										result of a Task</a></li>
+								<li><a href="agents_and_tasks.html#chaining-tasks">Chaining Tasks</a></li>
+								<li><a href="agents_and_tasks.html#logging-levels">Logging levels</a></li>
+								<li><a href="agents_and_tasks.html#configuring-llms-settings">Configuring LLM's
+										settings</a></li>
 							</ul>
 						</li>
-						<li><a href="#">Maximus Erat</a></li>
-						<li><a href="#">Sapien Mauris</a></li>
-						<li><a href="#">Amet Lacinia</a></li>
+						<li>
+							<span class="opener">III. Routing</span>
+							<ul>
+								<li><a href="routing.html#concepts-of-routing">Concepts of routing</a></li>
+								<li><a href="routing.html#self-reflection-routing">Self-reflection routing</a>
+								</li>
+								<li><a href="routing.html#cleaning-history">Cleaning history</a></li>
+								<li><a href="routing.html#routing-demonstration">Routing demonstration</a></li>
+							</ul>
+						</li>
+						<li>
+							<span class="opener">IV. Managing Agents history</span>
+							<ul>
+								<li><a href="managing_agent_history.html#printing-history">Printing history</a>
+								</li>
+								<li><a href="managing_agent_history.html#creating-and-loading-checkpoints">Creating
+										and loading checkpoints</a></li>
+								<li><a href="managing_agent_history.html#Zero-prompt-shot-vs-multi-prompt-shot">Zero-prompt
+										shot vs multi-prompt shot</a></li>
+								<li><a href="managing_agent_history.html#saving-agent-state">Saving Agent
+										state</a></li>
+							</ul>
+						</li>
+						<li>
+							<span class="opener">V. Tool calling</span>
+							<ul>
+								<li><a href="tool_calling.html#concept-of-calling-tools">Concepts of calling
+										tools</a></li>
+								<li><a href="tool_calling.html#writing-good-tool-prompts">Writing good tool
+										prompts</a></li>
+								<li><a href="tool_calling.html#calling-a-tool">Calling a tool</a></li>
+								<li><a href="tool_calling.html#improving-tool-calling-results">Improving
+										tool-calling results</a></li>
+								<li><a href="tool_calling.html#optional-tools">Optional tools</a></li>
+								<li><a href="tool_calling.html#assigning-multiple-tools">Assigning multiple
+										Tools</a></li>
+							</ul>
+						</li>
+						<li>
+							<span class="opener">VI. Dual-agents chat</span>
+							<ul>
+								<li><a href="dual_agents_chat.html#stopping-chat-using-maximum-iterations">Stopping
+										chat using 'maximum iterations'</a></li>
+								<li><a href="dual_agents_chat.html#letting-agents-end-the-chat">Letting Agents end
+										the chat</a></li>
+								<li><a href="dual_agents_chat.html#controlling-the-shift-message">Controlling the
+										Shift Message</a></li>
+								<li><a href="dual_agents_chat.html#using-tools-in-chat">Using tools in chat</a>
+								</li>
+							</ul>
+						</li>
+						<li><a href="multi_agents_chat.html#multi-agents-chat">VII. Multi-agents chat</a></li>
+
+
 					</ul>
 				</nav>
 
