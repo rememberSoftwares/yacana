@@ -358,7 +358,7 @@ As you can see above the two agents didn't output the same number of tokens.
 
 Other frameworks tend to make abstractions for everything. Even things that don't need any. That's why I'll show you how to do routing with only what we have seen earlier. Yacana doesn't provide routing abstraction because there is no need to do so.  
 
-But what is routing? Well, having LLMs solve a Task and then chaining many others in a sequence is good but to be efficient you have to create conditional workflows. In particular when using local LLMs that don't have the power to solve all Tasks with only one prompt. You must create an AI workflow in advance that will go forward step by step and converge to some expected result. AI allows you to deal with some level of unknown but you can't expect having a master brain (like in crewAI) that distributes tasks to agents and achieves an expected result. It's IMPOSSIBLE with local LLMs. They are too dumb! Therefore they need you to help them along their path. This is why LangGraph works well with local LLMs and Yacana does too. You create a workflow and when conditions are met you switch from one branch to another that treats more specific cases, etc.  
+But what is routing? Well, having LLMs solve a Task and then chaining many others in a sequence is good but to be efficient you have to create conditional workflows. In particular when using local LLMs that don't have the power to solve all Tasks with only one prompt. You must create an AI workflow in advance that will go forward step by step and converge to some expected result. AI allows you to deal with some level of unknown but you can't expect having a master brain (like in crewAI) that distributes tasks to agents and achieves an expected result. It's IMPOSSIBLE with local LLMs. They are too dumb! Therefore they need you to help them along their path. This is why LangGraph works well with local LLMs and Yacana does too. You should create workflows and when conditions are met switch from one branch to another, treating more specific cases.  
 
 ---
 
@@ -441,7 +441,7 @@ See how the LLM had an "intense" reflection on the subject. This is very good. Y
 
 ▶️The prompt engineering techniques used here are:
 1. **Make it think**: Using the expression "Explain your reasoning." makes it generate a logical answer. Note that if the model is bad at reasoning or makes a mistake during this step it may result in extremely bad situations. But fear not, failsafes can be built to limit bad reasoning. For instance, having another LLM check the logic and interact with the original Agent (see GroupSolve later on) to show it its mistake. You could also give tools to the Agent that will help it achieve the truth and not rely solely on his reasoning abilities (see Tools later on).  
-2. **Making it two shots**: Now that we have 2 Tasks instead of one, the second one only focuses on one task: "yes" or "no" interpretation of the result of Task1. Cutting objectives in multiple sub-tasks gives better performance. This why using an agentic framework is great but it's also why it's consuming a lot of tokens and having "free to run" local LLMs is great!  
+2. **Making it two shots**: Now that we have 2 Tasks instead of one, the second one only focuses on one subtask: "yes" or "no" interpretation of the result of Task1. Cutting objectives in multiple sub-tasks gives better performance. This why using an agentic framework is great but it's also why it's consuming a lot of tokens and having "free to run" local LLMs is great!  
 
 Full code:
 ```python
@@ -743,7 +743,7 @@ This is what an history looks like:
 ![history1A](https://github.com/user-attachments/assets/631b634a-8699-4fff-9ac4-06b403c06ae1)
 
 There are 3 types of prompts.  
-* The optional system prompt that, if present, always goes first.
+* The optional "System" prompt that, if present, always goes first.
 
 Then it's only an alternation between these two:  
 * The "User" prompts coming from the Task you set.  
@@ -779,7 +779,7 @@ print("############## END ##################")
 
 print("")
 
-print("############## Agent 1 history pretty print ##################")
+print("############## Agent 1 history dictionnary ##################")
 print(str(agent1.history.get_as_dict()))
 print("############## END ##################")
 ```
@@ -1063,7 +1063,7 @@ INFO: [AI_RESPONSE]: {"names": ["Marie", "Ryan"], "actions": {"Marie": "is walki
 ```
 
 Way better. No more noise.  
-However, we would prefer having an array of `name` and `action`, even for the weather (the name would be *sky* and the action *raining*).
+However, we would prefer having an array of `name` and `action` even for the weather (the name would be *sky* and the action *raining*).
 
 To achieve this let's give the LLM an example of what we expect by making it believe it already outputted it correctly once:  
 ```python
@@ -1194,10 +1194,10 @@ A side note for those interested...
 If you don't understand how a text-to-text neural network can call a Python function let me tell you: It doesn't.  
 
 When we refer to *tool calling* we also refer to *function calling* which is very poorly named. Function calling is the ability of an inference server to make the LLM output the text in a particular format. As of today, only JSON is supported but there is no doubt that more formats will be available soon.  
-However, now that we can control how the LLM answers, we can parse a JSON of which we know the structure. Therefore we can ask the LLM for a JSON that matches the prototype of a Python function. For instance the name and some parameter values.  
+That said, now that we can control how the LLM answers, we can parse a JSON of which we know the structure. Therefore we can ask the LLM for a JSON that matches the prototype of a Python function. For instance the function name and some parameter values.  
 
 Some LLMs have been trained to output JSON in a particular way that matches a particular JSON structure. This particular JSON structure has become a convention and was pushed by big AI players like OpenAI.  
-Unfortunately, the size and complexity of this JSON doesn't work very well with our dumb 8B LLMs. This a problem that ChatGPT, Claude, Grok and other smart LLMs don't have.  
+Unfortunately, the size and complexity of this JSON doesn't work very well with our dumb 8B LLMs. This is a problem that ChatGPT, Claude, Grok and other smart LLMs don't have.  
 To overcome this particular issue, Yacana comes with its own JSON structure to call Python functions! It's way lighter than the OpenAI standard and Yacana uses [percussive maintenance]() @todo url to force the LLM to output the JSON in a way that the tool expects.  
 
 ### Writing good tool prompts
