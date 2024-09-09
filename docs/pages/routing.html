@@ -65,9 +65,9 @@
 						AI allows you to deal with some level of unknown but you can't expect having a master brain
 						(like in crewAI) that distributes tasks to agents and achieves an expected result. It's
 						IMPOSSIBLE with local LLMs. They are too dumb! Therefore they need you to help them along their
-						path. This is why LangGraph works well with local LLMs and Yacana does too. You create a
-						workflow and when conditions are met you switch from one branch to another that treats more
-						specific cases, etc. </p>
+						path. This is why LangGraph works well with local LLMs and Yacana does too. You should create
+						workflows and when conditions are met switch from one branch to another, treating more
+						specific cases. </p>
 					<hr />
 					<p>The most common routing mechanic is "yes" / "no". Depending on the result, your program can do
 						different things next. Let's see an example: </p>
@@ -108,11 +108,11 @@ Question is about plants
 								idea, I say yes"</i>.
 							Substring match will match <i>"yes"</i> anywhere in the LLM answer.<br>
 							But what if you looked for <i>"no"</i>
-							first and the LLM generated <i>"Not sure but I would say yes"</i>. Because we search for
-							substrings
+							first and the LLM generated <i>"Not sure but I would say yes"</i>?.<br>
+							Because we search for substrings
 							the condition would match the <i>"no"</i> part of the word <i>"Not"</i> even though the LLM
-							said <i>yes</i>. We
-							could use regexe to fix this but it's easier to just start the condition by looking for
+							said <i>yes</i>.<br>
+							We could use regexe to fix this but it's easier to just start the condition by looking for
 							<i>"yes"</i> as there are no English words that contain <i>"yes"</i> in a substring (at
 							least no common
 							ones ^^).
@@ -182,7 +182,7 @@ Question is about plants
 							give tools to the Agent that will help it achieve the truth and not rely solely on his
 							reasoning abilities (see Tools later on). </li>
 						<li><strong>Making it two shots</strong>: Now that we have 2 Tasks instead of one, the second
-							one only focuses on one task: "yes" or "no" interpretation of the result of Task1. Cutting
+							one only focuses on one subtask: <i>"yes"</i> or <i>"no"</i> interpretation of the result of Task1. Cutting
 							objectives in multiple sub-tasks gives better performance. This why using an agentic
 							framework is great but it's also why it's consuming a lot of tokens and having "free to run"
 							local LLMs is great! </li>

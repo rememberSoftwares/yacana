@@ -65,7 +65,7 @@
 							alt="history1A" /></span>
 					<p>There are 3 types of prompts: </p>
 					<ul>
-						<li>1: The optional system prompt that, if present, always goes first.</li>
+						<li>1: The optional "System" prompt that, if present, always goes first.</li>
 					</ul>
 					<span><i>Then it's only an alternation between these two:</i></span>
 					<ul>
@@ -117,7 +117,7 @@ print("############## END ##################")
 
 print("")
 
-print("############## Agent 1 history pretty print ##################")
+print("############## Agent 1 history dictionnary ##################")
 print(str(agent1.history.get_as_dict()))
 print("############## END ##################")
 					</code></pre><br>
@@ -411,7 +411,7 @@ INFO: [PROMPT]: Print the following sentence as JSON extracting the names and re
 INFO: [AI_RESPONSE]: {"names": ["Marie", "Ryan"], "actions": {"Marie": "is walking", "Ryan": "is watching"}, "description": [{"location": "window", "activity": "watching"}, {"location": "outdoors", "activity": "pouring raindrops"}]}
 					</code></pre><br>
 					<p>Way better. No more noise. <br />
-						However, we would prefer having an array of <code>name</code> and <code>action</code>, even for
+						However, we would prefer having an array of <code>name</code> and <code>action</code> even for
 						the weather (the name would be <em>sky</em> and the action <em>raining</em>).</p>
 					<p>To achieve this let's give the LLM an example of what we expect by making it believe it already
 						outputted it correctly once: </p>

@@ -83,14 +83,14 @@
 						poorly named. Function calling is the ability of an inference server to make the LLM output the
 						text in a particular format. As of today, only JSON is supported but there is no doubt that more
 						formats will be available soon.<br>
-						However, now that we can control how the LLM answers, we can parse a JSON of which we know the
+						That said, now that we can control how the LLM answers, we can parse a JSON of which we know the
 						structure. Therefore we can ask the LLM for a JSON that matches the prototype of a Python
-						function. For instance the name and some parameter values.</p>
+						function. For instance the function name and some parameter values.</p>
 					<p>Some LLMs have been trained to output JSON in a particular way that matches a particular JSON
 						structure. This particular JSON structure has become a convention and was pushed by big AI
 						players like OpenAI.<br>
 						Unfortunately, the size and complexity of this JSON doesn't work very well with our dumb 8B
-						LLMs. This a problem that ChatGPT, Claude, Grok and other smart LLMs don't have.<br>
+						LLMs. This is a problem that ChatGPT, Claude, Grok and other smart LLMs don't have.<br>
 						To overcome this particular issue, Yacana comes with its own JSON structure to call Python
 						functions! It's way lighter than the OpenAI standard and Yacana uses <a href>percussive
 							maintenance</a> @todo url to force the LLM to output the JSON in a way that the tool
