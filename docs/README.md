@@ -172,7 +172,7 @@ What's happening above?
 * Second, we instantiated a Task ;  
 * Third, we asked that the Task be solved ;  
 
-ℹ️ For easing the learning curve the default logging level is INFO. It will show what is going on in Yacana. Note that not ALL prompts are shown.  
+ℹ️ For easing the learning curve the default logging level is INFO. It will show what is going on in Yacana. Note that NOT ALL prompts are shown.  
 
 The output should look like this:  
 ```
@@ -195,9 +195,9 @@ The Task class takes 2 mandatory parameters:
 
 #### In what way is this disruptive compared to other frameworks?
 
-In the above code snippet, we assigned the agent to the Task. So it's the Task that leads the direction that the AI takes. In most other frameworks it's the opposite. You assign work to an existing agent. This reversed way allows to have fined grained control on each resolution step as the LLM only follows bread crumb (the tasks). The pattern will become even more obvious as we get to the Tool section of this tutorial. As you'll see the Tools are also assigned at the Task level and not to the Agent directly.  
+In the above code snippet, we assigned the agent to the Task. So it's the Task that leads the direction that the AI takes. In most other frameworks it's the opposite. You assign work to an existing agent. This reversed way allows to have fine-grained control on each resolution step as the LLM only follows breadcrumbs (the tasks). The pattern will become even more obvious as we get to the Tool section of this tutorial. As you'll see the Tools are also assigned at the Task level and not to the Agent directly.  
 
-To compare with LangGraph, we indeed cannot generate a call graph as an image because we don't bind the tasks together explicitly. However, Yacana's way gives more flexibility and allows a hierarchical programming way of scheduling the tasks and keeping control of the flow. It also allows creating new Task dynamically if the need arises. You shall rely on your programming skills and good OOP to have a clean code and good Task ordering. There aren't and will never be any pre-hardcoded interactions and no flat config. This is a framework for developers.  
+Compared with LangGraph, we cannot generate a call graph as an image because we don't bind the tasks together explicitly. However, Yacana's way gives more flexibility and allows a hierarchical programming way of scheduling the tasks and keeping control of the flow. It also allows creating new Task dynamically if the need arises. You shall rely on your programming skills and good OOP to have a clean code and good Task ordering. There aren't and will never be any pre-hardcoded interactions and no flat config. This is a framework for developers.  
 
 ### Getting the result of a Task
 
@@ -232,15 +232,16 @@ from yacana import Agent, Task
 # First, let's make a basic AI agent
 agent1 = Agent("AI assistant", "llama3:8b", system_prompt="You are a helpful AI assistant")
 
-# Now we create a task and assign the agent1 to the task
-task1 = Task(f"Solve the equation 2 + 2 and output the result", agent1)
-
 # Creating the task, solving it, extracting the result and printing it all in one line
 print(f"The AI response to our task is: {Task(f'Solve the equation 2 + 2 and output the result', agent1).solve().content}")
 ```
 🤔 However, splitting the output of the LLM and the print in two lines would probably look better. Let's not one-line things too much 😅.
 
-
+For example:  
+```python
+result :str = Task(f'Solve the equation 2 + 2 and output the result', agent1).solve().content
+print(f"The AI response to our task is: {result}")
+```
 ### Chaining Tasks
 
 Chaining Tasks is nothing more than just calling a second Task with the same Agent. Agents keep track of the History of what they did (aka, all the Tasks they solved). So just call a second Task and assign the same Agent. For instance, let's multiply by 2 the result of the initial Task. Append this to our current script:
