@@ -25,7 +25,7 @@ For production-grade capabilities, Yacana offers a **guided workflow** approach 
 
 *Yacana is free and open source under MIT license.*  
 
-Be ready in minutes.  
+Be ready in minutes!  
 
 ➡️➡️➡️ Start by reading the documentation [here](https://remembersoftwares.github.io/yacana/). ⬅️⬅️⬅️  
 
