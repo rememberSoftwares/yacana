@@ -41,7 +41,7 @@
 						<h1 id="installing-ollama">I. Installation</h1>
 					</header>
 
-					<span class="image main"><img src="../images/ollama_yacana_banner.png"
+					<span class="image main"><img src="../images/installation.jpg"
 							alt="Yacana and Ollama installation" /></span>
 
 
@@ -145,7 +145,9 @@
 						<span class="image"><img style="width: 50%;" src="../images/yacana_round_small.png"
 								alt="" /></span>
 					</p>
-					<pre><code class="language-shell">pip install yacana</code></pre>
+					<pre><code class="language-python">
+pip install yacana
+					</code></pre>
 
 					<hr class="major" />
 
@@ -156,8 +158,9 @@
 						Unused imports generally appear grayed. Thus we recommend that you prepend these imports in all
 						your files and clean them later. This way the IDE will have auto-completion available and will
 						help you develop 10 times faster.</p>
-					<pre><code class="language-python"><span class="hljs-keyword">from</span> yacana <span class="hljs-keyword">import</span> Agent, Task, Tool, Message, MessageRole, GroupSolve, EndChat, EndChatMode, ModelSettings, LoggerManager, ToolError, MaxToolErrorIter
-						</code></pre>
+					<pre><code class="language-python">
+from yacana import Agent, Task, Tool, Message, MessageRole, GroupSolve, EndChat, EndChatMode, ModelSettings, LoggerManager, ToolError, MaxToolErrorIter
+					</code></pre>
 				</section>
 
 			</div>
