@@ -1,6 +1,6 @@
 # Yacana
 
-Task-driven multi-agent framework giving you the building blocks to create anything you wish with LLMs.  
+Task-driven multi-agents framework for developers to create open source LLM-powered apps with ease.  
 
 <p align="center">
   <img src="https://github.com/user-attachments/assets/c54b2e47-8a76-444d-9510-339acc1d16a8">
