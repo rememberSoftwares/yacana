@@ -7,7 +7,7 @@
 <html>
 
 <head>
-	<title>Generic - Editorial by HTML5 UP</title>
+	<title>Agents & Tasks</title>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 	<link rel="stylesheet" href="../assets/css/main.css" />
@@ -18,7 +18,6 @@
 	<link rel="stylesheet" href="../assets/css/zenburn.min.css">
 	<script src="../assets/js/codemirror.min.js"></script>
 	<script src="../assets/js/python.min.js"></script>
-	<script src="../assets/js/json-lint.min.js"></script>
 	<script src="../assets/js/foldcode.min.js"></script>
 	<script src="../assets/js/foldgutter.min.js"></script>
 	<script src="../assets/js/brace-fold.min.js"></script>
@@ -50,141 +49,21 @@
 				<!-- Content -->
 				<section>
 					<header class="main">
-						<h1 id="installing-ollama">I. Installation</h1>
+						<h1 id="multi-agents-chat">Roadmap</h1>
 					</header>
 
-					<span class="image main"><img src="../images/installation.jpg"
-							alt="Yacana and Ollama installation" /></span>
-
-
-					<h2>Installing Ollama</h2>
-					<p style="text-align: center;"><img
-							src="https://github.com/user-attachments/assets/f3c45d0e-efca-4853-8237-3e56d90e1747"
-							alt="image"></p>
-					<p>The current release of Yacana was made to work with <strong>Ollama</strong>. We will extend
-						support to all other
-						major inference servers in the next update.<br>
-						The first step is to install Ollama. It will be used to serve AI models with an HTTP API. <br>
-						If your computer is performant enough you can use it to run LLMs directly on your machine.
-						Ollama is a great inference server and the most simple to
-						install.
-					</p>
+					<span class="image main"><img src="../images/multi_agents.jpg" alt="Routing" /></span>
 					<p>
-						Click <a href="https://ollama.com/download">here</a> to get the latest release.<br>
+						The Yacana adventure is only just starting. We expect to release the following new features in the next update: 
 					</p>
-					<span>Ollama is:</span>
 					<ul>
-						<li>Compatible with all operating systems Windows/Max/Linux ;</li>
-						<li>Installed in seconds using one command ;</li>
-						<li>Has a great CLi that even a 4-year-old can use to download models ;</li>
-						<li>Has tons of tutorials out there if you run into any trouble ;</li>
-					</ul>
-					<p class="icon solid fa-info-circle"> You can connect Yacana to a remote Ollama instance. Read
-						forward.</p>
-
-					<hr class="major" />
-
-					<h2 id="choosing-an-llm-model">Choosing an LLM model</h2>
-					<p>After Ollama is installed you can browse the list of available LLMs on the <a
-							href="https://ollama.com/library">Ollama website</a> and download any model you want (or
-						your computer can
-						deal with).<br>
-						For reference, if you don't know what LLM model to choose (we've all been there) here is a list
-						of models you
-						can try out on consumer hardware:</p>
-					<div class="table-wrapper">
-						<table class="alt">
-							<thead>
-								<tr>
-									<th>Computer power</th>
-									<th style="text-align:center">LLM models name to try</th>
-									<th style="text-align:center">LLM quality</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<td><strong>Out of this world</strong> <em>(RTX 4090 / 64 GB RAM)</em></td>
-									<td style="text-align:center">'llama3.1:70b' or 'mixtral:8x22b'</td>
-									<td style="text-align:center">Excellent reasoning and instruction following.</td>
-								</tr>
-								<tr>
-									<td><strong>Epic</strong> <em>(RTX 4090 / 32 GB RAM)</em></td>
-									<td style="text-align:center">'llama3.1:8b' or 'dolphin-mixtral:8x7b' or
-										'dolphin-mixtral:8x7b-v2.5-q6_K'</td>
-									<td style="text-align:center">Good reasoning and instruction following. (q6_K model
-										should be less
-										consuming than the default Mixtral if you have any issues)</td>
-								</tr>
-								<tr>
-									<td><strong>Gamer</strong> <em>(GTX 1080TI / 16 GB RAM)</em></td>
-									<td style="text-align:center">'llama3.1:8b' or 'mistral:7b'</td>
-									<td style="text-align:center">Llama still works but is slower. Expect limited
-										reasoning
-										and no more than
-										2 complex instructions at a time</td>
-								</tr>
-								<tr>
-									<td><strong>Potato</strong></td>
-									<td style="text-align:center">'phi:2.7b' or 'phi3:3.8b' or 'tinyllama:1.1b'</td>
-									<td style="text-align:center">Almost no reasoning, incapable of following more than
-										1
-										instruction at a
-										time, English bound only ; Dumb as a stone</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-					<p>If you have access to a GPU VM with A LOT of RAM then you should try the state-of-the-art
-						'llama3.1:405b' model.
-						HF</p>
-
-					<hr class="major" />
-
-					<h2 id="running-the-model">Running the model</h2>
-
-					<p>When you have chosen your model it's time to use the Ollama CLI to pull it on your computer.</p>
-					<ul>
-						<li>To download the model do <code>ollama pull &lt;model_name&gt;</code> ;</li>
-						<li>Then list installed models using <code>ollama list</code> ;</li>
-						<li>When ready, test the model locally by doing <code>ollama run &lt;model_name&gt;</code> which
-							will start a conversation with the LLM ;</li>
+						<li>Compatibility with inference servers other than Ollama like vllm, etc.</li>
+						<li>Keep working on the documentation.</li>
+						<li>Add a section on code generation. In theroy we won't add any abstraction because this can be achieved using the current features but still needs documentation. FYI just call a tool that takes a string in input. The string would be the code to execute. Execute the code inside the tool. Problem solved...</li>
+						<li>More to come</li>
 					</ul>
 
-					<hr class="major" />
-
-					<h2 id="installing-yacana">Installing Yacana</h2>
-					<p style="text-align: center;">
-						<span class="image"><img style="width: 50%;" src="../images/yacana_round_small.png"
-								alt="" /></span>
-					</p>
-					<pre><code class="language-python">
-pip install yacana
-					</code></pre>
-
-					<hr class="major" />
-
-					<h2 id="imports">Imports</h2>
-					<p>When using other frameworks 'import hell' quickly appears. To prevent this bothersome problem we
-						propose that you always import all of Yacana's modules and when finished developing let the IDE
-						remove the unused imports.
-						Unused imports generally appear grayed. Thus we recommend that you prepend these imports in all
-						your files and clean them later. This way the IDE will have auto-completion available and will
-						help you develop 10 times faster.</p>
-					<pre><code class="language-python">
-from yacana import Agent, Task, Tool, Message, MessageRole, GroupSolve, EndChat, EndChatMode, ModelSettings, LoggerManager, ToolError, MaxToolErrorIter
-					</code></pre>
-
-					
-					<div style="text-align: center; margin-top: 50px;">
-						<h4>Pagination</h4>
-						<ul class="pagination">
-							<li><span class="button disabled">Prev</span></li>
-
-							<li><a href="agents_and_tasks.html#creating-an-agent" class="button">Next</a></li>
-						</ul>
-					</div>
 				</section>
-
 			</div>
 		</div>
 
@@ -307,13 +186,8 @@ from yacana import Agent, Task, Tool, Message, MessageRole, GroupSolve, EndChat,
 						<header class="major">
 							<h2>Page menu</h2>
 						</header>
-						<ul>
-							<li><a href="installation.html#installing-ollama">Installing Ollama</a></li>
-							<li><a href="installation.html#choosing-an-llm-model">Choosing an LLM model</a>
-							</li>
-							<li><a href="installation.html#running-the-model">Running the model</a></li>
-							<li><a href="installation.html#installing-yacana">Installing Yacana</a></li>
-							<li><a href="installation.html#imports">Imports</a></li>
+						<ul>						
+							<li><a href="multi_agents_chat.html#multi-agents-chat">Multi-agents chat</a></li>
 						</ul>
 					</nav>
 				</section>

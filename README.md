@@ -27,7 +27,7 @@ For production-grade capabilities, Yacana offers a **guided workflow** approach 
 
 Be ready in minutes!  
 
-➡️➡️➡️ Start by reading the documentation [here](https://remembersoftwares.github.io/yacana/). ⬅️⬅️⬅️  
+▶️▶️▶️ Start by reading the documentation [here](https://remembersoftwares.github.io/yacana/). ◀️◀️◀️    
 
 ## Quick look at how it works
 
