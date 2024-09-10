@@ -79,7 +79,7 @@ agent1 = Agent("AI assistant", "llama3:8b", system_prompt="You are a helpful AI 
 question: str = "Why do leaves fall in autumn ?"
 
 # Ask if the question is plant related: yes or no
-router_answer: str = Task(f"Is the following question about plants ? <question>{question}</question> Answer ONLY by 'yes' or 'no'.", agent1).solve().content
+router_answer: str = Task(f"Is the following question about plants ? &#60;question&#62;{question}&#60;/question&#62; Answer ONLY by 'yes' or 'no'.", agent1).solve().content
 
 if "yes" in router_answer.lower():
     print("Yes, question is about plants")
@@ -91,7 +91,7 @@ elif "no" in router_answer.lower():
 </code></pre><br>
 					<p>You should get the following output:</p>
 					<pre><code class="text-output">
-INFO: [PROMPT]: Is the following question about plants? <question>Why do leaves fall in autumn ?</question> Answer ONLY by 'yes' or 'no'.
+INFO: [PROMPT]: Is the following question about plants? &#60;question>Why do leaves fall in autumn ?&#60;/question&#62; Answer ONLY by 'yes' or 'no'.
 
 INFO: [AI_RESPONSE]: yes
 Question is about plants
@@ -125,7 +125,7 @@ Question is about plants
 							given in custom <code>&#60;question&#62;</code> tags. LLMs love delimiters. This way the LLM
 							knows
 							when the question starts and when the question ends. This technique helps to differentiate
-							your prompt and the dynamic part. You don't have to add tags everywhere but they can prove
+							your prompt from the dynamic part. You don't have to add tags everywhere but they can prove
 							useful. Do not abuse them or the LLM might start using them in its response. Just keep this
 							trick in mind. </li>
 					</ol>
@@ -182,7 +182,8 @@ Question is about plants
 							give tools to the Agent that will help it achieve the truth and not rely solely on his
 							reasoning abilities (see Tools later on). </li>
 						<li><strong>Making it two shots</strong>: Now that we have 2 Tasks instead of one, the second
-							one only focuses on one subtask: <i>"yes"</i> or <i>"no"</i> interpretation of the result of Task1. Cutting
+							one only focuses on one subtask: <i>"yes"</i> or <i>"no"</i> interpretation of the result of
+							Task1. Cutting
 							objectives in multiple sub-tasks gives better performance. This why using an agentic
 							framework is great but it's also why it's consuming a lot of tokens and having "free to run"
 							local LLMs is great! </li>
@@ -326,11 +327,15 @@ def check_is_about_plants():
 
 # Starting point
 check_is_about_plants()
-</code></pre><br>
+					</code></pre><br>
 					<p><strong>Let's try the "common plant" question that doesn't involve specifying a plant
 							name:</strong> </p>
+		
+						<pre><code class="language-python">
+question: str = "Why do leaves fall in autumn ?"
+						</code></pre><br>
 					<p>▶️ Outputs :</p>
-					<pre><code class="text-output">INFO: [PROMPT]: Is the following question about plants ? <question>Why do leaves fall in autumn ?</question>
+					<pre><code class="text-output">INFO: [PROMPT]: Is the following question about plants ? &#60;question&#62;Why do leaves fall in autumn ?&#60;/question&#62;
 Explain your reasoning.
 
 INFO: [AI_RESPONSE]: A great question!
@@ -401,11 +406,11 @@ So, there you have it! The falling of leaves in autumn is a complex process invo
 						that only YOUR prints are
 						shown. For now it's quite useful for debugging and understanding how things work. So we'll leave
 						them in this tutorial section. </p>
-					<p><strong>Upating question to match the "specific plant info" workflow:</strong> </p>
+					<p><strong>Upating question to match the specific "plant info" workflow:</strong> </p>
 					<pre><code class="language-python">question: str = "Why do poppies fade so quickly ?"
 </code></pre><br>
 					<p>▶️ Outputs :</p>
-					<pre><code class="text-output">INFO: [PROMPT]: Is the following question about plants ? <question>Why do poppies fade so quickly ?</question>
+					<pre><code class="text-output">INFO: [PROMPT]: Is the following question about plants ? &#60;question&#62;Why do poppies fade so quickly ?&#60;/question&#62;
 Explain your reasoning.
 
 INFO: [AI_RESPONSE]: A lovely question!
@@ -463,7 +468,7 @@ These factors combined might contribute to the perception that poppies fade quic
 					<pre><code class="language-python">question: str = "Why is the sky blue ?"
 </code></pre><br>
 					<p>▶️ Outputs :</p>
-					<pre><code class="text-output">INFO: [PROMPT]: Is the following question about plants ? <question>Why is the sky blue ?</question>
+					<pre><code class="text-output">INFO: [PROMPT]: Is the following question about plants ? &#60;question&#62;Why is the sky blue ?&#60;/question&#62;
 Explain your reasoning.
 
 INFO: [AI_RESPONSE]: No, the question "Why is the sky blue?" is not about plants. My reasoning is that the topic of the question is the color of the sky, which is a characteristic of the atmosphere and weather phenomena, rather than any aspect of plant biology or botany. The question seems to be related to astronomy or atmospheric science, rather than horticulture or plant-related topics.
@@ -590,48 +595,35 @@ Question is NOT about plants sorry.
 				<!-- Section -->
 				<section>
 					<header class="major">
-						<h2>Ante interdum</h2>
+						<h2>Related Youtube video</h2>
 					</header>
 					<div class="mini-posts">
 						<article>
-							<a href="#" class="image"><img src="../images/pic07.jpg" alt="" /></a>
-							<p>Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore aliquam.</p>
-						</article>
-						<article>
-							<a href="#" class="image"><img src="../images/pic08.jpg" alt="" /></a>
-							<p>Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore aliquam.</p>
-						</article>
-						<article>
-							<a href="#" class="image"><img src="../images/pic09.jpg" alt="" /></a>
-							<p>Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore aliquam.</p>
+							<a href="#" class="image"><img src="../images/youtube_down.jpg" alt="" /></a>
+							<p>Youtube video for this section is still under creation. Please be patient ^^</p>
 						</article>
 					</div>
-					<ul class="actions">
-						<li><a href="#" class="button">More</a></li>
-					</ul>
 				</section>
 
 				<!-- Section -->
 				<section>
-					<header class="major">
-						<h2>Get in touch</h2>
-					</header>
-					<p>Sed varius enim lorem ullamcorper dolore aliquam aenean ornare velit lacus, ac varius enim lorem
-						ullamcorper dolore. Proin sed aliquam facilisis ante interdum. Sed nulla amet lorem feugiat
-						tempus aliquam.</p>
-					<ul class="contact">
-						<li class="icon solid fa-envelope"><a href="#">information@untitled.tld</a></li>
-						<li class="icon solid fa-phone">(000) 000-0000</li>
-						<li class="icon solid fa-home">1234 Somewhere Road #8254<br />
-							Nashville, TN 00000-0000</li>
-					</ul>
+					<nav id="menu">
+						<header class="major">
+							<h2>Page menu</h2>
+						</header>
+						<ul>
+							<li><a href="routing.html#concepts-of-routing">Concepts of routing</a></li>
+							<li><a href="routing.html#self-reflection-routing">Self-reflection routing</a></li>
+							<li><a href="routing.html#cleaning-history">Cleaning history</a></li>
+							<li><a href="routing.html#routing-demonstration">Routing demonstration</a></li>
+						</ul>
+					</nav>
 				</section>
 
 				<!-- Footer -->
 				<footer id="footer">
-					<p class="copyright">&copy; Untitled. All rights reserved. Demo Images: <a
-							href="https://unsplash.com">Unsplash</a>. Design: <a href="https://html5up.net">HTML5
-							UP</a>.</p>
+					<p class="copyright">&copy; Emilien Lancelot. All rights reserved.<br>
+						Design: <a href="https://html5up.net">HTML5UP</a>.</p>
 				</footer>
 
 			</div>

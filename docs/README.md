@@ -396,7 +396,7 @@ Question is about plants
 1. **Always compare with lower case string**: Because LLMs have their own mind they do not always answer a straight `yes`. Sometimes you get "Yes" or even full cap "YES" for no reason.  
 2. **Always start by searching for "yes"**: We do a substring match using the `in` keyword of Python because the LLM doesn't always respect the instructions of outputting "ONLY 'yes' or 'no'". Sometimes you'll get "yes!" or "Great idea, I say yes". Substring match will match "yes" anywhere in the LLM answer. But what if you matched "no" first and the LLM generated "Not sure but I would say yes" ? Because we search for substrings the condition would match the "no" part of the word "Not" even though the LLM said yes. We could use regexe to fix this but it's easier to just start the condition by looking for "yes" as there are no English words that contain "yes" in the substring (at least no common ones ^^).
 3. **Force the LLM to respect the instruction**: Tell it to "answer ONLY with 'xx'". See the use of the upper cap on "ONLY"? Also, the single quotes around the possible choices 'yes' and 'no' help the LLM that sees them as delimiters.  
-4. **Use formatting tags**: The question that is mentioned in the prompt is then given in custom `<question>` tags. LLMs love delimiters. This way the LLM knows when the question starts and when the question ends. This technique helps to differentiate your prompt and the dynamic part. You don't have to add tags everywhere but they can prove useful. Do not abuse them or the LLM might start using them in its response. Just keep this trick in mind.  
+4. **Use formatting tags**: The question that is mentioned in the prompt is then given in custom `<question>` tags. LLMs love delimiters. This way the LLM knows when the question starts and when the question ends. This technique helps to differentiate your prompt from the dynamic part. You don't have to add tags everywhere but they can prove useful. Do not abuse them or the LLM might start using them in its response. Just keep this trick in mind.  
 
 ℹ️ This is all basic prompt engineering. If you wish to build an app with local models you will definitely have to learn those tricks. LLMs are unpredictable. It's why we built them.  
 
@@ -576,6 +576,10 @@ check_is_about_plants()
 ```
 
 **Let's try the "common plant" question that doesn't involve specifying a plant name:** 
+
+```python
+question: str = "Why do leaves fall in autumn ?"
+```
 
 ➡️ Outputs :
 ```
