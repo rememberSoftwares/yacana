@@ -16,7 +16,7 @@ The real strength of the framework lies in its ability to deliver impressive res
 
 For production-grade capabilities, Yacana offers a **guided workflow** approach or **multi-turn chat**, both leveraging what we typically call '*Agents*'. However, Yacana takes a different approach to Agents compared to other frameworks, focusing more on chaining Tasks together rather than on the Agents themselves.
 
-## II. Most trending features
+## II. Key Features
 
 * Link tasks together to create workflows
 * Tool calling for every LLMs
@@ -28,6 +28,7 @@ For production-grade capabilities, Yacana offers a **guided workflow** approach 
 Be ready in minutes!  
 
 ▶️▶️▶️ [Start by reading the documentation here](https://remembersoftwares.github.io/yacana/). ◀️◀️◀️    
+
 
 ## III. Installation
 ```shell
