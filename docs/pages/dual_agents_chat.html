@@ -87,8 +87,8 @@
 from yacana import Agent, Task, GroupSolve, EndChat, EndChatMode
 
 # Creating two agents
-agent1 = Agent("Ai assistant 1", "llama3:8b")
-agent2 = Agent("Ai assistant 2", "llama3:8b")
+agent1 = Agent("Ai assistant 1", "llama3.1:8b")
+agent2 = Agent("Ai assistant 2", "llama3.1:8b")
 
 # Creating two different Tasks to solve but that are related to one another
 task1 = Task("Your task is to create a list of attractions for an amusement park.", agent1)
@@ -560,8 +560,8 @@ GroupSolve([task1, task2], EndChat(EndChatMode.ONE_LAST_GROUP_CHAT_AFTER_FIRST_C
 					<pre><code class="language-python">
 from yacana import Agent, Task, GroupSolve, EndChat, EndChatMode
 
-agent1 = Agent("Ai assistant 1", "llama3:8b")
-agent2 = Agent("Ai assistant 2", "llama3:8b")
+agent1 = Agent("Ai assistant 1", "llama3.1:8b")
+agent2 = Agent("Ai assistant 2", "llama3.1:8b")
 
 task1 = Task("Your task is to add 1 to the initial count which is 0. Your objective is complete when you get to output number '2'", agent1, llm_stops_by_itself=True)
 task2 = Task("Your task is to add 1 to the initial count which is 0. Your objective is complete when you get to output number '3'", agent2, llm_stops_by_itself=True)
@@ -692,8 +692,8 @@ Looks like we've completed the task successfully! Well done! Would you like to s
 					</ul>
 					<p>The "game" finishes when Agent1 has 15 numbers in its list. </p>
 					<pre><code class="language-python">
-agent1 = Agent("Ai assistant 1", "llama3:8b")
-agent2 = Agent("Ai assistant 2", "llama3:8b")
+agent1 = Agent("Ai assistant 1", "llama3.1:8b")
+agent2 = Agent("Ai assistant 2", "llama3.1:8b")
 
 
 task1 = Task("Your task is to create a list of numbers. The list starts empty. The numbers will be given to you. Your objective is fulfilled when you have more than 15 numbers in the list.", agent1, llm_stops_by_itself=True)
@@ -1025,8 +1025,8 @@ GroupSolve([task1, task2], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION),
 					<pre><code class="language-python">
 from yacana import Agent, Task, GroupSolve, EndChat, EndChatMode
 
-agent1 = Agent("Ai assistant 1", "llama3:8b")
-agent2 = Agent("Ai assistant 2", "llama3:8b")
+agent1 = Agent("Ai assistant 1", "llama3.1:8b")
+agent2 = Agent("Ai assistant 2", "llama3.1:8b")
 
 task1 = Task(f"A bat and a ball together cost $1.10. The bat costs $1 more than the ball. How much does the ball cost? Your objective is complete when you are confident that you solved the problem correctly.", agent1, use_self_reflection=True, llm_stops_by_itself=True)
 task2 = Task(f"What do you think of the reasoning ?", agent2)
@@ -1087,8 +1087,8 @@ So, in hindsight, I have not fully completed the objective of considering altern
 from yacana import Agent, Task, GroupSolve, EndChat, EndChatMode
 
 # Creating our two players
-agent1 = Agent("Player 1", "llama3:8b")
-agent2 = Agent("Player 2", "llama3:8b")
+agent1 = Agent("Player 1", "llama3.1:8b")
+agent2 = Agent("Player 2", "llama3.1:8b")
 
 
 # Making up a number and guiding player 2 
@@ -1305,8 +1305,8 @@ def high_low(secret_number: int, guessed_number: int) -> str:
 
 
 # Creating our two Agents
-player = Agent("Player", "llama3:8b")
-game_master = Agent("Game master", "llama3:8b")
+player = Agent("Player", "llama3.1:8b")
+game_master = Agent("Game master", "llama3.1:8b")
 
 # Instanciating our tool
 high_low_tool = Tool("high_low", "Compares 2 numbers and returns a description of the relation between the two. Higher, lower or equal.", high_low)

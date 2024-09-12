@@ -62,7 +62,7 @@
 					<pre><code class="language-python">
 from yacana import Agent
 
-agent1 = Agent("AI assistant", "llama3:8b", system_prompt="You are a helpful AI assistant", endpoint="http://127.0.0.1:11434")
+agent1 = Agent("AI assistant", "llama3.1:8b", system_prompt="You are a helpful AI assistant", endpoint="http://127.0.0.1:11434")
 					</code></pre><br>
 					<p>The <code>Agent()</code> class takes...</p>
 					<span class="icon solid fa-chevron-right"> 2 <u>mandatory</u> parameters:</span>
@@ -106,7 +106,7 @@ Hey! It's nice to meet you. Is there something I can help you with, or would you
 					</code></pre><br>
 					<p>Let's change the <strong>system prompt</strong> and have some fun!</p>
 					<pre><code class="language-python">
-agent1 = Agent("Pirate", "llama3:8b", system_prompt="You are a pirate", endpoint="http://127.0.0.1:11434")
+agent1 = Agent("Pirate", "llama3.1:8b", system_prompt="You are a pirate", endpoint="http://127.0.0.1:11434")
 					</code></pre><br>
 					<span>▶️ Output:</span>
 					<pre><code class="text-output">
@@ -121,7 +121,7 @@ Red Beard's treasure, ye say? (puffs on pipe) Well, I be knowin' a thing or two 
 					<pre><code class="language-python">
 from yacana import Agent
 
-agent1 = Agent("Pirate", "llama3:8b", system_prompt="You are a pirate", endpoint="http://127.0.0.1:11434")
+agent1 = Agent("Pirate", "llama3.1:8b", system_prompt="You are a pirate", endpoint="http://127.0.0.1:11434")
 agent1.simple_chat()
 					</code></pre><br>
 					<p>⚠️From now on we will not set the <em>endpoint</em> attribute anymore for clarity and will resort
@@ -143,7 +143,7 @@ agent1.simple_chat()
 from yacana import Agent, Task
 
 # First, let's make a basic AI agent
-agent1 = Agent("AI assistant", "llama3:8b", system_prompt="You are a helpful AI assistant")
+agent1 = Agent("AI assistant", "llama3.1:8b", system_prompt="You are a helpful AI assistant")
 
 # Now we create a task and assign the agent1 to the task
 task1 = Task(f"Solve the equation 2 + 2 and output the result", agent1)
@@ -153,7 +153,7 @@ task1.solve()
 					</code></pre><br>
 					<p>What's happening above?</p>
 					<ul>
-						<li>First, we instantiated an Agent with the <code>llama3:8b</code> model. You might need to
+						<li>First, we instantiated an Agent with the <code>llama3.1:8b</code> model. You might need to
 							update that depending on what LLM you downloaded from Ollama ;</li>
 						<li>Second, we instantiated a Task ;</li>
 						<li>Third, we asked that the Task be solved ;</li>
@@ -213,7 +213,7 @@ So, the result of solving the equation 2 + 2 is indeed 4.
 from yacana import Agent, Task, Message
 
 # First, let's make a basic AI agent
-agent1 = Agent("AI assistant", "llama3:8b", system_prompt="You are a helpful AI assistant")
+agent1 = Agent("AI assistant", "llama3.1:8b", system_prompt="You are a helpful AI assistant")
 
 # Now we create a task and assign the agent1 to the task
 task1 = Task(f"Solve the equation 2 + 2 and output the result", agent1)
@@ -236,7 +236,7 @@ print(f"The AI response to our task is : {my_message.content}")
 from yacana import Agent, Task
 
 # First, let's make a basic AI agent
-agent1 = Agent("AI assistant", "llama3:8b", system_prompt="You are a helpful AI assistant")
+agent1 = Agent("AI assistant", "llama3.1:8b", system_prompt="You are a helpful AI assistant")
 
 # Creating the task, solving it, extracting the result and printing it all in one line
 print(f"The AI response to our task is: {Task(f'Solve the equation 2 + 2 and output the result', agent1).solve().content}")
@@ -333,7 +333,7 @@ from yacana import ModelSettings, Agent
 
 ms = ModelSettings(temperature=0.4)
 
-agent1 = Agent("Ai assistant", "llama3:8b", model_settings=ms)
+agent1 = Agent("Ai assistant", "llama3.1:8b", model_settings=ms)
 					</code></pre><br>
 					<p>If you're wondering what are the default values of these when not set. Well, Ollama sets the
 						default for you. They can also be overridden in the Model config file (looks like a dockerfile
@@ -349,7 +349,7 @@ from yacana import ModelSettings, Agent, Task
 # Setting temperature and max token to 100
 ms = ModelSettings(temperature=0.4, num_predict=100)
 
-agent1 = Agent("Ai assistant", "llama3:8b", model_settings=ms)
+agent1 = Agent("Ai assistant", "llama3.1:8b", model_settings=ms)
 Task("Why is the sky blue ?", agent1).solve()
 
 print("-------------------")
@@ -357,7 +357,7 @@ print("-------------------")
 # Settings max token to 15
 ms = ModelSettings(num_predict=15)
 
-agent2 = Agent("Ai assistant", "llama3:8b", model_settings=ms)
+agent2 = Agent("Ai assistant", "llama3.1:8b", model_settings=ms)
 Task("Why is the sky blue ?", agent2).solve()
 					</code></pre><br>
 					<span>▶️ Output:</span>

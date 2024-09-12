@@ -103,7 +103,7 @@ from yacana import LoggerManager, Agent, Task
 # Let's deactivate automatic logging so that only OUR prints are shown
 LoggerManager.set_log_level(None)
 
-agent1 = Agent("Cook", "llama3:8b", system_prompt="You are a pastry chef")
+agent1 = Agent("Cook", "llama3.1:8b", system_prompt="You are a pastry chef")
 
 Task("Generate 5 pastry names followed by the associated estimated calorie.", agent1).solve()
 Task("Rank the pastries from the lowest calorie count to the largest.", agent1).solve()
@@ -203,7 +203,7 @@ from yacana import LoggerManager, Agent, Task
 # Let's deactivate automatic logging so that only OUR prints are shown; Maybe reactivate (to "info") if you want to see what's happening behind the scenes.
 LoggerManager.set_log_level(None)
 
-agent1 = Agent("Cook", "llama3:8b", system_prompt="You are a pastry chef")
+agent1 = Agent("Cook", "llama3.1:8b", system_prompt="You are a pastry chef")
 
 # Getting a list of pastries
 pastries: str = Task("Generate 5 pastry names displayed as a list. ONLY output the names and nothing else.", agent1).solve().content
@@ -331,7 +331,7 @@ yes
 from yacana import Agent, Message, MessageRole
 
 # Creating a basic agent with an empty history
-agent1 = Agent("AI assistant", "llama3:8b")
+agent1 = Agent("AI assistant", "llama3.1:8b")
 
 # We create a fake prompt identified as coming from the user (Thx to `MessageRole.USER`)
 user_message = Message(MessageRole.USER, "What's 2+2 ?")
@@ -366,7 +366,7 @@ The answer is 4
 					<pre><code class="language-python">
 from yacana import Agent, Task
 
-agent1 = Agent("Ai assistant", "llama3:8b")
+agent1 = Agent("Ai assistant", "llama3.1:8b")
 
 Task(f"Print the following sentence as JSON, extracting the names and rephrasing the actions: 'Marie is walking her dog. Ryan is watching them through the window. The dark sky is pouring down heavy raindrops.'", agent1).solve()
 					</code></pre><br>
@@ -416,7 +416,7 @@ INFO: [AI_RESPONSE]: {"names": ["Marie", "Ryan"], "actions": {"Marie": "is walki
 					<pre><code class="language-python">
 from yacana import Agent, Task, MessageRole, Message
 
-agent1 = Agent("Ai assistant", "llama3:8b")
+agent1 = Agent("Ai assistant", "llama3.1:8b")
 
 # Making a fake valid interaction
 agent1.history.add(Message(MessageRole.USER, "Print the following sentence as json extracting the names and rephrasing the actions: 'John is reading a book on the porch while the cold wind blows through the trees.'"))
@@ -441,7 +441,7 @@ INFO: [AI_RESPONSE]: [{"name": "Marie", "action": "Walking her dog."}, {"name": 
 					<pre><code class="language-python">
 from yacana import Agent, Task
 
-agent1 = Agent("Ai assistant", "llama3:8b")
+agent1 = Agent("Ai assistant", "llama3.1:8b")
 
 Task('I will give you a sentence where you must extract as JSON all the names and rephrase all the actions. For example in the following sentence: "John is reading a book on the porch while the cold wind blows through the trees." would result in this JSON output: [{"name": "John", "action": "Reading a book."}, {"name": "Cold wind", "action": "Blowing through the trees."}] ', agent1).solve()
 
@@ -473,7 +473,7 @@ INFO: [AI_RESPONSE]: {"name": "Marie", "action": "Walking with her dog."}
 					<pre><code class="language-python">
 from yacana import Agent, Task
 
-agent1 = Agent("Ai assistant", "llama3:8b")
+agent1 = Agent("Ai assistant", "llama3.1:8b")
 
 Task("What's 2+2 ?", agent1).solve()
 
@@ -484,7 +484,7 @@ agent1.export_state("./agent1_save.json")
 					<pre><code class="text-output">
 {
     "name": "Ai assistant",
-    "model_name": "llama3:8b",
+    "model_name": "llama3.1:8b",
     "system_prompt": null,
     "model_settings": {},
     "endpoint": "http://127.0.0.1:11434",

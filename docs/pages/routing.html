@@ -70,7 +70,7 @@
 						different things next. Let's see an example: </p>
 					<pre><code class="language-python">from yacana import Agent, Task
 
-agent1 = Agent("AI assistant", "llama3:8b", system_prompt="You are a helpful AI assistant")
+agent1 = Agent("AI assistant", "llama3.1:8b", system_prompt="You are a helpful AI assistant")
 
 # Let's invent a question about 'plants'
 question: str = "Why do leaves fall in autumn ?"
@@ -188,7 +188,7 @@ Question is about plants
 					<p>Full code:</p>
 					<pre><code class="language-python">from yacana import Agent, Task
 
-agent1 = Agent("AI assistant", "llama3:8b", system_prompt="You are a helpful AI assistant")
+agent1 = Agent("AI assistant", "llama3.1:8b", system_prompt="You are a helpful AI assistant")
 
 # Let's invent a question about 'plants'
 question: str = "Why do leaves fall in autumn ?"
@@ -243,7 +243,7 @@ router_answer: str = Task(f"To summarize in one word, was the question about pla
 					<pre><code class="language-python">from yacana import Agent, Task
 
 # Declare agent
-agent1 = Agent("AI assistant", "llama3:8b", system_prompt="You are a helpful AI assistant")
+agent1 = Agent("AI assistant", "llama3.1:8b", system_prompt="You are a helpful AI assistant")
 
 
 # Asking a question

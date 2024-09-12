@@ -47,7 +47,7 @@ If your computer is performant enough you can use it to run LLMs directly on you
 Click [here](https://ollama.com/download) to install the latest release.  
 
 Ollama is:  
-* Compatible with all operating systems Windows/Max/Linux ;  
+* Compatible with all operating systems Windows/Mac/Linux ;  
 * Installed in seconds using one command ;  
 * Has a great CLi that even a 4-year-old can use to download models ;  
 * Has tons of tutorials out there if you run into any trouble ;
@@ -96,7 +96,7 @@ Create a Python file with this content:
 ```python
 from yacana import Agent
 
-agent1 = Agent("AI assistant", "llama3:8b", system_prompt="You are a helpful AI assistant", endpoint="http://127.0.0.1:11434")
+agent1 = Agent("AI assistant", "llama3.1:8b", system_prompt="You are a helpful AI assistant", endpoint="http://127.0.0.1:11434")
 ```
 The Agent(...) class takes 2 mandatory parameters:  
 1. **The agent name**: Choose something short about the agent's global focus  
@@ -126,7 +126,7 @@ Hey! It's nice to meet you. Is there something I can help you with, or would you
 
 Let's change the **system prompt** and have some fun!  
 ```python
-agent1 = Agent("Pirate", "llama3:8b", system_prompt="You are a pirate", endpoint="http://127.0.0.1:11434")
+agent1 = Agent("Pirate", "llama3.1:8b", system_prompt="You are a pirate", endpoint="http://127.0.0.1:11434")
 ```
 Output:
 ```
@@ -144,7 +144,7 @@ Complete section code:
 ```python
 from yacana import Agent
 
-agent1 = Agent("Pirate", "llama3:8b", system_prompt="You are a pirate", endpoint="http://127.0.0.1:11434")
+agent1 = Agent("Pirate", "llama3.1:8b", system_prompt="You are a pirate", endpoint="http://127.0.0.1:11434")
 agent1.simple_chat()
 ```
 
@@ -158,7 +158,7 @@ The whole concept of the framework lies here. If you understand this following s
 from yacana import Agent, Task
 
 # First, let's make a basic AI agent
-agent1 = Agent("AI assistant", "llama3:8b", system_prompt="You are a helpful AI assistant")
+agent1 = Agent("AI assistant", "llama3.1:8b", system_prompt="You are a helpful AI assistant")
 
 # Now we create a task and assign the agent1 to the task
 task1 = Task(f"Solve the equation 2 + 2 and output the result", agent1)
@@ -168,7 +168,7 @@ task1.solve()
 ```
 
 What's happening above?  
-* First, we instantiated an Agent with the `llama3:8b` model. You might need to update that depending on what LLM you downloaded from Ollama ;  
+* First, we instantiated an Agent with the `llama3.1:8b` model. You might need to update that depending on what LLM you downloaded from Ollama ;  
 * Second, we instantiated a Task ;  
 * Third, we asked that the Task be solved ;  
 
@@ -208,7 +208,7 @@ Maybe you are thinking "Ho nooo, another class to deal with". Well, let me tell 
 from yacana import Agent, Task, Message
 
 # First, let's make a basic AI agent
-agent1 = Agent("AI assistant", "llama3:8b", system_prompt="You are a helpful AI assistant")
+agent1 = Agent("AI assistant", "llama3.1:8b", system_prompt="You are a helpful AI assistant")
 
 # Now we create a task and assign the agent1 to the task
 task1 = Task(f"Solve the equation 2 + 2 and output the result", agent1)
@@ -230,7 +230,7 @@ Don't like having 100 lines of code for something simple? Then chain them all in
 from yacana import Agent, Task
 
 # First, let's make a basic AI agent
-agent1 = Agent("AI assistant", "llama3:8b", system_prompt="You are a helpful AI assistant")
+agent1 = Agent("AI assistant", "llama3.1:8b", system_prompt="You are a helpful AI assistant")
 
 # Creating the task, solving it, extracting the result and printing it all in one line
 print(f"The AI response to our task is: {Task(f'Solve the equation 2 + 2 and output the result', agent1).solve().content}")
@@ -312,7 +312,7 @@ from yacana import ModelSettings, Agent
 
 ms = ModelSettings(temperature=0.4)
 
-agent1 = Agent("Ai assistant", "llama3:8b", model_settings=ms)
+agent1 = Agent("Ai assistant", "llama3.1:8b", model_settings=ms)
 ```
 If you're wondering what are the default values of these when not set. Well, Ollama sets the default for you. They can also be overridden in the Model config file (looks like a dockerfile but for LLMs) and finally, you can set them through Yacana during runtime.  
 
@@ -323,7 +323,7 @@ from yacana import ModelSettings, Agent, Task
 # Setting temperature and max token to 100
 ms = ModelSettings(temperature=0.4, num_predict=100)
 
-agent1 = Agent("Ai assistant", "llama3:8b", model_settings=ms)
+agent1 = Agent("Ai assistant", "llama3.1:8b", model_settings=ms)
 Task("Why is the sky blue ?", agent1).solve()
 
 print("-------------------")
@@ -331,7 +331,7 @@ print("-------------------")
 # Settings max token to 15
 ms = ModelSettings(num_predict=15)
 
-agent2 = Agent("Ai assistant", "llama3:8b", model_settings=ms)
+agent2 = Agent("Ai assistant", "llama3.1:8b", model_settings=ms)
 Task("Why is the sky blue ?", agent2).solve()
 ```
 
@@ -367,7 +367,7 @@ The most common routing mechanic is "yes" / "no". Depending on the result, your 
 ```python
 from yacana import Agent, Task
 
-agent1 = Agent("AI assistant", "llama3:8b", system_prompt="You are a helpful AI assistant")
+agent1 = Agent("AI assistant", "llama3.1:8b", system_prompt="You are a helpful AI assistant")
 
 # Let's invent a question about 'plants'
 question: str = "Why do leaves fall in autumn ?"
@@ -447,7 +447,7 @@ Full code:
 ```python
 from yacana import Agent, Task
 
-agent1 = Agent("AI assistant", "llama3:8b", system_prompt="You are a helpful AI assistant")
+agent1 = Agent("AI assistant", "llama3.1:8b", system_prompt="You are a helpful AI assistant")
 
 # Let's invent a question about 'plants'
 question: str = "Why do leaves fall in autumn ?"
@@ -492,7 +492,7 @@ Read from bottom ⬇️ to top ⬆️. (Though, the Agent and the question varia
 from yacana import Agent, Task
 
 # Declare agent
-agent1 = Agent("AI assistant", "llama3:8b", system_prompt="You are a helpful AI assistant")
+agent1 = Agent("AI assistant", "llama3.1:8b", system_prompt="You are a helpful AI assistant")
 
 
 # Asking a question
@@ -772,7 +772,7 @@ from yacana import LoggerManager, Agent, Task
 # Let's deactivate automatic logging so that only OUR prints are shown
 LoggerManager.set_log_level(None)
 
-agent1 = Agent("Cook", "llama3:8b", system_prompt="You are a pastry chef")
+agent1 = Agent("Cook", "llama3.1:8b", system_prompt="You are a pastry chef")
 
 Task("Generate 5 pastry names followed by the associated estimated calorie.", agent1).solve()
 Task("Rank the pastries from the lowest calorie count to the largest.", agent1).solve()
@@ -872,7 +872,7 @@ from yacana import LoggerManager, Agent, Task
 # Let's deactivate automatic logging so that only OUR prints are shown; Maybe reactivate (to "info") if you want to see what's happening behind the scenes.
 LoggerManager.set_log_level(None)
 
-agent1 = Agent("Cook", "llama3:8b", system_prompt="You are a pastry chef")
+agent1 = Agent("Cook", "llama3.1:8b", system_prompt="You are a pastry chef")
 
 # Getting a list of pastries
 pastries: str = Task("Generate 5 pastry names displayed as a list. ONLY output the names and nothing else.", agent1).solve().content
@@ -980,7 +980,7 @@ For example:
 from yacana import Agent, Message, MessageRole
 
 # Creating a basic agent with an empty history
-agent1 = Agent("AI assistant", "llama3:8b")
+agent1 = Agent("AI assistant", "llama3.1:8b")
 
 # We create a fake prompt identified as coming from the user (Thx to `MessageRole.USER`)
 user_message = Message(MessageRole.USER, "What's 2+2 ?")
@@ -1018,7 +1018,7 @@ Let's see a 0-shot example asking for a JSON output extracted from a given sente
 ```python
 from yacana import Agent, Task
 
-agent1 = Agent("Ai assistant", "llama3:8b")
+agent1 = Agent("Ai assistant", "llama3.1:8b")
 
 Task(f"Print the following sentence as JSON, extracting the names and rephrasing the actions: 'Marie is walking her dog. Ryan is watching them through the window. The dark sky is pouring down heavy raindrops.'", agent1).solve()
 ```
@@ -1073,7 +1073,7 @@ To achieve this let's give the LLM an example of what we expect by making it bel
 ```python
 from yacana import Agent, Task, MessageRole, Message
 
-agent1 = Agent("Ai assistant", "llama3:8b")
+agent1 = Agent("Ai assistant", "llama3.1:8b")
 
 # Making a fake valid interaction
 agent1.history.add(Message(MessageRole.USER, "Print the following sentence as json extracting the names and rephrasing the actions: 'John is reading a book on the porch while the cold wind blows through the trees.'"))
@@ -1101,7 +1101,7 @@ For example:
 ```python
 from yacana import Agent, Task
 
-agent1 = Agent("Ai assistant", "llama3:8b")
+agent1 = Agent("Ai assistant", "llama3.1:8b")
 
 Task('I will give you a sentence where you must extract as JSON all the names and rephrase all the actions. For example in the following sentence: "John is reading a book on the porch while the cold wind blows through the trees." would result in this JSON output: [{"name": "John", "action": "Reading a book."}, {"name": "Cold wind", "action": "Blowing through the trees."}] ', agent1).solve()
 
@@ -1129,7 +1129,7 @@ To save an Agent do the following:
 ```python
 from yacana import Agent, Task
 
-agent1 = Agent("Ai assistant", "llama3:8b")
+agent1 = Agent("Ai assistant", "llama3.1:8b")
 
 Task("What's 2+2 ?", agent1).solve()
 
@@ -1141,7 +1141,7 @@ If you look at the file `agent1_save.json` you'll see something like this:
 ```json
 {
     "name": "Ai assistant",
-    "model_name": "llama3:8b",
+    "model_name": "llama3.1:8b",
     "system_prompt": null,
     "model_settings": {},
     "endpoint": "http://127.0.0.1:11434",
@@ -1257,7 +1257,7 @@ Bad prompt:
 ```python
 from yacana import Agent, Tool, Task
 
-agent1 = Agent("AI assistant", "llama3:8b")
+agent1 = Agent("AI assistant", "llama3.1:8b")
 
 def get_weather(city: str) -> str:
     # Faking the weather API response
@@ -1275,7 +1275,7 @@ Good prompt:
 ```python
 from yacana import Agent, Tool, Task
 
-agent1 = Agent("AI assistant", "llama3:8b")
+agent1 = Agent("AI assistant", "llama3.1:8b")
 
 def get_weather(city: str) -> str:
     # Faking the weather API response
@@ -1331,7 +1331,7 @@ def adder(first_number: int, second_number: int) -> int:
     print(f"Tool adder was called with param {first_number} {type(first_number)} and {second_number} ({type(second_number)})")
     return first_number + second_number
 
-agent1 = Agent("Ai assistant", "llama3:8b")
+agent1 = Agent("Ai assistant", "llama3.1:8b")
 
 adder_tool: Tool = Tool("Adder", "Adds two numbers and returns the result", adder)
 result: str = Task(f"What's 2+2 ?", agent1, tools=[adder_tool]).solve().content
@@ -1463,7 +1463,7 @@ Let's remove the "examples" set in the previous section. The LLM will be blind o
 ```python
 from yacana import Agent, Tool, Task, ToolError
 
-agent1 = Agent("Ai assistant", "llama3:8b")
+agent1 = Agent("Ai assistant", "llama3.1:8b")
 
 def adder(first_number: int, second_number: int) -> int:
     print(f"Tool adder was called with param '{first_number}' ({type(first_number)}) and '{second_number}' ({type(second_number)})")
@@ -1575,7 +1575,7 @@ from yacana import Task, Agent, Tool
 def get_temperature(city: str) -> int:
     return 20
 
-agent1 = Agent("Ai assistant", "llama3:8b")
+agent1 = Agent("Ai assistant", "llama3.1:8b")
 
 result: str = Task(f"What's the temperature in NY ?", agent1, tools=[Tool("get_temp", "Returns the celsius temperature of a given city", get_temperature)]).solve().content
 
@@ -1765,7 +1765,7 @@ def substractor(first_number, second_number) -> int:
 
 
 
-agent1 = Agent("Ai assistant", "llama3:8b")
+agent1 = Agent("Ai assistant", "llama3.1:8b")
 
 # Defining 3 tools
 adder_tool: Tool = Tool("Adder", "Adds two numbers and returns the result", adder)
@@ -1945,8 +1945,8 @@ Let's look at an example:
 from yacana import Agent, Task, GroupSolve, EndChat, EndChatMode
 
 # Creating two agents
-agent1 = Agent("Ai assistant 1", "llama3:8b")
-agent2 = Agent("Ai assistant 2", "llama3:8b")
+agent1 = Agent("Ai assistant 1", "llama3.1:8b")
+agent2 = Agent("Ai assistant 2", "llama3.1:8b")
 
 # Creating two different Tasks to solve but that are related to one another
 task1 = Task("Your task is to create a list of attractions for an amusement park.", agent1)
@@ -2346,8 +2346,8 @@ To demonstrate this without having a headache let's make a silly GroupSolve() st
 ```python
 from yacana import Agent, Task, GroupSolve, EndChat, EndChatMode
 
-agent1 = Agent("Ai assistant 1", "llama3:8b")
-agent2 = Agent("Ai assistant 2", "llama3:8b")
+agent1 = Agent("Ai assistant 1", "llama3.1:8b")
+agent2 = Agent("Ai assistant 2", "llama3.1:8b")
 
 task1 = Task("Your task is to add 1 to the initial count which is 0. Your objective is complete when you get to output number '2'", agent1, llm_stops_by_itself=True)
 task2 = Task("Your task is to add 1 to the initial count which is 0. Your objective is complete when you get to output number '3'", agent2, llm_stops_by_itself=True)
@@ -2476,8 +2476,8 @@ To showcase this let's make another game:
 The "game" finishes when Agent1 has 15 numbers in its list.  
 
 ```python
-agent1 = Agent("Ai assistant 1", "llama3:8b")
-agent2 = Agent("Ai assistant 2", "llama3:8b")
+agent1 = Agent("Ai assistant 1", "llama3.1:8b")
+agent2 = Agent("Ai assistant 2", "llama3.1:8b")
 
 
 task1 = Task("Your task is to create a list of numbers. The list starts empty. The numbers will be given to you. Your objective is fulfilled when you have more than 15 numbers in the list.", agent1, llm_stops_by_itself=True)
@@ -2759,8 +2759,8 @@ This optional parameter is `use_self_reflection` and should be set to `True` in 
 ```python
 from yacana import Agent, Task, GroupSolve, EndChat, EndChatMode
 
-agent1 = Agent("Ai assistant 1", "llama3:8b")
-agent2 = Agent("Ai assistant 2", "llama3:8b")
+agent1 = Agent("Ai assistant 1", "llama3.1:8b")
+agent2 = Agent("Ai assistant 2", "llama3.1:8b")
 
 task1 = Task(f"A bat and a ball together cost $1.10. The bat costs $1 more than the ball. How much does the ball cost? Your objective is complete when you are confident that you solved the problem correctly.", agent1, use_self_reflection=True, llm_stops_by_itself=True)
 task2 = Task(f"What do you think of the reasoning ?", agent2)
@@ -2810,8 +2810,8 @@ Let's play a new game, **first without tools**:
 from yacana import Agent, Task, GroupSolve, EndChat, EndChatMode
 
 # Creating our two players
-agent1 = Agent("Player 1", "llama3:8b")
-agent2 = Agent("Player 2", "llama3:8b")
+agent1 = Agent("Player 1", "llama3.1:8b")
+agent2 = Agent("Player 2", "llama3.1:8b")
 
 
 # Making up a number and guiding player 2 
@@ -3021,8 +3021,8 @@ def high_low(secret_number: int, guessed_number: int) -> str:
 
 
 # Creating our two Agents
-player = Agent("Player", "llama3:8b")
-game_master = Agent("Game master", "llama3:8b")
+player = Agent("Player", "llama3.1:8b")
+game_master = Agent("Game master", "llama3.1:8b")
 
 # Instanciating our tool
 high_low_tool = Tool("high_low", "Compares 2 numbers and returns a description of the relation between the two. Higher, lower or equal.", high_low)
@@ -3238,10 +3238,10 @@ Let's play another dumb game where 3 players must output one letter each. The ga
 ```python
 from yacana import Agent, Task, GroupSolve, EndChat, EndChatMode
 
-agent1 = Agent("James", "llama3:8b")
-agent2 = Agent("Emily", "llama3:8b")
-agent3 = Agent("Michael", "llama3:8b")
-game_master = Agent("Game master", "llama3:8b")
+agent1 = Agent("James", "llama3.1:8b")
+agent2 = Agent("Emily", "llama3.1:8b")
+agent3 = Agent("Michael", "llama3.1:8b")
+game_master = Agent("Game master", "llama3.1:8b")
 
 task1 = Task("You play a game where each player must add ONE letter. The goal is to form an existing word of 4 letters long. You can only say one letter in each message.", agent1)
 task2 = Task("You play a game where each player must add ONE letter. The goal is to form an existing word of 4 letters long. You can only say one letter in each message.", agent2)

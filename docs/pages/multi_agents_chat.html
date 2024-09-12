@@ -64,10 +64,10 @@
 					<pre><code class="language-python">
 from yacana import Agent, Task, GroupSolve, EndChat, EndChatMode
 
-agent1 = Agent("James", "llama3:8b")
-agent2 = Agent("Emily", "llama3:8b")
-agent3 = Agent("Michael", "llama3:8b")
-game_master = Agent("Game master", "llama3:8b")
+agent1 = Agent("James", "llama3.1:8b")
+agent2 = Agent("Emily", "llama3.1:8b")
+agent3 = Agent("Michael", "llama3.1:8b")
+game_master = Agent("Game master", "llama3.1:8b")
 
 task1 = Task("You play a game where each player must add ONE letter. The goal is to form an existing word of 4 letters long. You can only say one letter in each message.", agent1)
 task2 = Task("You play a game where each player must add ONE letter. The goal is to form an existing word of 4 letters long. You can only say one letter in each message.", agent2)
