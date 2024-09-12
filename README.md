@@ -6,7 +6,7 @@ Task-driven multi-agents framework for developers to create open source LLM-powe
   <img src="https://github.com/user-attachments/assets/e59e056b-35c8-4077-a22a-3b6a72c9eb03">
 </p>
 
-## What is Yacana
+## I. What is Yacana
 
 Yacana is designed for both *beginners* and *advanced* AI users.  
 
@@ -16,7 +16,7 @@ The real strength of the framework lies in its ability to deliver impressive res
 
 For production-grade capabilities, Yacana offers a **guided workflow** approach or **multi-turn chat**, both leveraging what we typically call '*Agents*'. However, Yacana takes a different approach to Agents compared to other frameworks, focusing more on chaining Tasks together rather than on the Agents themselves.
 
-## Most trending features
+## II. Most trending features
 
 * Link tasks together to create workflows
 * Tool calling for every LLMs
@@ -29,12 +29,12 @@ Be ready in minutes!
 
 ▶️▶️▶️ [Start by reading the documentation here](https://remembersoftwares.github.io/yacana/). ◀️◀️◀️    
 
-## Installation
+## III. Installation
 ```shell
 pip install yacana
 ```
 
-## Quick demo
+## IV. Quick demo
 
 Let's make an application that looks for PDF invoices inside a folder. For each one it will:  
 * Check if it is an invoice. If not it will skip to the next one.
@@ -214,12 +214,12 @@ for invoice_file in files:
 
 ![invoice_demo](https://github.com/user-attachments/assets/7cf6fd5f-325f-4868-b4c9-0667a30543fd)
 
-## Roadmap
+## V. Roadmap
 
 ❗ Highest priority
 * Compatibility with inference servers other than Ollama, like vllm, etc.
 
 ❕ Lower priority
-* Simplifying shift message system and maybe reworking GroupChat itself a bit.
+* Simplify shift message and maybe rework GroupChat itself a bit.
 * Keep working on the documentation.
 * Add a section on code generation.
