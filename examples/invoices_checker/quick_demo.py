@@ -1,51 +1,3 @@
-# Yacana
-
-Task-driven multi-agents framework for developers to create open source LLM-powered apps with ease.  
-
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/c54b2e47-8a76-444d-9510-339acc1d16a8">
-</p>
-
-## What it is
-
-Yacana is designed for both *beginners* and *advanced* AI users.  
-
-It features a simple OOP API with a **smooth learning curve**, while also offering advanced runtime LLM configurations when needed.  
-
-The real strength of the framework lies in its ability to deliver impressive results with open-source models, even small ones, making **tool calling effortless with any LLM**.  
-
-For production-grade capabilities, Yacana offers a **guided workflow** approach or **multi-turn chat**, both leveraging what we typically call '*Agents*'. However, Yacana takes a different approach to Agents compared to other frameworks, focusing more on chaining Tasks together rather than on the Agents themselves.
-
-## What is does
-
-* Link tasks together to create workflows
-* Tool calling for every LLMs
-* Multi-agents autonomous chat
-* Ready to use in minutes
-
-*Yacana is free and open source under MIT license.*  
-
-Be ready in minutes!  
-
-▶️▶️▶️ Start by reading the documentation [here](https://remembersoftwares.github.io/yacana/). ◀️◀️◀️    
-
-## Quick look at how it works
-
-```
-pip install yacana
-pip install pypdf
-
-git clone https://github.com/rememberSoftwares/yacana.git
-cd yacana/examples/invoices_checker
-python quick_demo.py
-```
-
-Let's make an application that searches for PDF in a folder. For each one it will:  
-* Check if it is an invoice. If not it will skip to the next one.
-* Deduct the money on the invoice from the bank account (@`checking_account_limit`) and tell you if you don't have enough money to pay for everything !
-* Rename the invoice file name to match `<category><total price>.pdf`.
-
-```python
 from yacana import Agent, Task, Tool, GroupSolve, EndChat, EndChatMode, ModelSettings, LoggerManager, ToolError
 import os
 from typing import List
@@ -186,4 +138,3 @@ for invoice_file in files:
     agent1.history.load_check_point(checkpoint_ag1)
     agent2.history.load_check_point(checkpoint_ag2)
     agent3.history.load_check_point(checkpoint_ag3)
-```

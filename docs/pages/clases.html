@@ -1,0 +1,363 @@
+<!DOCTYPE HTML>
+<!--
+	Editorial by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+
+<head>
+	<title>Agents & Tasks</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<link rel="stylesheet" href="../assets/css/main.css" />
+	<link rel="stylesheet" href="../assets/css/codemirror.min.css">
+	<link rel="stylesheet" href="../assets/css/monokai.min.css">
+	<link rel="stylesheet" href="../assets/css/foldgutter.min.css">
+	<link rel="stylesheet" href="../assets/css/codemirror-custom.css">
+	<link rel="stylesheet" href="../assets/css/zenburn.min.css">
+	<script src="../assets/js/codemirror.min.js"></script>
+	<script src="../assets/js/python.min.js"></script>
+	<script src="../assets/js/foldcode.min.js"></script>
+	<script src="../assets/js/foldgutter.min.js"></script>
+	<script src="../assets/js/brace-fold.min.js"></script>
+	<script src="../assets/js/codemirror-custom.js"></script>
+</head>
+
+<body class="is-preload">
+
+	<!-- Wrapper -->
+	<div id="wrapper">
+
+		<!-- Main -->
+		<div id="main">
+			<div class="inner">
+
+				<!-- Header -->
+				<header id="header">
+					<a href="../index.html" class="logo"><strong>Yacana</strong>, powering open source LLMs</a>
+					<ul class="icons">
+						<li><a href="https://x.com/RSoftwares_ofc" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+						<li><a href="https://medium.com/@docteur_rs" class="icon brands fa-medium-m"><span class="label">Medium</span></a></li>
+						<li><a href="https://www.youtube.com/channel/UCvi7R0CRmtxhWOVw62XteTw" class="icon brands fa-youtube"><span class="label">Medium</span></a></li>
+					</ul>
+				</header>
+
+				<!-- Content -->
+				<section>
+					<header class="main">
+						<h1 id="multi-agents-chat">Classes technical documentation</h1>
+					</header>
+
+					<span class="image main"><img src="../images/roadmap_banner.jpg" alt="Raodmap" /></span>
+					
+					<h4>Agent</h4>
+					<pre><code id="agent" class="language-python">
+class Agent:
+    """ Representation of an LLM. This class gives ways to interact with the LLM that is being assign to it.
+    However, an agent should not be controlled directly but assigned to a Task(). When the task is marked as solved
+    then the agent will interact with the prompt inside the task and output an answer. This class is more about
+    configuring the agent than interacting with it.
+
+    Attributes
+    ----------
+    name : str
+        Name of the agent. Can be used during conversations. Use something short and meaningful that doesn't contradict the system prompt
+    model_name : str
+        Name of the LLM model that will be sent to the inference server. For instance 'llama:3.1" or 'mistral:latest' etc
+    system_prompt : str
+        Defines the way the LLM will behave. For instance set the SP to "You are a pirate" to have it talk like a pirate.
+    model_settings: ModelSettings
+        All settings that Ollama currently supports as model configuration. This needs to be tested with other inference servers. This allows modifying deep behavioral patterns of the LLM.
+    endpoint: str
+        By default will look for Ollama endpoint on your localhost. If you are using a VM with GPU then update this to the remote URL + port.
+    history: History
+        The whole conversation that is sent to the inference server. It contains the alternation of message between the prompts in the task that are given to the LLM and it's answers.
+
+    Methods
+    ----------
+    simple_chat(custom_prompt: str = "> ", stream: bool = True) -> None
+    export_state(self, file_path: str) -> None
+
+    ClassMethods
+    ----------
+    get_agent_from_state(file_path: str) -> 'Agent'
+    """
+
+    def __init__(self, name: str, model_name: str, system_prompt: str | None = None, endpoint: str = "http://127.0.0.1:11434",
+                 model_settings: ModelSettings = None) -> None:
+
+    def simple_chat(self, custom_prompt: str = "> ", stream: bool = True) -> None:
+        """
+        Use for testing but this is not how the framework is intended to be used. It creates a simple chatbot that
+        keeps track of this history.
+        @param custom_prompt: str : Set the prompt style for user input
+        @param stream: If set to True you will see the result of your output as the LLM generates tokens instead of waiting for it to complete.
+        @return: None
+        """
+
+    def export_state(self, file_path: str) -> None:
+        """
+        Exports the current agent configuration to a file. This contains all constructor date and also the history.
+        This means that you can use the @get_agent_from_state method to load this agent back again and continue where
+        you left off.
+        @param file_path: str: path of the file in which you wish the data to be saved. Specify the path + filename. Be wary when using relative path.
+        @return:
+        """
+
+    @classmethod
+    def get_agent_from_state(cls, file_path: str) -> 'Agent':
+        """
+        Loads the state previously exported from the @export_state() method. This will return an Agent in the same state
+        as it was before it was saved allowing you to resume the agent conversation even after the program has exited.
+        @param file_path: str : The path from the file from which to load the Agent.
+        @return: Agent : A newly created Agent that is a copy from disk of a previously exported agent
+        """
+					</code></pre>
+
+
+					<h4>EndChatMode</h4>
+					<pre><code id="end-chat-mode" class="language-python">
+class EndChatMode(Enum):
+    """ All types of group chat completion.
+    The difficulty in making agents talk to each other is not to have them talk but to have them stop talking.
+    Note that only tasks that have the @llm_stops_by_itself=True are actually impacted by the mode set here.
+    Use in conjunction with EndChat()
+
+    Attributes
+    ----------
+    ALL_TASK_MUST_COMPLETE : str
+        chat will continue going until all LLMs with @llm_stops_by_itself=True says they are finished (Set precise completion goals in the task prompt if you want this to actualy work).
+    ONE_LAST_CHAT_AFTER_FIRST_COMPLETION : str
+        One agent will have the opportunity to respond after the completion of one agent allowing it to answer one last time.
+    ONE_LAST_GROUP_CHAT_AFTER_FIRST_COMPLETION : str
+        All agents will have one last table turn to speak before exiting the chat after the first completion arrives
+    END_CHAT_AFTER_FIRST_COMPLETION : str
+        Immediately stops group chat after an agent has reached completion
+    MAX_ITERATIONS_ONLY : str
+        LLMs won't be asked if they have fulfilled their objectives but instead will loop until achieving max iteration. Max iteration can be set in the EndChat() class bellow.
+
+    """
+					</code></pre>
+
+					<h4>EndChat</h4>
+					<pre><code id="end-chat" class="language-python">
+class EndChat:
+    """Defines the modality of how and when LLMs stop chatting.
+    By default, when reaching the @max_iterations limit the chat will end.
+    However, if a task has set @llm_stops_by_itself=True then you can use one of the EndChatMode values to specify how
+    and when the chat stops after reaching the first completion.
+
+    Attributes
+    ----------
+    mode : EndChatMode
+        The modality to end a chat with multiple agents
+    max_iterations : int
+        The max number of iterations in a conversation. An iteration is complete when we get back to the first speaker
+    """
+					</code></pre>
+
+					<h4>GroupSolve</h4>
+					<pre><code id="group-solve" class="language-python">
+class GroupSolve:
+    """This class allows multiple agents to enter a conversation with each other. This is made different from other
+    frameworks as it is not directly the agents that enter the group chat but the tasks. Note that each task has an LLM
+    Agent bound to it though. However, this changes the approach you should have when creating the conversation prompts.
+    If you are letting LLMs decide when to stop chatting then be sure to specify precise goals. For instance 'Your task
+    is done when XXXX'. This way the LLM will reflect on that and make a decision if it has achieved its original Task.
+    Note that dual chat is more efficient as each agent thinks it is talking to a human and this is how instruct models
+    have been trained. When having a conversation with more than two agents (aka more than 2 tasks) then Yacana will
+    force them into roleplay. This might degrade performance a bit but has the advantage of showing a clearer logs.
+    Logging output for dual chat will be reworked shortly.
+
+    Attributes
+    ----------
+    tasks : list[task]
+        All tasks that must be solved during group chat
+    mode : EndChatMode
+        Defines the way to stop the conversation besides than topping max iteration
+    max_iter : int
+        Sets a max iteration counter to prevent infinite loops
+
+    Methods
+    ----------
+    solve(self) -> None
+
+    """
+
+    def __init__(self, tasks: List[Task], end_chat: EndChat, reconcile_first_message: bool = False, shift_message_owner: Task = None, shift_message_content: str | None = None) -> None:
+
+    def set_shift_message(self) -> tuple:
+
+    def solve(self) -> None:
+        """
+        Starts the group chat and allows all LLMs to solve their assigned tasks. Note that 'dual chat' and '3 and more'
+        chat have a different way of starting. Refer to the official documentation.
+        @return: None
+        """
+					</code></pre>
+
+					<h4>Agent</h4>
+					<pre><code id="agent" class="language-python">
+
+					</code></pre>
+
+
+					<h4>Agent</h4>
+					<pre><code id="agent" class="language-python">
+
+					</code></pre>
+
+					<h4>Agent</h4>
+					<pre><code id="agent" class="language-python">
+
+					</code></pre>
+
+					<h4>Agent</h4>
+					<pre><code id="agent" class="language-python">
+
+					</code></pre>
+
+					<h4>Agent</h4>
+					<pre><code id="agent" class="language-python">
+
+					</code></pre>
+
+
+					<h4>Agent</h4>
+					<pre><code id="agent" class="language-python">
+
+					</code></pre>
+
+
+					<h4>Agent</h4>
+					<pre><code id="agent" class="language-python">
+
+					</code></pre>
+
+				</section>
+			</div>
+		</div>
+
+		<!-- Sidebar -->
+		<div id="sidebar">
+			<div class="inner">
+
+				<!-- Search -->
+				<section id="search" class="alt">
+					<form method="post" action="#">
+						<input type="text" name="query" id="query" placeholder="Search" />
+					</form>
+				</section>
+
+				<!-- Menu -->
+				<nav id="menu">
+					<header class="major">
+						<h2>Menu</h2>
+					</header>
+					<ul>
+						<li><a href="../index.html">Homepage</a></li>
+						<li>
+							<span class="opener">I. Installation</span>
+							<ul>
+								<li><a href="installation.html#installing-ollama">Installing Ollama</a></li>
+								<li><a href="installation.html#choosing-an-llm-model">Choosing an LLM model</a>
+								</li>
+								<li><a href="installation.html#running-the-model">Running the model</a></li>
+								<li><a href="installation.html#installing-yacana">Installing Yacana</a></li>
+								<li><a href="installation.html#imports">Imports</a></li>
+							</ul>
+						</li>
+						<li>
+							<span class="opener">II. Agents & Tasks</span>
+							<ul>
+								<li><a href="agents_and_tasks.html#creating-an-agent">Creating an Agent</a></li>
+								<li><a href="agents_and_tasks.html#basic-roleplay">Basic roleplay</a></li>
+								<li><a href="agents_and_tasks.html#creating-tasks">Creating Tasks</a></li>
+								<li><a href="agents_and_tasks.html#getting-the-result-of-a-task">Getting the
+										result of a Task</a></li>
+								<li><a href="agents_and_tasks.html#chaining-tasks">Chaining Tasks</a></li>
+								<li><a href="agents_and_tasks.html#logging-levels">Logging levels</a></li>
+								<li><a href="agents_and_tasks.html#configuring-llms-settings">Configuring LLM's
+										settings</a></li>
+							</ul>
+						</li>
+						<li>
+							<span class="opener">III. Routing</span>
+							<ul>
+								<li><a href="routing.html#concepts-of-routing">Concepts of routing</a></li>
+								<li><a href="routing.html#self-reflection-routing">Self-reflection routing</a>
+								</li>
+								<li><a href="routing.html#cleaning-history">Cleaning history</a></li>
+								<li><a href="routing.html#routing-demonstration">Routing demonstration</a></li>
+							</ul>
+						</li>
+						<li>
+							<span class="opener">IV. Managing Agents history</span>
+							<ul>
+								<li><a href="managing_agent_history.html#printing-history">Printing history</a>
+								</li>
+								<li><a href="managing_agent_history.html#creating-and-loading-checkpoints">Creating
+										and loading checkpoints</a></li>
+								<li><a href="managing_agent_history.html#Zero-prompt-shot-vs-multi-prompt-shot">Zero-prompt
+										shot vs multi-prompt shot</a></li>
+								<li><a href="managing_agent_history.html#saving-agent-state">Saving Agent
+										state</a></li>
+							</ul>
+						</li>
+						<li>
+							<span class="opener">V. Tool calling</span>
+							<ul>
+								<li><a href="tool_calling.html#concept-of-calling-tools">Concepts of calling
+										tools</a></li>
+								<li><a href="tool_calling.html#writing-good-tool-prompts">Writing good tool
+										prompts</a></li>
+								<li><a href="tool_calling.html#calling-a-tool">Calling a tool</a></li>
+								<li><a href="tool_calling.html#improving-tool-calling-results">Improving
+										tool-calling results</a></li>
+								<li><a href="tool_calling.html#optional-tools">Optional tools</a></li>
+								<li><a href="tool_calling.html#assigning-multiple-tools">Assigning multiple
+										Tools</a></li>
+							</ul>
+						</li>
+						<li>
+							<span class="opener">VI. Dual-agents chat</span>
+							<ul>
+								<li><a href="dual_agents_chat.html#stopping-chat-using-maximum-iterations">Stopping
+										chat using 'maximum iterations'</a></li>
+								<li><a href="dual_agents_chat.html#letting-agents-end-the-chat">Letting Agents end
+										the chat</a></li>
+								<li><a href="dual_agents_chat.html#controlling-the-shift-message">Controlling the
+										Shift Message</a></li>
+								<li><a href="dual_agents_chat.html#using-tools-in-chat">Using tools in chat</a>
+								</li>
+							</ul>
+						</li>
+						<li><a href="multi_agents_chat.html#multi-agents-chat">VII. Multi-agents chat</a></li>
+
+
+					</ul>
+				</nav>
+
+
+				<!-- Footer -->
+				<footer id="footer">
+					<p class="copyright">&copy; Emilien Lancelot. All rights reserved.<br>
+						Design: <a href="https://html5up.net">HTML5UP</a>.</p>
+				</footer>
+
+			</div>
+		</div>
+
+	</div>
+
+	<!-- Scripts -->
+	<script src="../assets/js/jquery.min.js"></script>
+	<script src="../assets/js/browser.min.js"></script>
+	<script src="../assets/js/breakpoints.min.js"></script>
+	<script src="../assets/js/util.js"></script>
+	<script src="../assets/js/main.js"></script>
+
+</body>
+
+</html>
