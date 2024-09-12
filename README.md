@@ -56,7 +56,8 @@ python quick_demo.py
 
 ⚠️ Requirements:  
 * Before running the script make sure that you installed Ollama on your computer
-* The Agents are using `llama3.1:8b`. If you are using another LLM model, update the 3 agent declarations in the script to match the one you installed:
+* The Agents are using `llama3.1:8b`. If you are using another LLM model, update the 3 agent declarations in the script to match the one you installed:  
+
 ➡️
 ```
 agent1 = Agent("Expert banker", "llama3.1:8b", model_settings=ms)

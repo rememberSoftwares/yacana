@@ -30,7 +30,7 @@ def read_pdf(file_name: str) -> str:
     # extracting text from all pages
     full_text = ""
     for page in reader.pages:
-        full_text += page.extract_text() + "\n"  # Adding a newline between pages
+        full_text += page.extract_text() + "\n"
     return full_text
 
 
@@ -81,8 +81,9 @@ ms = ModelSettings(temperature=0.4)
 
 # Creating 3 agents
 agent1 = Agent("Expert banker", "llama3.1:8b", model_settings=ms)
-agent2 = Agent("Naming expert", "llama3.1:8b")
-agent3 = Agent("File-system helper", "llama3.1:8b", model_settings=ms)
+agent2 = Agent("File-system helper", "llama3.1:8b", model_settings=ms)
+agent3 = Agent("Naming expert", "llama3.1:8b")
+
 
 # Registering 2 tools
 expense_tracker_tool: Tool = Tool("Expense tracker", "Takes as input a price from an invoice and deducts it from the user's account. Returns the new account balance.", invoice_expense_tracker)
@@ -112,7 +113,7 @@ for invoice_file in files:
         Task("We must register this new price into an invoice tracker", agent1, tools=[expense_tracker_tool]).solve()
         # Yes/no router
         router = Task("Is the current account balance still positive ? Answer ONLY by 'yes' or 'no'.", agent1, forget=True).solve().content
-        # !! Reversed condition !! ; looking for 'yes' or it's absence is safer than looking for 'no'
+        # !! Reversed condition !! ; looking for 'yes' or its absence is safer than looking for 'no'
         if "yes" not in router.lower():
             print("WARNING ! You are spending to much !!")
 
@@ -120,8 +121,8 @@ for invoice_file in files:
         GroupSolve(
             [
                 Task("You must find a name for the invoice file. It must follow this pattern: '<category>_<total_price>.pdf'", agent1),
-                Task("Check that the proposed file name is not already taken.", agent3, tools=[check_file_existence_tool]),
-                Task("If the file name is already taken, add an incrementation to the end of the name. Your objective is complete as soon as a correct file name is found. No need to research further.", agent2, llm_stops_by_itself=True)
+                Task("Check that the proposed file name is not already taken.", agent2, tools=[check_file_existence_tool]),
+                Task("If the file name is already taken, add an incrementation to the end of the name. Your objective is complete as soon as a correct file name is found. No need to research further.", agent3, llm_stops_by_itself=True)
             ],
             EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION, max_iterations=3)
         ).solve()
