@@ -148,11 +148,11 @@ agent1 = Agent("Pirate", "llama3.1:8b", system_prompt="You are a pirate", endpoi
 agent1.simple_chat()
 ```
 
-⚠️From now on we will not set the *endpoint* attribute anymore for clarity and will resort to the defaults. If your LLM is not served by Ollama or isn't on your localhost you should continue setting this value.  
+⚠️From now on, for clarity, we will not set the *endpoint* attribute anymore for clarity and will resort to the defaults. If your LLM is not served by Ollama or isn't on your localhost you should continue setting this value.  
 
 ### Creating Tasks
 
-The whole concept of the framework lies here. If you understand this following section then you have mastered 80% of Yacana's building principle. Like in LangGraph, where you create nodes that you link together, Yacana has a Task() class which takes as arguments a task to solve. There are no hardcoded links between the Tasks so it's easy to refactor and move things around. The important concept to grasp here is that through these Tasks you will give instructions to the LLM in a way that the result must be computable. meaning instructions must be clear and the prompt to use must reflect that. It's a Task, it's a job, it's something that needs solving but written like it is given as an order! Let's see some examples :
+The whole concept of the framework lies here. If you understand this following section then you have mastered 80% of Yacana's building principle. Like in LangGraph, where you create nodes that you link together, Yacana has a Task() class which takes as arguments a task to solve. There are no hardcoded links between the Tasks so it's easy to refactor and move things around. The important concept to grasp here is that through these Tasks you will give instructions to the LLM in a way that the result must be computable. Meaning instructions must be clear and the prompt to use must reflect that. It's a Task, it's a job, it's something that needs solving but written like it is given as an order! Let's see some examples :
 
 ```python
 from yacana import Agent, Task
@@ -191,7 +191,7 @@ The Task class takes 2 mandatory parameters:
 * The prompt: It is the task to be solved. Use imperative language, be precise, and ask for step-by-step thinking for complex Tasks and expected outputs if needed.  
 * The Agent: The agent that will be assigned to this task. The agent will be in charge of solving the task.  
 
-ℹ️ Many other parameters can be given to a Task. We will see some of them in the following sections of this tutorial. But you can already check out the Task class documentation @todo URL
+ℹ️ Many other parameters can be given to a Task. We will see some of them in the following sections of this tutorial. But you can already check out the Task class documentation. @todo URL
 
 #### In what way is this disruptive compared to other frameworks?
 
@@ -203,7 +203,7 @@ Compared with LangGraph, we cannot generate a call graph as an image because we 
 
 Even though we get logs on the standard output of the terminal, we still need to extract the answer of the LLM that solved that Task in order to do something with it.    
 Getting the string message out of it is quite easy as the .solve() method returns a Message() @todo URL class.  
-Maybe you are thinking "Ho nooo, another class to deal with". Well, let me tell you that it's always better to have an OOP class than some semi-random Python dictionary where you'll forget what keys it contains in ten minutes. Also, the Message @todo url class is very straightforward. It exposes a `content` attribute. Update the current code to look like this:  
+Maybe you are thinking "Ho nooo, another class to deal with". Well, let me tell you that it's always better to have an OOP class than some semi-random Python dictionary where you'll forget what keys it contains in matter of minutes. Also, the Message @todo url class is very straightforward. It exposes a `content` attribute. Update the current code to look like this:  
 ```python
 from yacana import Agent, Task, Message
 
@@ -261,7 +261,7 @@ The AI response to our task is: If we multiply the previous result of 4 by 2, we
 
 ---
 
-See? The assigned Agent remembered that it had solved the Task1 previously and used this information to solve the second task.  
+See? The assigned Agent remembered that it had solved Task1 previously and used this information to solve the second task.  
 You can chain as many Tasks as you need. Also, you should create other Agents that don't have the knowledge of previous tasks and make them do things based on the output of your first agent. You can build anything now!  
 
 ### Logging levels
@@ -300,7 +300,7 @@ The above example sets the logging level of the network httpx library to warning
 
 For advanced users, Yacana provides a way to tweak the LLM runtime behavior!  
 For instance, lowering the `temperature` setting makes the model less creative in its responses. On the contrary, raising this setting will make the LLM more chatty and creative.  
-Yacana provides you with a class that exposes all the possible LLM properties. Look at them [here]() @todo url and if you need a good explanation of each of them I would recommend the [excellent video](https://youtu.be/QfFRNF5AhME?si=lpSYUq2WoidYiqzP) Matt Williams did on this subject.  
+Yacana provides you with a class that exposes all the possible LLM properties. Look at them [here]() @todo url and if you need a good explanation for each of them I would recommend the [excellent video](https://youtu.be/QfFRNF5AhME?si=lpSYUq2WoidYiqzP) Matt Williams did on this subject.  
 
 ℹ️ These settings are set at the Agent level so that you can have the same model used by two separate agents and have them behave differently.  
 
@@ -314,7 +314,7 @@ ms = ModelSettings(temperature=0.4)
 
 agent1 = Agent("Ai assistant", "llama3.1:8b", model_settings=ms)
 ```
-If you're wondering what are the default values of these when not set. Well, Ollama sets the default for you. They can also be overridden in the Model config file (looks like a dockerfile but for LLMs) and finally, you can set them through Yacana during runtime.  
+If you're wondering what the default values of these are when not set. Well, Ollama sets the defaults for you. They can also be overridden in the Model config file (looks like a dockerfile but for LLMs) and finally, you can set them through Yacana during runtime.  
 
 A good way to show how this can have a real impact on the output is by setting the `num_predict` parameter. This one allows control of how many tokens should be generated by the LLM. Let's make the same Task twice but with different `num_predict` values:  
 ```python
@@ -740,7 +740,7 @@ Question is NOT about plants sorry.
 
 ## IV. Managing Agents history
 
-As you saw in the previous examples, each agent has his own history of messages that compose its memory. When a new request is made to the LLM the whole history is sent to the inference server (ie: Ollama) and the LLM responds to the last prompt in the chain but bases its answer on the context it gets from the previous messages (and the initial system prompt if present). 
+As you saw in the previous examples, each agent has its own history of messages that compose its memory. When a new request is made to the LLM the whole history is sent to the inference server (ie: Ollama) and the LLM responds to the last prompt in the chain but bases its answer on the context it gets from the previous messages (and the initial system prompt if present). 
 
 This is what an history looks like:
 
@@ -759,7 +759,7 @@ However, sending the whole history to the LLM for each Task to solve has some di
   * One token roughly represents one word or 3/4 of a word. More information on token count per word [here](https://winder.ai/calculating-token-counts-llm-context-windows-practical-guide/) or [here](https://help.openai.com/en/articles/4936856-what-are-tokens-and-how-to-count-them).  
 
 To counteract those negative effects it is recommended you clean the history when possible. You can use the `forget=True` parameter in the Task() class so the prompt and the LLM response do not get saved to the history ([see here]() @todo url). You'll see there are other ways to preserve the history from useless noise.  
-But first, we'll look at viewing one's Agent history. Fortunately, Yacana got you covered.  
+But first, we'll look at one Agent's history. Fortunately, Yacana got you covered.  
 
 ### Printing History
 

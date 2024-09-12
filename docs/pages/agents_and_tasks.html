@@ -125,7 +125,7 @@ from yacana import Agent
 agent1 = Agent("Pirate", "llama3.1:8b", system_prompt="You are a pirate", endpoint="http://127.0.0.1:11434")
 agent1.simple_chat()
 					</code></pre><br>
-					<p>⚠️From now on we will not set the <em>endpoint</em> attribute anymore for clarity and will resort
+					<p>⚠️From now on, for clarity, we will not set the <em>endpoint</em> attribute anymore for clarity and will resort
 						to the defaults. If your LLM is not served by Ollama or isn't on your localhost you should
 						continue setting this value.</p>
 
@@ -137,7 +137,7 @@ agent1.simple_chat()
 						you link together, Yacana has a Task() class which takes as arguments a task to solve. There are
 						no hardcoded links between the Tasks so it's easy to refactor and move things around. The
 						important concept to grasp here is that through these Tasks you will give instructions to the
-						LLM in a way that the result must be computable. meaning instructions must be clear and the
+						LLM in a way that the result must be computable. Meaning instructions must be clear and the
 						prompt to use must reflect that. It's a Task, it's a job, it's something that needs solving but
 						written like it is given as an order! Let's see some examples :</p>
 					<pre><code class="language-python">
@@ -182,7 +182,7 @@ So, the result of solving the equation 2 + 2 is indeed 4.
 					</ul>
 					<p class="icon solid fa-info-circle"> Many other parameters can be given to a Task. We will see some
 						of them in the following sections of this tutorial. But you can already check out the Task class
-						documentation</p>
+						documentation.</p>
 					<h4 id="in-what-way-is-this-disruptive-compared-to-other-frameworks">In what way is this disruptive
 						compared to other frameworks?</h4>
 					<p>In the above code snippet, we assigned the agent to the Task. So it's the Task that leads the
@@ -206,7 +206,7 @@ So, the result of solving the equation 2 + 2 is indeed 4.
 						Getting the string message out of it is quite easy as the .solve() method returns a Message() class.<br>
 						Maybe you are thinking &quot;Ho nooo, another class to deal with&quot;. Well, let me tell you
 						that it's always better to have an OOP class than some semi-random Python dictionary where
-						you'll forget what keys it contains in ten minutes. Also, the Message class is very
+						you'll forget what keys it contains in a matter of minutes. Also, the Message class is very
 						straightforward. It exposes a <code>content</code> attribute. Update the current code to look
 						like this:</p>
 					<pre><code class="language-python">
@@ -269,7 +269,7 @@ The AI response to our task is: If we multiply the previous result of 4 by 2, we
 					<p class="icon solid fa-info-circle"> Without tools this only relies on the LLM's ability to do the
 						maths and is dependent on its training.</p>
 					<hr>
-					<p>See? The assigned Agent remembered that it had solved the Task1 previously and used this
+					<p>See? The assigned Agent remembered that it had solved Task1 previously and used this
 						information to solve the second task.<br>
 						You can chain as many Tasks as you need. Also, you should create other Agents that don't have
 						the knowledge of previous tasks and make them do things based on the output of your first agent.
@@ -320,7 +320,7 @@ LoggerManager.set_library_log_level("httpx", "WARNING")
 					<p>For advanced users, Yacana provides a way to tweak the LLM runtime behavior!<br>
 						For instance, lowering the <code>temperature</code> setting makes the model less creative in its
 						responses. On the contrary, raising this setting will make the LLM more chatty and creative.<br>
-						Yacana provides you with a class that exposes all the possible LLM properties. Also if you need a good explanation of each of them I would
+						Yacana provides you with a class that exposes all the possible LLM properties. Also if you need a good explanation for each of them I would
 						recommend the <a href="https://youtu.be/QfFRNF5AhME?si=lpSYUq2WoidYiqzP">excellent video</a>
 						Matt Williams did on this subject.</p>
 					<p class="icon solid fa-info-circle"> These settings are set at the Agent level so that you can have
@@ -334,8 +334,8 @@ ms = ModelSettings(temperature=0.4)
 
 agent1 = Agent("Ai assistant", "llama3.1:8b", model_settings=ms)
 					</code></pre><br>
-					<p>If you're wondering what are the default values of these when not set. Well, Ollama sets the
-						default for you. They can also be overridden in the Model config file (looks like a dockerfile
+					<p>If you're wondering what the default values of these are when not set. Well, Ollama sets the
+						defaults for you. They can also be overridden in the Model config file (looks like a dockerfile
 						but for LLMs) and finally, you can set them through Yacana during runtime.</p>
 					<p>A good way to show how this can have a real impact on the output is by setting the
 						<code>num_predict</code> parameter. This one allows control of how many tokens should be
