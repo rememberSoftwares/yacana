@@ -3,7 +3,7 @@
 Task-driven multi-agents framework for developers to create open source LLM-powered apps with ease.  
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/c54b2e47-8a76-444d-9510-339acc1d16a8">
+  <img src="https://github.com/user-attachments/assets/e59e056b-35c8-4077-a22a-3b6a72c9eb03">
 </p>
 
 ![yacana_round_small](https://github.com/user-attachments/assets/e59e056b-35c8-4077-a22a-3b6a72c9eb03)
