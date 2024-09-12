@@ -8,7 +8,7 @@ Task-driven multi-agents framework for developers to create open source LLM-powe
 
 ---
 
-## I. What is Yacana
+## What is Yacana
 
 Yacana is designed for both *beginners* and *advanced* AI users.  
 
@@ -20,7 +20,7 @@ Yacana offers a **guided workflow** approach or **multi-turn chat** for producti
 
 ---
 
-## II. Key Features
+## Key Features
 
 * Link tasks together to create workflows
 * Tool calling for every LLMs
@@ -35,14 +35,14 @@ Be ready in minutes!
 
 ---
 
-## III. Installation
+## Installation
 ```shell
 pip install yacana
 ```
 
 ---
 
-## IV. Quick demo
+## Quick demo
 
 Let's make an application that looks for PDF invoices inside a folder. For each one it will:  
 * Check if it is an invoice. If not it will skip to the next one.
@@ -225,7 +225,7 @@ for invoice_file in files:
 
 ---
 
-## V. Roadmap
+## Roadmap
 
 ❗ Highest priority
 * Compatibility with inference servers other than Ollama, like vllm, etc.
