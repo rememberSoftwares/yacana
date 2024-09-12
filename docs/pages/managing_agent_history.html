@@ -41,6 +41,7 @@
 						<li><a href="https://x.com/RSoftwares_ofc" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
 						<li><a href="https://medium.com/@docteur_rs" class="icon brands fa-medium-m"><span class="label">Medium</span></a></li>
 						<li><a href="https://www.youtube.com/channel/UCvi7R0CRmtxhWOVw62XteTw" class="icon brands fa-youtube"><span class="label">Medium</span></a></li>
+						<li><a href="https://github.com/rememberSoftwares/yacana" class="icon brands fa-github"><span class="label">Github</span></a></li>
 					</ul>
 				</header>
 
@@ -84,12 +85,12 @@
 					</ul>
 					<p>To counteract those negative effects it is recommended you clean the history when possible. You
 						can use the <code>forget=True</code> parameter in the Task() class so the prompt and the LLM
-						response do not get saved to the history ([see here]() @todo url). You'll see there are other
+						response do not get saved to the history. You'll see there are other
 						ways to preserve the history from useless noise. <br />
 						But first, we'll look at viewing one's Agent history. Fortunately, Yacana got you covered. </p>
 					<h2>Printing History</h2>
-					<p>The Agent class comes with a <code>.history</code> property of type <code>History</code> (@todo
-						<a href>see here</a>. It exposes methods so you can manipulate and view it (for debugging,
+					<p>The Agent class comes with a <code>.history</code> property of type <code>History</code>. 
+						It exposes methods so you can manipulate and view it (for debugging,
 						mostly) during runtime. For instance, it has a <code>.pretty_print()</code> method that prints
 						on the standard output the content of the history using the classic color scheme. It's great for
 						debugging but not for parsing. If you need to parse the history there is a
@@ -324,8 +325,8 @@ yes
 					</ul>
 					<p>Yacana provides you with a way to add new Messages to the History manually. The History class
 						exposes an <code>.add(...)</code> method. <br />
-						It takes an argument of type <code>Message()</code> ([[see here]() @todo) with two parameters: a
-						[MessageRole]() @todo url enum and the string message itself. </p>
+						It takes an argument of type <code>Message()</code> with two parameters: a
+						[MessageRole]() enum and the string message itself. </p>
 					<p>For example: </p>
 					<pre><code class="language-python">
 from yacana import Agent, Message, MessageRole

@@ -41,6 +41,7 @@
 						<li><a href="https://x.com/RSoftwares_ofc" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
 						<li><a href="https://medium.com/@docteur_rs" class="icon brands fa-medium-m"><span class="label">Medium</span></a></li>
 						<li><a href="https://www.youtube.com/channel/UCvi7R0CRmtxhWOVw62XteTw" class="icon brands fa-youtube"><span class="label">Medium</span></a></li>
+						<li><a href="https://github.com/rememberSoftwares/yacana" class="icon brands fa-github"><span class="label">Github</span></a></li>
 					</ul>
 				</header>
 
@@ -73,7 +74,7 @@
 					<hr class="major" />
 
 					<h2>Stopping chat using 'maximum iterations'</h2>
-					<p>We'll be using a new class called [GroupSolve]() @todo url. It takes a list of Tasks (at least
+					<p>We'll be using a new class called GroupSolve. It takes a list of Tasks (at least
 						two) and an [EndChat]() object. </p>
 					<ol>
 						<li>The list of tasks will be the center of conversation for the LLM agents. The order in the
@@ -215,7 +216,7 @@ These are just a few ideas to get you started! What do you think? Would you like
 
 
 					<h2 id="letting-agents-end-the-chat">Letting Agents end the chat</h2>
-					<p>The [EndChatMode]() @todo url enum provides multiple ways to stop a chat. These are the available
+					<p>The EndChatMode enum provides multiple ways to stop a chat. These are the available
 						values: </p>
 					<table>
 						<thead>
@@ -1070,7 +1071,7 @@ So, in hindsight, I have not fully completed the objective of considering altern
 					<h2 id="using-tools-in-chat">Using tools in chat</h2>
 					<h4>Tool use in GroupSolve</h4>
 					<p>GroupSolve uses the common Task class. This means that Tools are also available while agents are
-						chatting. However, tools work the same way as described in the tool section @todo URL. Meaning
+						chatting. However, tools work the same way as described in the tool section. Meaning
 						that the Task's prompt will only be used to trigger the tool but will not be used to act upon
 						its result. You need the other agent for that. <br />
 						This is an important concept because it means that the task's prompt will not be part of the

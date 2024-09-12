@@ -41,6 +41,7 @@
 						<li><a href="https://x.com/RSoftwares_ofc" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
 						<li><a href="https://medium.com/@docteur_rs" class="icon brands fa-medium-m"><span class="label">Medium</span></a></li>
 						<li><a href="https://www.youtube.com/channel/UCvi7R0CRmtxhWOVw62XteTw" class="icon brands fa-youtube"><span class="label">Medium</span></a></li>
+						<li><a href="https://github.com/rememberSoftwares/yacana" class="icon brands fa-github"><span class="label">Github</span></a></li>
 					</ul>
 				</header>
 
@@ -90,7 +91,7 @@
 						LLMs. This is a problem that ChatGPT, Claude, Grok and other smart LLMs don't have.<br>
 						To overcome this particular issue, Yacana comes with its own JSON structure to call Python
 						functions! It's way lighter than the OpenAI standard and Yacana uses <a href>percussive
-							maintenance</a> @todo url to force the LLM to output the JSON in a way that the tool
+							maintenance</a> to force the LLM to output the JSON in a way that the tool
 						expects.</p>
 
 					<hr class="major" />
@@ -225,7 +226,7 @@ def adder(first_number: int, second_number: int) -> int:
 					<p>⚠️ Be aware that whatever the return of your function, Yacana will cast it to string using the
 						built-in <code>str(...)</code> function. LLMs can only understand text so make sure that
 						whatever you send back can be cast correctly (override the <strong>str</strong> if needed).</p>
-					<p>Let's create a <a href>Tool</a> @todo url instance using the Yacana Tool constructor. It takes a
+					<p>Let's create a <a href>Tool</a> instance using the Yacana Tool constructor. It takes a
 						name, a description, and a reference to the actual function.<br>
 						<span class="icon solid fa-info-circle">I can only emphasize once more on the importance of
 							providing an accurate description.</span>

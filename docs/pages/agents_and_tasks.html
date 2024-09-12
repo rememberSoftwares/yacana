@@ -40,6 +40,7 @@
 						<li><a href="https://x.com/RSoftwares_ofc" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
 						<li><a href="https://medium.com/@docteur_rs" class="icon brands fa-medium-m"><span class="label">Medium</span></a></li>
 						<li><a href="https://www.youtube.com/channel/UCvi7R0CRmtxhWOVw62XteTw" class="icon brands fa-youtube"><span class="label">Medium</span></a></li>
+						<li><a href="https://github.com/rememberSoftwares/yacana" class="icon brands fa-github"><span class="label">Github</span></a></li>
 					</ul>
 				</header>
 
@@ -181,7 +182,7 @@ So, the result of solving the equation 2 + 2 is indeed 4.
 					</ul>
 					<p class="icon solid fa-info-circle"> Many other parameters can be given to a Task. We will see some
 						of them in the following sections of this tutorial. But you can already check out the Task class
-						documentation @todo URL</p>
+						documentation</p>
 					<h4 id="in-what-way-is-this-disruptive-compared-to-other-frameworks">In what way is this disruptive
 						compared to other frameworks?</h4>
 					<p>In the above code snippet, we assigned the agent to the Task. So it's the Task that leads the
@@ -202,11 +203,10 @@ So, the result of solving the equation 2 + 2 is indeed 4.
 					<h2 id="getting-the-result-of-a-task">Getting the result of a Task</h2>
 					<p>Even though we get logs on the standard output of the terminal, we still need to extract the
 						answer of the LLM that solved that Task in order to do something with it.<br>
-						Getting the string message out of it is quite easy as the .solve() method returns a Message()
-						@todo URL class.<br>
+						Getting the string message out of it is quite easy as the .solve() method returns a Message() class.<br>
 						Maybe you are thinking &quot;Ho nooo, another class to deal with&quot;. Well, let me tell you
 						that it's always better to have an OOP class than some semi-random Python dictionary where
-						you'll forget what keys it contains in ten minutes. Also, the Message @todo url class is very
+						you'll forget what keys it contains in ten minutes. Also, the Message class is very
 						straightforward. It exposes a <code>content</code> attribute. Update the current code to look
 						like this:</p>
 					<pre><code class="language-python">
@@ -320,13 +320,12 @@ LoggerManager.set_library_log_level("httpx", "WARNING")
 					<p>For advanced users, Yacana provides a way to tweak the LLM runtime behavior!<br>
 						For instance, lowering the <code>temperature</code> setting makes the model less creative in its
 						responses. On the contrary, raising this setting will make the LLM more chatty and creative.<br>
-						Yacana provides you with a class that exposes all the possible LLM properties. Look at them <a
-							href="">here</a> @todo url and if you need a good explanation of each of them I would
+						Yacana provides you with a class that exposes all the possible LLM properties. Also if you need a good explanation of each of them I would
 						recommend the <a href="https://youtu.be/QfFRNF5AhME?si=lpSYUq2WoidYiqzP">excellent video</a>
 						Matt Williams did on this subject.</p>
 					<p class="icon solid fa-info-circle"> These settings are set at the Agent level so that you can have
 						the same model used by two separate agents and have them behave differently.</p>
-					<p>We use the <a href="">ModelSettings</a> @todo url class to configure the settings we need.</p>
+					<p>We use the <a href="">ModelSettings</a> class to configure the settings we need.</p>
 					<p>For example, let's lower the temperature of an Agent to 0.4:</p>
 					<pre><code class="language-python">
 from yacana import ModelSettings, Agent
