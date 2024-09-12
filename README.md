@@ -6,6 +6,8 @@ Task-driven multi-agents framework for developers to create open source LLM-powe
   <img src="https://github.com/user-attachments/assets/e59e056b-35c8-4077-a22a-3b6a72c9eb03">
 </p>
 
+---
+
 ## I. What is Yacana
 
 Yacana is designed for both *beginners* and *advanced* AI users.  
@@ -14,7 +16,9 @@ It features a simple OOP API with a **smooth learning curve**, while also offeri
 
 The real strength of the framework lies in its ability to deliver impressive results with open-source models, even small ones, making **tool calling effortless with any LLM**.  
 
-For production-grade capabilities, Yacana offers a **guided workflow** approach or **multi-turn chat**, both leveraging what we typically call '*Agents*'. However, Yacana takes a different approach to Agents compared to other frameworks, focusing more on chaining Tasks together rather than on the Agents themselves.
+Yacana offers a **guided workflow** approach or **multi-turn chat** for production-grade capabilities, leveraging what we typically call '*Agents*'. However, Yacana takes a different approach to Agents compared to other frameworks, focusing more on chaining Tasks together rather than on the Agents themselves.
+
+---
 
 ## II. Key Features
 
@@ -29,11 +33,14 @@ Be ready in minutes!
 
 ▶️▶️▶️ [Start by reading the documentation here](https://remembersoftwares.github.io/yacana/). ◀️◀️◀️    
 
+---
 
 ## III. Installation
 ```shell
 pip install yacana
 ```
+
+---
 
 ## IV. Quick demo
 
@@ -55,7 +62,7 @@ cd yacana/examples/invoices_checker
 python quick_demo.py
 ```
 
-⚠️ Requirements:  
+⚠️ **Requirements:**  
 * Before running the script make sure that you installed Ollama on your computer
 * The Agents are using `llama3.1:8b`. If you are using another LLM model, update the 3 agent declarations in the script to match the one you installed:  
 
@@ -66,7 +73,7 @@ agent2 = Agent("Naming expert", "llama3.1:8b")
 agent3 = Agent("File-system helper", "llama3.1:8b", model_settings=ms)
 ```
 
----
+**Script:**
 
 ```python
 from yacana import Agent, Task, Tool, GroupSolve, EndChat, EndChatMode, ModelSettings, LoggerManager, ToolError
@@ -215,6 +222,8 @@ for invoice_file in files:
 ### Call graph
 
 ![invoice_demo](https://github.com/user-attachments/assets/7cf6fd5f-325f-4868-b4c9-0667a30543fd)
+
+---
 
 ## V. Roadmap
 
