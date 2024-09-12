@@ -31,7 +31,7 @@ Be ready in minutes!
 
 ## Quick look at how it works
 
-```
+```shell
 pip install yacana
 pip install pypdf
 
@@ -42,7 +42,7 @@ python quick_demo.py
 
 Let's make an application that searches for PDF in a folder. For each one it will:  
 * Check if it is an invoice. If not it will skip to the next one.
-* Deduct the money on the invoice from the bank account (@`checking_account_limit`) and tell you if you don't have enough money to pay for everything !
+* Deduct the money on the invoice from the bank account (@`checking_account_limit`) and tell you if you don't have enough money to pay for everything!
 * Rename the invoice file name to match `<category><total price>.pdf`.
 
 ```python
