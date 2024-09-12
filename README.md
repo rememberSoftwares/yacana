@@ -5,6 +5,8 @@ Task-driven multi-agents framework for developers to create open source LLM-powe
 <p align="center">
   <img src="https://github.com/user-attachments/assets/c54b2e47-8a76-444d-9510-339acc1d16a8">
 </p>
+![yacana_round_small](https://github.com/user-attachments/assets/e59e056b-35c8-4077-a22a-3b6a72c9eb03)
+![yacana_medium_round](https://github.com/user-attachments/assets/1d5eb3a5-5ae5-470e-9d51-1bf1beea345f)
 
 ## What is Yacana
 
