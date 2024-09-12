@@ -38,7 +38,7 @@ pip install yacana
 
 Let's make an application that looks for PDF invoices inside a folder. For each one it will:  
 * Check if it is an invoice. If not it will skip to the next one.
-* Deduct the money on the invoice from the bank account (@`checking_account_limit`) and tell you if you don't have enough money to pay for everything!
+* Deduct the money on the invoice from the bank account (`@checking_account_limit`) and tell you if you don't have enough money to pay for everything!
 * Rename the invoice file name to match `<category><total price>.pdf`.
 
 ### Demo setup
@@ -57,12 +57,14 @@ python quick_demo.py
 ⚠️ Requirements:  
 * Before running the script make sure that you installed Ollama on your computer
 * The Agents are using `llama3.1:8b`. If you are using another LLM model, update the 3 agent declarations in the script to match the one you installed:
+➡️
 ```
 agent1 = Agent("Expert banker", "llama3.1:8b", model_settings=ms)
 agent2 = Agent("Naming expert", "llama3.1:8b")
 agent3 = Agent("File-system helper", "llama3.1:8b", model_settings=ms)
 ```
 
+---
 
 ```python
 from yacana import Agent, Task, Tool, GroupSolve, EndChat, EndChatMode, ModelSettings, LoggerManager, ToolError
@@ -97,7 +99,7 @@ def read_pdf(file_name: str) -> str:
     # extracting text from all pages
     full_text = ""
     for page in reader.pages:
-        full_text += page.extract_text() + "\n"  # Adding a newline between pages
+        full_text += page.extract_text() + "\n"
     return full_text
 
 
@@ -148,8 +150,9 @@ ms = ModelSettings(temperature=0.4)
 
 # Creating 3 agents
 agent1 = Agent("Expert banker", "llama3.1:8b", model_settings=ms)
-agent2 = Agent("Naming expert", "llama3.1:8b")
-agent3 = Agent("File-system helper", "llama3.1:8b", model_settings=ms)
+agent2 = Agent("File-system helper", "llama3.1:8b", model_settings=ms)
+agent3 = Agent("Naming expert", "llama3.1:8b")
+
 
 # Registering 2 tools
 expense_tracker_tool: Tool = Tool("Expense tracker", "Takes as input a price from an invoice and deducts it from the user's account. Returns the new account balance.", invoice_expense_tracker)
@@ -179,7 +182,7 @@ for invoice_file in files:
         Task("We must register this new price into an invoice tracker", agent1, tools=[expense_tracker_tool]).solve()
         # Yes/no router
         router = Task("Is the current account balance still positive ? Answer ONLY by 'yes' or 'no'.", agent1, forget=True).solve().content
-        # !! Reversed condition !! ; looking for 'yes' or it's absence is safer than looking for 'no'
+        # !! Reversed condition !! ; looking for 'yes' or its absence is safer than looking for 'no'
         if "yes" not in router.lower():
             print("WARNING ! You are spending to much !!")
 
@@ -187,8 +190,8 @@ for invoice_file in files:
         GroupSolve(
             [
                 Task("You must find a name for the invoice file. It must follow this pattern: '<category>_<total_price>.pdf'", agent1),
-                Task("Check that the proposed file name is not already taken.", agent3, tools=[check_file_existence_tool]),
-                Task("If the file name is already taken, add an incrementation to the end of the name. Your objective is complete as soon as a correct file name is found. No need to research further.", agent2, llm_stops_by_itself=True)
+                Task("Check that the proposed file name is not already taken.", agent2, tools=[check_file_existence_tool]),
+                Task("If the file name is already taken, add an incrementation to the end of the name. Your objective is complete as soon as a correct file name is found. No need to research further.", agent3, llm_stops_by_itself=True)
             ],
             EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION, max_iterations=3)
         ).solve()
@@ -207,6 +210,16 @@ for invoice_file in files:
     agent3.history.load_check_point(checkpoint_ag3)
 ```
 
-## Call graph
+### Call graph
 
+![invoice_demo](https://github.com/user-attachments/assets/7cf6fd5f-325f-4868-b4c9-0667a30543fd)
 
+## Roadmap
+
+❗ Highest priority
+* Compatibility with inference servers other than Ollama, like vllm, etc.
+
+❕ Lower priority
+* Simplifying shift message system and maybe reworking GroupChat itself a bit.
+* Keep working on the documentation.
+* Add a section on code generation.
