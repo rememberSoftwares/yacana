@@ -234,3 +234,11 @@ for invoice_file in files:
 * Simplify shift message and maybe rework GroupChat itself a bit.
 * Keep working on the documentation.
 * Add a section on code generation.
+
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for more details.
+
+---
+
