@@ -22,17 +22,17 @@ Yacana offers a **guided workflow** approach or **multi-turn chat** for producti
 
 ## Key Features
 
-* Link tasks together to create workflows
-* Tool calling for every LLMs
-* Multi-agents autonomous chat
-* Ready to use in minutes
-
-*Yacana is free and open source under MIT license.*  
+* 🔗 Link tasks together to create workflows
+* 🧰 Tool calling for every LLMs
+* 🤖 Multi-agents autonomous chat
+* 🚀 Ready to use in minutes
 
 Be ready in minutes!  
 
 ▶️▶️▶️ [Start by reading the documentation here](https://remembersoftwares.github.io/yacana/). ◀️◀️◀️    
 
+*Yacana is free and open source under MIT license.*  
+If you like Yacana consider giving a star to the repo! Opensource projects need your help! ⭐  
 ---
 
 ## Installation
