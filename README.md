@@ -43,12 +43,13 @@ pip install yacana
 
 ## Quick demo
 
-Let's make an application that looks for PDF invoices inside a folder. For each one it will:  
-* Check if it is an invoice. If not it will skip to the next one.
-* Deduct the money on the invoice from the bank account (`@checking_account_limit`) and tell you if you don't have enough money to pay for everything!
-* Rename the invoice file name to match `<category><total price>.pdf`.
+Let's make an application that looks for PDF invoices inside a folder then checks if you have enough money to pay them and finaly rename them so things don't get messy!  
+Order of operation:   
+1. Check if it is an invoice. If not it will skip to the next one.
+2. Deduct the money on the invoice from the bank account (`@checking_account_limit` variable) and tell you if you don't have enough money to pay for everything!
+3. Rename the invoice file to match `<category><total price>.pdf` so that it's clean.
 
-*We'll test with these 3 PDFs. 2 invoices and one random text:*
+*We'll test with these 3 PDFs. Two invoices and one random text:*
 
 <p align="center">
   <img src="https://github.com/user-attachments/assets/9a58b927-0017-4214-b1ef-331a7c0fafaf">
@@ -69,7 +70,7 @@ python quick_demo.py
 
 ⚠️ **Requirements:**  
 * Before running the script make sure that you installed Ollama on your computer
-* The Agents are using `llama3.1:8b`. If you are using another LLM model, update the 3 agent declarations in the script to match the one you installed:  
+* The Agents are using `llama3.1:8b`. If you are using another LLM model, update the 3 agents' declaration in the script to match the one you installed:  
 
 ➡️
 ```
