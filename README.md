@@ -22,12 +22,10 @@ Yacana offers a **guided workflow** approach or **multi-turn chat** for producti
 
 ## Key Features
 
-* 🔗 Link tasks together to create workflows
-* 🧰 Tool calling for every LLMs
-* 🤖 Multi-agents autonomous chat
-* 🚀 Ready to use in minutes
-
-Be ready in minutes!  
+* 🔗 **Link** tasks together to create workflows
+* 🧰 Tool calling for **every** LLMs
+* 🤖 **Multi-agents** & **multi-turn** autonomous chat
+* 🚀 *Ready to use in minutes*
 
 ▶️▶️▶️ [Start by reading the documentation here](https://remembersoftwares.github.io/yacana/). ◀️◀️◀️    
 
