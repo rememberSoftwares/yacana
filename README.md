@@ -30,8 +30,8 @@ Yacana offers a **guided workflow** approach or **multi-turn chat** for producti
 ▶️▶️▶️ [Start by reading the documentation here](https://remembersoftwares.github.io/yacana/). ◀️◀️◀️    
 
 *Yacana is free and open source under MIT license.*  
-
 If you like Yacana consider giving a star to the repo! Opensource projects need your help! ⭐  
+
 ---
 
 ## Installation
