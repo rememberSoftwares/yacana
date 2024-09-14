@@ -49,6 +49,13 @@ Let's make an application that looks for PDF invoices inside a folder. For each 
 * Deduct the money on the invoice from the bank account (`@checking_account_limit`) and tell you if you don't have enough money to pay for everything!
 * Rename the invoice file name to match `<category><total price>.pdf`.
 
+We'll test with these 3 PDFs. 2 invoices and one random text:
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/9a58b927-0017-4214-b1ef-331a7c0fafaf">
+</p>
+![all_invoices](https://github.com/user-attachments/assets/9a58b927-0017-4214-b1ef-331a7c0fafaf)
+
+
 ### Demo setup
 
 ```shell
