@@ -235,24 +235,24 @@ These are just a few ideas to get you started! What do you think? Would you like
 							<tr>
 								<td>END<em>CHAT</em>AFTER<em>FIRST</em>COMPLETION</td>
 								<td>True</td>
-								<td>When a Task is marked as complete the chat ends immediately</td>
+								<td>When a Task is marked as complete the chat ends immediately.</td>
 							</tr>
 							<tr>
 								<td>ONE<em>LAST</em>CHAT<em>AFTER</em>FIRST_COMPLETION</td>
 								<td>True</td>
-								<td>When a Task is marked as complete, one last agent can speak and then the chat ends
+								<td>When a Task is marked as complete, one last agent can speak and then the chat ends.
 								</td>
 							</tr>
 							<tr>
 								<td>ONE<em>LAST</em>GROUP<em>CHAT</em>AFTER<em>FIRST</em>COMPLETION</td>
 								<td>True</td>
 								<td>When a Task is marked as complete, one whole table turn will be allowed before the
-									chat ends</td>
+									chat ends.</td>
 							</tr>
 							<tr>
 								<td>ALL<em>TASK</em>MUST_COMPLETE</td>
 								<td>True</td>
-								<td>All tasks must be marked as complete before the chat is ended</td>
+								<td>All tasks must be marked as complete before the chat is ended.</td>
 							</tr>
 						</tbody>
 					</table>
@@ -523,7 +523,7 @@ You must find a secret number from 1 to 3. Propose one number.
 GroupSolve([task1, task2], EndChat(EndChatMode.ONE_LAST_GROUP_CHAT_AFTER_FIRST_COMPLETION)).solve()
 					</code></pre><br>
 					<p>This will allow both LLMs to speak one last time before the chat ends. <br />
-						<span class="icon solid fa-info-circle">This option is more useful when doing GroupSolve with
+						<span class="icon solid fa-info-circle"> This option is more useful when doing GroupSolve with
 							more than 2 agents.</span>
 					</p>
 					<p>▶️ Output:</p>
@@ -689,7 +689,7 @@ Looks like we've completed the task successfully! Well done! Would you like to s
 					<p>To showcase this let's make another game: </p>
 					<ul>
 						<li>Agent1 has the main task of storing a list of numbers. The list is empty ;</li>
-						<li>Agent2 has the task of giving numbers to Agent1 so that it add them to its list ;</li>
+						<li>Agent2 has the task of giving numbers to Agent1 so that it adds them to its list ;</li>
 					</ul>
 					<p>The "game" finishes when Agent1 has 15 numbers in its list. </p>
 					<pre><code class="language-python">
@@ -740,7 +740,7 @@ task2.agent.history.pretty_print()
 							(default) point of view.</li>
 						<li>To control who gets the shift, use the
 							<code>shift_message_owner=&#60;task instance&#62;</code>
-							optionnal parameter from the GroupSolve() class
+							optionnal parameter from the GroupSolve() class.
 						</li>
 						<li>For instance:
 							<code>GroupSolve([task1, task2], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION), shift_message_owner=task2).solve()</code>
@@ -936,7 +936,7 @@ GroupSolve([task1, task2], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION),
 								alt="GS8" /></span></p>
 					<p>Using general, meaningless prompts as shift messages is good as it won't disturb the LLM in its
 						task. </p>
-					<p>⚠️ We haven't actually reran the program 😁. Therefore, message content after the shift message
+					<p>⚠️ We haven't actually rerun the program 😁. Therefore, message content after the shift message
 						may be different. </p>
 					<hr />
 					<p>Adding the shift message to Agent1 instead of Agent2 (default) would look like this: </p>
@@ -949,7 +949,7 @@ GroupSolve([task1, task2], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION),
 								alt="GS9" /></span>
 					</p>
 					<p>Note how User and Assistant are now reversed. </p>
-					<p>⚠️ We haven't actually reran the program 😁. Therefore, message content after the shift message
+					<p>⚠️ We haven't actually rerun the program 😁. Therefore, message content after the shift message
 						may be different now that it's assigned to Agent1.</p>
 					<h4>Reconciling initial messages</h4>
 					<p>Let's take another look at the diagram of one past conversation: <br />
@@ -979,18 +979,17 @@ GroupSolve([task1, task2], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION),
 								alt="GS6" /></span>
 					</p>
 					<ul>
-						<li>The first Task is solved and the output ends up in Agent1's History. It's messages 1 & 2 ;
-						</li>
+						<li>The first Task is solved and the output ends up in Agent1's History. It's messages 1 & 2</li>
 						<li>The prompt and answer are then copied to the agent2's History as you can see in messages 3 &
-							4 ;</li>
+							4</li>
 						<li>Next Task2 is solved. Note that it now has access to the input and output of Agent1's
-							solving task as it was put in its History. It's Message 5 & 6 ;</li>
-						<li>The messages 5 & 6 are copied back to agent1's History as shown in messages 7 & 8 ;</li>
+							solving task as it was put in its History. It's Message 5 & 6</li>
+						<li>The messages 5 & 6 are copied back to agent1's History as shown in messages 7 & 8</li>
 						<li>We now reach the shift message, at message 9, configured by default to copy message 8. 🚨You
 							should set the shift message yourself as the histories are now merged from the beginning.
-							<strong>This will create a message duplication if you don't!</strong> ;
+							<strong>This will create a message duplication if you don't!</strong>
 						</li>
-						<li>Messages from 10 to 12 are already merged as being part of the GroupSolve loop ;</li>
+						<li>Messages from 10 to 12 are already merged as being part of the GroupSolve loop</li>
 					</ul>
 					<p>We could represent this merged workflow in the following unified form: </p>
 					<p><span class="image main"><img

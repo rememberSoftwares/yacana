@@ -164,7 +164,7 @@ def get_weather(city: str) -> str:
 					<hr>
 					<p>⚠️⚠️The full example for those who wish to test IRL. However, we haven't even shown a real tool
 						example yet, so this section should be optional!⚠️⚠️</p>
-					<p>You should read the next section <strong>"Calling a tool"</strong> bellow and come back to this
+					<p>You should read the next section <strong>"Calling a tool"</strong> below and come back to this
 						later.</p>
 					<p>Bad prompt:</p>
 					<pre><code class="language-python">
@@ -228,7 +228,7 @@ def adder(first_number: int, second_number: int) -> int:
 						whatever you send back can be cast correctly (override the <strong>str</strong> if needed).</p>
 					<p>Let's create a <a href>Tool</a> instance using the Yacana Tool constructor. It takes a
 						name, a description, and a reference to the actual function.<br>
-						<span class="icon solid fa-info-circle">I can only emphasize once more on the importance of
+						<span class="icon solid fa-info-circle"> I can only emphasize once more on the importance of
 							providing an accurate description.</span>
 					</p>
 					<pre><code class="language-python">
@@ -357,13 +357,13 @@ Equation result =  4
 					<p class="icon solid fa-info-circle"> Note that the multi-shot prompts (the JSON examples) are not
 						shown in the INFO logs. This is
 						because no actual request is made to the LLM. They are appended to the History()
-						programmatically like shown in the multi-shot example. However, if you add an
+						programmatically as shown in the multi-shot example. However, if you add an
 						<code>agent1.history.pretty_print()</code> at the end of the script, you'll see both JSON
 						examples given to the LLM as history context.
 					</p>
 					<h4>Adding validation inside the Tool</h4>
-					<p>The previous trick is good to nudge the LLM in the right direction. But it's not the best way to
-						get accurate results. The technique presented here is by far the more effective and should be
+					<p>The previous trick is good to nudge the LLM into the right direction. But it's not the best way to
+						get accurate results. The technique presented here is by far the most effective and should be
 						preferred over the previous one.</p>
 					<p>As LLM are not deterministic we can never assure what will be given to our tool. Therefore, you
 						should look at a tool like you would a web server route. I'm talking here about server-side
@@ -504,9 +504,9 @@ Equation result = 4
 						maintenance should avoid that by shifting LLM internal configuration during runtime more or less
 						randomly, the LLM still might go into an infinite loop. And this is NOT a viable option!<br>
 						Fortunately, Yacana comes with a default of 5 iterations (tries) for each of the 2 types of
-						errors we encountered earlier.</p>
+						errors we encountered earlier:</p>
 					<ul>
-						<li>Either the calling error like the <code>"first__number"</code> error seen above</li>
+						<li>Either the calling error like the <code>"first__number"</code> error seen above.</li>
 						<li>Or the custom ToolError that the tool threw.
 							This means that if one of these two counters gets to 5 then an error is raised. One that is
 							not caught by Yacana.<br>
@@ -667,8 +667,7 @@ So, to summarize: the sky appears blue because of the selective scattering of sh
 					<p>If you write a tool that doesn't have a reason to answer anything to the LLM, you could be
 						tempted to let it return <code>None</code>.<br>
 						We wouldn't encourage this behavior as LLMs generally expect some kind of answer to guide them.
-						You should preferably return some kind of success message. It will act as some kind of positive
-						reinforcement.<br>
+						You should preferably return a success message. It will act as positive reinforcement.<br>
 						However, if your tool doesn't return anything, a default message will be added automatically:
 						<i>"Tool {tool.tool_name} was called successfully. It didn't return anything."</i>.
 					</p>

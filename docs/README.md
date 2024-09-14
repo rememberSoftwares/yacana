@@ -1431,11 +1431,11 @@ The LLM saw that the tool needed integers in input. As such, it called the tool 
 
 ⚠️ Do not abuse this technic as it tends to create some noise. Trying to manage too many hypothetical use cases might, in the end, degrade the performance of the tool call.  
 
-ℹ️ Note that the multi-shot prompts (the JSON examples) are not shown in the INFO logs. This is because no actual request is made to the LLM. They are appended to the History() programmatically like shown in the multi-shot example. However, if you add an `agent1.history.pretty_print()` at the end of the script, you'll see both JSON examples given to the LLM as history context.  
+ℹ️ Note that the multi-shot prompts (the JSON examples) are not shown in the INFO logs. This is because no actual request is made to the LLM. They are appended to the History() programmatically as shown in the multi-shot example. However, if you add an `agent1.history.pretty_print()` at the end of the script, you'll see both JSON examples given to the LLM as history context.  
 
 #### Adding validation inside the Tool
 
-The previous trick is good to nudge the LLM in the right direction. But it's not the best way to get accurate results. The technique presented here is by far the more effective and should be preferred over the previous one.  
+The previous trick is good to nudge the LLM into the right direction. But it's not the best way to get accurate results. The technique presented here is by far the most effective and should be preferred over the previous one.  
 
 As LLM are not deterministic we can never assure what will be given to our tool. Therefore, you should look at a tool like you would a web server route. I'm talking here about server-side validation. Your tool must check that what is given to it is valid and raise an error if not.  
 
@@ -1551,8 +1551,8 @@ It worked!
 #### Maximum tool errors
 
 What happens if the LLM is stubborn and gets stuck in a loop? Even though Yacana's percussive maintenance should avoid that by shifting LLM internal configuration during runtime more or less randomly, the LLM still might go into an infinite loop. And this is NOT a viable option!  
-Fortunately, Yacana comes with a default of 5 iterations (tries) for each of the 2 types of errors we encountered earlier.  
-* Either the calling error like the `"first__number"` error seen above
+Fortunately, Yacana comes with a default of 5 iterations (tries) for each of the 2 types of errors we encountered earlier:  
+* Either the calling error like the `"first__number"` error seen above.
 * Or the custom ToolError that the tool threw.
 This means that if one of these two counters gets to 5 then an error is raised. One that is not caught by Yacana.  
 Specifically a `MaxToolErrorIter` exception. You should try/catch all of your Tasks that utilize Tools as they might loop too many times and trigger this exception.  
@@ -1707,7 +1707,7 @@ In my opinion, using the `get_temperature` tool is NOT relevant to solving this 
 #### Tools that don't return anything
 
 If you write a tool that doesn't have a reason to answer anything to the LLM, you could be tempted to let it return `None`.  
-We wouldn't encourage this behavior as LLMs generally expect some kind of answer to guide them. You should preferably return some kind of success message. It will act as some kind of positive reinforcement.  
+We wouldn't encourage this behavior as LLMs generally expect some kind of answer to guide them. You should preferably return a success message. It will act as positive reinforcement.  
 However, if your tool doesn't return anything, a default message will be added automatically: "Tool {tool.tool_name} was called successfully. It didn't return anything.".  
 
 ### Assigning multiple Tools
@@ -2052,10 +2052,10 @@ The [EndChatMode]() @todo url enum provides multiple ways to stop a chat. These 
 | Mode              | Needs Task annotation | Description |
 | :---------------- | :------: | :----- |
 | MAX_ITERATIONS_ONLY | False  | Chat ends when we reach the maximum number of rounds. *Defaults to 5.* |
-| END_CHAT_AFTER_FIRST_COMPLETION | True | When a Task is marked as complete the chat ends immediately |
-| ONE_LAST_CHAT_AFTER_FIRST_COMPLETION | True | When a Task is marked as complete, one last agent can speak and then the chat ends |
-| ONE_LAST_GROUP_CHAT_AFTER_FIRST_COMPLETION | True| When a Task is marked as complete, one whole table turn will be allowed before the chat ends |
-| ALL_TASK_MUST_COMPLETE | True | All tasks must be marked as complete before the chat is ended |
+| END_CHAT_AFTER_FIRST_COMPLETION | True | When a Task is marked as complete the chat ends immediately. |
+| ONE_LAST_CHAT_AFTER_FIRST_COMPLETION | True | When a Task is marked as complete, one last agent can speak and then the chat ends. |
+| ONE_LAST_GROUP_CHAT_AFTER_FIRST_COMPLETION | True| When a Task is marked as complete, one whole table turn will be allowed before the chat ends. |
+| ALL_TASK_MUST_COMPLETE | True | All tasks must be marked as complete before the chat is ended. |
 
 What's the **Needs task annotation** column in the table?  
 > To let an agent know that it's in charge of ending the chat, its Task() must be given an optional parameter `llm_stops_by_itself=True`. All Task() constructors setting this, make their assigned Agent in charge of stopping the conversation.  
@@ -2471,7 +2471,7 @@ To achieve two agents speaking with each other we had to pipe the output of the 
 
 To showcase this let's make another game:  
 * Agent1 has the main task of storing a list of numbers. The list is empty ;
-* Agent2 has the task of giving numbers to Agent1 so that it add them to its list ;
+* Agent2 has the task of giving numbers to Agent1 so that it adds them to its list ;
 
 The "game" finishes when Agent1 has 15 numbers in its list.  
 
@@ -2507,7 +2507,7 @@ There are two columns: one for Agent1's point of view and one for Agent's 2 poin
 
 Taking control of the shift message is fairly simple. You have 2 types of control.  
 * The first control is where the shift message should be placed. Either in Agent1 or in Agent2 (default) point of view.
-  * To control who gets the shift, use the `shift_message_owner=<task instance>` optionnal parameter from the GroupSolve() class
+  * To control who gets the shift, use the `shift_message_owner=<task instance>` optionnal parameter from the GroupSolve() class.
   * For instance: `GroupSolve([task1, task2], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION), shift_message_owner=task2).solve()`
 * The second control is the content of the shift message. It can either come from the opposite side (default) or be set by you.
     * To control the content of the shift message, use the `shift_message_content="<Some message>"` optional parameter from the GroupSolve() class. Not specifying this parameter results in the message being automatically copied from the first Agent answer to the second Agent (cf graph).
@@ -2694,7 +2694,7 @@ The diagram now looks like this:
 
 Using general, meaningless prompts as shift messages is good as it won't disturb the LLM in its task.  
 
-⚠️ We haven't actually reran the program 😁. Therefore, message content after the shift message may be different.  
+⚠️ We haven't actually rerun the program 😁. Therefore, message content after the shift message may be different.  
 
 ---
 
@@ -2709,7 +2709,7 @@ The diagram now looks like this:
 
 Note how User and Assistant are now reversed.  
 
-⚠️ We haven't actually reran the program 😁. Therefore, message content after the shift message may be different now that it's assigned to Agent1.
+⚠️ We haven't actually rerun the program 😁. Therefore, message content after the shift message may be different now that it's assigned to Agent1.
 
 
 #### Reconciling initial messages
@@ -2732,12 +2732,12 @@ GroupSolve([task1, task2], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION),
 It does the following:  
 ![GS6](https://github.com/user-attachments/assets/51e1143c-3aa1-40e0-acf6-5ac014d83282)
 
-* The first Task is solved and the output ends up in Agent1's History. It's messages 1 & 2 ;
-* The prompt and answer are then copied to the agent2's History as you can see in messages 3 & 4 ;
-* Next Task2 is solved. Note that it now has access to the input and output of Agent1's solving task as it was put in its History. It's Message 5 & 6 ;
-* The messages 5 & 6 are copied back to agent1's History as shown in messages 7 & 8 ;
-* We now reach the shift message, at message 9, configured by default to copy message 8. 🚨You should set the shift message yourself as the histories are now merged from the beginning. **This will create a message duplication if you don't!** ;
-* Messages from 10 to 12 are already merged as being part of the GroupSolve loop ;
+* The first Task is solved and the output ends up in Agent1's History. It's messages 1 & 2.
+* The prompt and answer are then copied to the agent2's History as you can see in messages 3 & 4.
+* Next Task2 is solved. Note that it now has access to the input and output of Agent1's solving task as it was put in its History. It's Message 5 & 6.
+* The messages 5 & 6 are copied back to agent1's History as shown in messages 7 & 8.
+* We now reach the shift message, at message 9, configured by default to copy message 8. 🚨You should set the shift message yourself as the histories are now merged from the beginning. **This will create a message duplication if you don't!**
+* Messages from 10 to 12 are already merged as being part of the GroupSolve loop.
 
 We could represent this merged workflow in the following unified form:  
 
@@ -3570,7 +3570,7 @@ Cons:
 
 Pros:  
 * Logs readability is good ;
-* No "shift message" nor "first message reconciliation" to deal with 
+* No "shift message" nor "first message reconciliation" to deal with. 
 
 Multi (>2) chat cons:  
 * LLMs that don't perform well with role-play may experience difficulties like impersonation ;
