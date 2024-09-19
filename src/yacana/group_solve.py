@@ -28,7 +28,7 @@ class EndChatMode(Enum):
     END_CHAT_AFTER_FIRST_COMPLETION : str
         Immediately stops group chat after an agent has reached completion
     MAX_ITERATIONS_ONLY : str
-        LLMs won't be asked if they have fulfilled their objectives but instead will loop until achieving max iteration. Max iteration can be set in the EndChat() class bellow.
+        LLMs won't be asked if they have fulfilled their objectives but instead will loop until achieving max iteration. Max iteration can be set in the EndChat() class below.
 
     """
     ALL_TASK_MUST_COMPLETE = "ALL_TASK_MUST_COMPLETE"
