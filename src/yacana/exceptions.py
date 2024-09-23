@@ -6,6 +6,10 @@ class ToolError(Exception):
 
     """
     def __init__(self, message):
+        """
+        Raised by the user from inside a tool when the tool 'thinks' that the given parameters are incorrect.
+        :param message: str: The message will be given to the LLM, so it tries to fix the issue.
+        """
         self.message = message
         super().__init__(self.message)
 
@@ -18,6 +22,10 @@ class MaxToolErrorIter(Exception):
 
     """
     def __init__(self, message):
+        """
+        Raised when the maximum amount of errors has been reached.
+        :param message: Info on what specific iteration counter got maxed out
+        """
         self.message = message
         super().__init__(self.message)
 
@@ -34,5 +42,9 @@ class IllogicalConfiguration(Exception):
 
     """
     def __init__(self, message):
+        """
+        You used the framework in an incoherent way. Seek the stacktrace message.
+        :param message:
+        """
         self.message = message
         super().__init__(self.message)

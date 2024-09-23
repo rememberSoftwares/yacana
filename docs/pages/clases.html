@@ -589,352 +589,774 @@
                 <hr>
 
 
-
-
                 <h2 id="tech-doc-task"><u>Task</u></h2>
 
-<h3>▶️ Member variables</h3>
+                <h3>▶️ Member variables</h3>
 
-<div class="table-wrapper">
-    <table class="alt no-table-margin">
-        <thead>
-            <tr>
-                <th>Variable name</th>
-                <th style="text-align:center">Variable type</th>
-                <th style="text-align:center">Variable description</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><code>task</code></td>
-                <td style="text-align:center"><span>str</span></td>
-                <td style="text-align:center">The task to solve. It is the prompt given to the assigned LLM</td>
-            </tr>
-            <tr>
-                <td><code>agent</code></td>
-                <td style="text-align:center"><a href="#">Agent</a></td>
-                <td style="text-align:center">The agent assigned to this task</td>
-            </tr>
-            <tr>
-                <td><code>json_output</code></td>
-                <td style="text-align:center"><span>bool</span></td>
-                <td style="text-align:center">Forces the LLM to answer as JSON</td>
-            </tr>
-            <tr>
-                <td><code>tools</code></td>
-                <td style="text-align:center">list[<a href="#">Tool</a>]</td>
-                <td style="text-align:center">The list of tools the LLM will use for solving this task</td>
-            </tr>
-            <tr>
-                <td><code>raise_when_max_tool_error_iter</code></td>
-                <td style="text-align:center"><span>bool</span></td>
-                <td style="text-align:center">If True, raises MaxToolErrorIter() after exceeding tool usage limits</td>
-            </tr>
-            <tr>
-                <td><code>llm_stops_by_itself</code></td>
-                <td style="text-align:center"><span>bool</span></td>
-                <td style="text-align:center">Tells the LLM to stop by itself (only for GroupSolve)</td>
-            </tr>
-            <tr>
-                <td><code>use_self_reflection</code></td>
-                <td style="text-align:center"><span>bool</span></td>
-                <td style="text-align:center">Preserves the LLM's self-reflection for future GroupSolve iterations</td>
-            </tr>
-            <tr>
-                <td><code>forget</code></td>
-                <td style="text-align:center"><span>bool</span></td>
-                <td style="text-align:center">If False, the Agent will forget the task after completion</td>
-            </tr>
-            <tr>
-                <td><code>uuid</code></td>
-                <td style="text-align:center"><span>str</span></td>
-                <td style="text-align:center">A unique identifier for this task</td>
-            </tr>
-        </tbody>
-    </table>
-</div>
-<br>
+                <div class="table-wrapper">
+                    <table class="alt no-table-margin">
+                        <thead>
+                        <tr>
+                            <th>Variable name</th>
+                            <th style="text-align:center">Variable type</th>
+                            <th style="text-align:center">Variable description</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td><code>task</code></td>
+                            <td style="text-align:center"><span>str</span></td>
+                            <td style="text-align:center">The task to solve. It is the prompt given to the assigned
+                                LLM
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>agent</code></td>
+                            <td style="text-align:center"><a href="#">Agent</a></td>
+                            <td style="text-align:center">The agent assigned to this task</td>
+                        </tr>
+                        <tr>
+                            <td><code>json_output</code></td>
+                            <td style="text-align:center"><span>bool</span></td>
+                            <td style="text-align:center">Forces the LLM to answer as JSON</td>
+                        </tr>
+                        <tr>
+                            <td><code>tools</code></td>
+                            <td style="text-align:center">list[<a href="#">Tool</a>]</td>
+                            <td style="text-align:center">The list of tools the LLM will use for solving this task</td>
+                        </tr>
+                        <tr>
+                            <td><code>raise_when_max_tool_error_iter</code></td>
+                            <td style="text-align:center"><span>bool</span></td>
+                            <td style="text-align:center">If True, raises MaxToolErrorIter() after exceeding tool usage
+                                limits
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>llm_stops_by_itself</code></td>
+                            <td style="text-align:center"><span>bool</span></td>
+                            <td style="text-align:center">Tells the LLM to stop by itself (only for GroupSolve)</td>
+                        </tr>
+                        <tr>
+                            <td><code>use_self_reflection</code></td>
+                            <td style="text-align:center"><span>bool</span></td>
+                            <td style="text-align:center">Preserves the LLM's self-reflection for future GroupSolve
+                                iterations
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>forget</code></td>
+                            <td style="text-align:center"><span>bool</span></td>
+                            <td style="text-align:center">If False, the Agent will forget the task after completion</td>
+                        </tr>
+                        <tr>
+                            <td><code>uuid</code></td>
+                            <td style="text-align:center"><span>str</span></td>
+                            <td style="text-align:center">A unique identifier for this task</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <br>
 
-<h3>▶️ Methods</h3>
+                <h3>▶️ Methods</h3>
 
-<h4>➡️ __init__(...)</h4>
-<div>Returns a Task instance</div>
+                <h4>➡️ __init__(...)</h4>
+                <div>Returns a Task instance</div>
 
-<div class="table-wrapper">
-    <table class="alt no-table-margin">
-        <thead>
-            <tr>
-                <th>Parameter name</th>
-                <th style="text-align:center">Parameter type</th>
-                <th style="text-align:center">Parameter description</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><code>prompt</code></td>
-                <td style="text-align:center"><span>str</span></td>
-                <td style="text-align:center">The task to solve, i.e., the prompt for the assigned LLM</td>
-            </tr>
-            <tr>
-                <td><code>agent</code></td>
-                <td style="text-align:center"><a href="#">Agent</a></td>
-                <td style="text-align:center">The agent assigned to this task</td>
-            </tr>
-            <tr>
-                <td><code>json_output</code></td>
-                <td style="text-align:center"><span>bool</span></td>
-                <td style="text-align:center">Forces LLM to answer in JSON</td>
-            </tr>
-            <tr>
-                <td><code>tools</code></td>
-                <td style="text-align:center">list[<a href="#">Tool</a>]</td>
-                <td style="text-align:center">The tools the LLM has access to for this task</td>
-            </tr>
-            <tr>
-                <td><code>raise_when_max_tool_error_iter</code></td>
-                <td style="text-align:center"><span>bool</span></td>
-                <td style="text-align:center">Set to False if you don’t want to raise MaxToolErrorIter()</td>
-            </tr>
-            <tr>
-                <td><code>llm_stops_by_itself</code></td>
-                <td style="text-align:center"><span>bool</span></td>
-                <td style="text-align:center">Tells LLM to stop on its own (for GroupSolve)</td>
-            </tr>
-            <tr>
-                <td><code>use_self_reflection</code></td>
-                <td style="text-align:center"><span>bool</span></td>
-                <td style="text-align:center">Allows self-reflection in the next GroupSolve iteration</td>
-            </tr>
-            <tr>
-                <td><code>forget</code></td>
-                <td style="text-align:center"><span>bool</span></td>
-                <td style="text-align:center">Forgets the task once solved</td>
-            </tr>
-        </tbody>
-    </table>
-    <i>Return type: <span>None</span></i>
-</div>
-<br>
+                <div class="table-wrapper">
+                    <table class="alt no-table-margin">
+                        <thead>
+                        <tr>
+                            <th>Parameter name</th>
+                            <th style="text-align:center">Parameter type</th>
+                            <th style="text-align:center">Parameter description</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td><code>prompt</code></td>
+                            <td style="text-align:center"><span>str</span></td>
+                            <td style="text-align:center">The task to solve, i.e., the prompt for the assigned LLM</td>
+                        </tr>
+                        <tr>
+                            <td><code>agent</code></td>
+                            <td style="text-align:center"><a href="#">Agent</a></td>
+                            <td style="text-align:center">The agent assigned to this task</td>
+                        </tr>
+                        <tr>
+                            <td><code>json_output</code></td>
+                            <td style="text-align:center"><span>bool</span></td>
+                            <td style="text-align:center">Forces LLM to answer in JSON</td>
+                        </tr>
+                        <tr>
+                            <td><code>tools</code></td>
+                            <td style="text-align:center">list[<a href="#">Tool</a>]</td>
+                            <td style="text-align:center">The tools the LLM has access to for this task</td>
+                        </tr>
+                        <tr>
+                            <td><code>raise_when_max_tool_error_iter</code></td>
+                            <td style="text-align:center"><span>bool</span></td>
+                            <td style="text-align:center">Set to False if you don’t want to raise MaxToolErrorIter()
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>llm_stops_by_itself</code></td>
+                            <td style="text-align:center"><span>bool</span></td>
+                            <td style="text-align:center">Tells LLM to stop on its own (for GroupSolve)</td>
+                        </tr>
+                        <tr>
+                            <td><code>use_self_reflection</code></td>
+                            <td style="text-align:center"><span>bool</span></td>
+                            <td style="text-align:center">Allows self-reflection in the next GroupSolve iteration</td>
+                        </tr>
+                        <tr>
+                            <td><code>forget</code></td>
+                            <td style="text-align:center"><span>bool</span></td>
+                            <td style="text-align:center">Forgets the task once solved</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <i>Return type: <span>None</span></i>
+                </div>
+                <br>
 
-<h4>➡️ uuid(...)</h4>
-<div>Read-only property that references the current task with a unique ID.</div>
-<i>Return type: <span>str</span></i>
-<br>
-<br>
-                
-<h4>➡️ add_tool(...)</h4>
-<div>Adds a <a href="#">Tool</a> to the list of tools to be used in this task</div>
+                <h4>➡️ uuid(...)</h4>
+                <div>Read-only property that references the current task with a unique ID.</div>
+                <i>Return type: <span>str</span></i>
+                <br>
+                <br>
 
-<div class="table-wrapper">
-    <table class="alt no-table-margin">
-        <thead>
-            <tr>
-                <th>Parameter name</th>
-                <th style="text-align:center">Parameter type</th>
-                <th style="text-align:center">Parameter description</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><code>tool</code></td>
-                <td style="text-align:center"><a href="#">Tool</a></td>
-                <td style="text-align:center">A tool given to the LLM for this task</td>
-            </tr>
-        </tbody>
-    </table>
-    <i>Return type: <span>None</span></i>
-</div>
-<br>
+                <h4>➡️ add_tool(...)</h4>
+                <div>Adds a <a href="#">Tool</a> to the list of tools to be used in this task</div>
 
-<h4>➡️ solve(...)</h4>
-<div>Calls the assigned LLM to perform inference and solve the task. The LLM will use available tools, and Yacana ensures compliance.</div>
-<i>Return type: <a href="#">Message</a> | <span>None</span></i>
-<br>
+                <div class="table-wrapper">
+                    <table class="alt no-table-margin">
+                        <thead>
+                        <tr>
+                            <th>Parameter name</th>
+                            <th style="text-align:center">Parameter type</th>
+                            <th style="text-align:center">Parameter description</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td><code>tool</code></td>
+                            <td style="text-align:center"><a href="#">Tool</a></td>
+                            <td style="text-align:center">A tool given to the LLM for this task</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <i>Return type: <span>None</span></i>
+                </div>
+                <br>
 
-
-
-                <pre><code id="agent" class="language-python">
-class Agent:
-    """ Representation of an LLM. This class gives ways to interact with the LLM that is being assign to it.
-    However, an agent should not be controlled directly but assigned to a Task(). When the task is marked as solved
-    then the agent will interact with the prompt inside the task and output an answer. This class is more about
-    configuring the agent than interacting with it.
-
-    Attributes
-    ----------
-    name : str
-        Name of the agent. Can be used during conversations. Use something short and meaningful that doesn't contradict the system prompt
-    model_name : str
-        Name of the LLM model that will be sent to the inference server. For instance 'llama:3.1" or 'mistral:latest' etc
-    system_prompt : str
-        Defines the way the LLM will behave. For instance set the SP to "You are a pirate" to have it talk like a pirate.
-    model_settings: ModelSettings
-        All settings that Ollama currently supports as model configuration. This needs to be tested with other inference servers. This allows modifying deep behavioral patterns of the LLM.
-    endpoint: str
-        By default will look for Ollama endpoint on your localhost. If you are using a VM with GPU then update this to the remote URL + port.
-    history: History
-        The whole conversation that is sent to the inference server. It contains the alternation of message between the prompts in the task that are given to the LLM and it's answers.
-
-    Methods
-    ----------
-    simple_chat(custom_prompt: str = "> ", stream: bool = True) -> None
-    export_state(self, file_path: str) -> None
-
-    ClassMethods
-    ----------
-    get_agent_from_state(file_path: str) -> 'Agent'
-    """
-
-    def __init__(self, name: str, model_name: str, system_prompt: str | None = None, endpoint: str = "http://127.0.0.1:11434",
-                 model_settings: ModelSettings = None) -> None:
-
-    def simple_chat(self, custom_prompt: str = "> ", stream: bool = True) -> None:
-        """
-        Use for testing but this is not how the framework is intended to be used. It creates a simple chatbot that
-        keeps track of this history.
-        @param custom_prompt: str : Set the prompt style for user input
-        @param stream: If set to True you will see the result of your output as the LLM generates tokens instead of waiting for it to complete.
-        @return: None
-        """
-
-    def export_state(self, file_path: str) -> None:
-        """
-        Exports the current agent configuration to a file. This contains all constructor date and also the history.
-        This means that you can use the @get_agent_from_state method to load this agent back again and continue where
-        you left off.
-        @param file_path: str: path of the file in which you wish the data to be saved. Specify the path + filename. Be wary when using relative path.
-        @return:
-        """
-
-    @classmethod
-    def get_agent_from_state(cls, file_path: str) -> 'Agent':
-        """
-        Loads the state previously exported from the @export_state() method. This will return an Agent in the same state
-        as it was before it was saved allowing you to resume the agent conversation even after the program has exited.
-        @param file_path: str : The path from the file from which to load the Agent.
-        @return: Agent : A newly created Agent that is a copy from disk of a previously exported agent
-        """
-					</code></pre>
+                <h4>➡️ solve(...)</h4>
+                <div>Calls the assigned LLM to perform inference and solve the task. The LLM will use available tools,
+                    and Yacana ensures compliance.
+                </div>
+                <i>Return type: <a href="#">Message</a> | <span>None</span></i>
+                <br>
 
 
-                <h4>EndChatMode</h4>
-                <pre><code id="end-chat-mode" class="language-python">
-class EndChatMode(Enum):
-    """ All types of group chat completion.
-    The difficulty in making agents talk to each other is not to have them talk but to have them stop talking.
-    Note that only tasks that have the @llm_stops_by_itself=True are actually impacted by the mode set here.
-    Use in conjunction with EndChat()
-
-    Attributes
-    ----------
-    ALL_TASK_MUST_COMPLETE : str
-        chat will continue going until all LLMs with @llm_stops_by_itself=True says they are finished (Set precise completion goals in the task prompt if you want this to actualy work).
-    ONE_LAST_CHAT_AFTER_FIRST_COMPLETION : str
-        One agent will have the opportunity to respond after the completion of one agent allowing it to answer one last time.
-    ONE_LAST_GROUP_CHAT_AFTER_FIRST_COMPLETION : str
-        All agents will have one last table turn to speak before exiting the chat after the first completion arrives
-    END_CHAT_AFTER_FIRST_COMPLETION : str
-        Immediately stops group chat after an agent has reached completion
-    MAX_ITERATIONS_ONLY : str
-        LLMs won't be asked if they have fulfilled their objectives but instead will loop until achieving max iteration. Max iteration can be set in the EndChat() class below.
-
-    """
-					</code></pre>
-
-                <h4>EndChat</h4>
-                <pre><code id="end-chat" class="language-python">
-class EndChat:
-    """Defines the modality of how and when LLMs stop chatting.
-    By default, when reaching the @max_iterations limit the chat will end.
-    However, if a task has set @llm_stops_by_itself=True then you can use one of the EndChatMode values to specify how
-    and when the chat stops after reaching the first completion.
-
-    Attributes
-    ----------
-    mode : EndChatMode
-        The modality to end a chat with multiple agents
-    max_iterations : int
-        The max number of iterations in a conversation. An iteration is complete when we get back to the first speaker
-    """
-					</code></pre>
-
-                <h4>GroupSolve</h4>
-                <pre><code id="group-solve" class="language-python">
-class GroupSolve:
-    """This class allows multiple agents to enter a conversation with each other. This is made different from other
-    frameworks as it is not directly the agents that enter the group chat but the tasks. Note that each task has an LLM
-    Agent bound to it though. However, this changes the approach you should have when creating the conversation prompts.
-    If you are letting LLMs decide when to stop chatting then be sure to specify precise goals. For instance 'Your task
-    is done when XXXX'. This way the LLM will reflect on that and make a decision if it has achieved its original Task.
-    Note that dual chat is more efficient as each agent thinks it is talking to a human and this is how instruct models
-    have been trained. When having a conversation with more than two agents (aka more than 2 tasks) then Yacana will
-    force them into roleplay. This might degrade performance a bit but has the advantage of showing a clearer logs.
-    Logging output for dual chat will be reworked shortly.
-
-    Attributes
-    ----------
-    tasks : list[task]
-        All tasks that must be solved during group chat
-    mode : EndChatMode
-        Defines the way to stop the conversation besides than topping max iteration
-    max_iter : int
-        Sets a max iteration counter to prevent infinite loops
-
-    Methods
-    ----------
-    solve(self) -> None
-
-    """
-
-    def __init__(self, tasks: List[Task], end_chat: EndChat, reconcile_first_message: bool = False, shift_message_owner: Task = None, shift_message_content: str | None = None) -> None:
-
-    def set_shift_message(self) -> tuple:
-
-    def solve(self) -> None:
-        """
-        Starts the group chat and allows all LLMs to solve their assigned tasks. Note that 'dual chat' and '3 and more'
-        chat have a different way of starting. Refer to the official documentation.
-        @return: None
-        """
-					</code></pre>
-
-                <h4>Agent</h4>
-                <pre><code id="agent" class="language-python">
-
-					</code></pre>
+                <hr>
+                <hr>
 
 
-                <h4>Agent</h4>
-                <pre><code id="agent" class="language-python">
+                <h2 id="tech-doc-tool"><u>Tool</u></h2>
 
-					</code></pre>
+                <h3>▶️ Member variables</h3>
 
-                <h4>Agent</h4>
-                <pre><code id="agent" class="language-python">
+                <div class="table-wrapper">
+                    <table class="alt">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th style="text-align:center">Type</th>
+                            <th style="text-align:center">Description</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td><code>tool_name</code></td>
+                            <td style="text-align:center"><span>str</span></td>
+                            <td style="text-align:center">A name for the tool. Should be concise and related to what the
+                                tool does.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>function_description</code></td>
+                            <td style="text-align:center"><span>str</span></td>
+                            <td style="text-align:center">A description for the tool. Should be concise and related to
+                                what the tool does. May contain an example of how to use.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>function_ref</code></td>
+                            <td style="text-align:center"><span>Callable</span></td>
+                            <td style="text-align:center">The reference to a python function that will be called with
+                                parameters provided by the LLM.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>optional</code></td>
+                            <td style="text-align:center"><span>bool</span></td>
+                            <td style="text-align:center">Allows to a certain extent the LLM to choose to use the given
+                                tool or not depending on the task to solve.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>usage_examples</code></td>
+                            <td style="text-align:center">List[<a href="#">dict</a>]</td>
+                            <td style="text-align:center">A list of Python dictionary examples of how the tool should be
+                                called. Useful if the LLM struggles to call the tool successfully.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>max_custom_error</code></td>
+                            <td style="text-align:center"><span>int</span></td>
+                            <td style="text-align:center">The maximum number of errors a tool can raise before stopping
+                                the task.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>max_call_error</code></td>
+                            <td style="text-align:center"><span>int</span></td>
+                            <td style="text-align:center">The maximum number of times Yacana can fail to call a tool
+                                correctly.
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
 
-					</code></pre>
+                <h3>▶️ Methods</h3>
 
-                <h4>Agent</h4>
-                <pre><code id="agent" class="language-python">
+                <h4>➡️ __init__(...)</h4>
+                <div>Tool's class constructor</div>
 
-					</code></pre>
+                <div class="table-wrapper">
+                    <table class="alt no-table-margin">
+                        <thead>
+                        <tr>
+                            <th>Parameter name</th>
+                            <th style="text-align:center">Parameter type</th>
+                            <th style="text-align:center">Parameter description</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td><code>tool_name</code></td>
+                            <td style="text-align:center"><span>str</span></td>
+                            <td style="text-align:center">A name for the tool. Should be concise and related to what the
+                                tool does.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>function_description</code></td>
+                            <td style="text-align:center"><span>str</span></td>
+                            <td style="text-align:center">A description for the tool. May contain an example of how to
+                                use.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>function_ref</code></td>
+                            <td style="text-align:center"><a href="#">Callable</a></td>
+                            <td style="text-align:center">The reference to a python function that will be called with
+                                parameters provided by the LLM.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>optional</code></td>
+                            <td style="text-align:center"><span>bool</span></td>
+                            <td style="text-align:center">Allows some flexibility in the tool's use by the LLM.</td>
+                        </tr>
+                        <tr>
+                            <td><code>usage_examples</code></td>
+                            <td style="text-align:center">List[<a href="#">dict</a>]</td>
+                            <td style="text-align:center">A list of dictionary examples to guide the LLM on how to use
+                                the tool.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>max_custom_error</code></td>
+                            <td style="text-align:center"><span>int</span></td>
+                            <td style="text-align:center">The maximum number of errors a tool can raise.</td>
+                        </tr>
+                        <tr>
+                            <td><code>max_call_error</code></td>
+                            <td style="text-align:center"><span>int</span></td>
+                            <td style="text-align:center">The maximum number of failed attempts to call the tool.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <i>Return type: <span>None</span></i>
+                </div>
 
-                <h4>Agent</h4>
-                <pre><code id="agent" class="language-python">
+                <hr>
+                <hr>
 
-					</code></pre>
+                <h2 id="tech-doc-toolerror"><u>ToolError</u></h2>
+
+                <p>Raised by the user from inside a tool when the tool 'thinks' that the given parameters are incorrect.
+                    The message provided in the raise statement should help the LLM correct its mistakes. If not fixed,
+                    the tool might loop until reaching MaxToolErrorIter. The error message should be didactic, e.g.,
+                    'Parameter xxxx expected type int but got type string'.</p>
+
+                <h3>▶️ Methods</h3>
+
+                <h4>➡️ __init__(...)</h4>
+                <div>ToolError's class constructor</div>
+
+                <div class="table-wrapper">
+                    <table class="alt no-table-margin">
+                        <thead>
+                        <tr>
+                            <th>Parameter name</th>
+                            <th style="text-align:center">Parameter type</th>
+                            <th style="text-align:center">Parameter description</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td><code>message</code></td>
+                            <td style="text-align:center"><span>str</span></td>
+                            <td style="text-align:center">The message will be given to the LLM, so it tries to fix the
+                                issue.
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <i>Return type: <span>None</span></i>
+                </div>
 
 
-                <h4>Agent</h4>
-                <pre><code id="agent" class="language-python">
+                <hr>
+                <hr>
 
-					</code></pre>
+                <h2 id="tech-doc-maxtoolerroriter"><u>MaxToolErrorIter</u></h2>
 
+                <p>Raised when the maximum amount of errors has been reached. This counts errors raised from the tool as
+                    well as when Yacana fails to call the tool correctly. Each situation has its own counter variable,
+                    meaning that if set to 5, you can have 4 ToolError and 4 Yacana tool call errors ((4 + 4) > 5)
+                    without issue. The exception will be raised when either type of error exceeds the limit.</p>
 
-                <h4>Agent</h4>
-                <pre><code id="agent" class="language-python">
+                <h3>▶️ Methods</h3>
 
-					</code></pre>
+                <h4>➡️ __init__(...)</h4>
+                <div>MaxToolErrorIter's class constructor</div>
+
+                <div class="table-wrapper">
+                    <table class="alt no-table-margin">
+                        <thead>
+                        <tr>
+                            <th>Parameter name</th>
+                            <th style="text-align:center">Parameter type</th>
+                            <th style="text-align:center">Parameter description</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td><code>message</code></td>
+                            <td style="text-align:center"><span>str</span></td>
+                            <td style="text-align:center">Info on which specific iteration counter got maxed out.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <i>Return type: <span>None</span></i>
+                </div>
+
+                <hr>
+                <hr>
+
+                <h2 id="tech-doc-endchatmode"><u>EndChatMode</u></h2>
+
+                <p>All types of group chat completion. The challenge in making agents communicate effectively is not
+                    just to have them talk but to ensure they know when to stop. Only tasks with <code>@llm_stops_by_itself=True</code>
+                    are influenced by the mode set here. Use in conjunction with <code>EndChat()</code>.</p>
+
+                <h3>▶️ Member variables</h3>
+
+                <div class="table-wrapper">
+                    <table class="alt">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th style="text-align:center">Type</th>
+                            <th style="text-align:center">Description</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td><code>ALL_TASK_MUST_COMPLETE</code></td>
+                            <td style="text-align:center"><span>str</span></td>
+                            <td style="text-align:center">Chat will continue until all LLMs with <code>@llm_stops_by_itself=True</code>
+                                indicate they are finished. Set precise completion goals in the task prompt for this to
+                                work effectively.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>ONE_LAST_CHAT_AFTER_FIRST_COMPLETION</code></td>
+                            <td style="text-align:center"><span>str</span></td>
+                            <td style="text-align:center">One agent will have the opportunity to respond after the
+                                completion of one agent, allowing it to answer one last time.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>ONE_LAST_GROUP_CHAT_AFTER_FIRST_COMPLETION</code></td>
+                            <td style="text-align:center"><span>str</span></td>
+                            <td style="text-align:center">All agents will have one last turn to speak before exiting the
+                                chat after the first completion arrives.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>END_CHAT_AFTER_FIRST_COMPLETION</code></td>
+                            <td style="text-align:center"><span>str</span></td>
+                            <td style="text-align:center">Immediately stops group chat after an agent has reached
+                                completion.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>MAX_ITERATIONS_ONLY</code></td>
+                            <td style="text-align:center"><span>str</span></td>
+                            <td style="text-align:center">LLMs won't be asked if they have fulfilled their objectives
+                                but will loop until achieving the maximum iteration, which can be set in the <code>EndChat()</code>
+                                class.
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <hr>
+                <hr>
+
+                <h2 id="tech-doc-endchat"><u>EndChat</u></h2>
+
+                <p>Defines the modality of how and when LLMs stop chatting. By default, when reaching the <code>@max_iterations</code>
+                    limit, the chat will end. However, if a task has set <code>@llm_stops_by_itself=True</code>, you can
+                    use one of the <code>EndChatMode</code> values to specify how and when the chat stops after reaching
+                    the first completion.</p>
+
+                <h3>▶️ Member variables</h3>
+
+                <div class="table-wrapper">
+                    <table class="alt">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th style="text-align:center">Type</th>
+                            <th style="text-align:center">Description</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td><code>mode</code></td>
+                            <td style="text-align:center"><a href="#">EndChatMode</a></td>
+                            <td style="text-align:center">The modality to end a chat with multiple agents.</td>
+                        </tr>
+                        <tr>
+                            <td><code>max_iterations</code></td>
+                            <td style="text-align:center"><span>int</span></td>
+                            <td style="text-align:center">The max number of iterations in a conversation. An iteration
+                                is complete when we get back to the first speaker.
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>▶️ Methods</h3>
+
+                <h4>➡️ __init__(...)</h4>
+                <div>Defines the modality of how and when LLMs stop chatting.</div>
+
+                <div class="table-wrapper">
+                    <table class="alt no-table-margin">
+                        <thead>
+                        <tr>
+                            <th>Parameter name</th>
+                            <th style="text-align:center">Parameter type</th>
+                            <th style="text-align:center">Parameter description</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td><code>mode</code></td>
+                            <td style="text-align:center"><a href="#">EndChatMode</a></td>
+                            <td style="text-align:center">The modality to end a chat with multiple agents.</td>
+                        </tr>
+                        <tr>
+                            <td><code>max_iterations</code></td>
+                            <td style="text-align:center"><span>int</span></td>
+                            <td style="text-align:center">The max number of iterations in a conversation. An iteration
+                                is complete when we get back to the first speaker.
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <i>Return type: <span>None</span></i>
+                </div>
+
+                <hr>
+                <hr>
+                <h2 id="tech-doc-messagerole"><u>MessageRole</u></h2>
+
+                <p>The available types of message creators. It can either be a message from the user or an answer from
+                    the LLM to the user's message. Developers can also set a system prompt that guides the LLM into a
+                    specific way of answering.</p>
+
+                <h3>▶️ Member variables</h3>
+
+                <div class="table-wrapper">
+                    <table class="alt">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th style="text-align:center">Type</th>
+                            <th style="text-align:center">Description</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td><code>USER</code></td>
+                            <td style="text-align:center"><span>str</span></td>
+                            <td style="text-align:center">Represents a message from the user.</td>
+                        </tr>
+                        <tr>
+                            <td><code>ASSISTANT</code></td>
+                            <td style="text-align:center"><span>str</span></td>
+                            <td style="text-align:center">Represents an answer from the LLM to the user's message.</td>
+                        </tr>
+                        <tr>
+                            <td><code>SYSTEM</code></td>
+                            <td style="text-align:center"><span>str</span></td>
+                            <td style="text-align:center">Represents a system prompt that guides the LLM.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <hr>
+                <hr>
+
+                <h2 id="tech-doc-loggermanager"><u>LoggerManager</u></h2>
+
+                <p>Allows the user to set a correct level of debug. Note that this will impact the whole program.
+                    Defaults to INFO and will print most of the prompts and AI answers. Note that not all prompts are
+                    shown as some multi-shot prompts are sometimes injected and not displayed as they are set a
+                    posteriori, and showing them at this exact moment would make the logs illogical.</p>
+
+                <h3>▶️ Static Methods</h3>
+
+                <h4>➡️ set_log_level(...)</h4>
+                <div>Defines a log level to print messages to std. All levels have their specific colors. For
+                    information logs, the color depends on if it is a user prompt or an AI answer. Setting @log_level to
+                    None will disable logging.
+                </div>
+                <div class="table-wrapper">
+                    <table class="alt no-table-margin">
+                        <thead>
+                        <tr>
+                            <th>Parameter name</th>
+                            <th style="text-align:center">Parameter type</th>
+                            <th style="text-align:center">Parameter description</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td><code>log_level</code></td>
+                            <td style="text-align:center"><span>str | None</span></td>
+                            <td style="text-align:center">Level of debug shown on std. One of => "DEBUG" | "INFO" |
+                                "WARNING" | "ERROR" | "CRITICAL" | None
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <i>Return type: <span>None</span></i>
+                </div>
+                <br>
+
+                <h4>➡️ set_library_log_level(...)</h4>
+                <div>Use to specify the log level of a specific Python library as this setting is global to the whole
+                    program and can spam the output if all libraries start to log debug info.
+                </div>
+                <div class="table-wrapper">
+                    <table class="alt no-table-margin">
+                        <thead>
+                        <tr>
+                            <th>Parameter name</th>
+                            <th style="text-align:center">Parameter type</th>
+                            <th style="text-align:center">Parameter description</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td><code>library_name</code></td>
+                            <td style="text-align:center"><span>str</span></td>
+                            <td style="text-align:center">Name of the target library</td>
+                        </tr>
+                        <tr>
+                            <td><code>log_level</code></td>
+                            <td style="text-align:center"><span>str</span></td>
+                            <td style="text-align:center">Level of log</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <i>Return type: <span>None</span></i>
+                </div>
+
+                <hr>
+                <hr>
+
+                <h2 id="tech-doc-modelsettings"><u>ModelSettings</u></h2>
+
+                <p>Class to encapsulate the settings available into the inference server. Note that these are all
+                    recognized by Ollama but may have no effect when using other inference servers.</p>
+
+                <h3>▶️ Methods</h3>
+
+                <h4>➡️ __init__(...)</h4>
+                <div>Initializes the model settings with various parameters.</div>
+                <div class="table-wrapper">
+                    <table class="alt no-table-margin">
+                        <thead>
+                        <tr>
+                            <th>Parameter name</th>
+                            <th style="text-align:center">Parameter type</th>
+                            <th style="text-align:center">Parameter description</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td><code>mirostat</code></td>
+                            <td style="text-align:center"><span>int</span> | <span>None</span></td>
+                            <td style="text-align:center">Like a volume control for the machine’s “creativity.”
+                                (Example: 0 is off, 1 is on, 2 is extra on)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>mirostat_eta</code></td>
+                            <td style="text-align:center"><span>float</span> | <span>None</span></td>
+                            <td style="text-align:center">Adjusts how quickly the machine learns from what it’s
+                                currently talking about. (Example: 0.1)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>mirostat_tau</code></td>
+                            <td style="text-align:center"><span>float</span> | <span>None</span></td>
+                            <td style="text-align:center">Helps decide if the machine should stick closely to the topic.
+                                (Example: 5.0)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>num_ctx</code></td>
+                            <td style="text-align:center"><span>int</span> | <span>None</span></td>
+                            <td style="text-align:center">Determines how much of the previous conversation the machine
+                                can remember at once. (Example: 4096)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>num_gqa</code></td>
+                            <td style="text-align:center"><span>int</span> | <span>None</span></td>
+                            <td style="text-align:center">Like tuning how many different tasks the machine can juggle at
+                                once. (Example: 8)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>num_gpu</code></td>
+                            <td style="text-align:center"><span>int</span> | <span>None</span></td>
+                            <td style="text-align:center">Sets how many “brains” (or parts of the computer’s graphics
+                                card) the machine uses. (Example: 50)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>num_thread</code></td>
+                            <td style="text-align:center"><span>int</span> | <span>None</span></td>
+                            <td style="text-align:center">Determines how many separate conversations or tasks the
+                                machine can handle at the same time. (Example: 8)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>repeat_last_n</code></td>
+                            <td style="text-align:center"><span>int</span> | <span>None</span></td>
+                            <td style="text-align:center">How much of the last part of the conversation to try not to
+                                repeat. (Example: 64)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>repeat_penalty</code></td>
+                            <td style="text-align:center"><span>float</span> | <span>None</span></td>
+                            <td style="text-align:center">A nudge to encourage the machine to come up with something new
+                                if it starts repeating itself. (Example: 1.1)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>temperature</code></td>
+                            <td style="text-align:center"><span>float</span> | <span>None</span></td>
+                            <td style="text-align:center">Controls how “wild” or “safe” the machine’s responses are.
+                                (Example: 0.7)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>seed</code></td>
+                            <td style="text-align:center"><span>int</span> | <span>None</span></td>
+                            <td style="text-align:center">Sets up a starting point for generating responses. (Example:
+                                42)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>stop</code></td>
+                            <td style="text-align:center"><span>str</span> | <span>None</span></td>
+                            <td style="text-align:center">Tells the machine when to stop talking, based on certain cues
+                                or keywords. (Example: "AI assistant:")
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>tfs_z</code></td>
+                            <td style="text-align:center"><span>float</span> | <span>None</span></td>
+                            <td style="text-align:center">Aims to reduce randomness in the machine’s responses.
+                                (Example: 2.0)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>num_predict</code></td>
+                            <td style="text-align:center"><span>int</span> | <span>None</span></td>
+                            <td style="text-align:center">Limits how much the machine can say in one go. (Example:
+                                128)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>top_k</code></td>
+                            <td style="text-align:center"><span>int</span> | <span>None</span></td>
+                            <td style="text-align:center">Limits the machine’s word choices to the top contenders.
+                                (Example: 40)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>top_p</code></td>
+                            <td style="text-align:center"><span>float</span> | <span>None</span></td>
+                            <td style="text-align:center">Works with top_k to fine-tune the variety of the machine’s
+                                responses. (Example: 0.9)
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <i>Return type: <span>None</span></i>
+                </div>
+                <br>
+
+                <h4>➡️ reset()</h4>
+                <div>Reset all properties to their initial values</div>
+                <i>Return type: <span>None</span></i>
+                <br>
+                <br>
+
+                <h4>➡️ get_settings()</h4>
+                <div>Returns a dictionary of all the settings and their current values, excluding None values.</div>
+                <i>Return type: <span>dict</span></i>
+                <div>A dictionary containing the machine settings that have been set.</div>
+
 
             </section>
         </div>

@@ -34,13 +34,18 @@ class LoggerManager:
     Static methods
     ----------
     set_log_level(log_level: str | None)
-
+    set_library_log_level(library_name: str, log_level: str)
     """
     LOG_LEVEL = "INFO"
     AVAILABLE_LOG_LEVELS = ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL", None]
 
     @staticmethod
     def setup_logging(log_level: str | None = None):
+        """
+        Initial setup logging level for the current program. You should not use this unless you know what you are doing. See set_log_level().
+        :param log_level: str: One of => "DEBUG" | "INFO" | "WARNING" | "ERROR" | "CRITICAL" | None
+        :return:
+        """
 
         if log_level is None:
             log_level = LoggerManager.LOG_LEVEL
@@ -67,7 +72,7 @@ class LoggerManager:
         Defines a log level to print messages to std. All levels have their specific colors. For information logs the
         color depends on if it is a user prompt or an AI answer. Setting @log_level to None will disable logging.
 
-        @param log_level: str | None : Level of debug shown on std.
+        @param log_level: str | None : Level of debug shown on std. One of => "DEBUG" | "INFO" | "WARNING" | "ERROR" | "CRITICAL" | None
         @return:
         """
 
@@ -82,7 +87,13 @@ class LoggerManager:
                 f"WARNING:root:Invalid value given to LOG_LEVEL. Keeping current level: {logging.getLevelName(logging.getLogger().level)}")
 
     @staticmethod
-    def set_library_log_level(library_name, log_level):
+    def set_library_log_level(library_name: str, log_level: str):
+        """
+        Use to specify the log level of a specific python library as this setting is global to the whole program and can spam the output if all libraries start to log debug info.
+        :param library_name: Name of the target libray
+        :param log_level: Level of log
+        :return:
+        """
         if log_level in LoggerManager.AVAILABLE_LOG_LEVELS:
             library_logger = logging.getLogger(library_name)
             library_logger.setLevel(getattr(logging, log_level))

@@ -52,6 +52,11 @@ class EndChat:
         The max number of iterations in a conversation. An iteration is complete when we get back to the first speaker
     """
     def __init__(self, mode: EndChatMode, max_iterations: int = 5):
+        """
+        Defines the modality of how and when LLMs stop chatting.
+        :param mode: EndChatMode: The modality to end a chat with multiple agents
+        :param max_iterations: int: The max number of iterations in a conversation. An iteration is complete when we get back to the first speaker
+        """
         if not isinstance(mode, EndChatMode):
             raise ValueError(
                 "@mode must be an instance of EndChatMode. For instance: EndChatMode.ALL_TASK_MUST_COMPLETE")
