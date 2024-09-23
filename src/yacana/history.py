@@ -34,17 +34,26 @@ class Message:
     """
 
     def __init__(self, role: MessageRole, content: str) -> None:
+        """
+        Returns an instance of Message
+        :param role: MessageRole: From whom is the message from. See the MessageRole Enum
+        :param content: str : The actual message
+        """
         self.role: MessageRole = role
         self.content: str = content
 
     def get_as_dict(self) -> Dict:
         """
         Returns the alternation of messages that compose a conversation as a pure python dictionary
-        @return:
+        @return: Dict
         """
         return {'role': self.role.value, 'content': self.content}
 
     def __str__(self) -> str:
+        """
+        Override of str() to pretty print.
+        :return: str
+        """
         result = {'role': self.role.value, 'content': self.content}
         return json.dumps(result)
 
@@ -65,10 +74,13 @@ class History:
     get_last() -> Message
     clean() -> None
     __str__() -> str
-
     """
 
     def __init__(self, messages: List[Message] = None) -> None:
+        """
+        Returns a History instance
+        :param messages: List[Message]: The list of all messages that compose the History of an Agent
+        """
         self._messages: List[Message] = [] if messages is None else messages
         # Looks like { "uid": { history_as_dict }, ... }
         self._checkpoints: dict = {}
@@ -149,6 +161,16 @@ class History:
             if save_system_prompt is not None:
                 self._messages.append(save_system_prompt)
 
+    def __str__(self) -> str:
+        """
+        Override str() for pretty print
+        :return: str
+        """
+        result = []
+        for message in self._messages:
+            result.append(message.get_as_dict())
+        return json.dumps(result)
+
     def _load_as_dict(self, messages_dict: List[dict]) -> None:
         """
         !!Warning!! This is a concatenation of the given dict to the existing one.
@@ -177,9 +199,3 @@ class History:
         @return:
         """
         self._messages = self._messages + history._messages
-
-    def __str__(self) -> str:
-        result = []
-        for message in self._messages:
-            result.append(message.get_as_dict())
-        return json.dumps(result)

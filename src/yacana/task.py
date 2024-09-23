@@ -29,7 +29,7 @@ class Task:
     tools : List[Tool]
         A list of tools that the LLM will get access to when trying to solve this task. This means that tools are not bound to the LLM itself but to the task. This provides more flexibility and less confusion to the LLM as it gets access to the tools it needs in relation to the task at hand.
     raise_when_max_tool_error_iter : bool
-        You should try/catch MaxToolErrorIter() on each call to .solve(). But if you don't want to, you can set this to False and in case there is a MaxToolErrorIter then the .solve() method will return None and won't throw. This might be cleaner to catch if you don't want to try/catch every call to .solve().  But be wary, this has not been tested extensively, yet, and is a behavior that might change in the near futur.
+        You should try/catch MaxToolErrorIter() on each call to .solve(). But if you don't want to, you can set this to False and in case there is a MaxToolErrorIter then the .solve() method will return None and won't throw. This might be cleaner to catch if you don't want to try/catch every call to .solve().  But be wary, this has not been tested extensively, yet, and is a behavior that might change in the near future.
     llm_stops_by_itself : bool
         Only useful when the task is part of a GroupSolve(). This signal the assigned LLM that it will have to stop talking by its onw means and is not only bound to a simple max iteration stop.
     use_self_reflection : bool
@@ -49,15 +49,15 @@ class Task:
                  raise_when_max_tool_error_iter: bool = True, llm_stops_by_itself: bool = False,
                  use_self_reflection=False, forget=False) -> None:
         """
-
-        @param prompt:
-        @param agent:
-        @param json_output:
-        @param tools:
-        @param raise_when_max_tool_error_iter:
-        @param llm_stops_by_itself:
-        @param use_self_reflection:
-        @param forget:
+        Returns a Task instance.
+        @param prompt: str: The task to solve. It is the prompt given to the assigned LLM
+        @param agent: str: The agent assigned to this task
+        @param json_output: bool: If True, will force the LLM to answer as JSON. Its using Ollama json mode for now. We shall see how to implement that on other inference backends. Either way you should ask for a JSON output in the task prompt.
+        @param tools:  List[Tool]: A list of tools that the LLM will get access to when trying to solve this task. This means that tools are not bound to the LLM itself but to the task. This provides more flexibility and less confusion to the LLM as it gets access to the tools it needs in relation to the task at hand.
+        @param raise_when_max_tool_error_iter: bool: You should try/catch MaxToolErrorIter() on each call to .solve(). But if you don't want to, you can set this to False and in case there is a MaxToolErrorIter then the .solve() method will return None and won't throw. This might be cleaner to catch if you don't want to try/catch every call to .solve().  But be wary, this has not been tested extensively, yet, and is a behavior that might change in the near future.
+        @param llm_stops_by_itself: bool: Only useful when the task is part of a GroupSolve(). This signal the assigned LLM that it will have to stop talking by its onw means and is not only bound to a simple max iteration stop.
+        @param use_self_reflection: bool: Only useful when the task is part of a GroupSolve(). Allows to keep the self reflection process done by the LLM in the next GS iteration. May be useful if the LLM has problems with reasoning.
+        @param forget: bool: When this task has finished resolving and this is set to False, the Agent won't remember it happened. Useful when doing yes/no questions for routing purposes and no need to keep the answer in the history.
         """
         self.task: str = prompt
         self.agent: Agent = agent

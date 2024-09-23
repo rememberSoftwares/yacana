@@ -48,6 +48,14 @@ class Agent:
 
     def __init__(self, name: str, model_name: str, system_prompt: str | None = None, endpoint: str = "http://127.0.0.1:11434",
                  model_settings: ModelSettings = None) -> None:
+        """
+        Returns a new Agent
+        :param name: str : Name of the agent. Can be used during conversations. Use something short and meaningful that doesn't contradict the system prompt
+        :param model_name: str : Name of the LLM model that will be sent to the inference server. For instance 'llama:3.1" or 'mistral:latest' etc
+        :param system_prompt: str : Defines the way the LLM will behave. For instance set the SP to "You are a pirate" to have it talk like a pirate.
+        :param endpoint: str : By default will look for Ollama endpoint on your localhost. If you are using a VM with GPU then update this to the remote URL + port.
+        :param model_settings: ModelSettings : All settings that Ollama currently supports as model configuration. This needs to be tested with other inference servers. This allows modifying deep behavioral patterns of the LLM.
+        """
 
         self.name: str = name
         self.model_name: str = model_name
@@ -64,7 +72,7 @@ class Agent:
         Use for testing but this is not how the framework is intended to be used. It creates a simple chatbot that
         keeps track of this history.
         @param custom_prompt: str : Set the prompt style for user input
-        @param stream: If set to True you will see the result of your output as the LLM generates tokens instead of waiting for it to complete.
+        @param stream: bool : If set to True you will see the result of your output as the LLM generates tokens instead of waiting for it to complete.
         @return: None
         """
         LoggerManager.set_log_level(None)
@@ -90,7 +98,7 @@ class Agent:
         Exports the current agent configuration to a file. This contains all constructor date and also the history.
         This means that you can use the @get_agent_from_state method to load this agent back again and continue where
         you left off.
-        @param file_path: str: path of the file in which you wish the data to be saved. Specify the path + filename. Be wary when using relative path.
+        @param file_path: str: Path of the file in which you wish the data to be saved. Specify the path + filename. Be wary when using relative path.
         @return:
         """
         final: dict = {

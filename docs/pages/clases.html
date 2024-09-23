@@ -7,52 +7,753 @@
 <html>
 
 <head>
-	<title>Agents & Tasks</title>
-	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-	<link rel="stylesheet" href="../assets/css/main.css" />
-	<link rel="stylesheet" href="../assets/css/codemirror.min.css">
-	<link rel="stylesheet" href="../assets/css/monokai.min.css">
-	<link rel="stylesheet" href="../assets/css/foldgutter.min.css">
-	<link rel="stylesheet" href="../assets/css/codemirror-custom.css">
-	<link rel="stylesheet" href="../assets/css/zenburn.min.css">
-	<script src="../assets/js/codemirror.min.js"></script>
-	<script src="../assets/js/python.min.js"></script>
-	<script src="../assets/js/foldcode.min.js"></script>
-	<script src="../assets/js/foldgutter.min.js"></script>
-	<script src="../assets/js/brace-fold.min.js"></script>
-	<script src="../assets/js/codemirror-custom.js"></script>
+    <title>Agents & Tasks</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
+    <link rel="stylesheet" href="../assets/css/main.css"/>
+    <link rel="stylesheet" href="../assets/css/codemirror.min.css">
+    <link rel="stylesheet" href="../assets/css/monokai.min.css">
+    <link rel="stylesheet" href="../assets/css/foldgutter.min.css">
+    <link rel="stylesheet" href="../assets/css/codemirror-custom.css">
+    <link rel="stylesheet" href="../assets/css/zenburn.min.css">
+    <script src="../assets/js/codemirror.min.js"></script>
+    <script src="../assets/js/python.min.js"></script>
+    <script src="../assets/js/foldcode.min.js"></script>
+    <script src="../assets/js/foldgutter.min.js"></script>
+    <script src="../assets/js/brace-fold.min.js"></script>
+    <script src="../assets/js/codemirror-custom.js"></script>
 </head>
 
 <body class="is-preload">
 
-	<!-- Wrapper -->
-	<div id="wrapper">
+<!-- Wrapper -->
+<div id="wrapper">
 
-		<!-- Main -->
-		<div id="main">
-			<div class="inner">
+    <!-- Main -->
+    <div id="main">
+        <div class="inner">
 
-				<!-- Header -->
-				<header id="header">
-					<a href="../index.html" class="logo"><strong>Yacana</strong>, powering open source LLMs</a>
-					<ul class="icons">
-						<li><a href="https://x.com/RSoftwares_ofc" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
-						<li><a href="https://medium.com/@docteur_rs" class="icon brands fa-medium-m"><span class="label">Medium</span></a></li>
-						<li><a href="https://www.youtube.com/channel/UCvi7R0CRmtxhWOVw62XteTw" class="icon brands fa-youtube"><span class="label">Medium</span></a></li>
-					</ul>
-				</header>
+            <!-- Header -->
+            <header id="header">
+                <a href="../index.html" class="logo"><strong>Yacana</strong>, powering open source LLMs</a>
+                <ul class="icons">
+                    <li><a href="https://x.com/RSoftwares_ofc" class="icon brands fa-twitter"><span
+                            class="label">Twitter</span></a></li>
+                    <li><a href="https://medium.com/@docteur_rs" class="icon brands fa-medium-m"><span
+                            class="label">Medium</span></a></li>
+                    <li><a href="https://www.youtube.com/channel/UCvi7R0CRmtxhWOVw62XteTw"
+                           class="icon brands fa-youtube"><span class="label">Medium</span></a></li>
+                </ul>
+            </header>
 
-				<!-- Content -->
-				<section>
-					<header class="main">
-						<h1 id="multi-agents-chat">Classes technical documentation</h1>
-					</header>
+            <!-- Content -->
+            <section>
+                <header class="main">
+                    <h1 id="multi-agents-chat">Technical documentation - Yacana 0.1.3</h1>
+                </header>
 
-					<span class="image main"><img src="../images/roadmap_banner.jpg" alt="Raodmap" /></span>
-					
-					<h4>Agent</h4>
-					<pre><code id="agent" class="language-python">
+                <span class="image main"><img src="../images/roadmap_banner.jpg" alt="Raodmap"/></span>
+
+                <h2 id="tech-doc-agent"><u>Agent</u></h2>
+
+                <h3>▶️ Member variables</h3>
+
+                <div class="table-wrapper">
+                    <table class="alt">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th style="text-align:center">Type</th>
+                            <th style="text-align:center">Description</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td><code>name</code></td>
+                            <td style="text-align:center"><span>str</span></td>
+                            <td style="text-align:center">Name of the agent. Can be used during conversations.
+                                Use
+                                something short and meaningful that doesn't contradict the system prompt
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>model_name</code></td>
+                            <td style="text-align:center"><span>str</span></td>
+                            <td style="text-align:center">Name of the LLM model that will be sent to the
+                                inference
+                                server. For instance 'llama:3.1" or 'mistral:latest' etc
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>system_prompt</code></td>
+                            <td style="text-align:center"><span>str</span></td>
+                            <td style="text-align:center">Defines the way the LLM will behave. For instance set
+                                the
+                                SP to "You are a pirate" to have it talk like a pirate.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>model_settings</code></td>
+                            <td style="text-align:center"><a href="#">ModelSettings</a></td>
+                            <td style="text-align:center">All settings that Ollama currently supports as model
+                                configuration. This needs to be tested with other inference servers. This allows
+                                modifying deep behavioral patterns of the LLM.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>endpoint</code></td>
+                            <td style="text-align:center"><span>str</span></td>
+                            <td style="text-align:center">By default will look for Ollama endpoint on your
+                                localhost. If you are using a VM with GPU then update this to the remote URL +
+                                port.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>history</code></td>
+                            <td style="text-align:center"><a href="#">History</a></td>
+                            <td style="text-align:center">The whole conversation that is sent to the inference
+                                server. It contains the alternation of message between the prompts in the task
+                                that
+                                are given to the LLM and it's answers.
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+
+                <h3>▶️ Methods</h3>
+
+                <h4>➡️ __init__(...)</h4>
+                <div>Agent's class constructor</div>
+
+                <div class="table-wrapper">
+                    <table class="alt no-table-margin">
+                        <thead>
+                        <tr>
+                            <th>Parameter name</th>
+                            <th style="text-align:center">Parameter type</th>
+                            <th style="text-align:center">Parameter description</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td><code>name</code></td>
+                            <td style="text-align:center"><span>str</span></td>
+                            <td style="text-align:center">Name of the agent. Can be used during conversations.
+                                Use
+                                something short and meaningful that doesn't contradict the system prompt
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>model_name</code></td>
+                            <td style="text-align:center"><span>str</span></td>
+                            <td style="text-align:center">Name of the LLM model that will be sent to the
+                                inference
+                                server. For instance 'llama:3.1" or 'mistral:latest' etc
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>system_prompt</code></td>
+                            <td style="text-align:center"><span>str</span></td>
+                            <td style="text-align:center">Defines the way the LLM will behave. For instance set
+                                the
+                                SP to "You are a pirate" to have it talk like a pirate.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>endpoint</code></td>
+                            <td style="text-align:center"><span>str</span></td>
+                            <td style="text-align:center">By default, will look for Ollama endpoint on your
+                                localhost. If you are using a VM with GPU then update this to the remote URL +
+                                port.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>model_settings</code></td>
+                            <td style="text-align:center"><a href="#">ModelSettings</a></td>
+                            <td style="text-align:center">All settings that Ollama currently supports as model
+                                configuration. This needs to be tested with other inference servers. This allows
+                                modifying deep behavioral patterns of the LLM.
+                            </td>
+                        </tr>
+
+                        </tbody>
+                    </table>
+                    <i>Return type: <a href="#">Agent</a></i>
+                </div>
+                <br>
+
+                <h4>➡️ simple_chat(...)</h4>
+                <div>Use for testing but this is not how the framework is intended to be used. It creates a simple
+                    chatbot that
+                    keeps track of this history.
+                </div>
+                <div class="table-wrapper">
+                    <table class="alt no-table-margin">
+                        <thead>
+                        <tr>
+                            <th>Parameter name</th>
+                            <th style="text-align:center">Parameter type</th>
+                            <th style="text-align:center">Parameter description</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td><code>custom_prompt</code></td>
+                            <td style="text-align:center"><span>str</span></td>
+                            <td style="text-align:center"> Set the prompt style for user input</td>
+                        </tr>
+                        <tr>
+                            <td><code>stream</code></td>
+                            <td style="text-align:center"><span>bool</span></td>
+                            <td style="text-align:center">If set to True you will see the result of your output as the
+                                LLM generates tokens instead of waiting for it to complete.
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <i>Return type: <span>None</span></i>
+                </div>
+                <br>
+
+                <h4>➡️ export_state(...)</h4>
+                <div>Exports the current agent configuration to a file. This contains all constructor date and also the
+                    history.
+                    This means that you can use the @get_agent_from_state method to load this agent back again and
+                    continue where
+                    you left off.
+                </div>
+
+                <div class="table-wrapper">
+                    <table class="alt no-table-margin">
+                        <thead>
+                        <tr>
+                            <th>Parameter name</th>
+                            <th style="text-align:center">Parameter type</th>
+                            <th style="text-align:center">Parameter description</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td><code>file_path</code></td>
+                            <td style="text-align:center"><a href="#">bool</a></td>
+                            <td style="text-align:center"> Path of the file in which you wish the data to be saved.
+                                Specify the path + filename. Be wary when using relative path.
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <i>Return type: <span>None</span></i>
+                </div>
+                <br>
+
+                <h3>▶️ Class Methods</h3>
+
+                <h4>➡️ get_agent_from_state(...)</h4>
+                <div>Loads the state previously exported from the @export_state() method. This will return an Agent in
+                    the same state
+                    as it was before it was saved allowing you to resume the agent conversation even after the program
+                    has exited.
+                </div>
+
+                <div class="table-wrapper">
+                    <table class="alt no-table-margin">
+                        <thead>
+                        <tr>
+                            <th>Parameter name</th>
+                            <th style="text-align:center">Parameter type</th>
+                            <th style="text-align:center">Parameter description</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td><code>file_path</code></td>
+                            <td style="text-align:center"><span>str</span></td>
+                            <td style="text-align:center">The path from the file from which to load the Agent.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <i>Return type: <a href="#">Agent</a></i>
+                </div>
+                <br>
+
+                <hr>
+                <hr>
+
+
+                <h2 id="tech-doc-groupsolve"><u>GroupSolve</u></h2>
+
+                <h3>▶️ Member variables</h3>
+
+                <div class="table-wrapper">
+                    <table class="alt">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th style="text-align:center">Type</th>
+                            <th style="text-align:center">Description</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td><code>tasks</code></td>
+                            <td style="text-align:center">list[<a href="#">Task</a>]</td>
+                            <td style="text-align:center">All tasks that must be solved during group chat</td>
+                        </tr>
+                        <tr>
+                            <td><code>mode</code></td>
+                            <td style="text-align:center"><a href="#">EndChatMode</a></td>
+                            <td style="text-align:center">Defines the way to stop the conversation besides topping max
+                                iteration
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>max_iter</code></td>
+                            <td style="text-align:center"><span>int</span></td>
+                            <td style="text-align:center">Sets a max iteration counter to prevent infinite loops</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>▶️ Methods</h3>
+
+                <h4>➡️ __init__(...)</h4>
+                <div>GroupSolve's class constructor</div>
+
+                <div class="table-wrapper">
+                    <table class="alt no-table-margin">
+                        <thead>
+                        <tr>
+                            <th>Parameter name</th>
+                            <th style="text-align:center">Parameter type</th>
+                            <th style="text-align:center">Parameter description</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td><code>tasks</code></td>
+                            <td style="text-align:center">list[<a href="#">Task</a>]</td>
+                            <td style="text-align:center">All tasks that must be solved during group chat</td>
+                        </tr>
+                        <tr>
+                            <td><code>end_chat</code></td>
+                            <td style="text-align:center"><a href="#">EndChat</a></td>
+                            <td style="text-align:center">Defines the modality of how and when LLMs stop chatting.</td>
+                        </tr>
+                        <tr>
+                            <td><code>reconcile_first_message</code></td>
+                            <td style="text-align:center"><span>bool</span></td>
+                            <td style="text-align:center">Should the first message from both LLMs be available to one
+                                another. Only useful in dual chat.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>shift_message_owner</code></td>
+                            <td style="text-align:center"><a href="#">Task</a></td>
+                            <td style="text-align:center">The Task to which the shift message should be assigned to. In
+                                the end it's rather the corresponding Agent than the Task that is involved here.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>shift_message_content</code></td>
+                            <td style="text-align:center"><span>str</span></td>
+                            <td style="text-align:center">A custom message instead of using the opposite agent response
+                                as shift message content.
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <i>Return type: <span>None</span></i>
+                </div>
+                <br>
+
+                <h4>➡️ set_shift_message(...)</h4>
+                <div>Assigning shift message to either Agents and sets a custom message if user gave one. If not, the
+                    opposite agent's ANSWER will be used as PROMPT (shift message).
+                </div>
+                <i>Return type: (str, (<a href="#">Task</a>, <a href="#">Task</a>))</i>
+                <br>
+                <br>
+
+                <h4>➡️ solve(...)</h4>
+                <div>Starts the group chat and allows all LLMs to solve their assigned tasks. Note that 'dual chat' and
+                    '3 and more' chat have a different way of starting. Refer to the official documentation.
+                </div>
+                <i>Return type: <span>None</span></i>
+                <br>
+
+                <hr>
+                <hr>
+
+                <h2 id="tech-doc-message"><u>Message</u></h2>
+
+                <h3>▶️ Member variables</h3>
+
+                <div class="table-wrapper">
+                    <table class="alt">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th style="text-align:center">Type</th>
+                            <th style="text-align:center">Description</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td><code>role</code></td>
+                            <td style="text-align:center"><a href="#">MessageRole</a></td>
+                            <td style="text-align:center">From whom is the message from. See the MessageRole Enum</td>
+                        </tr>
+                        <tr>
+                            <td><code>content</code></td>
+                            <td style="text-align:center"><span>str</span></td>
+                            <td style="text-align:center">The actual message</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>▶️ Methods</h3>
+
+                <h4>➡️ __init__(...)</h4>
+                <div>Returns an instance of Message</div>
+
+                <div class="table-wrapper">
+                    <table class="alt no-table-margin">
+                        <thead>
+                        <tr>
+                            <th>Parameter name</th>
+                            <th style="text-align:center">Parameter type</th>
+                            <th style="text-align:center">Parameter description</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td><code>role</code></td>
+                            <td style="text-align:center"><a href="#">MessageRole</a></td>
+                            <td style="text-align:center">From whom is the message from. See the MessageRole Enum</td>
+                        </tr>
+                        <tr>
+                            <td><code>content</code></td>
+                            <td style="text-align:center"><span>str</span></td>
+                            <td style="text-align:center">The actual message</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <i>Return type: <span>None</span></i>
+                </div>
+                <br>
+
+                <h4>➡️ get_as_dict(...)</h4>
+                <div>Returns the alternation of messages that compose a conversation as a pure python dictionary</div>
+                <i>Return type: <a href="#">Dict</a></i>
+                <br>
+                <br>
+
+                <h4>➡️ __str__(...)</h4>
+                <div>Override of str() to pretty print.</div>
+                <i>Return type: <span>str</span></i>
+                <br>
+
+
+                <hr>
+                <hr>
+
+                <h2 id="tech-doc-history"><u>History</u></h2>
+
+                <h3>▶️ Member variables</h3>
+                <p>No member variables documented for this class.</p>
+
+                <h3>▶️ Methods</h3>
+
+                <h4>➡️ __init__(...)</h4>
+                <div>Returns a History instance</div>
+
+                <div class="table-wrapper">
+                    <table class="alt no-table-margin">
+                        <thead>
+                        <tr>
+                            <th>Parameter name</th>
+                            <th style="text-align:center">Parameter type</th>
+                            <th style="text-align:center">Parameter description</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td><code>messages</code></td>
+                            <td style="text-align:center">list[<a href="#">Message</a>]</td>
+                            <td style="text-align:center">The list of all messages that compose the History of an
+                                Agent
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <i>Return type: <span>None</span></i>
+                </div>
+                <br>
+
+                <h4>➡️ add(...)</h4>
+                <div>Adds a new <a href="#">Message</a> to the list of messages composing the history of the
+                    conversation
+                </div>
+
+                <div class="table-wrapper">
+                    <table class="alt no-table-margin">
+                        <thead>
+                        <tr>
+                            <th>Parameter name</th>
+                            <th style="text-align:center">Parameter type</th>
+                            <th style="text-align:center">Parameter description</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td><code>message</code></td>
+                            <td style="text-align:center"><a href="#">Message</a></td>
+                            <td style="text-align:center">A message with the sender and the message itself</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <i>Return type: <span>None</span></i>
+                </div>
+                <br>
+
+                <h4>➡️ get_as_dict(...)</h4>
+                <div>Returns the history (aka the conversation) as a pure python dictionary</div>
+                <i>Return type: list[<a href="#">Dict</a>]</i>
+                <br>
+                <br>
+
+                <h4>➡️ pretty_print(...)</h4>
+                <div>Prints the history on the std with shiny colors</div>
+                <i>Return type: <span>None</span></i>
+                <br>
+                <br>
+
+                <h4>➡️ create_check_point(...)</h4>
+                <div>Saves the current history so that you can load it back later. Useful when you want to keep a clean
+                    history in a flow that didn't work out as expected and want to roll back.
+                </div>
+                <i>Return type: <span>str</span></i>
+                <br>
+
+                <h4>➡️ load_check_point(...)</h4>
+                <div>Loads the history saved from a particular checkpoint in time. It replaces the current history with
+                    the loaded one. Perfect for a timey-wimey rollback in time.
+                </div>
+
+                <div class="table-wrapper">
+                    <table class="alt no-table-margin">
+                        <thead>
+                        <tr>
+                            <th>Parameter name</th>
+                            <th style="text-align:center">Parameter type</th>
+                            <th style="text-align:center">Parameter description</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td><code>uid</code></td>
+                            <td style="text-align:center"><span>str</span></td>
+                            <td style="text-align:center">A unique identifier for the checkpoint to load</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <i>Return type: <span>None</span></i>
+                </div>
+                <br>
+
+                <h4>➡️ get_last(...)</h4>
+                <div>Returns the last message of the history. A syntactic sugar to get the last item from the
+                    conversation.
+                </div>
+                <i>Return type: <a href="#">Message</a></i>
+                <br>
+                <br>
+
+                <h4>➡️ clean(...)</h4>
+                <div>Resets the history, preserving only the initial system prompt</div>
+                <i>Return type: <span>None</span></i>
+                <br>
+                <br>
+
+                <h4>➡️ __str__(...)</h4>
+                <div>Override <code>str()</code> for pretty print</div>
+                <i>Return type: <span>str</span></i>
+                <br>
+
+
+                <hr>
+                <hr>
+
+
+
+
+                <h2 id="tech-doc-task"><u>Task</u></h2>
+
+<h3>▶️ Member variables</h3>
+
+<div class="table-wrapper">
+    <table class="alt no-table-margin">
+        <thead>
+            <tr>
+                <th>Variable name</th>
+                <th style="text-align:center">Variable type</th>
+                <th style="text-align:center">Variable description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>task</code></td>
+                <td style="text-align:center"><span>str</span></td>
+                <td style="text-align:center">The task to solve. It is the prompt given to the assigned LLM</td>
+            </tr>
+            <tr>
+                <td><code>agent</code></td>
+                <td style="text-align:center"><a href="#">Agent</a></td>
+                <td style="text-align:center">The agent assigned to this task</td>
+            </tr>
+            <tr>
+                <td><code>json_output</code></td>
+                <td style="text-align:center"><span>bool</span></td>
+                <td style="text-align:center">Forces the LLM to answer as JSON</td>
+            </tr>
+            <tr>
+                <td><code>tools</code></td>
+                <td style="text-align:center">list[<a href="#">Tool</a>]</td>
+                <td style="text-align:center">The list of tools the LLM will use for solving this task</td>
+            </tr>
+            <tr>
+                <td><code>raise_when_max_tool_error_iter</code></td>
+                <td style="text-align:center"><span>bool</span></td>
+                <td style="text-align:center">If True, raises MaxToolErrorIter() after exceeding tool usage limits</td>
+            </tr>
+            <tr>
+                <td><code>llm_stops_by_itself</code></td>
+                <td style="text-align:center"><span>bool</span></td>
+                <td style="text-align:center">Tells the LLM to stop by itself (only for GroupSolve)</td>
+            </tr>
+            <tr>
+                <td><code>use_self_reflection</code></td>
+                <td style="text-align:center"><span>bool</span></td>
+                <td style="text-align:center">Preserves the LLM's self-reflection for future GroupSolve iterations</td>
+            </tr>
+            <tr>
+                <td><code>forget</code></td>
+                <td style="text-align:center"><span>bool</span></td>
+                <td style="text-align:center">If False, the Agent will forget the task after completion</td>
+            </tr>
+            <tr>
+                <td><code>uuid</code></td>
+                <td style="text-align:center"><span>str</span></td>
+                <td style="text-align:center">A unique identifier for this task</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<br>
+
+<h3>▶️ Methods</h3>
+
+<h4>➡️ __init__(...)</h4>
+<div>Returns a Task instance</div>
+
+<div class="table-wrapper">
+    <table class="alt no-table-margin">
+        <thead>
+            <tr>
+                <th>Parameter name</th>
+                <th style="text-align:center">Parameter type</th>
+                <th style="text-align:center">Parameter description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>prompt</code></td>
+                <td style="text-align:center"><span>str</span></td>
+                <td style="text-align:center">The task to solve, i.e., the prompt for the assigned LLM</td>
+            </tr>
+            <tr>
+                <td><code>agent</code></td>
+                <td style="text-align:center"><a href="#">Agent</a></td>
+                <td style="text-align:center">The agent assigned to this task</td>
+            </tr>
+            <tr>
+                <td><code>json_output</code></td>
+                <td style="text-align:center"><span>bool</span></td>
+                <td style="text-align:center">Forces LLM to answer in JSON</td>
+            </tr>
+            <tr>
+                <td><code>tools</code></td>
+                <td style="text-align:center">list[<a href="#">Tool</a>]</td>
+                <td style="text-align:center">The tools the LLM has access to for this task</td>
+            </tr>
+            <tr>
+                <td><code>raise_when_max_tool_error_iter</code></td>
+                <td style="text-align:center"><span>bool</span></td>
+                <td style="text-align:center">Set to False if you don’t want to raise MaxToolErrorIter()</td>
+            </tr>
+            <tr>
+                <td><code>llm_stops_by_itself</code></td>
+                <td style="text-align:center"><span>bool</span></td>
+                <td style="text-align:center">Tells LLM to stop on its own (for GroupSolve)</td>
+            </tr>
+            <tr>
+                <td><code>use_self_reflection</code></td>
+                <td style="text-align:center"><span>bool</span></td>
+                <td style="text-align:center">Allows self-reflection in the next GroupSolve iteration</td>
+            </tr>
+            <tr>
+                <td><code>forget</code></td>
+                <td style="text-align:center"><span>bool</span></td>
+                <td style="text-align:center">Forgets the task once solved</td>
+            </tr>
+        </tbody>
+    </table>
+    <i>Return type: <span>None</span></i>
+</div>
+<br>
+
+<h4>➡️ uuid(...)</h4>
+<div>Read-only property that references the current task with a unique ID.</div>
+<i>Return type: <span>str</span></i>
+<br>
+<br>
+                
+<h4>➡️ add_tool(...)</h4>
+<div>Adds a <a href="#">Tool</a> to the list of tools to be used in this task</div>
+
+<div class="table-wrapper">
+    <table class="alt no-table-margin">
+        <thead>
+            <tr>
+                <th>Parameter name</th>
+                <th style="text-align:center">Parameter type</th>
+                <th style="text-align:center">Parameter description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>tool</code></td>
+                <td style="text-align:center"><a href="#">Tool</a></td>
+                <td style="text-align:center">A tool given to the LLM for this task</td>
+            </tr>
+        </tbody>
+    </table>
+    <i>Return type: <span>None</span></i>
+</div>
+<br>
+
+<h4>➡️ solve(...)</h4>
+<div>Calls the assigned LLM to perform inference and solve the task. The LLM will use available tools, and Yacana ensures compliance.</div>
+<i>Return type: <a href="#">Message</a> | <span>None</span></i>
+<br>
+
+
+
+                <pre><code id="agent" class="language-python">
 class Agent:
     """ Representation of an LLM. This class gives ways to interact with the LLM that is being assign to it.
     However, an agent should not be controlled directly but assigned to a Task(). When the task is marked as solved
@@ -116,8 +817,8 @@ class Agent:
 					</code></pre>
 
 
-					<h4>EndChatMode</h4>
-					<pre><code id="end-chat-mode" class="language-python">
+                <h4>EndChatMode</h4>
+                <pre><code id="end-chat-mode" class="language-python">
 class EndChatMode(Enum):
     """ All types of group chat completion.
     The difficulty in making agents talk to each other is not to have them talk but to have them stop talking.
@@ -140,8 +841,8 @@ class EndChatMode(Enum):
     """
 					</code></pre>
 
-					<h4>EndChat</h4>
-					<pre><code id="end-chat" class="language-python">
+                <h4>EndChat</h4>
+                <pre><code id="end-chat" class="language-python">
 class EndChat:
     """Defines the modality of how and when LLMs stop chatting.
     By default, when reaching the @max_iterations limit the chat will end.
@@ -157,8 +858,8 @@ class EndChat:
     """
 					</code></pre>
 
-					<h4>GroupSolve</h4>
-					<pre><code id="group-solve" class="language-python">
+                <h4>GroupSolve</h4>
+                <pre><code id="group-solve" class="language-python">
 class GroupSolve:
     """This class allows multiple agents to enter a conversation with each other. This is made different from other
     frameworks as it is not directly the agents that enter the group chat but the tasks. Note that each task has an LLM
@@ -197,166 +898,166 @@ class GroupSolve:
         """
 					</code></pre>
 
-					<h4>Agent</h4>
-					<pre><code id="agent" class="language-python">
+                <h4>Agent</h4>
+                <pre><code id="agent" class="language-python">
 
 					</code></pre>
 
 
-					<h4>Agent</h4>
-					<pre><code id="agent" class="language-python">
+                <h4>Agent</h4>
+                <pre><code id="agent" class="language-python">
 
 					</code></pre>
 
-					<h4>Agent</h4>
-					<pre><code id="agent" class="language-python">
+                <h4>Agent</h4>
+                <pre><code id="agent" class="language-python">
 
 					</code></pre>
 
-					<h4>Agent</h4>
-					<pre><code id="agent" class="language-python">
+                <h4>Agent</h4>
+                <pre><code id="agent" class="language-python">
 
 					</code></pre>
 
-					<h4>Agent</h4>
-					<pre><code id="agent" class="language-python">
-
-					</code></pre>
-
-
-					<h4>Agent</h4>
-					<pre><code id="agent" class="language-python">
+                <h4>Agent</h4>
+                <pre><code id="agent" class="language-python">
 
 					</code></pre>
 
 
-					<h4>Agent</h4>
-					<pre><code id="agent" class="language-python">
+                <h4>Agent</h4>
+                <pre><code id="agent" class="language-python">
 
 					</code></pre>
 
-				</section>
-			</div>
-		</div>
 
-		<!-- Sidebar -->
-		<div id="sidebar">
-			<div class="inner">
+                <h4>Agent</h4>
+                <pre><code id="agent" class="language-python">
 
-				<!-- Search -->
-				<section id="search" class="alt">
-					<form method="post" action="#">
-						<input type="text" name="query" id="query" placeholder="Search" />
-					</form>
-				</section>
+					</code></pre>
 
-				<!-- Menu -->
-				<nav id="menu">
-					<header class="major">
-						<h2>Menu</h2>
-					</header>
-					<ul>
-						<li><a href="../index.html">Homepage</a></li>
-						<li>
-							<span class="opener">I. Installation</span>
-							<ul>
-								<li><a href="installation.html#installing-ollama">Installing Ollama</a></li>
-								<li><a href="installation.html#choosing-an-llm-model">Choosing an LLM model</a>
-								</li>
-								<li><a href="installation.html#running-the-model">Running the model</a></li>
-								<li><a href="installation.html#installing-yacana">Installing Yacana</a></li>
-								<li><a href="installation.html#imports">Imports</a></li>
-							</ul>
-						</li>
-						<li>
-							<span class="opener">II. Agents & Tasks</span>
-							<ul>
-								<li><a href="agents_and_tasks.html#creating-an-agent">Creating an Agent</a></li>
-								<li><a href="agents_and_tasks.html#basic-roleplay">Basic roleplay</a></li>
-								<li><a href="agents_and_tasks.html#creating-tasks">Creating Tasks</a></li>
-								<li><a href="agents_and_tasks.html#getting-the-result-of-a-task">Getting the
-										result of a Task</a></li>
-								<li><a href="agents_and_tasks.html#chaining-tasks">Chaining Tasks</a></li>
-								<li><a href="agents_and_tasks.html#logging-levels">Logging levels</a></li>
-								<li><a href="agents_and_tasks.html#configuring-llms-settings">Configuring LLM's
-										settings</a></li>
-							</ul>
-						</li>
-						<li>
-							<span class="opener">III. Routing</span>
-							<ul>
-								<li><a href="routing.html#concepts-of-routing">Concepts of routing</a></li>
-								<li><a href="routing.html#self-reflection-routing">Self-reflection routing</a>
-								</li>
-								<li><a href="routing.html#cleaning-history">Cleaning history</a></li>
-								<li><a href="routing.html#routing-demonstration">Routing demonstration</a></li>
-							</ul>
-						</li>
-						<li>
-							<span class="opener">IV. Managing Agents history</span>
-							<ul>
-								<li><a href="managing_agent_history.html#printing-history">Printing history</a>
-								</li>
-								<li><a href="managing_agent_history.html#creating-and-loading-checkpoints">Creating
-										and loading checkpoints</a></li>
-								<li><a href="managing_agent_history.html#Zero-prompt-shot-vs-multi-prompt-shot">Zero-prompt
-										shot vs multi-prompt shot</a></li>
-								<li><a href="managing_agent_history.html#saving-agent-state">Saving Agent
-										state</a></li>
-							</ul>
-						</li>
-						<li>
-							<span class="opener">V. Tool calling</span>
-							<ul>
-								<li><a href="tool_calling.html#concept-of-calling-tools">Concepts of calling
-										tools</a></li>
-								<li><a href="tool_calling.html#writing-good-tool-prompts">Writing good tool
-										prompts</a></li>
-								<li><a href="tool_calling.html#calling-a-tool">Calling a tool</a></li>
-								<li><a href="tool_calling.html#improving-tool-calling-results">Improving
-										tool-calling results</a></li>
-								<li><a href="tool_calling.html#optional-tools">Optional tools</a></li>
-								<li><a href="tool_calling.html#assigning-multiple-tools">Assigning multiple
-										Tools</a></li>
-							</ul>
-						</li>
-						<li>
-							<span class="opener">VI. Dual-agents chat</span>
-							<ul>
-								<li><a href="dual_agents_chat.html#stopping-chat-using-maximum-iterations">Stopping
-										chat using 'maximum iterations'</a></li>
-								<li><a href="dual_agents_chat.html#letting-agents-end-the-chat">Letting Agents end
-										the chat</a></li>
-								<li><a href="dual_agents_chat.html#controlling-the-shift-message">Controlling the
-										Shift Message</a></li>
-								<li><a href="dual_agents_chat.html#using-tools-in-chat">Using tools in chat</a>
-								</li>
-							</ul>
-						</li>
-						<li><a href="multi_agents_chat.html#multi-agents-chat">VII. Multi-agents chat</a></li>
+            </section>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div id="sidebar">
+        <div class="inner">
+
+            <!-- Search -->
+            <section id="search" class="alt">
+                <form method="post" action="#">
+                    <input type="text" name="query" id="query" placeholder="Search"/>
+                </form>
+            </section>
+
+            <!-- Menu -->
+            <nav id="menu">
+                <header class="major">
+                    <h2>Menu</h2>
+                </header>
+                <ul>
+                    <li><a href="../index.html">Homepage</a></li>
+                    <li>
+                        <span class="opener">I. Installation</span>
+                        <ul>
+                            <li><a href="installation.html#installing-ollama">Installing Ollama</a></li>
+                            <li><a href="installation.html#choosing-an-llm-model">Choosing an LLM model</a>
+                            </li>
+                            <li><a href="installation.html#running-the-model">Running the model</a></li>
+                            <li><a href="installation.html#installing-yacana">Installing Yacana</a></li>
+                            <li><a href="installation.html#imports">Imports</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <span class="opener">II. Agents & Tasks</span>
+                        <ul>
+                            <li><a href="agents_and_tasks.html#creating-an-agent">Creating an Agent</a></li>
+                            <li><a href="agents_and_tasks.html#basic-roleplay">Basic roleplay</a></li>
+                            <li><a href="agents_and_tasks.html#creating-tasks">Creating Tasks</a></li>
+                            <li><a href="agents_and_tasks.html#getting-the-result-of-a-task">Getting the
+                                result of a Task</a></li>
+                            <li><a href="agents_and_tasks.html#chaining-tasks">Chaining Tasks</a></li>
+                            <li><a href="agents_and_tasks.html#logging-levels">Logging levels</a></li>
+                            <li><a href="agents_and_tasks.html#configuring-llms-settings">Configuring LLM's
+                                settings</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <span class="opener">III. Routing</span>
+                        <ul>
+                            <li><a href="routing.html#concepts-of-routing">Concepts of routing</a></li>
+                            <li><a href="routing.html#self-reflection-routing">Self-reflection routing</a>
+                            </li>
+                            <li><a href="routing.html#cleaning-history">Cleaning history</a></li>
+                            <li><a href="routing.html#routing-demonstration">Routing demonstration</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <span class="opener">IV. Managing Agents history</span>
+                        <ul>
+                            <li><a href="managing_agent_history.html#printing-history">Printing history</a>
+                            </li>
+                            <li><a href="managing_agent_history.html#creating-and-loading-checkpoints">Creating
+                                and loading checkpoints</a></li>
+                            <li><a href="managing_agent_history.html#Zero-prompt-shot-vs-multi-prompt-shot">Zero-prompt
+                                shot vs multi-prompt shot</a></li>
+                            <li><a href="managing_agent_history.html#saving-agent-state">Saving Agent
+                                state</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <span class="opener">V. Tool calling</span>
+                        <ul>
+                            <li><a href="tool_calling.html#concept-of-calling-tools">Concepts of calling
+                                tools</a></li>
+                            <li><a href="tool_calling.html#writing-good-tool-prompts">Writing good tool
+                                prompts</a></li>
+                            <li><a href="tool_calling.html#calling-a-tool">Calling a tool</a></li>
+                            <li><a href="tool_calling.html#improving-tool-calling-results">Improving
+                                tool-calling results</a></li>
+                            <li><a href="tool_calling.html#optional-tools">Optional tools</a></li>
+                            <li><a href="tool_calling.html#assigning-multiple-tools">Assigning multiple
+                                Tools</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <span class="opener">VI. Dual-agents chat</span>
+                        <ul>
+                            <li><a href="dual_agents_chat.html#stopping-chat-using-maximum-iterations">Stopping
+                                chat using 'maximum iterations'</a></li>
+                            <li><a href="dual_agents_chat.html#letting-agents-end-the-chat">Letting Agents end
+                                the chat</a></li>
+                            <li><a href="dual_agents_chat.html#controlling-the-shift-message">Controlling the
+                                Shift Message</a></li>
+                            <li><a href="dual_agents_chat.html#using-tools-in-chat">Using tools in chat</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li><a href="multi_agents_chat.html#multi-agents-chat">VII. Multi-agents chat</a></li>
 
 
-					</ul>
-				</nav>
+                </ul>
+            </nav>
 
 
-				<!-- Footer -->
-				<footer id="footer">
-					<p class="copyright">&copy; Emilien Lancelot. All rights reserved.<br>
-						Design: <a href="https://html5up.net">HTML5UP</a>.</p>
-				</footer>
+            <!-- Footer -->
+            <footer id="footer">
+                <p class="copyright">&copy; Emilien Lancelot. All rights reserved.<br>
+                    Design: <a href="https://html5up.net">HTML5UP</a>.</p>
+            </footer>
 
-			</div>
-		</div>
+        </div>
+    </div>
 
-	</div>
+</div>
 
-	<!-- Scripts -->
-	<script src="../assets/js/jquery.min.js"></script>
-	<script src="../assets/js/browser.min.js"></script>
-	<script src="../assets/js/breakpoints.min.js"></script>
-	<script src="../assets/js/util.js"></script>
-	<script src="../assets/js/main.js"></script>
+<!-- Scripts -->
+<script src="../assets/js/jquery.min.js"></script>
+<script src="../assets/js/browser.min.js"></script>
+<script src="../assets/js/breakpoints.min.js"></script>
+<script src="../assets/js/util.js"></script>
+<script src="../assets/js/main.js"></script>
 
 </body>
 

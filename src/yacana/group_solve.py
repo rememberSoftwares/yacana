@@ -88,6 +88,13 @@ class GroupSolve:
     """
 
     def __init__(self, tasks: List[Task], end_chat: EndChat, reconcile_first_message: bool = False, shift_message_owner: Task = None, shift_message_content: str | None = None) -> None:
+        """
+        :param tasks: list[task] : All tasks that must be solved during group chat
+        :param end_chat: EndChat : Defines the modality of how and when LLMs stop chatting.
+        :param reconcile_first_message: bool : Should the first message from both LLMs be available to one another. Only useful in dual chat.
+        :param shift_message_owner: Task : The Task to which the shift message should be assigned to. In the end it's rather the corresponding Agent than the Task that is involved here.
+        :param shift_message_content: str : A custom message instead of using the opposite agent response as shift message content.
+        """
         if tasks is None:
             raise ValueError("@tasks cannot be None. Must be a List of Task")
         if not isinstance(end_chat, EndChat):
@@ -105,6 +112,10 @@ class GroupSolve:
                                            cur_task.llm_stops_by_itself}
 
     def set_shift_message(self) -> tuple:
+        """
+        Assigning shift message to either Agents and sets a custom message if user gave one. If not, the opposite agent's ANSWER will be used as PROMPT (shift message).
+        :return: (str, (Task, Task))
+        """
         my_task1 = self.tasks[0]
         my_task2 = self.tasks[1]
 

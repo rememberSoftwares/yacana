@@ -2271,3 +2271,7 @@ button,
     border-top: 0;
     margin-top: 0;
     padding-top: 0; }
+
+.no-table-margin {
+        margin: 0 0 0 0;
+}
