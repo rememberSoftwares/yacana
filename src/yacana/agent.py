@@ -34,7 +34,7 @@ class Agent:
     endpoint: str
         By default will look for Ollama endpoint on your localhost. If you are using a VM with GPU then update this to the remote URL + port.
     history: History
-        The whole conversation that is sent to the inference server. It contains the alternation of message between the prompts in the task that are given to the LLM and it's answers.
+        The whole conversation that is sent to the inference server. It contains the alternation of message between the prompts in the task that are given to the LLM and its answers.
 
     Methods
     ----------
@@ -70,7 +70,7 @@ class Agent:
     def simple_chat(self, custom_prompt: str = "> ", stream: bool = True) -> None:
         """
         Use for testing but this is not how the framework is intended to be used. It creates a simple chatbot that
-        keeps track of this history.
+        keeps track of the history.
         @param custom_prompt: str : Set the prompt style for user input
         @param stream: bool : If set to True you will see the result of your output as the LLM generates tokens instead of waiting for it to complete.
         @return: None
@@ -95,7 +95,7 @@ class Agent:
 
     def export_state(self, file_path: str) -> None:
         """
-        Exports the current agent configuration to a file. This contains all constructor date and also the history.
+        Exports the current agent configuration to a file. This contains all of the agent's data and history.
         This means that you can use the @get_agent_from_state method to load this agent back again and continue where
         you left off.
         @param file_path: str: Path of the file in which you wish the data to be saved. Specify the path + filename. Be wary when using relative path.

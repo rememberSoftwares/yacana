@@ -28,7 +28,7 @@ class EndChatMode(Enum):
     END_CHAT_AFTER_FIRST_COMPLETION : str
         Immediately stops group chat after an agent has reached completion
     MAX_ITERATIONS_ONLY : str
-        LLMs won't be asked if they have fulfilled their objectives but instead will loop until achieving max iteration. Max iteration can be set in the EndChat() class below.
+        Agents won't be asked if they have fulfilled their objectives but instead will loop until achieving max iteration. Max iteration can be set in the EndChat() class below.
 
     """
     ALL_TASK_MUST_COMPLETE = "ALL_TASK_MUST_COMPLETE"
@@ -116,35 +116,6 @@ class GroupSolve:
         self._tasks_completion_statuses = {cur_task.uuid: False for cur_task in self.tasks if
                                            cur_task.llm_stops_by_itself}
 
-    def set_shift_message(self) -> tuple:
-        """
-        Assigning shift message to either Agents and sets a custom message if user gave one. If not, the opposite agent's ANSWER will be used as PROMPT (shift message).
-        :return: (str, (Task, Task))
-        """
-        my_task1 = self.tasks[0]
-        my_task2 = self.tasks[1]
-
-        # Setting default: shift message will be assigned to task2
-        if self.shift_owner is None:
-            self.shift_owner = my_task2
-
-        # Assigning shift message to either Agents and sets a custom message if user gave one. If not, the opposite agent's ANSWER will be used as PROMPT (shift message).
-        if self.shift_owner is my_task1:
-            if self.shift_content is None:
-                last_generated_answer: str = my_task2.agent.history.get_last().content
-            else:
-                last_generated_answer: str = self.shift_content
-            tasks_run_order: Tuple = (my_task1, my_task2)
-        elif self.shift_owner is my_task2:
-            if self.shift_content is None:
-                last_generated_answer: str = my_task1.agent.history.get_last().content
-            else:
-                last_generated_answer: str = self.shift_content
-            tasks_run_order: Tuple = (my_task2, my_task1)
-        else:
-            raise IllogicalConfiguration("@shift_message_owner parameter from GroupSolve() class must be an instance of Task present in the array of Task also given to the constructor.")
-        return last_generated_answer, tasks_run_order
-
     def solve(self) -> None:
         """
         Starts the group chat and allows all LLMs to solve their assigned tasks. Note that 'dual chat' and '3 and more'
@@ -187,7 +158,7 @@ class GroupSolve:
                     my_task1.agent.history.add(Message(MessageRole.ASSISTANT, my_task2.agent.history.get_last().content))
 
                 # (str, (TaskX, TaskY))
-                last_generated_answer, tasks_run_order = self.set_shift_message()
+                last_generated_answer, tasks_run_order = self._set_shift_message()
 
                 while self.max_iter > 0 and (exit_after_next_group_chat is None or exit_after_next_group_chat > 0):
                     logging.debug("Entering groupSolve.")
@@ -235,6 +206,35 @@ class GroupSolve:
                         exit_after_next_group_chat -= 1
             except ReachedTaskCompletion:
                 pass
+
+    def _set_shift_message(self) -> tuple:
+        """
+        Assigning shift message to either Agents and sets a custom message if user gave one. If not, the opposite agent's ANSWER will be used as PROMPT (shift message).
+        :return: (str, (Task, Task))
+        """
+        my_task1 = self.tasks[0]
+        my_task2 = self.tasks[1]
+
+        # Setting default: shift message will be assigned to task2
+        if self.shift_owner is None:
+            self.shift_owner = my_task2
+
+        # Assigning shift message to either Agents and sets a custom message if user gave one. If not, the opposite agent's ANSWER will be used as PROMPT (shift message).
+        if self.shift_owner is my_task1:
+            if self.shift_content is None:
+                last_generated_answer: str = my_task2.agent.history.get_last().content
+            else:
+                last_generated_answer: str = self.shift_content
+            tasks_run_order: Tuple = (my_task1, my_task2)
+        elif self.shift_owner is my_task2:
+            if self.shift_content is None:
+                last_generated_answer: str = my_task1.agent.history.get_last().content
+            else:
+                last_generated_answer: str = self.shift_content
+            tasks_run_order: Tuple = (my_task2, my_task1)
+        else:
+            raise IllogicalConfiguration("@shift_message_owner parameter from GroupSolve() class must be an instance of Task present in the array of Task also given to the constructor.")
+        return last_generated_answer, tasks_run_order
 
     def _duplicate_task(self, task_to_duplicate: Task, last_generated_answer: str) -> Task:
         """

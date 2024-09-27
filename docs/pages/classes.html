@@ -37,12 +37,14 @@
             <header id="header">
                 <a href="../index.html" class="logo"><strong>Yacana</strong>, powering open source LLMs</a>
                 <ul class="icons">
-                    <li><a href="https://x.com/RSoftwares_ofc" class="icon brands fa-twitter"><span
-                            class="label">Twitter</span></a></li>
-                    <li><a href="https://medium.com/@docteur_rs" class="icon brands fa-medium-m"><span
-                            class="label">Medium</span></a></li>
+                    <li><a href="https://x.com/RSoftwares_ofc" class="icon brands fa-twitter"><span class="label">Twitter</span></a>
+                    </li>
+                    <li><a href="https://medium.com/@docteur_rs" class="icon brands fa-medium-m"><span class="label">Medium</span></a>
+                    </li>
                     <li><a href="https://www.youtube.com/channel/UCvi7R0CRmtxhWOVw62XteTw"
                            class="icon brands fa-youtube"><span class="label">Medium</span></a></li>
+                    <li><a href="https://github.com/rememberSoftwares/yacana" class="icon brands fa-github"><span
+                            class="label">Github</span></a></li>
                 </ul>
             </header>
 
@@ -52,7 +54,7 @@
                     <h1 id="multi-agents-chat">Technical documentation - Yacana 0.1.3</h1>
                 </header>
 
-                <span class="image main"><img src="../images/roadmap_banner.jpg" alt="Raodmap"/></span>
+                <span class="image main"><img src="../images/tech_doc.jpg" alt="Raodmap"/></span>
 
                 <h2 id="tech-doc-agent"><u>Agent</u></h2>
 
@@ -94,7 +96,7 @@
                         </tr>
                         <tr>
                             <td><code>model_settings</code></td>
-                            <td style="text-align:center"><a href="#">ModelSettings</a></td>
+                            <td style="text-align:center"><a href="#tech-doc-modelsettings">ModelSettings</a></td>
                             <td style="text-align:center">All settings that Ollama currently supports as model
                                 configuration. This needs to be tested with other inference servers. This allows
                                 modifying deep behavioral patterns of the LLM.
@@ -103,18 +105,18 @@
                         <tr>
                             <td><code>endpoint</code></td>
                             <td style="text-align:center"><span>str</span></td>
-                            <td style="text-align:center">By default will look for Ollama endpoint on your
+                            <td style="text-align:center">By default, will look for Ollama endpoint on your
                                 localhost. If you are using a VM with GPU then update this to the remote URL +
                                 port.
                             </td>
                         </tr>
                         <tr>
                             <td><code>history</code></td>
-                            <td style="text-align:center"><a href="#">History</a></td>
+                            <td style="text-align:center"><a href="#tech-doc-history">History</a></td>
                             <td style="text-align:center">The whole conversation that is sent to the inference
                                 server. It contains the alternation of message between the prompts in the task
                                 that
-                                are given to the LLM and it's answers.
+                                are given to the LLM and its answers.
                             </td>
                         </tr>
                         </tbody>
@@ -125,7 +127,7 @@
                 <h3>▶️ Methods</h3>
 
                 <h4>➡️ __init__(...)</h4>
-                <div>Agent's class constructor</div>
+                <div>Agent's constructor</div>
 
                 <div class="table-wrapper">
                     <table class="alt no-table-margin">
@@ -171,7 +173,7 @@
                         </tr>
                         <tr>
                             <td><code>model_settings</code></td>
-                            <td style="text-align:center"><a href="#">ModelSettings</a></td>
+                            <td style="text-align:center"><a href="#tech-doc-modelsettings">ModelSettings</a></td>
                             <td style="text-align:center">All settings that Ollama currently supports as model
                                 configuration. This needs to be tested with other inference servers. This allows
                                 modifying deep behavioral patterns of the LLM.
@@ -180,14 +182,14 @@
 
                         </tbody>
                     </table>
-                    <i>Return type: <a href="#">Agent</a></i>
+                    <i>Return type: <a href="#tech-doc-agent">Agent</a></i>
                 </div>
                 <br>
 
                 <h4>➡️ simple_chat(...)</h4>
                 <div>Use for testing but this is not how the framework is intended to be used. It creates a simple
                     chatbot that
-                    keeps track of this history.
+                    keeps track of the history.
                 </div>
                 <div class="table-wrapper">
                     <table class="alt no-table-margin">
@@ -218,11 +220,10 @@
                 <br>
 
                 <h4>➡️ export_state(...)</h4>
-                <div>Exports the current agent configuration to a file. This contains all constructor date and also the
-                    history.
-                    This means that you can use the @get_agent_from_state method to load this agent back again and
-                    continue where
-                    you left off.
+                <div>Exports the current agent configuration to a file. This contains all the agent's data and history.
+                    This means that you can use the <a href="#tech-doc-getagentfromstate">@get_agent_from_state(...)</a>
+                    method to
+                    load this agent back again and continue where you left off.
                 </div>
 
                 <div class="table-wrapper">
@@ -237,7 +238,7 @@
                         <tbody>
                         <tr>
                             <td><code>file_path</code></td>
-                            <td style="text-align:center"><a href="#">bool</a></td>
+                            <td style="text-align:center">bool</td>
                             <td style="text-align:center"> Path of the file in which you wish the data to be saved.
                                 Specify the path + filename. Be wary when using relative path.
                             </td>
@@ -250,8 +251,9 @@
 
                 <h3>▶️ Class Methods</h3>
 
-                <h4>➡️ get_agent_from_state(...)</h4>
-                <div>Loads the state previously exported from the @export_state() method. This will return an Agent in
+                <h4 id="tech-doc-getagentfromstate">➡️ get_agent_from_state(...)</h4>
+                <div>Loads the state previously exported from the <a href="todo">@export_state(...)</a> method. This
+                    will return an Agent in
                     the same state
                     as it was before it was saved allowing you to resume the agent conversation even after the program
                     has exited.
@@ -274,7 +276,7 @@
                         </tr>
                         </tbody>
                     </table>
-                    <i>Return type: <a href="#">Agent</a></i>
+                    <i>Return type: <a href="#tech-doc-agent">Agent</a></i>
                 </div>
                 <br>
 
@@ -298,12 +300,12 @@
                         <tbody>
                         <tr>
                             <td><code>tasks</code></td>
-                            <td style="text-align:center">list[<a href="#">Task</a>]</td>
+                            <td style="text-align:center">list[<a href="#tech-doc-task">Task</a>]</td>
                             <td style="text-align:center">All tasks that must be solved during group chat</td>
                         </tr>
                         <tr>
                             <td><code>mode</code></td>
-                            <td style="text-align:center"><a href="#">EndChatMode</a></td>
+                            <td style="text-align:center"><a href="#tech-doc-endchatmode">EndChatMode</a></td>
                             <td style="text-align:center">Defines the way to stop the conversation besides topping max
                                 iteration
                             </td>
@@ -320,7 +322,7 @@
                 <h3>▶️ Methods</h3>
 
                 <h4>➡️ __init__(...)</h4>
-                <div>GroupSolve's class constructor</div>
+                <div>GroupSolve's constructor</div>
 
                 <div class="table-wrapper">
                     <table class="alt no-table-margin">
@@ -334,12 +336,12 @@
                         <tbody>
                         <tr>
                             <td><code>tasks</code></td>
-                            <td style="text-align:center">list[<a href="#">Task</a>]</td>
+                            <td style="text-align:center">list[<a href="#tech-doc-task">Task</a>]</td>
                             <td style="text-align:center">All tasks that must be solved during group chat</td>
                         </tr>
                         <tr>
                             <td><code>end_chat</code></td>
-                            <td style="text-align:center"><a href="#">EndChat</a></td>
+                            <td style="text-align:center"><a href="#tech-doc-endchat">EndChat</a></td>
                             <td style="text-align:center">Defines the modality of how and when LLMs stop chatting.</td>
                         </tr>
                         <tr>
@@ -351,7 +353,7 @@
                         </tr>
                         <tr>
                             <td><code>shift_message_owner</code></td>
-                            <td style="text-align:center"><a href="#">Task</a></td>
+                            <td style="text-align:center"><a href="#tech-doc-task">Task</a></td>
                             <td style="text-align:center">The Task to which the shift message should be assigned to. In
                                 the end it's rather the corresponding Agent than the Task that is involved here.
                             </td>
@@ -365,16 +367,8 @@
                         </tr>
                         </tbody>
                     </table>
-                    <i>Return type: <span>None</span></i>
+                    <i>Return type: <a href="#tech-doc-groupsolve">GroupSolve</a></i>
                 </div>
-                <br>
-
-                <h4>➡️ set_shift_message(...)</h4>
-                <div>Assigning shift message to either Agents and sets a custom message if user gave one. If not, the
-                    opposite agent's ANSWER will be used as PROMPT (shift message).
-                </div>
-                <i>Return type: (str, (<a href="#">Task</a>, <a href="#">Task</a>))</i>
-                <br>
                 <br>
 
                 <h4>➡️ solve(...)</h4>
@@ -403,7 +397,7 @@
                         <tbody>
                         <tr>
                             <td><code>role</code></td>
-                            <td style="text-align:center"><a href="#">MessageRole</a></td>
+                            <td style="text-align:center"><a href="#tech-doc-messagerole">MessageRole</a></td>
                             <td style="text-align:center">From whom is the message from. See the MessageRole Enum</td>
                         </tr>
                         <tr>
@@ -418,7 +412,7 @@
                 <h3>▶️ Methods</h3>
 
                 <h4>➡️ __init__(...)</h4>
-                <div>Returns an instance of Message</div>
+                <div>Message's constructor</div>
 
                 <div class="table-wrapper">
                     <table class="alt no-table-margin">
@@ -432,7 +426,7 @@
                         <tbody>
                         <tr>
                             <td><code>role</code></td>
-                            <td style="text-align:center"><a href="#">MessageRole</a></td>
+                            <td style="text-align:center"><a href="#tech-doc-messagerole">MessageRole</a></td>
                             <td style="text-align:center">From whom is the message from. See the MessageRole Enum</td>
                         </tr>
                         <tr>
@@ -442,17 +436,17 @@
                         </tr>
                         </tbody>
                     </table>
-                    <i>Return type: <span>None</span></i>
+                    <i>Return type: <a href="#tech-doc-message">Message</a></i>
                 </div>
                 <br>
 
-                <h4>➡️ get_as_dict(...)</h4>
+                <h4>➡️ get_as_dict()</h4>
                 <div>Returns the alternation of messages that compose a conversation as a pure python dictionary</div>
-                <i>Return type: <a href="#">Dict</a></i>
+                <i>Return type: Dict</i>
                 <br>
                 <br>
 
-                <h4>➡️ __str__(...)</h4>
+                <h4>➡️ __str__()</h4>
                 <div>Override of str() to pretty print.</div>
                 <i>Return type: <span>str</span></i>
                 <br>
@@ -469,7 +463,7 @@
                 <h3>▶️ Methods</h3>
 
                 <h4>➡️ __init__(...)</h4>
-                <div>Returns a History instance</div>
+                <div>History's constructor</div>
 
                 <div class="table-wrapper">
                     <table class="alt no-table-margin">
@@ -483,19 +477,20 @@
                         <tbody>
                         <tr>
                             <td><code>messages</code></td>
-                            <td style="text-align:center">list[<a href="#">Message</a>]</td>
+                            <td style="text-align:center">list[<a href="#tech-doc-message">Message</a>]</td>
                             <td style="text-align:center">The list of all messages that compose the History of an
                                 Agent
                             </td>
                         </tr>
                         </tbody>
                     </table>
-                    <i>Return type: <span>None</span></i>
+                    <i>Return type: <a href="#tech-doc-history">History</a></i>
                 </div>
                 <br>
 
                 <h4>➡️ add(...)</h4>
-                <div>Adds a new <a href="#">Message</a> to the list of messages composing the history of the
+                <div>Adds a new <a href="#tech-doc-message">Message</a> to the list of messages composing the history of
+                    the
                     conversation
                 </div>
 
@@ -511,7 +506,7 @@
                         <tbody>
                         <tr>
                             <td><code>message</code></td>
-                            <td style="text-align:center"><a href="#">Message</a></td>
+                            <td style="text-align:center"><a href="#tech-doc-message">Message</a></td>
                             <td style="text-align:center">A message with the sender and the message itself</td>
                         </tr>
                         </tbody>
@@ -520,23 +515,24 @@
                 </div>
                 <br>
 
-                <h4>➡️ get_as_dict(...)</h4>
+                <h4>➡️ get_as_dict()</h4>
                 <div>Returns the history (aka the conversation) as a pure python dictionary</div>
-                <i>Return type: list[<a href="#">Dict</a>]</i>
+                <i>Return type: list[Dict]</i>
                 <br>
                 <br>
 
-                <h4>➡️ pretty_print(...)</h4>
+                <h4>➡️ pretty_print()</h4>
                 <div>Prints the history on the std with shiny colors</div>
                 <i>Return type: <span>None</span></i>
                 <br>
                 <br>
 
-                <h4>➡️ create_check_point(...)</h4>
+                <h4>➡️ create_check_point()</h4>
                 <div>Saves the current history so that you can load it back later. Useful when you want to keep a clean
                     history in a flow that didn't work out as expected and want to roll back.
                 </div>
-                <i>Return type: <span>str</span></i>
+                <i>Return type: str</i>
+                <br>
                 <br>
 
                 <h4>➡️ load_check_point(...)</h4>
@@ -561,27 +557,27 @@
                         </tr>
                         </tbody>
                     </table>
-                    <i>Return type: <span>None</span></i>
+                    <i>Return type: None</i>
                 </div>
                 <br>
 
-                <h4>➡️ get_last(...)</h4>
+                <h4>➡️ get_last()</h4>
                 <div>Returns the last message of the history. A syntactic sugar to get the last item from the
                     conversation.
                 </div>
-                <i>Return type: <a href="#">Message</a></i>
+                <i>Return type: <a href="#tech-doc-message">Message</a></i>
                 <br>
                 <br>
 
-                <h4>➡️ clean(...)</h4>
+                <h4>➡️ clean()</h4>
                 <div>Resets the history, preserving only the initial system prompt</div>
-                <i>Return type: <span>None</span></i>
+                <i>Return type: None</i>
                 <br>
                 <br>
 
-                <h4>➡️ __str__(...)</h4>
+                <h4>➡️ __str__()</h4>
                 <div>Override <code>str()</code> for pretty print</div>
-                <i>Return type: <span>str</span></i>
+                <i>Return type: str</i>
                 <br>
 
 
@@ -607,52 +603,71 @@
                             <td><code>task</code></td>
                             <td style="text-align:center"><span>str</span></td>
                             <td style="text-align:center">The task to solve. It is the prompt given to the assigned
-                                LLM
+                                LLM.
                             </td>
                         </tr>
                         <tr>
                             <td><code>agent</code></td>
-                            <td style="text-align:center"><a href="#">Agent</a></td>
-                            <td style="text-align:center">The agent assigned to this task</td>
+                            <td style="text-align:center"><a href="#tech-doc-agent">Agent</a></td>
+                            <td style="text-align:center">The <a href="#tech-doc-agent">Agent</a> assigned to this task
+                                .
+                            </td>
                         </tr>
                         <tr>
                             <td><code>json_output</code></td>
                             <td style="text-align:center"><span>bool</span></td>
-                            <td style="text-align:center">Forces the LLM to answer as JSON</td>
+                            <td style="text-align:center">Forces the LLM to answer as JSON. You should still ask
+                                for a JSON output in the prompt to help the LLM.
+                            </td>
                         </tr>
                         <tr>
                             <td><code>tools</code></td>
-                            <td style="text-align:center">list[<a href="#">Tool</a>]</td>
-                            <td style="text-align:center">The list of tools the LLM will use for solving this task</td>
+                            <td style="text-align:center">list[<a href="#tech-doc-tool">Tool</a>]</td>
+                            <td style="text-align:center">The list of tools the LLM will use for solving this task.</td>
                         </tr>
                         <tr>
                             <td><code>raise_when_max_tool_error_iter</code></td>
                             <td style="text-align:center"><span>bool</span></td>
-                            <td style="text-align:center">If True, raises MaxToolErrorIter() after exceeding tool usage
-                                limits
+                            <td style="text-align:center">If True, raises <a href="#tech-doc-maxtoolerroriter">
+                                MaxToolErrorIter()</a> after
+                                exceeding tool usage limits.
                             </td>
                         </tr>
                         <tr>
                             <td><code>llm_stops_by_itself</code></td>
                             <td style="text-align:center"><span>bool</span></td>
-                            <td style="text-align:center">Tells the LLM to stop by itself (only for GroupSolve)</td>
+                            <td style="text-align:center">Tells the assigned LLM to stop by itself (only for <a
+                                    href="#tech-doc-groupsolve"> GroupSolve</a>). Multiple Tasks can set this, hence
+                                making multiple <a
+                                        href="#tech-doc-agent">Agent</a>s responsible for ending the Chat. Choose <a
+                                        href="#tech-doc-endchatmode">
+                                    EndChatMode</a> wisely.
+                            </td>
                         </tr>
                         <tr>
                             <td><code>use_self_reflection</code></td>
                             <td style="text-align:center"><span>bool</span></td>
-                            <td style="text-align:center">Preserves the LLM's self-reflection for future GroupSolve
-                                iterations
+                            <td style="text-align:center">Preserves the LLM's self-reflection for future <a
+                                    href="#tech-doc-groupsolve">GroupSolve</a> iterations. May help level up the LLM
+                                reasoning skills.
                             </td>
                         </tr>
                         <tr>
                             <td><code>forget</code></td>
                             <td style="text-align:center"><span>bool</span></td>
-                            <td style="text-align:center">If False, the Agent will forget the task after completion</td>
+                            <td style="text-align:center">If True, the <a href="#tech-doc-agent">Agent</a> will forget
+                                the task after
+                                completion
+                                . Useful when doing a yes/no router which the answer is not crucial to the history
+                                consistency.
+                            </td>
                         </tr>
                         <tr>
                             <td><code>uuid</code></td>
                             <td style="text-align:center"><span>str</span></td>
-                            <td style="text-align:center">A unique identifier for this task</td>
+                            <td style="text-align:center">A unique identifier for this task. This is mostly for
+                                Yacana's internal magic.
+                            </td>
                         </tr>
                         </tbody>
                     </table>
@@ -662,7 +677,7 @@
                 <h3>▶️ Methods</h3>
 
                 <h4>➡️ __init__(...)</h4>
-                <div>Returns a Task instance</div>
+                <div>Task's constructor</div>
 
                 <div class="table-wrapper">
                     <table class="alt no-table-margin">
@@ -681,54 +696,73 @@
                         </tr>
                         <tr>
                             <td><code>agent</code></td>
-                            <td style="text-align:center"><a href="#">Agent</a></td>
-                            <td style="text-align:center">The agent assigned to this task</td>
+                            <td style="text-align:center"><a href="#tech-doc-agent">Agent</a></td>
+                            <td style="text-align:center">The <a href="#tech-doc-agent">Agent</a> assigned to this
+                                task
+                            </td>
                         </tr>
                         <tr>
                             <td><code>json_output</code></td>
                             <td style="text-align:center"><span>bool</span></td>
-                            <td style="text-align:center">Forces LLM to answer in JSON</td>
+                            <td style="text-align:center">Forces the LLM to answer as JSON. You should still ask
+                                for a JSON output in the prompt to help the LLM.
+                            </td>
                         </tr>
                         <tr>
                             <td><code>tools</code></td>
-                            <td style="text-align:center">list[<a href="#">Tool</a>]</td>
+                            <td style="text-align:center">list[<a href="#tech-doc-tool">Tool</a>]</td>
                             <td style="text-align:center">The tools the LLM has access to for this task</td>
                         </tr>
                         <tr>
                             <td><code>raise_when_max_tool_error_iter</code></td>
                             <td style="text-align:center"><span>bool</span></td>
-                            <td style="text-align:center">Set to False if you don’t want to raise MaxToolErrorIter()
+                            <td style="text-align:center">Set to False if you don’t want to raise <a
+                                    href="#tech-doc-maxtoolerroriter">MaxToolErrorIter()</a>
                             </td>
                         </tr>
                         <tr>
                             <td><code>llm_stops_by_itself</code></td>
                             <td style="text-align:center"><span>bool</span></td>
-                            <td style="text-align:center">Tells LLM to stop on its own (for GroupSolve)</td>
+                            <td style="text-align:center">Tells the assigned LLM to stop by itself (only for <a
+                                    href="#tech-doc-groupsolve"> GroupSolve</a>). Multiple Tasks can set this, hence
+                                making multiple <a
+                                        href="#tech-doc-agent">Agent</a>s responsible for ending the Chat. Choose <a
+                                        href="#tech-doc-endchatmode">
+                                    EndChatMode</a> wisely.
+                            </td>
                         </tr>
                         <tr>
                             <td><code>use_self_reflection</code></td>
                             <td style="text-align:center"><span>bool</span></td>
-                            <td style="text-align:center">Allows self-reflection in the next GroupSolve iteration</td>
+                            <td style="text-align:center">Preserves the LLM's self-reflection for future <a
+                                    href="#tech-doc-groupsolve">GroupSolve</a> iterations. May help level up the LLM
+                                reasoning skills.
+                            </td>
                         </tr>
                         <tr>
                             <td><code>forget</code></td>
                             <td style="text-align:center"><span>bool</span></td>
-                            <td style="text-align:center">Forgets the task once solved</td>
+                            <td style="text-align:center">If True, the <a href="#tech-doc-agent">Agent</a> will forget
+                                the task after
+                                completion
+                                . Useful when doing a yes/no router which the answer is not crucial to the history
+                                consistency.
+                            </td>
                         </tr>
                         </tbody>
                     </table>
-                    <i>Return type: <span>None</span></i>
+                    <i>Return type: <a href="#tech-doc-task">Task</a></i>
                 </div>
                 <br>
 
-                <h4>➡️ uuid(...)</h4>
+                <h4>➡️ uuid()</h4>
                 <div>Read-only property that references the current task with a unique ID.</div>
                 <i>Return type: <span>str</span></i>
                 <br>
                 <br>
 
                 <h4>➡️ add_tool(...)</h4>
-                <div>Adds a <a href="#">Tool</a> to the list of tools to be used in this task</div>
+                <div>Adds a <a href="#tech-doc-tool">Tool</a> to the list of tools to be used in this task</div>
 
                 <div class="table-wrapper">
                     <table class="alt no-table-margin">
@@ -742,7 +776,7 @@
                         <tbody>
                         <tr>
                             <td><code>tool</code></td>
-                            <td style="text-align:center"><a href="#">Tool</a></td>
+                            <td style="text-align:center"><a href="#tech-doc-tool">Tool</a></td>
                             <td style="text-align:center">A tool given to the LLM for this task</td>
                         </tr>
                         </tbody>
@@ -751,11 +785,12 @@
                 </div>
                 <br>
 
-                <h4>➡️ solve(...)</h4>
+                <h4>➡️ solve()</h4>
                 <div>Calls the assigned LLM to perform inference and solve the task. The LLM will use available tools,
-                    and Yacana ensures compliance.
+                    and Yacana ensures compliance. Don't forget to call this method on every Task or nothing will
+                    happen ;-)
                 </div>
-                <i>Return type: <a href="#">Message</a> | <span>None</span></i>
+                <i>Return type: <a href="#tech-doc-message">Message</a> | <span>None</span></i>
                 <br>
 
 
@@ -807,7 +842,7 @@
                         </tr>
                         <tr>
                             <td><code>usage_examples</code></td>
-                            <td style="text-align:center">List[<a href="#">dict</a>]</td>
+                            <td style="text-align:center">List[dict]</td>
                             <td style="text-align:center">A list of Python dictionary examples of how the tool should be
                                 called. Useful if the LLM struggles to call the tool successfully.
                             </td>
@@ -816,13 +851,17 @@
                             <td><code>max_custom_error</code></td>
                             <td style="text-align:center"><span>int</span></td>
                             <td style="text-align:center">The maximum number of errors a tool can raise before stopping
-                                the task.
+                                the <a href="#tech-doc-task">Task</a>. When reached, a <a
+                                        href="#tech-doc-maxtoolerroriter">MaxToolErrorIter</a>
+                                will be raised.
                             </td>
                         </tr>
                         <tr>
                             <td><code>max_call_error</code></td>
                             <td style="text-align:center"><span>int</span></td>
-                            <td style="text-align:center">The maximum number of times Yacana can fail to call a tool
+                            <td style="text-align:center">The maximum number of times Yacana can fail to call a tool.
+                                When reached, a <a href="#tech-doc-maxtoolerroriter">MaxToolErrorIter</a> will be
+                                raised.
                                 correctly.
                             </td>
                         </tr>
@@ -861,7 +900,7 @@
                         </tr>
                         <tr>
                             <td><code>function_ref</code></td>
-                            <td style="text-align:center"><a href="#">Callable</a></td>
+                            <td style="text-align:center">Callable</td>
                             <td style="text-align:center">The reference to a python function that will be called with
                                 parameters provided by the LLM.
                             </td>
@@ -873,7 +912,7 @@
                         </tr>
                         <tr>
                             <td><code>usage_examples</code></td>
-                            <td style="text-align:center">List[<a href="#">dict</a>]</td>
+                            <td style="text-align:center">List[dict]</td>
                             <td style="text-align:center">A list of dictionary examples to guide the LLM on how to use
                                 the tool.
                             </td>
@@ -881,16 +920,22 @@
                         <tr>
                             <td><code>max_custom_error</code></td>
                             <td style="text-align:center"><span>int</span></td>
-                            <td style="text-align:center">The maximum number of errors a tool can raise.</td>
+                            <td style="text-align:center">The maximum number of errors a tool can raise. When
+                                reached, a <a href="#tech-doc-maxtoolerroriter">MaxToolErrorIter</a> will be raised
+                                .
+                            </td>
                         </tr>
                         <tr>
                             <td><code>max_call_error</code></td>
                             <td style="text-align:center"><span>int</span></td>
-                            <td style="text-align:center">The maximum number of failed attempts to call the tool.</td>
+                            <td style="text-align:center">The maximum number of failed attempts to call the tool.
+                                When reached, a <a href="#tech-doc-maxtoolerroriter">MaxToolErrorIter</a> will be
+                                raised.
+                            </td>
                         </tr>
                         </tbody>
                     </table>
-                    <i>Return type: <span>None</span></i>
+                    <i>Return type: <a href="#tech-doc-tool">Tool</a></i>
                 </div>
 
                 <hr>
@@ -898,7 +943,8 @@
 
                 <h2 id="tech-doc-toolerror"><u>ToolError</u></h2>
 
-                <p>Raised by the user from inside a tool when the tool 'thinks' that the given parameters are incorrect.
+                <p>Raised by the user from inside a tool when the tool's validation logic detects that the
+                    given parameters are incorrect.
                     The message provided in the raise statement should help the LLM correct its mistakes. If not fixed,
                     the tool might loop until reaching MaxToolErrorIter. The error message should be didactic, e.g.,
                     'Parameter xxxx expected type int but got type string'.</p>
@@ -927,7 +973,7 @@
                         </tr>
                         </tbody>
                     </table>
-                    <i>Return type: <span>None</span></i>
+                    <i>Type: exception</i>
                 </div>
 
 
@@ -963,7 +1009,7 @@
                         </tr>
                         </tbody>
                     </table>
-                    <i>Return type: <span>None</span></i>
+                    <i>Type: exception</i>
                 </div>
 
                 <hr>
@@ -978,7 +1024,7 @@
                 <h3>▶️ Member variables</h3>
 
                 <div class="table-wrapper">
-                    <table class="alt">
+                    <table class="alt no-table-margin">
                         <thead>
                         <tr>
                             <th>Name</th>
@@ -1019,13 +1065,14 @@
                         <tr>
                             <td><code>MAX_ITERATIONS_ONLY</code></td>
                             <td style="text-align:center"><span>str</span></td>
-                            <td style="text-align:center">LLMs won't be asked if they have fulfilled their objectives
+                            <td style="text-align:center">Agents won't be asked if they have fulfilled their objectives
                                 but will loop until achieving the maximum iteration, which can be set in the <code>EndChat()</code>
                                 class.
                             </td>
                         </tr>
                         </tbody>
                     </table>
+                    <i>Type: Enum</i>
                 </div>
 
                 <hr>
@@ -1052,7 +1099,7 @@
                         <tbody>
                         <tr>
                             <td><code>mode</code></td>
-                            <td style="text-align:center"><a href="#">EndChatMode</a></td>
+                            <td style="text-align:center"><a href="#tech-doc-endchatmode">EndChatMode</a></td>
                             <td style="text-align:center">The modality to end a chat with multiple agents.</td>
                         </tr>
                         <tr>
@@ -1083,19 +1130,19 @@
                         <tbody>
                         <tr>
                             <td><code>mode</code></td>
-                            <td style="text-align:center"><a href="#">EndChatMode</a></td>
+                            <td style="text-align:center"><a href="#tech-doc-endchatmode">EndChatMode</a></td>
                             <td style="text-align:center">The modality to end a chat with multiple agents.</td>
                         </tr>
                         <tr>
                             <td><code>max_iterations</code></td>
                             <td style="text-align:center"><span>int</span></td>
                             <td style="text-align:center">The max number of iterations in a conversation. An iteration
-                                is complete when we get back to the first speaker.
+                                is complete when we get back to the first speaker. Defaults to 5.
                             </td>
                         </tr>
                         </tbody>
                     </table>
-                    <i>Return type: <span>None</span></i>
+                    <i>Return type: <a href="#tech-doc-endchat">EndChat</a></i>
                 </div>
 
                 <hr>
@@ -1109,7 +1156,7 @@
                 <h3>▶️ Member variables</h3>
 
                 <div class="table-wrapper">
-                    <table class="alt">
+                    <table class="alt no-table-margin">
                         <thead>
                         <tr>
                             <th>Name</th>
@@ -1135,6 +1182,7 @@
                         </tr>
                         </tbody>
                     </table>
+                    <i>Type: Enum</i>
                 </div>
 
                 <hr>
@@ -1342,7 +1390,7 @@
                         </tr>
                         </tbody>
                     </table>
-                    <i>Return type: <span>None</span></i>
+                    <i>Return type: <a href="#tech-doc-modelsettings">ModelSettings</a></i>
                 </div>
                 <br>
 
@@ -1355,9 +1403,6 @@
                 <h4>➡️ get_settings()</h4>
                 <div>Returns a dictionary of all the settings and their current values, excluding None values.</div>
                 <i>Return type: <span>dict</span></i>
-                <div>A dictionary containing the machine settings that have been set.</div>
-
-
             </section>
         </div>
     </div>
@@ -1457,10 +1502,19 @@
                         </ul>
                     </li>
                     <li><a href="multi_agents_chat.html#multi-agents-chat">VII. Multi-agents chat</a></li>
-
-
                 </ul>
             </nav>
+
+            <section>
+                <header class="major">
+                    <h2>Additional resources</h2>
+                </header>
+                <nav id="additional-resources-menu">
+                    <ul>
+                        <li><a href="classes.html">Technical Documentation</a></li>
+                    </ul>
+                </nav>
+            </section>
 
 
             <!-- Footer -->

@@ -57,7 +57,7 @@ class Task:
         @param raise_when_max_tool_error_iter: bool: You should try/catch MaxToolErrorIter() on each call to .solve(). But if you don't want to, you can set this to False and in case there is a MaxToolErrorIter then the .solve() method will return None and won't throw. This might be cleaner to catch if you don't want to try/catch every call to .solve().  But be wary, this has not been tested extensively, yet, and is a behavior that might change in the near future.
         @param llm_stops_by_itself: bool: Only useful when the task is part of a GroupSolve(). This signal the assigned LLM that it will have to stop talking by its onw means and is not only bound to a simple max iteration stop.
         @param use_self_reflection: bool: Only useful when the task is part of a GroupSolve(). Allows to keep the self reflection process done by the LLM in the next GS iteration. May be useful if the LLM has problems with reasoning.
-        @param forget: bool: When this task has finished resolving and this is set to False, the Agent won't remember it happened. Useful when doing yes/no questions for routing purposes and no need to keep the answer in the history.
+        @param forget: bool: When this task has finished resolving and this is set to True, the Agent won't remember it happened. Useful when doing yes/no questions for routing purposes and no need to keep the answer in the history.
         """
         self.task: str = prompt
         self.agent: Agent = agent
