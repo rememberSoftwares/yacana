@@ -7,62 +7,66 @@
 <html>
 
 <head>
-	<title>Agents & Tasks</title>
-	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-	<link rel="stylesheet" href="../assets/css/main.css" />
-	<link rel="stylesheet" href="../assets/css/codemirror.min.css">
-	<link rel="stylesheet" href="../assets/css/monokai.min.css">
-	<link rel="stylesheet" href="../assets/css/foldgutter.min.css">
-	<link rel="stylesheet" href="../assets/css/codemirror-custom.css">
-	<link rel="stylesheet" href="../assets/css/zenburn.min.css">
-	<script src="../assets/js/codemirror.min.js"></script>
-	<script src="../assets/js/python.min.js"></script>
-	<script src="../assets/js/foldcode.min.js"></script>
-	<script src="../assets/js/foldgutter.min.js"></script>
-	<script src="../assets/js/brace-fold.min.js"></script>
-	<script src="../assets/js/codemirror-custom.js"></script>
+    <title>Agents & Tasks</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
+    <link rel="stylesheet" href="../assets/css/main.css"/>
+    <link rel="stylesheet" href="../assets/css/codemirror.min.css">
+    <link rel="stylesheet" href="../assets/css/monokai.min.css">
+    <link rel="stylesheet" href="../assets/css/foldgutter.min.css">
+    <link rel="stylesheet" href="../assets/css/codemirror-custom.css">
+    <link rel="stylesheet" href="../assets/css/zenburn.min.css">
+    <script src="../assets/js/codemirror.min.js"></script>
+    <script src="../assets/js/python.min.js"></script>
+    <script src="../assets/js/foldcode.min.js"></script>
+    <script src="../assets/js/foldgutter.min.js"></script>
+    <script src="../assets/js/brace-fold.min.js"></script>
+    <script src="../assets/js/codemirror-custom.js"></script>
 </head>
 
 <body class="is-preload">
 
-	<!-- Wrapper -->
-	<div id="wrapper">
+<!-- Wrapper -->
+<div id="wrapper">
 
-		<!-- Main -->
-		<div id="main">
-			<div class="inner">
+    <!-- Main -->
+    <div id="main">
+        <div class="inner">
 
-				<!-- Header -->
-				<header id="header">
-					<a href="../index.html" class="logo"><strong>Yacana</strong>, powering open source LLMs</a>
-					<ul class="icons">
-						<li><a href="https://x.com/RSoftwares_ofc" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
-						<li><a href="https://medium.com/@docteur_rs" class="icon brands fa-medium-m"><span class="label">Medium</span></a></li>
-						<li><a href="https://www.youtube.com/channel/UCvi7R0CRmtxhWOVw62XteTw" class="icon brands fa-youtube"><span class="label">Medium</span></a></li>
-						<li><a href="https://github.com/rememberSoftwares/yacana" class="icon brands fa-github"><span class="label">Github</span></a></li>
-					</ul>
-				</header>
+            <!-- Header -->
+            <header id="header">
+                <a href="../index.html" class="logo"><strong>Yacana</strong>, powering open source LLMs</a>
+                <ul class="icons">
+                    <li><a href="https://x.com/RSoftwares_ofc" class="icon brands fa-twitter"><span class="label">Twitter</span></a>
+                    </li>
+                    <li><a href="https://medium.com/@docteur_rs" class="icon brands fa-medium-m"><span class="label">Medium</span></a>
+                    </li>
+                    <li><a href="https://www.youtube.com/channel/UCvi7R0CRmtxhWOVw62XteTw"
+                           class="icon brands fa-youtube"><span class="label">Medium</span></a></li>
+                    <li><a href="https://github.com/rememberSoftwares/yacana" class="icon brands fa-github"><span
+                            class="label">Github</span></a></li>
+                </ul>
+            </header>
 
-				<!-- Content -->
-				<section>
-					<header class="main">
-						<h1 id="multi-agents-chat">VII. Multi-agents chat</h1>
-					</header>
+            <!-- Content -->
+            <section>
+                <header class="main">
+                    <h1 id="multi-agents-chat">VII. Multi-agents chat</h1>
+                </header>
 
-					<span class="image main"><img src="../images/multi_agents.jpg" alt="Multi chat" /></span>
+                <span class="image main"><img src="../images/multi_agents.jpg" alt="Multi chat"/></span>
 
-					<p>Yacana provides a way to make more than two agents speak one after the other. Better yet, there
-						is no limit to the number of agents that you can add. However, note that the dual conversation
-						pattern should be the one giving the best results as LLM were trained to speak to one user. Not
-						be part of a multi-user conversation… <br />
-						Still, the functionality is here for you to use! <br />
-						To make this happen Yacana makes the Agents enter a role-play situation. It will heavily rely on
-						the agent's name, so be sure that each of them has a concise, yet meaningful, name/title. </p>
-					<p>Let's play another dumb game where 3 players must output one letter each. The game is won when
-						the fourth player (the game master) can make a valid 4-letter word from the previously outputted
-						letters. </p>
-					<pre><code class="language-python">
+                <p>Yacana provides a way to make more than two agents speak one after the other. Better yet, there
+                    is no limit to the number of agents that you can add. However, note that the dual conversation
+                    pattern should be the one giving the best results as LLM were trained to speak to one user. Not
+                    be part of a multi-user conversation… <br/>
+                    Still, the functionality is here for you to use! <br/>
+                    To make this happen Yacana makes the Agents enter a role-play situation. It will heavily rely on
+                    the agent's name, so be sure that each of them has a concise, yet meaningful, name/title. </p>
+                <p>Let's play another dumb game where 3 players must output one letter each. The game is won when
+                    the fourth player (the game master) can make a valid 4-letter word from the previously outputted
+                    letters. </p>
+                <pre><code class="language-python">
 from yacana import Agent, Task, GroupSolve, EndChat, EndChatMode
 
 agent1 = Agent("James", "llama3.1:8b")
@@ -89,9 +93,10 @@ agent1.history.pretty_print()
 
 print("------game_master----------")
 game_master.history.pretty_print()
-					</code></pre><br>
-					<p>▶️ Output:</p>
-					<pre><code class="text-output">
+					</code></pre>
+                <br>
+                <p>▶️ Output:</p>
+                <pre><code class="text-output">
 ################Starting GroupSolve#################
 
 INFO: [PROMPT][To: James]: [TaskManager]: James: this is your main task: `You play a game where each player must add ONE letter. The goal is to form an existing word of 4 letters long. You can only say one letter in each message.`
@@ -372,205 +377,222 @@ I will give you your task in the next message.
 
 [assistant]:
 [Game master]: After analyzing the letters provided so far (T-E-H-A-L-S), I can see that they form a valid 4-letter word: HALE! Congratulations, the game is complete!
-					</code></pre><br>
-					<p>During the first round the proposed letters are "T - E - H".<br>
-						The game master responds to this with:
-						<code>After analyzing the letters provided so far (T-E-H), I can see that they don't form a valid 4-letter word. The game continues!</code>
-						<br />
-						During the second round new letters are added: "A - L - S".<br>
-						To which the game master responds:
-						<code>After analyzing the letters provided so far (T-E-H-A-L-S), I can see that they form a valid 4-letter word: HALE! Congratulations, the game is complete!</code>.
-						After which the chat ends!
-					</p>
-					<p class="icon solid fa-info-circle"> Note that all types of "end chat" modes are
-						still valid in multi-user chat too.
-						Tools and all their parameters are also available in this mode and follow the same tools
-						principles. </p>
-					<h4>Pros and cons of multi-LLM group chat</h4>
-					<p><strong>Dual chat</strong> <br />
-						Pros: </p>
-					<ul>
-						<li>The dual group chat may have better accuracy with "dumb" LLMs assuming that you don't use
-							tools as this may plumber the model's limited reasoning skills.</li>
-						<li>Many options to configure conversation kick-off (shift message, first message
-							reconciliation)</li>
-					</ul>
-					<p>Cons: </p>
-					<ul>
-						<li>Control of the "shift message" and "first message reconciliation" may be a burden for new
-							users ;</li>
-						<li>Logs readability is not great at the moment ;</li>
-					</ul>
-					<hr />
-					<p><strong>Multi chat (>2)</strong> </p>
-					<p>Pros: </p>
-					<ul>
-						<li>Logs readability is good ;</li>
-						<li>No "shift message" nor "first message reconciliation" to deal with. </li>
-					</ul>
-					<p>Multi (>2) chat cons: </p>
-					<ul>
-						<li>LLMs that don't perform well with role-play may experience difficulties like impersonation ;
-						</li>
-					</ul>
-					<p class="icon solid fa-info-circle"> We might consider adding an option to also use role-play for
-						dual chat mode.</p>
+					</code></pre>
+                <br>
+                <p>During the first round the proposed letters are "T - E - H".<br>
+                    The game master responds to this with:
+                    <code>After analyzing the letters provided so far (T-E-H), I can see that they don't form a valid
+                        4-letter word. The game continues!</code>
+                    <br/>
+                    During the second round new letters are added: "A - L - S".<br>
+                    To which the game master responds:
+                    <code>After analyzing the letters provided so far (T-E-H-A-L-S), I can see that they form a valid
+                        4-letter word: HALE! Congratulations, the game is complete!</code>.
+                    After which the chat ends!
+                </p>
+                <p class="icon solid fa-info-circle"> Note that all types of "end chat" modes are
+                    still valid in multi-user chat too.
+                    Tools and all their parameters are also available in this mode and follow the same tools
+                    principles. </p>
+                <h4>Pros and cons of multi-LLM group chat</h4>
+                <p><strong>Dual chat</strong> <br/>
+                    Pros: </p>
+                <ul>
+                    <li>The dual group chat may have better accuracy with "dumb" LLMs assuming that you don't use
+                        tools as this may plumber the model's limited reasoning skills.
+                    </li>
+                    <li>Many options to configure conversation kick-off (shift message, first message
+                        reconciliation)
+                    </li>
+                </ul>
+                <p>Cons: </p>
+                <ul>
+                    <li>Control of the "shift message" and "first message reconciliation" may be a burden for new
+                        users ;
+                    </li>
+                    <li>Logs readability is not great at the moment ;</li>
+                </ul>
+                <hr/>
+                <p><strong>Multi chat (>2)</strong></p>
+                <p>Pros: </p>
+                <ul>
+                    <li>Logs readability is good ;</li>
+                    <li>No "shift message" nor "first message reconciliation" to deal with.</li>
+                </ul>
+                <p>Multi (>2) chat cons: </p>
+                <ul>
+                    <li>LLMs that don't perform well with role-play may experience difficulties like impersonation ;
+                    </li>
+                </ul>
+                <p class="icon solid fa-info-circle"> We might consider adding an option to also use role-play for
+                    dual chat mode.</p>
 
-					<div style="text-align: center; margin-top: 50px;">
-						<h4>Pagination</h4>
-						<ul class="pagination">
-							<li><a href="dual_agents_chat.html#stopping-chat-using-maximum-iterations"
-									class="button">Prev</a></li>
+                <div style="text-align: center; margin-top: 50px;">
+                    <h4>Pagination</h4>
+                    <ul class="pagination">
+                        <li><a href="dual_agents_chat.html#stopping-chat-using-maximum-iterations"
+                               class="button">Prev</a></li>
 
-							<li><span class="button disabled">Next</span></li>
-						</ul>
-					</div>
-				</section>
-			</div>
-		</div>
+                        <li><span class="button disabled">Next</span></li>
+                    </ul>
+                </div>
+            </section>
+        </div>
+    </div>
 
-		<!-- Sidebar -->
-		<div id="sidebar">
-			<div class="inner">
+    <!-- Sidebar -->
+    <div id="sidebar">
+        <div class="inner">
 
-				<!-- Search -->
-				<section id="search" class="alt">
-					<form method="post" action="#">
-						<input type="text" name="query" id="query" placeholder="Search" />
-					</form>
-				</section>
+            <!-- Search -->
+            <section id="search" class="alt">
+                <form method="post" action="#">
+                    <input type="text" name="query" id="query" placeholder="Search"/>
+                </form>
+            </section>
 
-				<!-- Menu -->
-				<nav id="menu">
-					<header class="major">
-						<h2>Menu</h2>
-					</header>
-					<ul>
-						<li><a href="../index.html">Homepage</a></li>
-						<li>
-							<span class="opener">I. Installation</span>
-							<ul>
-								<li><a href="installation.html#installing-ollama">Installing Ollama</a></li>
-								<li><a href="installation.html#choosing-an-llm-model">Choosing an LLM model</a>
-								</li>
-								<li><a href="installation.html#running-the-model">Running the model</a></li>
-								<li><a href="installation.html#installing-yacana">Installing Yacana</a></li>
-								<li><a href="installation.html#imports">Imports</a></li>
-							</ul>
-						</li>
-						<li>
-							<span class="opener">II. Agents & Tasks</span>
-							<ul>
-								<li><a href="agents_and_tasks.html#creating-an-agent">Creating an Agent</a></li>
-								<li><a href="agents_and_tasks.html#basic-roleplay">Basic roleplay</a></li>
-								<li><a href="agents_and_tasks.html#creating-tasks">Creating Tasks</a></li>
-								<li><a href="agents_and_tasks.html#getting-the-result-of-a-task">Getting the
-										result of a Task</a></li>
-								<li><a href="agents_and_tasks.html#chaining-tasks">Chaining Tasks</a></li>
-								<li><a href="agents_and_tasks.html#logging-levels">Logging levels</a></li>
-								<li><a href="agents_and_tasks.html#configuring-llms-settings">Configuring LLM's
-										settings</a></li>
-							</ul>
-						</li>
-						<li>
-							<span class="opener">III. Routing</span>
-							<ul>
-								<li><a href="routing.html#concepts-of-routing">Concepts of routing</a></li>
-								<li><a href="routing.html#self-reflection-routing">Self-reflection routing</a>
-								</li>
-								<li><a href="routing.html#cleaning-history">Cleaning history</a></li>
-								<li><a href="routing.html#routing-demonstration">Routing demonstration</a></li>
-							</ul>
-						</li>
-						<li>
-							<span class="opener">IV. Managing Agents history</span>
-							<ul>
-								<li><a href="managing_agent_history.html#printing-history">Printing history</a>
-								</li>
-								<li><a href="managing_agent_history.html#creating-and-loading-checkpoints">Creating
-										and loading checkpoints</a></li>
-								<li><a href="managing_agent_history.html#Zero-prompt-shot-vs-multi-prompt-shot">Zero-prompt
-										shot vs multi-prompt shot</a></li>
-								<li><a href="managing_agent_history.html#saving-agent-state">Saving Agent
-										state</a></li>
-							</ul>
-						</li>
-						<li>
-							<span class="opener">V. Tool calling</span>
-							<ul>
-								<li><a href="tool_calling.html#concept-of-calling-tools">Concepts of calling
-										tools</a></li>
-								<li><a href="tool_calling.html#writing-good-tool-prompts">Writing good tool
-										prompts</a></li>
-								<li><a href="tool_calling.html#calling-a-tool">Calling a tool</a></li>
-								<li><a href="tool_calling.html#improving-tool-calling-results">Improving
-										tool-calling results</a></li>
-								<li><a href="tool_calling.html#optional-tools">Optional tools</a></li>
-								<li><a href="tool_calling.html#assigning-multiple-tools">Assigning multiple
-										Tools</a></li>
-							</ul>
-						</li>
-						<li>
-							<span class="opener">VI. Dual-agents chat</span>
-							<ul>
-								<li><a href="dual_agents_chat.html#stopping-chat-using-maximum-iterations">Stopping
-										chat using 'maximum iterations'</a></li>
-								<li><a href="dual_agents_chat.html#letting-agents-end-the-chat">Letting Agents end
-										the chat</a></li>
-								<li><a href="dual_agents_chat.html#controlling-the-shift-message">Controlling the
-										Shift Message</a></li>
-								<li><a href="dual_agents_chat.html#using-tools-in-chat">Using tools in chat</a>
-								</li>
-							</ul>
-						</li>
-						<li><a href="multi_agents_chat.html#multi-agents-chat">VII. Multi-agents chat</a></li>
+            <!-- Menu -->
+            <nav class="menu">
+                <header class="major">
+                    <h2>Menu</h2>
+                </header>
+                <ul>
+                    <li><a href="../index.html">Homepage</a></li>
+                    <li>
+                        <span class="opener">I. Installation</span>
+                        <ul>
+                            <li><a href="installation.html#installing-ollama">Installing Ollama</a></li>
+                            <li><a href="installation.html#choosing-an-llm-model">Choosing an LLM model</a>
+                            </li>
+                            <li><a href="installation.html#running-the-model">Running the model</a></li>
+                            <li><a href="installation.html#installing-yacana">Installing Yacana</a></li>
+                            <li><a href="installation.html#imports">Imports</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <span class="opener">II. Agents & Tasks</span>
+                        <ul>
+                            <li><a href="agents_and_tasks.html#creating-an-agent">Creating an Agent</a></li>
+                            <li><a href="agents_and_tasks.html#basic-roleplay">Basic roleplay</a></li>
+                            <li><a href="agents_and_tasks.html#creating-tasks">Creating Tasks</a></li>
+                            <li><a href="agents_and_tasks.html#getting-the-result-of-a-task">Getting the
+                                result of a Task</a></li>
+                            <li><a href="agents_and_tasks.html#chaining-tasks">Chaining Tasks</a></li>
+                            <li><a href="agents_and_tasks.html#logging-levels">Logging levels</a></li>
+                            <li><a href="agents_and_tasks.html#configuring-llms-settings">Configuring LLM's
+                                settings</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <span class="opener">III. Routing</span>
+                        <ul>
+                            <li><a href="routing.html#concepts-of-routing">Concepts of routing</a></li>
+                            <li><a href="routing.html#self-reflection-routing">Self-reflection routing</a>
+                            </li>
+                            <li><a href="routing.html#cleaning-history">Cleaning history</a></li>
+                            <li><a href="routing.html#routing-demonstration">Routing demonstration</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <span class="opener">IV. Managing Agents history</span>
+                        <ul>
+                            <li><a href="managing_agent_history.html#printing-history">Printing history</a>
+                            </li>
+                            <li><a href="managing_agent_history.html#creating-and-loading-checkpoints">Creating
+                                and loading checkpoints</a></li>
+                            <li><a href="managing_agent_history.html#Zero-prompt-shot-vs-multi-prompt-shot">Zero-prompt
+                                shot vs multi-prompt shot</a></li>
+                            <li><a href="managing_agent_history.html#saving-agent-state">Saving Agent
+                                state</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <span class="opener">V. Tool calling</span>
+                        <ul>
+                            <li><a href="tool_calling.html#concept-of-calling-tools">Concepts of calling
+                                tools</a></li>
+                            <li><a href="tool_calling.html#writing-good-tool-prompts">Writing good tool
+                                prompts</a></li>
+                            <li><a href="tool_calling.html#calling-a-tool">Calling a tool</a></li>
+                            <li><a href="tool_calling.html#improving-tool-calling-results">Improving
+                                tool-calling results</a></li>
+                            <li><a href="tool_calling.html#optional-tools">Optional tools</a></li>
+                            <li><a href="tool_calling.html#assigning-multiple-tools">Assigning multiple
+                                Tools</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <span class="opener">VI. Dual-agents chat</span>
+                        <ul>
+                            <li><a href="dual_agents_chat.html#stopping-chat-using-maximum-iterations">Stopping
+                                chat using 'maximum iterations'</a></li>
+                            <li><a href="dual_agents_chat.html#letting-agents-end-the-chat">Letting Agents end
+                                the chat</a></li>
+                            <li><a href="dual_agents_chat.html#controlling-the-shift-message">Controlling the
+                                Shift Message</a></li>
+                            <li><a href="dual_agents_chat.html#using-tools-in-chat">Using tools in chat</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li><a href="multi_agents_chat.html#multi-agents-chat">VII. Multi-agents chat</a></li>
+                </ul>
+                <br>
+                <ul>
+                    <li>
+                        <a href="classes.html">
+                            <span style="display: inline" class="icon solid fa-cog">
+                                <span class="label">
+                                    Technical Documentation
+                                </span>
+                                Technical Documentation
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
 
+            <!-- Section -->
+            <section>
+                <header class="major">
+                    <h2>Related Youtube video</h2>
+                </header>
+                <div class="mini-posts">
+                    <article>
+                        <a href="#" class="image"><img src="../images/youtube_down.jpg" alt=""/></a>
+                        <p>Youtube video for this section is still under creation. Please be patient ^^</p>
+                    </article>
+                </div>
+            </section>
 
-					</ul>
-				</nav>
+            <!-- Section -->
+            <section>
+                <nav class="menu">
+                    <header class="major">
+                        <h2>Page menu</h2>
+                    </header>
+                    <ul>
+                        <li><a href="multi_agents_chat.html#multi-agents-chat">Multi-agents chat</a></li>
+                    </ul>
+                </nav>
+            </section>
 
-				<!-- Section -->
-				<section>
-					<header class="major">
-						<h2>Related Youtube video</h2>
-					</header>
-					<div class="mini-posts">
-						<article>
-							<a href="#" class="image"><img src="../images/youtube_down.jpg" alt="" /></a>
-							<p>Youtube video for this section is still under creation. Please be patient ^^</p>
-						</article>
-					</div>
-				</section>
+            <!-- Footer -->
+            <footer id="footer">
+                <p class="copyright">&copy; Emilien Lancelot. All rights reserved.<br>
+                    Design: <a href="https://html5up.net">HTML5UP</a>.</p>
+            </footer>
 
-				<!-- Section -->
-				<section>
-					<nav id="menu">
-						<header class="major">
-							<h2>Page menu</h2>
-						</header>
-						<ul>
-							<li><a href="multi_agents_chat.html#multi-agents-chat">Multi-agents chat</a></li>
-						</ul>
-					</nav>
-				</section>
+        </div>
+    </div>
 
-				<!-- Footer -->
-				<footer id="footer">
-					<p class="copyright">&copy; Emilien Lancelot. All rights reserved.<br>
-						Design: <a href="https://html5up.net">HTML5UP</a>.</p>
-				</footer>
+</div>
 
-			</div>
-		</div>
-
-	</div>
-
-	<!-- Scripts -->
-	<script src="../assets/js/jquery.min.js"></script>
-	<script src="../assets/js/browser.min.js"></script>
-	<script src="../assets/js/breakpoints.min.js"></script>
-	<script src="../assets/js/util.js"></script>
-	<script src="../assets/js/main.js"></script>
+<!-- Scripts -->
+<script src="../assets/js/jquery.min.js"></script>
+<script src="../assets/js/browser.min.js"></script>
+<script src="../assets/js/breakpoints.min.js"></script>
+<script src="../assets/js/util.js"></script>
+<script src="../assets/js/main.js"></script>
 
 </body>
 

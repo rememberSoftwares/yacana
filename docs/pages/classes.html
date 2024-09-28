@@ -56,7 +56,7 @@
 
                 <span class="image main"><img src="../images/tech_doc.jpg" alt="Raodmap"/></span>
 
-                <h2 id="tech-doc-agent"><u>Agent</u></h2>
+                <h2 id="tech-doc-agent"><a><u>Agent</u></a></h2>
 
                 <h3>▶️ Member variables</h3>
 
@@ -284,7 +284,7 @@
                 <hr>
 
 
-                <h2 id="tech-doc-groupsolve"><u>GroupSolve</u></h2>
+                <h2 id="tech-doc-groupsolve"><a><u>GroupSolve</u></a></h2>
 
                 <h3>▶️ Member variables</h3>
 
@@ -381,7 +381,7 @@
                 <hr>
                 <hr>
 
-                <h2 id="tech-doc-message"><u>Message</u></h2>
+                <h2 id="tech-doc-message"><a><u>Message</u></a></h2>
 
                 <h3>▶️ Member variables</h3>
 
@@ -455,7 +455,7 @@
                 <hr>
                 <hr>
 
-                <h2 id="tech-doc-history"><u>History</u></h2>
+                <h2 id="tech-doc-history"><a><u>History</u></a></h2>
 
                 <h3>▶️ Member variables</h3>
                 <p>No member variables documented for this class.</p>
@@ -585,7 +585,7 @@
                 <hr>
 
 
-                <h2 id="tech-doc-task"><u>Task</u></h2>
+                <h2 id="tech-doc-task"><a><u>Task</u></a></h2>
 
                 <h3>▶️ Member variables</h3>
 
@@ -798,7 +798,7 @@
                 <hr>
 
 
-                <h2 id="tech-doc-tool"><u>Tool</u></h2>
+                <h2 id="tech-doc-tool"><a><u>Tool</u></a></h2>
 
                 <h3>▶️ Member variables</h3>
 
@@ -941,7 +941,7 @@
                 <hr>
                 <hr>
 
-                <h2 id="tech-doc-toolerror"><u>ToolError</u></h2>
+                <h2 id="tech-doc-toolerror"><a><u>ToolError</u></a></h2>
 
                 <p>Raised by the user from inside a tool when the tool's validation logic detects that the
                     given parameters are incorrect.
@@ -980,7 +980,7 @@
                 <hr>
                 <hr>
 
-                <h2 id="tech-doc-maxtoolerroriter"><u>MaxToolErrorIter</u></h2>
+                <h2 id="tech-doc-maxtoolerroriter"><a><u>MaxToolErrorIter</u></a></h2>
 
                 <p>Raised when the maximum amount of errors has been reached. This counts errors raised from the tool as
                     well as when Yacana fails to call the tool correctly. Each situation has its own counter variable,
@@ -1015,7 +1015,7 @@
                 <hr>
                 <hr>
 
-                <h2 id="tech-doc-endchatmode"><u>EndChatMode</u></h2>
+                <h2 id="tech-doc-endchatmode"><a><u>EndChatMode</u></a></h2>
 
                 <p>All types of group chat completion. The challenge in making agents communicate effectively is not
                     just to have them talk but to ensure they know when to stop. Only tasks with <code>@llm_stops_by_itself=True</code>
@@ -1078,7 +1078,7 @@
                 <hr>
                 <hr>
 
-                <h2 id="tech-doc-endchat"><u>EndChat</u></h2>
+                <h2 id="tech-doc-endchat"><a><u>EndChat</u></a></h2>
 
                 <p>Defines the modality of how and when LLMs stop chatting. By default, when reaching the <code>@max_iterations</code>
                     limit, the chat will end. However, if a task has set <code>@llm_stops_by_itself=True</code>, you can
@@ -1147,7 +1147,7 @@
 
                 <hr>
                 <hr>
-                <h2 id="tech-doc-messagerole"><u>MessageRole</u></h2>
+                <h2 id="tech-doc-messagerole"><a><u>MessageRole</u></a></h2>
 
                 <p>The available types of message creators. It can either be a message from the user or an answer from
                     the LLM to the user's message. Developers can also set a system prompt that guides the LLM into a
@@ -1188,7 +1188,7 @@
                 <hr>
                 <hr>
 
-                <h2 id="tech-doc-loggermanager"><u>LoggerManager</u></h2>
+                <h2 id="tech-doc-loggermanager"><a><u>LoggerManager</u></a></h2>
 
                 <p>Allows the user to set a correct level of debug. Note that this will impact the whole program.
                     Defaults to INFO and will print most of the prompts and AI answers. Note that not all prompts are
@@ -1257,7 +1257,7 @@
                 <hr>
                 <hr>
 
-                <h2 id="tech-doc-modelsettings"><u>ModelSettings</u></h2>
+                <h2 id="tech-doc-modelsettings"><a><u>ModelSettings</u></a></h2>
 
                 <p>Class to encapsulate the settings available into the inference server. Note that these are all
                     recognized by Ollama but may have no effect when using other inference servers.</p>
@@ -1523,6 +1523,30 @@
                         </li>
 
 
+                    </ul>
+                </nav>
+            </section>
+
+                        <!-- Section -->
+            <section>
+                <nav class="menu">
+                    <header class="major">
+                        <h2>Page menu</h2>
+                    </header>
+                    <ul>
+                        <li><a href="#tech-doc-agent">Agent</a></li>
+                        <li><a href="#tech-doc-groupsolve">GroupSolve</a></li>
+                        <li><a href="#tech-doc-message">Message</a></li>
+                        <li><a href="#tech-doc-history">History</a></li>
+                        <li><a href="#tech-doc-task">Tasks</a></li>
+                        <li><a href="#tech-doc-tool">Tool</a></li>
+                        <li><a href="#tech-doc-toolerror">ToolError</a></li>
+                        <li><a href="#tech-doc-maxtoolerroriter">MaxToolErrorIter</a></li>
+                        <li><a href="#tech-doc-endchatmode">EndChatMode</a></li>
+                        <li><a href="#tech-doc-endchat">EndChat</a></li>
+                        <li><a href="#tech-doc-messagerole">MessageRole</a></li>
+                        <li><a href="#tech-doc-loggermanager">LoggerManager</a></li>
+                        <li><a href="#tech-doc-modelsettings">ModelSettings</a></li>
                     </ul>
                 </nav>
             </section>

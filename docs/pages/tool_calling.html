@@ -7,167 +7,177 @@
 <html>
 
 <head>
-	<title>Managing_agents_history</title>
-	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-	<link rel="stylesheet" href="../assets/css/main.css" />
-	<link rel="stylesheet" href="../assets/css/codemirror.min.css">
-	<link rel="stylesheet" href="../assets/css/monokai.min.css">
-	<link rel="stylesheet" href="../assets/css/foldgutter.min.css">
-	<link rel="stylesheet" href="../assets/css/codemirror-custom.css">
-	<link rel="stylesheet" href="../assets/css/zenburn.min.css">
-	<script src="../assets/js/codemirror.min.js"></script>
-	<script src="../assets/js/python.min.js"></script>
-	<script src="../assets/js/json-lint.min.js"></script>
-	<script src="../assets/js/foldcode.min.js"></script>
-	<script src="../assets/js/foldgutter.min.js"></script>
-	<script src="../assets/js/brace-fold.min.js"></script>
-	<script src="../assets/js/codemirror-custom.js"></script>
+    <title>Managing_agents_history</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
+    <link rel="stylesheet" href="../assets/css/main.css"/>
+    <link rel="stylesheet" href="../assets/css/codemirror.min.css">
+    <link rel="stylesheet" href="../assets/css/monokai.min.css">
+    <link rel="stylesheet" href="../assets/css/foldgutter.min.css">
+    <link rel="stylesheet" href="../assets/css/codemirror-custom.css">
+    <link rel="stylesheet" href="../assets/css/zenburn.min.css">
+    <script src="../assets/js/codemirror.min.js"></script>
+    <script src="../assets/js/python.min.js"></script>
+    <script src="../assets/js/json-lint.min.js"></script>
+    <script src="../assets/js/foldcode.min.js"></script>
+    <script src="../assets/js/foldgutter.min.js"></script>
+    <script src="../assets/js/brace-fold.min.js"></script>
+    <script src="../assets/js/codemirror-custom.js"></script>
 </head>
 
 <body class="is-preload">
 
-	<!-- Wrapper -->
-	<div id="wrapper">
+<!-- Wrapper -->
+<div id="wrapper">
 
-		<!-- Main -->
-		<div id="main">
-			<div class="inner">
+    <!-- Main -->
+    <div id="main">
+        <div class="inner">
 
-				<!-- Header -->
-				<header id="header">
-					<a href="../index.html" class="logo"><strong>Yacana</strong>, powering open source LLMs</a>
-					<ul class="icons">
-						<li><a href="https://x.com/RSoftwares_ofc" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
-						<li><a href="https://medium.com/@docteur_rs" class="icon brands fa-medium-m"><span class="label">Medium</span></a></li>
-						<li><a href="https://www.youtube.com/channel/UCvi7R0CRmtxhWOVw62XteTw" class="icon brands fa-youtube"><span class="label">Medium</span></a></li>
-						<li><a href="https://github.com/rememberSoftwares/yacana" class="icon brands fa-github"><span class="label">Github</span></a></li>
-					</ul>
-				</header>
+            <!-- Header -->
+            <header id="header">
+                <a href="../index.html" class="logo"><strong>Yacana</strong>, powering open source LLMs</a>
+                <ul class="icons">
+                    <li><a href="https://x.com/RSoftwares_ofc" class="icon brands fa-twitter"><span class="label">Twitter</span></a>
+                    </li>
+                    <li><a href="https://medium.com/@docteur_rs" class="icon brands fa-medium-m"><span class="label">Medium</span></a>
+                    </li>
+                    <li><a href="https://www.youtube.com/channel/UCvi7R0CRmtxhWOVw62XteTw"
+                           class="icon brands fa-youtube"><span class="label">Medium</span></a></li>
+                    <li><a href="https://github.com/rememberSoftwares/yacana" class="icon brands fa-github"><span
+                            class="label">Github</span></a></li>
+                </ul>
+            </header>
 
-				<!-- Content -->
-				<section>
-					<header class="main">
-						<h1 id="concept-of-calling-tools">V. Tool calling</h1>
-					</header>
+            <!-- Content -->
+            <section>
+                <header class="main">
+                    <h1 id="concept-of-calling-tools">V. Tool calling</h1>
+                </header>
 
-					<span class="image main"><img src="../images/toolcalling.jpg" alt="Tool calling" /></span>
+                <span class="image main"><img src="../images/toolcalling.jpg" alt="Tool calling"/></span>
 
-					<h2>Concept of calling tools</h2>
-					<p>Allowing the LLM to call a tool is the most important thing an agent can do! But what is a
-						"tool"? A "tool" simply refers to a Python function. This function can be the entry point to any
-						level of underlying complexity. But it doesn't matter. What matters is that the LLM can call the
-						tool with parameters that match the function. This way, LLMs can interact with <em>classic</em>
-						programming interfaces that produce deterministic results (aka normal programming).</p>
-					<p>For instance, let's say you want a calculator powered by an LLM. You cannot rely on the LLM to do
-						the math because even though it knows how to decompose equations to an extent and has basic
-						arithmetics, it will fail on more advanced calculations. Therefore we do not expect the LLM to
-						perform the operation itself. We already have the CPU to do this task perfectly. On the other
-						hand, we expect the LLM to decompose the equation correctly and call tools for each arithmetic
-						operation needed to solve it.</p>
-					<h4>In what way is Yacana different than other frameworks?</h4>
-					<p>Other frameworks assign their tools to the agent during its initialization. This creates a hard
-						link between the tools and the agents. In our opinion, this implementation tends to confuse the
-						agent because it's getting access to many tools that may not be relevant to the immediate task
-						it is given. In Yacana tools are only available at the Task level. Thus no noise is generated
-						before having to solve a particular task. The tool is made available to the LLM only when it's
-						needed and not before. Also, the Agent doesn't keep the memory of the available tools so it
-						won't be tempted to use them elsewhere, where it wouldn't be appropriate.</p>
-					<h4>Understanding the underlying mechanism of tool calling in LLMs</h4>
-					<p>A side note for those interested...</p>
-					<p>If you don't understand how a text-to-text neural network can call a Python function let me tell
-						you: It doesn't.</p>
-					<p>When we refer to <em>tool calling</em> we also refer to <em>function calling</em> which is very
-						poorly named. Function calling is the ability of an inference server to make the LLM output the
-						text in a particular format. As of today, only JSON is supported but there is no doubt that more
-						formats will be available soon.<br>
-						That said, now that we can control how the LLM answers, we can parse a JSON of which we know the
-						structure. Therefore we can ask the LLM for a JSON that matches the prototype of a Python
-						function. For instance the function name and some parameter values.</p>
-					<p>Some LLMs have been trained to output JSON in a particular way that matches a particular JSON
-						structure. This particular JSON structure has become a convention and was pushed by big AI
-						players like OpenAI.<br>
-						Unfortunately, the size and complexity of this JSON doesn't work very well with our dumb 8B
-						LLMs. This is a problem that ChatGPT, Claude, Grok and other smart LLMs don't have.<br>
-						To overcome this particular issue, Yacana comes with its own JSON structure to call Python
-						functions! It's way lighter than the OpenAI standard and Yacana uses <a href>percussive
-							maintenance</a> to force the LLM to output the JSON in a way that the tool
-						expects.</p>
+                <h2>Concept of calling tools</h2>
+                <p>Allowing the LLM to call a tool is the most important thing an agent can do! But what is a
+                    "tool"? A "tool" simply refers to a Python function. This function can be the entry point to any
+                    level of underlying complexity. But it doesn't matter. What matters is that the LLM can call the
+                    tool with parameters that match the function. This way, LLMs can interact with <em>classic</em>
+                    programming interfaces that produce deterministic results (aka normal programming).</p>
+                <p>For instance, let's say you want a calculator powered by an LLM. You cannot rely on the LLM to do
+                    the math because even though it knows how to decompose equations to an extent and has basic
+                    arithmetics, it will fail on more advanced calculations. Therefore we do not expect the LLM to
+                    perform the operation itself. We already have the CPU to do this task perfectly. On the other
+                    hand, we expect the LLM to decompose the equation correctly and call tools for each arithmetic
+                    operation needed to solve it.</p>
+                <h4>In what way is Yacana different than other frameworks?</h4>
+                <p>Other frameworks assign their tools to the agent during its initialization. This creates a hard
+                    link between the tools and the agents. In our opinion, this implementation tends to confuse the
+                    agent because it's getting access to many tools that may not be relevant to the immediate task
+                    it is given. In Yacana tools are only available at the Task level. Thus no noise is generated
+                    before having to solve a particular task. The tool is made available to the LLM only when it's
+                    needed and not before. Also, the Agent doesn't keep the memory of the available tools so it
+                    won't be tempted to use them elsewhere, where it wouldn't be appropriate.</p>
+                <h4>Understanding the underlying mechanism of tool calling in LLMs</h4>
+                <p>A side note for those interested...</p>
+                <p>If you don't understand how a text-to-text neural network can call a Python function let me tell
+                    you: It doesn't.</p>
+                <p>When we refer to <em>tool calling</em> we also refer to <em>function calling</em> which is very
+                    poorly named. Function calling is the ability of an inference server to make the LLM output the
+                    text in a particular format. As of today, only JSON is supported but there is no doubt that more
+                    formats will be available soon.<br>
+                    That said, now that we can control how the LLM answers, we can parse a JSON of which we know the
+                    structure. Therefore we can ask the LLM for a JSON that matches the prototype of a Python
+                    function. For instance the function name and some parameter values.</p>
+                <p>Some LLMs have been trained to output JSON in a particular way that matches a particular JSON
+                    structure. This particular JSON structure has become a convention and was pushed by big AI
+                    players like OpenAI.<br>
+                    Unfortunately, the size and complexity of this JSON doesn't work very well with our dumb 8B
+                    LLMs. This is a problem that ChatGPT, Claude, Grok and other smart LLMs don't have.<br>
+                    To overcome this particular issue, Yacana comes with its own JSON structure to call Python
+                    functions! It's way lighter than the OpenAI standard and Yacana uses <a href>percussive
+                        maintenance</a> to force the LLM to output the JSON in a way that the tool
+                    expects.</p>
 
-					<hr class="major" />
+                <hr class="major"/>
 
-					<h2 id="writing-good-tool-prompts">Writing good tool prompts</h2>
-					<p>The title spoils one of the most important things about tool calling in Yacana.<br>
-						<strong>The prompt is to guide the LLM on how to use the tool and not what to do with the tool
-							result!</strong><br>
-						It is of the utmost importance that you understand this concept. This implies that you will have
-						to create a second Task to deal with the output of the first one.
-					</p>
-					<p>This is a step-by-step of the internal mechanism:</p>
-					<ol>
-						<li>The Task is called upon to be solved: <code>.solve()</code> ;</li>
-						<li>There is a Tool assigned, so the Agent must use it ;</li>
-						<li>Yacana provides examples of how to use the tool ;</li>
-						<li>Yacana gives the initial Task prompt to the Agent so it knows what to do with the tool ;
-						</li>
-						<li>The agent decides what values to send the Tool based on the prompt and previous History ;
-						</li>
-						<li>The Tool is called with the previously mentioned parameters ;</li>
-						<li>The tool returns a value ;</li>
-						<li><strong>The Task's final output is the tool's value</strong> ;</li>
-					</ol>
-					<p>As you can see, nothing was made with the tool result itself. This means the tool return value
-						must carry all the necessary information so the next Task can work with it!<br>
-						That said, not all tools must return something useful. Thus removing the need to create a second
-						Task to act upon the result of the tool call. For instance, an LLM might be of paramount
-						importance to call a function with complex arguments but as it may only make minor adjustments
-						to some variable in your code, there might be no point in the tool returning any information to
-						the LLM.</p>
-					<p>Example of a <strong>bad</strong> prompt with a Tool that gets the current weather of a city:</p>
-					<ul>
-						<li><code>Task(f"I give you the following city: '{city}'. Get the current weather there and output 'So much sun !' if there is some sun else say 'So  much rain !'", some_agent, tools=[get_weather_tool]).solve()</code>
-							=> You'll never get the output 'So much sun !' or 'So much rain !'. <strong>The result of
-								this task will be the tool output.</strong><br>
-							The prompt is ONLY useful to the Agent to extract the city name that must be given to the
-							tool.
-						</li>
-					</ul>
-					<p>To actually use the result of the tool you have two options:</p>
-					<span>1. Split the Task in two:</span>
-					<ul>
-						<li><code>Task(f"I give you the following city: '{city}'. Get the current weather there.", some_agent, tools=[get_weather_tool]).solve()</code>
-						</li>
-						<li><code>Task(f"Output 'So much sun !' if there is some sun else say 'So  much rain !'", some_agent).solve()</code><br>
-							Splitting the tasks into two allows the second Task to work on the output of the first one
-							(the tool output). FYI, it's also a type of self-reflection.</li>
-					</ul>
-					<span>2. Make the tool do the work:</span>
-					<ul>
-						<li>Let's write a <u>pseudo code</u> <code>get_weather</code> tool</li>
-					</ul>
-					<pre><code class="language-python">
+                <h2 id="writing-good-tool-prompts">Writing good tool prompts</h2>
+                <p>The title spoils one of the most important things about tool calling in Yacana.<br>
+                    <strong>The prompt is to guide the LLM on how to use the tool and not what to do with the tool
+                        result!</strong><br>
+                    It is of the utmost importance that you understand this concept. This implies that you will have
+                    to create a second Task to deal with the output of the first one.
+                </p>
+                <p>This is a step-by-step of the internal mechanism:</p>
+                <ol>
+                    <li>The Task is called upon to be solved: <code>.solve()</code> ;</li>
+                    <li>There is a Tool assigned, so the Agent must use it ;</li>
+                    <li>Yacana provides examples of how to use the tool ;</li>
+                    <li>Yacana gives the initial Task prompt to the Agent so it knows what to do with the tool ;
+                    </li>
+                    <li>The agent decides what values to send the Tool based on the prompt and previous History ;
+                    </li>
+                    <li>The Tool is called with the previously mentioned parameters ;</li>
+                    <li>The tool returns a value ;</li>
+                    <li><strong>The Task's final output is the tool's value</strong> ;</li>
+                </ol>
+                <p>As you can see, nothing was made with the tool result itself. This means the tool return value
+                    must carry all the necessary information so the next Task can work with it!<br>
+                    That said, not all tools must return something useful. Thus removing the need to create a second
+                    Task to act upon the result of the tool call. For instance, an LLM might be of paramount
+                    importance to call a function with complex arguments but as it may only make minor adjustments
+                    to some variable in your code, there might be no point in the tool returning any information to
+                    the LLM.</p>
+                <p>Example of a <strong>bad</strong> prompt with a Tool that gets the current weather of a city:</p>
+                <ul>
+                    <li><code>Task(f"I give you the following city: '{city}'. Get the current weather there and output
+                        'So much sun !' if there is some sun else say 'So much rain !'", some_agent,
+                        tools=[get_weather_tool]).solve()</code>
+                        => You'll never get the output 'So much sun !' or 'So much rain !'. <strong>The result of
+                            this task will be the tool output.</strong><br>
+                        The prompt is ONLY useful to the Agent to extract the city name that must be given to the
+                        tool.
+                    </li>
+                </ul>
+                <p>To actually use the result of the tool you have two options:</p>
+                <span>1. Split the Task in two:</span>
+                <ul>
+                    <li><code>Task(f"I give you the following city: '{city}'. Get the current weather there.",
+                        some_agent, tools=[get_weather_tool]).solve()</code>
+                    </li>
+                    <li><code>Task(f"Output 'So much sun !' if there is some sun else say 'So much rain !'",
+                        some_agent).solve()</code><br>
+                        Splitting the tasks into two allows the second Task to work on the output of the first one
+                        (the tool output). FYI, it's also a type of self-reflection.
+                    </li>
+                </ul>
+                <span>2. Make the tool do the work:</span>
+                <ul>
+                    <li>Let's write a <u>pseudo code</u> <code>get_weather</code> tool</li>
+                </ul>
+                <pre><code class="language-python">
 def get_weather(city: str) -> str:
     some_json = curl weather.com?city=$city
     if some_json["sun_level_percent"] > 50:
     	return "So much sun !"
     else:
     	return "So much rain !"
-					</code></pre><br>
-					<p>This tool would return either <i>"So much sun !"</i> or <i>"So much rain !"</i> based on the
-						output of some
-						fake weather API. This was the output we needed. <strong>However</strong>, the original prompt
-						is still wrong! The section "<em>output 'So much sun !' if there is some sun else say 'So much
-							rain !'</em>" of the initial <em>bad</em> prompt is still useless as it's the Tool itself
-						that will output this string. Not the LLM!<br>
-						You should rewrite the prompt like this: "I give you the following city: '{city}'. Get the
-						current weather there.". The tool will return the correct string.</p>
-					<hr>
-					<p>⚠️⚠️The full example for those who wish to test IRL. However, we haven't even shown a real tool
-						example yet, so this section should be optional!⚠️⚠️</p>
-					<p>You should read the next section <strong>"Calling a tool"</strong> below and come back to this
-						later.</p>
-					<p>Bad prompt:</p>
-					<pre><code class="language-python">
+					</code></pre>
+                <br>
+                <p>This tool would return either <i>"So much sun !"</i> or <i>"So much rain !"</i> based on the
+                    output of some
+                    fake weather API. This was the output we needed. <strong>However</strong>, the original prompt
+                    is still wrong! The section "<em>output 'So much sun !' if there is some sun else say 'So much
+                        rain !'</em>" of the initial <em>bad</em> prompt is still useless as it's the Tool itself
+                    that will output this string. Not the LLM!<br>
+                    You should rewrite the prompt like this: "I give you the following city: '{city}'. Get the
+                    current weather there.". The tool will return the correct string.</p>
+                <hr>
+                <p>⚠️⚠️The full example for those who wish to test IRL. However, we haven't even shown a real tool
+                    example yet, so this section should be optional!⚠️⚠️</p>
+                <p>You should read the next section <strong>"Calling a tool"</strong> below and come back to this
+                    later.</p>
+                <p>Bad prompt:</p>
+                <pre><code class="language-python">
 from yacana import Agent, Tool, Task
 
 agent1 = Agent("AI assistant", "llama3.1:8b")
@@ -182,9 +192,10 @@ Task(f"I give you the following city: LA. Get the current weather there and outp
 
 print("--history--")
 agent1.history.pretty_print()
-					</code></pre><br>
-					<p>Good prompt:</p>
-					<pre><code class="language-python">
+					</code></pre>
+                <br>
+                <p>Good prompt:</p>
+                <pre><code class="language-python">
 from yacana import Agent, Tool, Task
 
 agent1 = Agent("AI assistant", "llama3.1:8b")
@@ -201,48 +212,55 @@ Task(f"Output 'So much sun !' if there is some sun else say 'So  much rain !'", 
 
 print("--history--")
 agent1.history.pretty_print()
-					</code></pre><br>
+					</code></pre>
+                <br>
 
-					<hr class="major" />
+                <hr class="major"/>
 
-					<h2 id="calling-a-tool">Calling a tool</h2>
-					<p>Let's write our first tool call to perform a simple addition!</p>
-					<p>First, let's define our tool:</p>
-					<pre><code class="language-python">
+                <h2 id="calling-a-tool">Calling a tool</h2>
+                <p>Let's write our first tool call to perform a simple addition!</p>
+                <p>First, let's define our tool:</p>
+                <pre><code class="language-python">
 def adder(first_number: int, second_number: int) -> int:
     print(f"Tool adder was called with param {first_number}) ({type(first_number)} and {second_number} ({type(second_number)})")
     return first_number + second_number
-					</code></pre><br>
-					<p>What do we have here?</p>
-					<ul>
-						<li>The name of the function must be relevant to what the function does. Here the function
-							performs an addition so we'll call it <code>adder</code> ;</li>
-						<li>The same thing goes for the parameters. The name you choose is very important as it will
-							help the LLM to know what value to give this parameter ;</li>
-						<li>Duck typing the prototype is very important! You must set the type of each parameter and
-							also the return type of the function ;</li>
-						<li>We perform the operation between the two parameters and return the final result ;</li>
-					</ul>
-					<p>⚠️ Be aware that whatever the return of your function, Yacana will cast it to string using the
-						built-in <code>str(...)</code> function. LLMs can only understand text so make sure that
-						whatever you send back can be cast correctly (override the <strong>str</strong> if needed).</p>
-					<p>Let's create a <a href>Tool</a> instance using the Yacana Tool constructor. It takes a
-						name, a description, and a reference to the actual function.<br>
-						<span class="icon solid fa-info-circle"> I can only emphasize once more on the importance of
+					</code></pre>
+                <br>
+                <p>What do we have here?</p>
+                <ul>
+                    <li>The name of the function must be relevant to what the function does. Here the function
+                        performs an addition so we'll call it <code>adder</code> ;
+                    </li>
+                    <li>The same thing goes for the parameters. The name you choose is very important as it will
+                        help the LLM to know what value to give this parameter ;
+                    </li>
+                    <li>Duck typing the prototype is very important! You must set the type of each parameter and
+                        also the return type of the function ;
+                    </li>
+                    <li>We perform the operation between the two parameters and return the final result ;</li>
+                </ul>
+                <p>⚠️ Be aware that whatever the return of your function, Yacana will cast it to string using the
+                    built-in <code>str(...)</code> function. LLMs can only understand text so make sure that
+                    whatever you send back can be cast correctly (override the <strong>str</strong> if needed).</p>
+                <p>Let's create a <a href>Tool</a> instance using the Yacana Tool constructor. It takes a
+                    name, a description, and a reference to the actual function.<br>
+                    <span class="icon solid fa-info-circle"> I can only emphasize once more on the importance of
 							providing an accurate description.</span>
-					</p>
-					<pre><code class="language-python">
+                </p>
+                <pre><code class="language-python">
 adder_tool: Tool = Tool("Adder", "Adds two numbers and returns the result", adder)
-					</code></pre><br>
-					<p>Now let's assign our <em>adder_tool</em> to a Task. How to do that? It's simple, the Task() class
-						takes an optional <code>tools=[]</code> parameter. It's an array so be sure not to forget those
-						<code>[]</code>!
-					</p>
-					<pre><code class="language-python">
+					</code></pre>
+                <br>
+                <p>Now let's assign our <em>adder_tool</em> to a Task. How to do that? It's simple, the Task() class
+                    takes an optional <code>tools=[]</code> parameter. It's an array so be sure not to forget those
+                    <code>[]</code>!
+                </p>
+                <pre><code class="language-python">
 Task(f"What's 2+2 ?", agent1, tools=[adder_tool]).solve()
-					</code></pre><br>
-					<p>Full code:</p>
-					<pre><code class="language-python">
+					</code></pre>
+                <br>
+                <p>Full code:</p>
+                <pre><code class="language-python">
 from yacana import Agent, Tool, Task
 
 def adder(first_number: int, second_number: int) -> int:
@@ -255,9 +273,10 @@ adder_tool: Tool = Tool("Adder", "Adds two numbers and returns the result", adde
 result: str = Task(f"What's 2+2 ?", agent1, tools=[adder_tool]).solve().content
 
 print("Equation result = ", result)
-					</code></pre><br>
-					<p>▶️ Output:</p>
-					<pre><code class="text-output">
+					</code></pre>
+                <br>
+                <p>▶️ Output:</p>
+                <pre><code class="text-output">
 INFO: [PROMPT]: I give you the following tool definition that you must use to fulfill a future task: adder(first_number: int, second_number: int) -&gt; int - Adds two numbers and returns the result. Please acknowledge the given tool.
 
 INFO: [AI_RESPONSE]: Thank you for providing me with the `adder` tool definition! I understand that this is a function that takes two integer arguments (`first_number` and `second_number`) and returns an integer result, which represents the sum of these two input numbers.
@@ -281,44 +300,46 @@ INFO: [AI_RESPONSE]: {&quot;first_number&quot;: &quot;2&quot;, &quot;second_numb
 
 Tool adder was called with param '2' (&lt;class 'str'&gt;) and '2' (&lt;class 'str'&gt;)
 Equation result =  22
-					</code></pre><br>
-					<p>The multiple INFO logs you are seeing here is Yacana doing its magic to make the LLM call the
-						tool.</p>
-					<p>Unfortunately, even though the tool is indeed called, getting a correct result failed
-						spectacularly! ^^<br>
-						Is <code>2 + 2 = 22</code>? No, I don't think so. Can you find out what went wrong?</p>
-					<hr>
-					<p>When looking at the logs we can see that the tool was called with the following JSON:
-						<code>{"first_number": "2", "second_number": "2"}</code>. The values are of type
-						<code>string</code>. Later confirmed by the print() inside the tool itself:
-						<code>param '2' ('str') and '2' ('str')</code>.<br>
-						So instead of having integers, we got strings and what's the result of <code>"2" + "2"</code> in
-						Python?<br>
-						Not <i>"4"</i> but <i>"22"</i> (concatenation of strings). Bummer! ^^
-					</p>
-					<p>Fortunately, we can fix this easily in several ways.</p>
+					</code></pre>
+                <br>
+                <p>The multiple INFO logs you are seeing here is Yacana doing its magic to make the LLM call the
+                    tool.</p>
+                <p>Unfortunately, even though the tool is indeed called, getting a correct result failed
+                    spectacularly! ^^<br>
+                    Is <code>2 + 2 = 22</code>? No, I don't think so. Can you find out what went wrong?</p>
+                <hr>
+                <p>When looking at the logs we can see that the tool was called with the following JSON:
+                    <code>{"first_number": "2", "second_number": "2"}</code>. The values are of type
+                    <code>string</code>. Later confirmed by the print() inside the tool itself:
+                    <code>param '2' ('str') and '2' ('str')</code>.<br>
+                    So instead of having integers, we got strings and what's the result of <code>"2" + "2"</code> in
+                    Python?<br>
+                    Not <i>"4"</i> but <i>"22"</i> (concatenation of strings). Bummer! ^^
+                </p>
+                <p>Fortunately, we can fix this easily in several ways.</p>
 
-					<hr class="major" />
+                <hr class="major"/>
 
-					<h2 id="improving-tool-calling-results">Improving tool-calling results</h2>
-					<p>As you saw in the previous adder example we ran into trouble with the <code>2 + 2</code> call
-						sent as a string. Let's fix that.</p>
-					<h4>Providing tool call examples</h4>
-					<p>If you followed this tutorial from the start you saw that multi-shot prompting yields good
-						results. The Tool class allows this too, using the <code>usage_examples=[]</code> optional
-						parameter. You can provide a Python dictionary where each key corresponds to a function's
-						parameter and the value, a valid value. It's inside an array so you can provide multiple
-						examples if needed. In general one or two is enough.<br>
-						These dictionaries will be presented by Yacana to the LLM as examples of how to call the tool
-						correctly.</p>
-					<p>Let's look at an example with this new tool instance:</p>
-					<pre><code class="language-python">
+                <h2 id="improving-tool-calling-results">Improving tool-calling results</h2>
+                <p>As you saw in the previous adder example we ran into trouble with the <code>2 + 2</code> call
+                    sent as a string. Let's fix that.</p>
+                <h4>Providing tool call examples</h4>
+                <p>If you followed this tutorial from the start you saw that multi-shot prompting yields good
+                    results. The Tool class allows this too, using the <code>usage_examples=[]</code> optional
+                    parameter. You can provide a Python dictionary where each key corresponds to a function's
+                    parameter and the value, a valid value. It's inside an array so you can provide multiple
+                    examples if needed. In general one or two is enough.<br>
+                    These dictionaries will be presented by Yacana to the LLM as examples of how to call the tool
+                    correctly.</p>
+                <p>Let's look at an example with this new tool instance:</p>
+                <pre><code class="language-python">
 adder_tool: Tool = Tool("Adder", "Adds two numbers and returns the result", adder, usage_examples=[{"first_number": 2, "second_number": 4}, {"first_number": 8, "second_number": -2}])
-					</code></pre><br>
-					<p>We provided above two examples for the LLM to look at. Each time giving <code>first_number</code>
-						and <code>second_number</code> different integer values. No strings. Actual integers!</p>
-					<p>Let's run our program again and see if we get the correct input types this time:</p>
-					<pre><code class="text-output">
+					</code></pre>
+                <br>
+                <p>We provided above two examples for the LLM to look at. Each time giving <code>first_number</code>
+                    and <code>second_number</code> different integer values. No strings. Actual integers!</p>
+                <p>Let's run our program again and see if we get the correct input types this time:</p>
+                <pre><code class="text-output">
 INFO: [PROMPT]: I give you the following tool definition that you must use to fulfill a future task: adder(first_number: int, second_number: int) -> int - Adds two numbers and returns the result. Please acknowledge the given tool.
 
 INFO: [AI_RESPONSE]: Acknowledged!
@@ -348,34 +369,35 @@ INFO: [AI_RESPONSE]: {"first_number": 2, "second_number": 2}
 
 Tool adder was called with param '2' (<class 'int'>) and '2' (<class 'int'>)
 Equation result =  4
-					</code></pre><br>
-					<p>It worked!<br>
-						The LLM saw that the tool needed integers in input. As such, it called the tool with the correct
-						types therefore the adder tool returned <code>4</code> as it was expected. Houra!</p>
-					<p>⚠️ Do not abuse this technic as it tends to create some noise. Trying to manage too many
-						hypothetical use cases might, in the end, degrade the performance of the tool call.</p>
-					<p class="icon solid fa-info-circle"> Note that the multi-shot prompts (the JSON examples) are not
-						shown in the INFO logs. This is
-						because no actual request is made to the LLM. They are appended to the History()
-						programmatically as shown in the multi-shot example. However, if you add an
-						<code>agent1.history.pretty_print()</code> at the end of the script, you'll see both JSON
-						examples given to the LLM as history context.
-					</p>
-					<h4>Adding validation inside the Tool</h4>
-					<p>The previous trick is good to nudge the LLM into the right direction. But it's not the best way to
-						get accurate results. The technique presented here is by far the most effective and should be
-						preferred over the previous one.</p>
-					<p>As LLM are not deterministic we can never assure what will be given to our tool. Therefore, you
-						should look at a tool like you would a web server route. I'm talking here about server-side
-						validation. Your tool must check that what is given to it is valid and raise an error if not.
-					</p>
-					<p>This means adding heavy checks on our tool. Thus, when the LLM sends an incorrect value an error
-						will be raised. But not any error! Specifically a <code>ToolError(...)</code>. This exception
-						will be caught by Yacana which will instruct the LLM that something bad happened while calling
-						the tool. This also means that you must give precise error messages in the exception because the
-						LLM will try to change his next tool call based on this message.</p>
-					<p>Let's upgrade our adder tool!</p>
-					<pre><code class="language-python">
+					</code></pre>
+                <br>
+                <p>It worked!<br>
+                    The LLM saw that the tool needed integers in input. As such, it called the tool with the correct
+                    types therefore the adder tool returned <code>4</code> as it was expected. Houra!</p>
+                <p>⚠️ Do not abuse this technic as it tends to create some noise. Trying to manage too many
+                    hypothetical use cases might, in the end, degrade the performance of the tool call.</p>
+                <p class="icon solid fa-info-circle"> Note that the multi-shot prompts (the JSON examples) are not
+                    shown in the INFO logs. This is
+                    because no actual request is made to the LLM. They are appended to the History()
+                    programmatically as shown in the multi-shot example. However, if you add an
+                    <code>agent1.history.pretty_print()</code> at the end of the script, you'll see both JSON
+                    examples given to the LLM as history context.
+                </p>
+                <h4>Adding validation inside the Tool</h4>
+                <p>The previous trick is good to nudge the LLM into the right direction. But it's not the best way to
+                    get accurate results. The technique presented here is by far the most effective and should be
+                    preferred over the previous one.</p>
+                <p>As LLM are not deterministic we can never assure what will be given to our tool. Therefore, you
+                    should look at a tool like you would a web server route. I'm talking here about server-side
+                    validation. Your tool must check that what is given to it is valid and raise an error if not.
+                </p>
+                <p>This means adding heavy checks on our tool. Thus, when the LLM sends an incorrect value an error
+                    will be raised. But not any error! Specifically a <code>ToolError(...)</code>. This exception
+                    will be caught by Yacana which will instruct the LLM that something bad happened while calling
+                    the tool. This also means that you must give precise error messages in the exception because the
+                    LLM will try to change his next tool call based on this message.</p>
+                <p>Let's upgrade our adder tool!</p>
+                <pre><code class="language-python">
 from yacana import Agent, Tool, Task, ToolError
 
 
@@ -386,14 +408,15 @@ def adder(first_number: int, second_number: int) -> int:
         raise ToolError("Parameter 'first_number' expected a type integer")
     if not (isinstance(second_number, int)):
         raise ToolError("Parameter 'second_number' expected a type integer")
-					</code></pre><br>
-					<p>We added type validation on both parameters. But you should also check for None values, etc. As I
-						said. Think of this as server-side validation. You cannot trust AI more than humans...</p>
-					<p>Let's remove the "examples" set in the previous section. The LLM will be blind once again. As
-						such, he will probably make mistakes but the ToolError exception will guide it onto the correct
-						path. Let's see:</p>
-					<p><em>Complete code</em></p>
-					<pre><code class="language-python">
+					</code></pre>
+                <br>
+                <p>We added type validation on both parameters. But you should also check for None values, etc. As I
+                    said. Think of this as server-side validation. You cannot trust AI more than humans...</p>
+                <p>Let's remove the "examples" set in the previous section. The LLM will be blind once again. As
+                    such, he will probably make mistakes but the ToolError exception will guide it onto the correct
+                    path. Let's see:</p>
+                <p><em>Complete code</em></p>
+                <pre><code class="language-python">
 from yacana import Agent, Tool, Task, ToolError
 
 agent1 = Agent("Ai assistant", "llama3.1:8b")
@@ -414,9 +437,10 @@ adder_tool: Tool = Tool("Adder", "Adds two numbers and returns the result", adde
 result: str = Task(f"What's 2+2 ?", agent1, tools=[adder_tool]).solve().content
 
 print(f"Equation result = {result}")
-					</code></pre><br>
-					<p>▶️ Output:</p>
-					<pre><code class="text-output">
+					</code></pre>
+                <br>
+                <p>▶️ Output:</p>
+                <pre><code class="text-output">
 INFO: [PROMPT]: I give you the following tool definition that you must use to fulfill a future task: adder(first_number: int, second_number: int) -> int - Adds two numbers and returns the result. Please acknowledge the given tool.
 
 INFO: [AI_RESPONSE]: Acknowledged!
@@ -467,75 +491,78 @@ INFO: [AI_RESPONSE]: {"first_number": 2, "second_number": 2}
 Tool adder was called with param '2' (<class 'int'>) and '2' (<class 'int'>)
 Result of added tool is:  4
 Equation result = 4
-					</code></pre><br>
-					<p>It worked!</p>
-					<p>2 warnings happened here:</p>
-					<ul>
-						<li><i>"WARNING: Yacana failed to call tool 'Adder' correctly based on the LLM output"</i></li>
-						<li><i>"WARNING: Tool 'Adder' raised an error"</i></li>
-					</ul>
-					<ul>
-						<li><strong>Warning 1</strong>: Regarding the first one if you look closely at the output you
-							can
-							see a strange malformation in the JSON:
-							<code>{"first__number": "arg 0", "second__number": "arg 1"}</code>. The first parameter was
-							called with two underscores for some reason (LLMs...). Fortunately, Yacana banged on the
-							LLM's head and it was fixed in the next iteration.
-						</li>
-						<li><strong>Warning 2</strong>: Concerning the second warning, it was the tool itself that
-							raised
-							the exception:
-							<code>The tool returned an error: Parameter 'first_number' expected a type integer</code>.
-							This is only logical as the LLM sent catastrophic values to the tool:
-							<code>{'first_number': 'arg 0', 'second_number': 'arg 1'}</code>. When the ToolError was
-							raised the error message was given to the LLM and a third iteration started. This time all
-							was correct: <code>{"first_number": 2, "second_number": 2}</code> and we got our result from
-							the tool which is 4.
-						</li>
-					</ul>
-					<p class="icon solid fa-info-circle"> You should combine both technics. Providing one example could
-						prevent one tool call failure
-						hence less lost CPU time but adding many validation checks in your tool raising with explicit
-						error messages is the best way to ensure that nothing breaks. Nothing beats good all fashion
-						<code>if</code> checks!
-					</p>
-					<h4>Maximum tool errors</h4>
-					<p>What happens if the LLM is stubborn and gets stuck in a loop? Even though Yacana's percussive
-						maintenance should avoid that by shifting LLM internal configuration during runtime more or less
-						randomly, the LLM still might go into an infinite loop. And this is NOT a viable option!<br>
-						Fortunately, Yacana comes with a default of 5 iterations (tries) for each of the 2 types of
-						errors we encountered earlier:</p>
-					<ul>
-						<li>Either the calling error like the <code>"first__number"</code> error seen above.</li>
-						<li>Or the custom ToolError that the tool threw.
-							This means that if one of these two counters gets to 5 then an error is raised. One that is
-							not caught by Yacana.<br>
-							Specifically a <code>MaxToolErrorIter</code> exception. You should try/catch all of your
-							Tasks that utilize Tools as they might loop too many times and trigger this exception.</li>
-					</ul>
-					<p>However, you can also set these counters to the value you wish... Move them higher or lower with
-						the following Tool optional parameters:
-						<code> max_call_error: int = 5, max_custom_error: int = 5</code>
-						For instance:
-					</p>
-					<pre><code class="language-python">
+					</code></pre>
+                <br>
+                <p>It worked!</p>
+                <p>2 warnings happened here:</p>
+                <ul>
+                    <li><i>"WARNING: Yacana failed to call tool 'Adder' correctly based on the LLM output"</i></li>
+                    <li><i>"WARNING: Tool 'Adder' raised an error"</i></li>
+                </ul>
+                <ul>
+                    <li><strong>Warning 1</strong>: Regarding the first one if you look closely at the output you
+                        can
+                        see a strange malformation in the JSON:
+                        <code>{"first__number": "arg 0", "second__number": "arg 1"}</code>. The first parameter was
+                        called with two underscores for some reason (LLMs...). Fortunately, Yacana banged on the
+                        LLM's head and it was fixed in the next iteration.
+                    </li>
+                    <li><strong>Warning 2</strong>: Concerning the second warning, it was the tool itself that
+                        raised
+                        the exception:
+                        <code>The tool returned an error: Parameter 'first_number' expected a type integer</code>.
+                        This is only logical as the LLM sent catastrophic values to the tool:
+                        <code>{'first_number': 'arg 0', 'second_number': 'arg 1'}</code>. When the ToolError was
+                        raised the error message was given to the LLM and a third iteration started. This time all
+                        was correct: <code>{"first_number": 2, "second_number": 2}</code> and we got our result from
+                        the tool which is 4.
+                    </li>
+                </ul>
+                <p class="icon solid fa-info-circle"> You should combine both technics. Providing one example could
+                    prevent one tool call failure
+                    hence less lost CPU time but adding many validation checks in your tool raising with explicit
+                    error messages is the best way to ensure that nothing breaks. Nothing beats good all fashion
+                    <code>if</code> checks!
+                </p>
+                <h4>Maximum tool errors</h4>
+                <p>What happens if the LLM is stubborn and gets stuck in a loop? Even though Yacana's percussive
+                    maintenance should avoid that by shifting LLM internal configuration during runtime more or less
+                    randomly, the LLM still might go into an infinite loop. And this is NOT a viable option!<br>
+                    Fortunately, Yacana comes with a default of 5 iterations (tries) for each of the 2 types of
+                    errors we encountered earlier:</p>
+                <ul>
+                    <li>Either the calling error like the <code>"first__number"</code> error seen above.</li>
+                    <li>Or the custom ToolError that the tool threw.
+                        This means that if one of these two counters gets to 5 then an error is raised. One that is
+                        not caught by Yacana.<br>
+                        Specifically a <code>MaxToolErrorIter</code> exception. You should try/catch all of your
+                        Tasks that utilize Tools as they might loop too many times and trigger this exception.
+                    </li>
+                </ul>
+                <p>However, you can also set these counters to the value you wish... Move them higher or lower with
+                    the following Tool optional parameters:
+                    <code> max_call_error: int = 5, max_custom_error: int = 5</code>
+                    For instance:
+                </p>
+                <pre><code class="language-python">
 # Doubling the number of iterations the LLM can do before raising `MaxToolErrorIter`: 5 -> 10
 adder_tool: Tool = Tool("Adder", "Adds two numbers and returns the result", adder, max_custom_error=10, max_call_error=10)
-					</code></pre><br>
+					</code></pre>
+                <br>
 
-					<hr class="major" />
+                <hr class="major"/>
 
-					<h2 id="optional-tools">Optional tools</h2>
-					<p>Sometimes you assign a Tool to a Task without knowing for sure that the tool will be useful. If
-						you have a fine-tuned model or doing basic operations you may want to rely on the LLM's
-						reasoning to choose if it really needs to call the tool or use his own training knowledge.
-						Setting the <code>optional: bool = True</code> will tweak how Yacana proposes the Tools to the
-						LLM, leaving it a chance to pass on the offer of the tool and use its own knowledge instead.</p>
-					<p>To demonstrate this, let's make a tool that returns a temperature from a city. It will return a
-						fake temperature as we don't really care. We <strong>won't</strong> set
-						<code>optionnal=True</code> so it will be forced to use the tool:
-					</p>
-					<pre><code class="language-python">
+                <h2 id="optional-tools">Optional tools</h2>
+                <p>Sometimes you assign a Tool to a Task without knowing for sure that the tool will be useful. If
+                    you have a fine-tuned model or doing basic operations you may want to rely on the LLM's
+                    reasoning to choose if it really needs to call the tool or use his own training knowledge.
+                    Setting the <code>optional: bool = True</code> will tweak how Yacana proposes the Tools to the
+                    LLM, leaving it a chance to pass on the offer of the tool and use its own knowledge instead.</p>
+                <p>To demonstrate this, let's make a tool that returns a temperature from a city. It will return a
+                    fake temperature as we don't really care. We <strong>won't</strong> set
+                    <code>optionnal=True</code> so it will be forced to use the tool:
+                </p>
+                <pre><code class="language-python">
 from yacana import Task, Agent, Tool
 
 def get_temperature(city: str) -> int:
@@ -546,9 +573,10 @@ agent1 = Agent("Ai assistant", "llama3.1:8b")
 result: str = Task(f"What's the temperature in NY ?", agent1, tools=[Tool("get_temp", "Returns the celsius temperature of a given city", get_temperature)]).solve().content
 
 print(f"Temperature = {result}")						
-					</code></pre><br>
-					<p>▶️ Output:</p>
-					<pre><code class="text-output">
+					</code></pre>
+                <br>
+                <p>▶️ Output:</p>
+                <pre><code class="text-output">
 INFO: [PROMPT]: I give you the following tool definition that you must use to fulfill a future task: get_temperature(city: str) -> int - Adds two numbers and returns the result. Please acknowledge the given tool.
 
 INFO: [AI_RESPONSE]: I've received the tool definition!
@@ -576,15 +604,17 @@ What's the temperature in NY ?
 
 INFO: [AI_RESPONSE]: { "city": "NY" }
 Temperature = 20			
-					</code></pre><br>
-					<p>The tool was called with <code>{ "city": "NY" }</code> which returned 20. Good!</p>
-					<hr>
-					<p>Now let's ask something completely unrelated but keep the tool mandatory:</p>
-					<pre><code class="language-python"> 
+					</code></pre>
+                <br>
+                <p>The tool was called with <code>{ "city": "NY" }</code> which returned 20. Good!</p>
+                <hr>
+                <p>Now let's ask something completely unrelated but keep the tool mandatory:</p>
+                <pre><code class="language-python">
 result: str = Task(f"Why is the sky blue ?", agent1, tools=[Tool("get_temp", "Returns the celsius temperature of a given city", get_temperature)]).solve().content					
-					</code></pre><br>
-					<p>▶️ Output:</p>
-					<pre><code class="text-output">
+					</code></pre>
+                <br>
+                <p>▶️ Output:</p>
+                <pre><code class="text-output">
 INFO: [PROMPT]: I give you the following tool definition that you must use to fulfill a future task: get_temperature(city: str) -> int - Returns the celsius temperature of a given city. Please acknowledge the given tool.
 
 INFO: [AI_RESPONSE]: Acknowledged!
@@ -608,17 +638,19 @@ Why is the sky blue ?
 
 INFO: [AI_RESPONSE]: {"city": "Paris"}
 Temperature = 20
-					</code></pre><br>
-					<p>It asked the tool for the temperature in the city 'Paris' without any particular reason. We can't
-						blame it. The tool we provided and the Task to solve have nothing to do with each other. So it's
-						making things up, like this city name.</p>
-					<hr>
-					<p>Now let's make the tool optional with <code>optional=True</code> and keep our unrelated Task:</p>
-					<pre><code class="language-python">
+					</code></pre>
+                <br>
+                <p>It asked the tool for the temperature in the city 'Paris' without any particular reason. We can't
+                    blame it. The tool we provided and the Task to solve have nothing to do with each other. So it's
+                    making things up, like this city name.</p>
+                <hr>
+                <p>Now let's make the tool optional with <code>optional=True</code> and keep our unrelated Task:</p>
+                <pre><code class="language-python">
 result: str = Task(f"Why is the sky blue ?", agent1, tools=[Tool("get_temp", "Returns the celsius temperature of a given city", get_temperature, optional=True)]).solve().content						
-					</code></pre><br>
-					<p>▶️ Output:</p>
-					<pre><code class="text-output">
+					</code></pre>
+                <br>
+                <p>▶️ Output:</p>
+                <pre><code class="text-output">
 INFO: [PROMPT]: I give you the following tool definition that you may use to fulfill a future task: get_temperature(city: str) -> int - Returns the celsius temperature of a given city. Please acknowledge the given tool.
 
 INFO: [AI_RESPONSE]: Acknowledged!
@@ -658,63 +690,67 @@ The sky appears blue because of a phenomenon called Rayleigh scattering, named a
 5. **Sky appears blue**: The combined effect of all these scattered blue and violet photons is what makes the sky appear blue to our eyes! The more direct sunlight that reaches our eyes, the whiter it will appear.
 
 So, to summarize: the sky appears blue because of the selective scattering of shorter wavelengths (like blue and violet) by tiny molecules in the atmosphere, which dominates the colors we see when looking up at the sky.
-					</code></pre><br>
-					<p>As you can see it chose to ignore the tool when Yacana proposed it. It said:</p>
-					<pre><code class="text-output">
+					</code></pre>
+                <br>
+                <p>As you can see it chose to ignore the tool when Yacana proposed it. It said:</p>
+                <pre><code class="text-output">
 						In my opinion, using the `get_temperature` tool is NOT relevant to solving this task. The task asks about why the sky is blue, and temperature doesn't seem to be directly related to that.
-					</code></pre><br>
-					<h4>Tools that don't return anything</h4>
-					<p>If you write a tool that doesn't have a reason to answer anything to the LLM, you could be
-						tempted to let it return <code>None</code>.<br>
-						We wouldn't encourage this behavior as LLMs generally expect some kind of answer to guide them.
-						You should preferably return a success message. It will act as positive reinforcement.<br>
-						However, if your tool doesn't return anything, a default message will be added automatically:
-						<i>"Tool {tool.tool_name} was called successfully. It didn't return anything."</i>.
-					</p>
+					</code></pre>
+                <br>
+                <h4>Tools that don't return anything</h4>
+                <p>If you write a tool that doesn't have a reason to answer anything to the LLM, you could be
+                    tempted to let it return <code>None</code>.<br>
+                    We wouldn't encourage this behavior as LLMs generally expect some kind of answer to guide them.
+                    You should preferably return a success message. It will act as positive reinforcement.<br>
+                    However, if your tool doesn't return anything, a default message will be added automatically:
+                    <i>"Tool {tool.tool_name} was called successfully. It didn't return anything."</i>.
+                </p>
 
-					<hr class="major" />
+                <hr class="major"/>
 
-					<h2 id="assigning-multiple-tools">Assigning multiple Tools</h2>
-					<p>In this section, we will see that you can assign more than one tool to a Task. You can add as
-						many Tools as you wish and the LLM will be asked what tool it wants to use. After using one of
-						the tools it will be asked if it considers its Task complete. If it says "no" then Yacana will
-						propose the list of tools again and a new iteration starts.</p>
-					<p>This is roughly what the tool-calling mechanism looks like:<br>
-						<span class="image main"><img
-								src="https://github.com/user-attachments/assets/bfaec298-44e9-4177-bfb8-e25bdfd01fe6"
-								alt="toolcall1B"></span>
-					</p>
-					<p class="icon solid fa-info-circle"> This doesn't take into account many tweaks Yacana makes like
-						model's runtime config updates
-						(in case of infinite loops), optional tools, self-reflection, multi-shot tool call examples,
-						history cleaning, exiting when reaching max iterations, etc. However, it definitely is the
-						<em>classic</em> process of calling tools one after the other.
-					</p>
-					<p><em>Additional behavior information:</em></p>
-					<blockquote>
-						<p>When only one tool is assigned, the Agent won't be proposed to use it again. One tool is one
-							shot!
-							When giving multiple tools, the agent will then be proposed to use another tool. He could
-							choose to always use the same one though.<br>
-							In the future, Yacana may allow you to have more control over how the tools are being
-							chosen:</p>
-						<ul>
-							<li>Allowing one tool to be re-called (when assigning only one tool) ;</li>
-							<li>When using multiple tools, each tool being used would be removed from the tool list,
-								ensuring that each tool can only be used once ;</li>
-							<li>Add a setting to force the LLM to use all the given tools from the list before exiting
-								the Task ;
-								Currently, giving more than one tool only ensures it makes use of one of them but could
-								decide to stop after the first use if it wished to.
-								Stay tuned for the next patch!</li>
-						</ul>
-					</blockquote>
-					<p>⚠️ For this next section we assume that you have already read section <strong>Assigning a tool to
-							a Task</strong> of the documentation.</p>
-					<p>Let's make a more advanced calculator and solve <code>2 + 2 - 6 * 8</code>. We'll add the missing
-						tools and give them some
-						"server-side" checking to help the LLM use them properly.</p>
-					<pre><code class="language-python">
+                <h2 id="assigning-multiple-tools">Assigning multiple Tools</h2>
+                <p>In this section, we will see that you can assign more than one tool to a Task. You can add as
+                    many Tools as you wish and the LLM will be asked what tool it wants to use. After using one of
+                    the tools it will be asked if it considers its Task complete. If it says "no" then Yacana will
+                    propose the list of tools again and a new iteration starts.</p>
+                <p>This is roughly what the tool-calling mechanism looks like:<br>
+                    <span class="image main"><img
+                            src="https://github.com/user-attachments/assets/bfaec298-44e9-4177-bfb8-e25bdfd01fe6"
+                            alt="toolcall1B"></span>
+                </p>
+                <p class="icon solid fa-info-circle"> This doesn't take into account many tweaks Yacana makes like
+                    model's runtime config updates
+                    (in case of infinite loops), optional tools, self-reflection, multi-shot tool call examples,
+                    history cleaning, exiting when reaching max iterations, etc. However, it definitely is the
+                    <em>classic</em> process of calling tools one after the other.
+                </p>
+                <p><em>Additional behavior information:</em></p>
+                <blockquote>
+                    <p>When only one tool is assigned, the Agent won't be proposed to use it again. One tool is one
+                        shot!
+                        When giving multiple tools, the agent will then be proposed to use another tool. He could
+                        choose to always use the same one though.<br>
+                        In the future, Yacana may allow you to have more control over how the tools are being
+                        chosen:</p>
+                    <ul>
+                        <li>Allowing one tool to be re-called (when assigning only one tool) ;</li>
+                        <li>When using multiple tools, each tool being used would be removed from the tool list,
+                            ensuring that each tool can only be used once ;
+                        </li>
+                        <li>Add a setting to force the LLM to use all the given tools from the list before exiting
+                            the Task ;
+                            Currently, giving more than one tool only ensures it makes use of one of them but could
+                            decide to stop after the first use if it wished to.
+                            Stay tuned for the next patch!
+                        </li>
+                    </ul>
+                </blockquote>
+                <p>⚠️ For this next section we assume that you have already read section <strong>Assigning a tool to
+                    a Task</strong> of the documentation.</p>
+                <p>Let's make a more advanced calculator and solve <code>2 + 2 - 6 * 8</code>. We'll add the missing
+                    tools and give them some
+                    "server-side" checking to help the LLM use them properly.</p>
+                <pre><code class="language-python">
 from yacana import Task, Agent, Tool, ToolError
 
 def adder(first_number: int, second_number: int) -> int:
@@ -764,9 +800,10 @@ result: str = Task(
 
 
 print("Result = ", result)
-					</code></pre><br>
-					<p>▶️ Output:</p>
-					<pre><code class="text-output">
+					</code></pre>
+                <br>
+                <p>▶️ Output:</p>
+                <pre><code class="text-output">
 INFO: [PROMPT]: You have access to this list of tools definitions you can use to fulfill tasks :
 * Name: 'Adder' - Usage: adder(first_number: int, second_number: int) -> int - Description: Adds two numbers and returns the result
 * Name: 'Substractor' - Usage: substractor(first_number, second_number) -> int - Description: Subtracts two numbers and returns the result. When having, for instance, 2 - 6 the arguments are 2 and 6 and not 2 and -6. The tool does the subtraction.
@@ -897,173 +934,186 @@ INFO: Exiting tool calls loop
 Result =  No, I don't need to make another tool call!
 The result of -44 is the final answer for the original expression: "2 + 2 - 6 * 8".
 I've used all the necessary tools (Multiplier, Adder, and Substractor) to break down the math expression and get the correct answer!
-					</code></pre><br>
-					<p>-44 is the correct answer. You could throw in maybe one more operation. However, in our tests
-						using Llama 3.0, going over 4 operations does not guarantee a correct result anymore. It may be
-						about prompt engineering but we also think that Yacana should continue improving. For the moment
-						the LLM tends to contradict itself at some point which sends the final result off. In the next
-						update, Yacana will try to detect errors in reasoning and self-correct between each tool call.
-						Stay tuned for updates.</p>
-					<div style="text-align: center; margin-top: 50px;">
-						<h4>Pagination</h4>
-						<ul class="pagination">
-							<li><a href="managing_agent_history.html#printing-history" class="button">Prev</a></li>
+					</code></pre>
+                <br>
+                <p>-44 is the correct answer. You could throw in maybe one more operation. However, in our tests
+                    using Llama 3.0, going over 4 operations does not guarantee a correct result anymore. It may be
+                    about prompt engineering but we also think that Yacana should continue improving. For the moment
+                    the LLM tends to contradict itself at some point which sends the final result off. In the next
+                    update, Yacana will try to detect errors in reasoning and self-correct between each tool call.
+                    Stay tuned for updates.</p>
+                <div style="text-align: center; margin-top: 50px;">
+                    <h4>Pagination</h4>
+                    <ul class="pagination">
+                        <li><a href="managing_agent_history.html#printing-history" class="button">Prev</a></li>
 
-							<li><a href="dual_agents_chat.html#stopping-chat-using-maximum-iterations" class="button">Next</a></li>
-						</ul>
-					</div>
-				</section>
-			</div>
-		</div>
+                        <li><a href="dual_agents_chat.html#stopping-chat-using-maximum-iterations"
+                               class="button">Next</a></li>
+                    </ul>
+                </div>
+            </section>
+        </div>
+    </div>
 
-		<!-- Sidebar -->
-		<div id="sidebar">
-			<div class="inner">
+    <!-- Sidebar -->
+    <div id="sidebar">
+        <div class="inner">
 
-				<!-- Search -->
-				<section id="search" class="alt">
-					<form method="post" action="#">
-						<input type="text" name="query" id="query" placeholder="Search" />
-					</form>
-				</section>
+            <!-- Search -->
+            <section id="search" class="alt">
+                <form method="post" action="#">
+                    <input type="text" name="query" id="query" placeholder="Search"/>
+                </form>
+            </section>
 
-				<!-- Menu -->
-				<nav id="menu">
-					<header class="major">
-						<h2>Menu</h2>
-					</header>
-					<ul>
-						<li><a href="../index.html">Homepage</a></li>
-						<li>
-							<span class="opener">I. Installation</span>
-							<ul>
-								<li><a href="installation.html#installing-ollama">Installing Ollama</a></li>
-								<li><a href="installation.html#choosing-an-llm-model">Choosing an LLM model</a>
-								</li>
-								<li><a href="installation.html#running-the-model">Running the model</a></li>
-								<li><a href="installation.html#installing-yacana">Installing Yacana</a></li>
-								<li><a href="installation.html#imports">Imports</a></li>
-							</ul>
-						</li>
-						<li>
-							<span class="opener">II. Agents & Tasks</span>
-							<ul>
-								<li><a href="agents_and_tasks.html#creating-an-agent">Creating an Agent</a></li>
-								<li><a href="agents_and_tasks.html#basic-roleplay">Basic roleplay</a></li>
-								<li><a href="agents_and_tasks.html#creating-tasks">Creating Tasks</a></li>
-								<li><a href="agents_and_tasks.html#getting-the-result-of-a-task">Getting the
-										result of a Task</a></li>
-								<li><a href="agents_and_tasks.html#chaining-tasks">Chaining Tasks</a></li>
-								<li><a href="agents_and_tasks.html#logging-levels">Logging levels</a></li>
-								<li><a href="agents_and_tasks.html#configuring-llms-settings">Configuring LLM's
-										settings</a></li>
-							</ul>
-						</li>
-						<li>
-							<span class="opener">III. Routing</span>
-							<ul>
-								<li><a href="routing.html#concepts-of-routing">Concepts of routing</a></li>
-								<li><a href="routing.html#self-reflection-routing">Self-reflection routing</a>
-								</li>
-								<li><a href="routing.html#cleaning-history">Cleaning history</a></li>
-								<li><a href="routing.html#routing-demonstration">Routing demonstration</a></li>
-							</ul>
-						</li>
-						<li>
-							<span class="opener">IV. Managing Agents history</span>
-							<ul>
-								<li><a href="managing_agent_history.html#printing-history">Printing history</a>
-								</li>
-								<li><a href="managing_agent_history.html#creating-and-loading-checkpoints">Creating
-										and loading checkpoints</a></li>
-								<li><a href="managing_agent_history.html#Zero-prompt-shot-vs-multi-prompt-shot">Zero-prompt
-										shot vs multi-prompt shot</a></li>
-								<li><a href="managing_agent_history.html#saving-agent-state">Saving Agent
-										state</a></li>
-							</ul>
-						</li>
-						<li>
-							<span class="opener">V. Tool calling</span>
-							<ul>
-								<li><a href="tool_calling.html#concept-of-calling-tools">Concepts of calling
-										tools</a></li>
-								<li><a href="tool_calling.html#writing-good-tool-prompts">Writing good tool
-										prompts</a></li>
-								<li><a href="tool_calling.html#calling-a-tool">Calling a tool</a></li>
-								<li><a href="tool_calling.html#improving-tool-calling-results">Improving
-										tool-calling results</a></li>
-								<li><a href="tool_calling.html#optional-tools">Optional tools</a></li>
-								<li><a href="tool_calling.html#assigning-multiple-tools">Assigning multiple
-										Tools</a></li>
-							</ul>
-						</li>
-						<li>
-							<span class="opener">VI. Dual-agents chat</span>
-							<ul>
-								<li><a href="dual_agents_chat.html#stopping-chat-using-maximum-iterations">Stopping
-										chat using 'maximum iterations'</a></li>
-								<li><a href="dual_agents_chat.html#letting-agents-end-the-chat">Letting Agents end
-										the chat</a></li>
-								<li><a href="dual_agents_chat.html#controlling-the-shift-message">Controlling the
-										Shift Message</a></li>
-								<li><a href="dual_agents_chat.html#using-tools-in-chat">Using tools in chat</a>
-								</li>
-							</ul>
-						</li>
-						<li><a href="multi_agents_chat.html#multi-agents-chat">VII. Multi-agents chat</a></li>
+            <!-- Menu -->
+            <nav class="menu">
+                <header class="major">
+                    <h2>Menu</h2>
+                </header>
+                <ul>
+                    <li><a href="../index.html">Homepage</a></li>
+                    <li>
+                        <span class="opener">I. Installation</span>
+                        <ul>
+                            <li><a href="installation.html#installing-ollama">Installing Ollama</a></li>
+                            <li><a href="installation.html#choosing-an-llm-model">Choosing an LLM model</a>
+                            </li>
+                            <li><a href="installation.html#running-the-model">Running the model</a></li>
+                            <li><a href="installation.html#installing-yacana">Installing Yacana</a></li>
+                            <li><a href="installation.html#imports">Imports</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <span class="opener">II. Agents & Tasks</span>
+                        <ul>
+                            <li><a href="agents_and_tasks.html#creating-an-agent">Creating an Agent</a></li>
+                            <li><a href="agents_and_tasks.html#basic-roleplay">Basic roleplay</a></li>
+                            <li><a href="agents_and_tasks.html#creating-tasks">Creating Tasks</a></li>
+                            <li><a href="agents_and_tasks.html#getting-the-result-of-a-task">Getting the
+                                result of a Task</a></li>
+                            <li><a href="agents_and_tasks.html#chaining-tasks">Chaining Tasks</a></li>
+                            <li><a href="agents_and_tasks.html#logging-levels">Logging levels</a></li>
+                            <li><a href="agents_and_tasks.html#configuring-llms-settings">Configuring LLM's
+                                settings</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <span class="opener">III. Routing</span>
+                        <ul>
+                            <li><a href="routing.html#concepts-of-routing">Concepts of routing</a></li>
+                            <li><a href="routing.html#self-reflection-routing">Self-reflection routing</a>
+                            </li>
+                            <li><a href="routing.html#cleaning-history">Cleaning history</a></li>
+                            <li><a href="routing.html#routing-demonstration">Routing demonstration</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <span class="opener">IV. Managing Agents history</span>
+                        <ul>
+                            <li><a href="managing_agent_history.html#printing-history">Printing history</a>
+                            </li>
+                            <li><a href="managing_agent_history.html#creating-and-loading-checkpoints">Creating
+                                and loading checkpoints</a></li>
+                            <li><a href="managing_agent_history.html#Zero-prompt-shot-vs-multi-prompt-shot">Zero-prompt
+                                shot vs multi-prompt shot</a></li>
+                            <li><a href="managing_agent_history.html#saving-agent-state">Saving Agent
+                                state</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <span class="opener">V. Tool calling</span>
+                        <ul>
+                            <li><a href="tool_calling.html#concept-of-calling-tools">Concepts of calling
+                                tools</a></li>
+                            <li><a href="tool_calling.html#writing-good-tool-prompts">Writing good tool
+                                prompts</a></li>
+                            <li><a href="tool_calling.html#calling-a-tool">Calling a tool</a></li>
+                            <li><a href="tool_calling.html#improving-tool-calling-results">Improving
+                                tool-calling results</a></li>
+                            <li><a href="tool_calling.html#optional-tools">Optional tools</a></li>
+                            <li><a href="tool_calling.html#assigning-multiple-tools">Assigning multiple
+                                Tools</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <span class="opener">VI. Dual-agents chat</span>
+                        <ul>
+                            <li><a href="dual_agents_chat.html#stopping-chat-using-maximum-iterations">Stopping
+                                chat using 'maximum iterations'</a></li>
+                            <li><a href="dual_agents_chat.html#letting-agents-end-the-chat">Letting Agents end
+                                the chat</a></li>
+                            <li><a href="dual_agents_chat.html#controlling-the-shift-message">Controlling the
+                                Shift Message</a></li>
+                            <li><a href="dual_agents_chat.html#using-tools-in-chat">Using tools in chat</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li><a href="multi_agents_chat.html#multi-agents-chat">VII. Multi-agents chat</a></li>
+                </ul>
+                <br>
+                <ul>
+                    <li>
+                        <a href="classes.html">
+                            <span style="display: inline" class="icon solid fa-cog">
+                                <span class="label">
+                                    Technical Documentation
+                                </span>
+                                Technical Documentation
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
 
+            <!-- Section -->
+            <section>
+                <header class="major">
+                    <h2>Related Youtube video</h2>
+                </header>
+                <div class="mini-posts">
+                    <article>
+                        <a href="#" class="image"><img src="../images/youtube_down.jpg" alt=""/></a>
+                        <p>Youtube video for this section is still under creation. Please be patient ^^</p>
+                    </article>
+                </div>
+            </section>
 
-					</ul>
-				</nav>
+            <!-- Section -->
+            <section>
+                <nav class="menu">
+                    <header class="major">
+                        <h2>Page menu</h2>
+                    </header>
+                    <ul>
+                        <li><a href="tool_calling.html#concept-of-calling-tools">Concepts of calling tools</a></li>
+                        <li><a href="tool_calling.html#writing-good-tool-prompts">Writing good tool prompts</a></li>
+                        <li><a href="tool_calling.html#calling-a-tool">Calling a tool</a></li>
+                        <li><a href="tool_calling.html#improving-tool-calling-results">Improving tool-calling
+                            results</a></li>
+                        <li><a href="tool_calling.html#optional-tools">Optional tools</a></li>
+                        <li><a href="tool_calling.html#assigning-multiple-tools">Assigning multiple Tools</a></li>
+                    </ul>
+                </nav>
+            </section>
 
-				<!-- Section -->
-				<section>
-					<header class="major">
-						<h2>Related Youtube video</h2>
-					</header>
-					<div class="mini-posts">
-						<article>
-							<a href="#" class="image"><img src="../images/youtube_down.jpg" alt="" /></a>
-							<p>Youtube video for this section is still under creation. Please be patient ^^</p>
-						</article>
-					</div>
-				</section>
+            <!-- Footer -->
+            <footer id="footer">
+                <p class="copyright">&copy; Emilien Lancelot. All rights reserved.<br>
+                    Design: <a href="https://html5up.net">HTML5UP</a>.</p>
+            </footer>
 
-				<!-- Section -->
-				<section>
-					<nav id="menu">
-						<header class="major">
-							<h2>Page menu</h2>
-						</header>
-						<ul>
-							<li><a href="tool_calling.html#concept-of-calling-tools">Concepts of calling tools</a></li>
-							<li><a href="tool_calling.html#writing-good-tool-prompts">Writing good tool prompts</a></li>
-							<li><a href="tool_calling.html#calling-a-tool">Calling a tool</a></li>
-							<li><a href="tool_calling.html#improving-tool-calling-results">Improving tool-calling
-									results</a></li>
-							<li><a href="tool_calling.html#optional-tools">Optional tools</a></li>
-							<li><a href="tool_calling.html#assigning-multiple-tools">Assigning multiple Tools</a></li>
-						</ul>
-					</nav>
-				</section>
+        </div>
+    </div>
 
-				<!-- Footer -->
-				<footer id="footer">
-					<p class="copyright">&copy; Emilien Lancelot. All rights reserved.<br>
-						Design: <a href="https://html5up.net">HTML5UP</a>.</p>
-				</footer>
+</div>
 
-			</div>
-		</div>
-
-	</div>
-
-	<!-- Scripts -->
-	<script src="../assets/js/jquery.min.js"></script>
-	<script src="../assets/js/browser.min.js"></script>
-	<script src="../assets/js/breakpoints.min.js"></script>
-	<script src="../assets/js/util.js"></script>
-	<script src="../assets/js/main.js"></script>
+<!-- Scripts -->
+<script src="../assets/js/jquery.min.js"></script>
+<script src="../assets/js/browser.min.js"></script>
+<script src="../assets/js/breakpoints.min.js"></script>
+<script src="../assets/js/util.js"></script>
+<script src="../assets/js/main.js"></script>
 
 </body>
 

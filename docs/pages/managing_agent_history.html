@@ -7,98 +7,103 @@
 <html>
 
 <head>
-	<title>Managing_agents_history</title>
-	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-	<link rel="stylesheet" href="../assets/css/main.css" />
-	<link rel="stylesheet" href="../assets/css/codemirror.min.css">
-	<link rel="stylesheet" href="../assets/css/monokai.min.css">
-	<link rel="stylesheet" href="../assets/css/foldgutter.min.css">
-	<link rel="stylesheet" href="../assets/css/codemirror-custom.css">
-	<link rel="stylesheet" href="../assets/css/zenburn.min.css">
-	<script src="../assets/js/codemirror.min.js"></script>
-	<script src="../assets/js/python.min.js"></script>
-	<script src="../assets/js/json-lint.min.js"></script>
-	<script src="../assets/js/foldcode.min.js"></script>
-	<script src="../assets/js/foldgutter.min.js"></script>
-	<script src="../assets/js/brace-fold.min.js"></script>
-	<script src="../assets/js/codemirror-custom.js"></script>
+    <title>Managing_agents_history</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
+    <link rel="stylesheet" href="../assets/css/main.css"/>
+    <link rel="stylesheet" href="../assets/css/codemirror.min.css">
+    <link rel="stylesheet" href="../assets/css/monokai.min.css">
+    <link rel="stylesheet" href="../assets/css/foldgutter.min.css">
+    <link rel="stylesheet" href="../assets/css/codemirror-custom.css">
+    <link rel="stylesheet" href="../assets/css/zenburn.min.css">
+    <script src="../assets/js/codemirror.min.js"></script>
+    <script src="../assets/js/python.min.js"></script>
+    <script src="../assets/js/json-lint.min.js"></script>
+    <script src="../assets/js/foldcode.min.js"></script>
+    <script src="../assets/js/foldgutter.min.js"></script>
+    <script src="../assets/js/brace-fold.min.js"></script>
+    <script src="../assets/js/codemirror-custom.js"></script>
 </head>
 
 <body class="is-preload">
 
-	<!-- Wrapper -->
-	<div id="wrapper">
+<!-- Wrapper -->
+<div id="wrapper">
 
-		<!-- Main -->
-		<div id="main">
-			<div class="inner">
+    <!-- Main -->
+    <div id="main">
+        <div class="inner">
 
-				<!-- Header -->
-				<header id="header">
-					<a href="../index.html" class="logo"><strong>Yacana</strong>, powering open source LLMs</a>
-					<ul class="icons">
-						<li><a href="https://x.com/RSoftwares_ofc" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
-						<li><a href="https://medium.com/@docteur_rs" class="icon brands fa-medium-m"><span class="label">Medium</span></a></li>
-						<li><a href="https://www.youtube.com/channel/UCvi7R0CRmtxhWOVw62XteTw" class="icon brands fa-youtube"><span class="label">Medium</span></a></li>
-						<li><a href="https://github.com/rememberSoftwares/yacana" class="icon brands fa-github"><span class="label">Github</span></a></li>
-					</ul>
-				</header>
+            <!-- Header -->
+            <header id="header">
+                <a href="../index.html" class="logo"><strong>Yacana</strong>, powering open source LLMs</a>
+                <ul class="icons">
+                    <li><a href="https://x.com/RSoftwares_ofc" class="icon brands fa-twitter"><span class="label">Twitter</span></a>
+                    </li>
+                    <li><a href="https://medium.com/@docteur_rs" class="icon brands fa-medium-m"><span class="label">Medium</span></a>
+                    </li>
+                    <li><a href="https://www.youtube.com/channel/UCvi7R0CRmtxhWOVw62XteTw"
+                           class="icon brands fa-youtube"><span class="label">Medium</span></a></li>
+                    <li><a href="https://github.com/rememberSoftwares/yacana" class="icon brands fa-github"><span
+                            class="label">Github</span></a></li>
+                </ul>
+            </header>
 
-				<!-- Content -->
-				<section>
-					<header class="main">
-						<h1 id="printing-history">IV. Managing Agents history</h1>
-					</header>
+            <!-- Content -->
+            <section>
+                <header class="main">
+                    <h1 id="printing-history">IV. Managing Agents history</h1>
+                </header>
 
-					<span class="image main"><img src="../images/managing_agents_history.jpg" alt="Managing agent history" /></span>
+                <span class="image main"><img src="../images/managing_agents_history.jpg" alt="Managing agent history"/></span>
 
-					<p>As you saw in the previous examples, each agent has its own history of messages that compose its
-						memory. When a new request is made to the LLM the whole history is sent to the inference server
-						(ie: Ollama) and the LLM responds to the last prompt in the chain but bases its answer on the
-						context it gets from the previous messages (and the initial system prompt if present). </p>
-					<p>This is what an history looks like:</p>
-					<span class="image main"><img
-							src="https://github.com/user-attachments/assets/631b634a-8699-4fff-9ac4-06b403c06ae1"
-							alt="history1A" /></span>
-					<p>There are 3 types of prompts: </p>
-					<ul>
-						<li>1: The optional "System" prompt that, if present, always goes first.</li>
-					</ul>
-					<span><i>Then it's only an alternation between these two:</i></span>
-					<ul>
-						<li>2: The "User" prompts coming from the Task you set. </li>
-						<li>3: The "Assistant" message which is the answer from the LLM. </li>
-					</ul>
-					<p>However, sending the whole history to the LLM for each Task to solve has some disadvantages that
-						can not be overturned: </p>
-					<ul>
-						<li>The longer the history the longer the LLM takes to analyze it and return an answer. </li>
-						<li>Each LLM comes with a maximum token window size. This is the maximum number of words an LLM
-							can analyze in one run, therefore it's maximum memory.</li>
-						<li>One token roughly represents one word or 3/4 of a word. More information on token count per
-							word <a
-								href="https://winder.ai/calculating-token-counts-llm-context-windows-practical-guide/">here</a>
-							or <a
-								href="https://help.openai.com/en/articles/4936856-what-are-tokens-and-how-to-count-them">here</a>.
-						</li>
-					</ul>
-					<p>To counteract those negative effects it is recommended you clean the history when possible. You
-						can use the <code>forget=True</code> parameter in the Task() class so the prompt and the LLM
-						response do not get saved to the history. You'll see there are other
-						ways to preserve the history from useless noise. <br />
-						But first, we'll look at one Agent's history. Fortunately, Yacana got you covered. </p>
-					<h2>Printing History</h2>
-					<p>The Agent class comes with a <code>.history</code> property of type <code>History</code>. 
-						It exposes methods so you can manipulate and view it (for debugging,
-						mostly) during runtime. For instance, it has a <code>.pretty_print()</code> method that prints
-						on the standard output the content of the history using the classic color scheme. It's great for
-						debugging but not for parsing. If you need to parse the history there is a
-						<code>.get_as_dict()</code> method which as the name implies returns the History as a Python
-						dictionary.
-					</p>
-					<p>Let's see a simple example:</p>
-					<pre><code class="language-python">
+                <p>As you saw in the previous examples, each agent has its own history of messages that compose its
+                    memory. When a new request is made to the LLM the whole history is sent to the inference server
+                    (ie: Ollama) and the LLM responds to the last prompt in the chain but bases its answer on the
+                    context it gets from the previous messages (and the initial system prompt if present). </p>
+                <p>This is what an history looks like:</p>
+                <span class="image main"><img
+                        src="https://github.com/user-attachments/assets/631b634a-8699-4fff-9ac4-06b403c06ae1"
+                        alt="history1A"/></span>
+                <p>There are 3 types of prompts: </p>
+                <ul>
+                    <li>1: The optional "System" prompt that, if present, always goes first.</li>
+                </ul>
+                <span><i>Then it's only an alternation between these two:</i></span>
+                <ul>
+                    <li>2: The "User" prompts coming from the Task you set.</li>
+                    <li>3: The "Assistant" message which is the answer from the LLM.</li>
+                </ul>
+                <p>However, sending the whole history to the LLM for each Task to solve has some disadvantages that
+                    can not be overturned: </p>
+                <ul>
+                    <li>The longer the history the longer the LLM takes to analyze it and return an answer.</li>
+                    <li>Each LLM comes with a maximum token window size. This is the maximum number of words an LLM
+                        can analyze in one run, therefore it's maximum memory.
+                    </li>
+                    <li>One token roughly represents one word or 3/4 of a word. More information on token count per
+                        word <a
+                                href="https://winder.ai/calculating-token-counts-llm-context-windows-practical-guide/">here</a>
+                        or <a
+                                href="https://help.openai.com/en/articles/4936856-what-are-tokens-and-how-to-count-them">here</a>.
+                    </li>
+                </ul>
+                <p>To counteract those negative effects it is recommended you clean the history when possible. You
+                    can use the <code>forget=True</code> parameter in the Task() class so the prompt and the LLM
+                    response do not get saved to the history. You'll see there are other
+                    ways to preserve the history from useless noise. <br/>
+                    But first, we'll look at one Agent's history. Fortunately, Yacana got you covered. </p>
+                <h2>Printing History</h2>
+                <p>The Agent class comes with a <code>.history</code> property of type <code>History</code>.
+                    It exposes methods so you can manipulate and view it (for debugging,
+                    mostly) during runtime. For instance, it has a <code>.pretty_print()</code> method that prints
+                    on the standard output the content of the history using the classic color scheme. It's great for
+                    debugging but not for parsing. If you need to parse the history there is a
+                    <code>.get_as_dict()</code> method which as the name implies returns the History as a Python
+                    dictionary.
+                </p>
+                <p>Let's see a simple example:</p>
+                <pre><code class="language-python">
 from yacana import LoggerManager, Agent, Task
 
 # Let's deactivate automatic logging so that only OUR prints are shown
@@ -118,8 +123,9 @@ print("")
 print("############## Agent 1 history dictionnary ##################")
 print(str(agent1.history.get_as_dict()))
 print("############## END ##################")
-					</code></pre><br>
-					<pre><code class="text-output">############## Agent 1 history pretty print ##################
+					</code></pre>
+                <br>
+                <pre><code class="text-output">############## Agent 1 history pretty print ##################
 
 [user]:
 Generate 5 pastry names followed by the associated estimated calorie.
@@ -154,51 +160,55 @@ Let me know if you have any other questions!
 ############## Agent 1 history pretty print ##################
 [{'role': 'system', 'content': 'You are a pastry chef'}, {'role': 'user', 'content': 'Generate 5 pastry names followed by the associated estimated calorie.'}, {'role': 'assistant', 'content': 'Here are 5 pastry names with their associated estimated calorie counts:\n\n1. **Cinnamon Swirl Brioche** (250-300 calories) - A sweet, buttery brioche filled with a gooey cinnamon swirl.\n2. **Lemon Lavender Mille-Feuille** (400-450 calories) - Layers of flaky pastry, lemon curd, and lavender cream create a bright and airy dessert.\n3. **Chocolate Soufflé Cake** (500-550 calories) - A rich, decadent chocolate cake that rises like a cloud from the oven, served with a scoop of vanilla ice cream.\n4. **Raspberry Almond Croissant** (200-250 calories) - Flaky, buttery croissants filled with sweet and tart raspberry jam and topped with sliced almonds.\n5. **Pistachio Rosewater Macarons** (150-200 calories) - Delicate, chewy macarons flavored with pistachio and rosewater, sandwiched together with a light and creamy filling.\n\nNote: The estimated calorie counts are approximate and may vary based on specific ingredients and portion sizes used.'}, {'role': 'user', 'content': 'Rank the pastries from the lowest calorie count to the largest.'}, {'role': 'assistant', 'content': 'Based on the estimated calorie counts I provided earlier, here are the pastries ranked from lowest to highest:\n\n1. **Pistachio Rosewater Macarons** (150-200 calories)\n2. **Raspberry Almond Croissant** (200-250 calories)\n3. **Cinnamon Swirl Brioche** (250-300 calories)\n4. **Lemon Lavender Mille-Feuille** (400-450 calories)\n5. **Chocolate Soufflé Cake** (500-550 calories)\n\nLet me know if you have any other questions!'}]
 ############## END ##################
-					</code></pre><br>
-					<p>Output speaks for itself. </p>
-					<h2 id="creating-and-loading-checkpoints">Creating and loading checkpoints</h2>
-					<p>As mentioned earlier it's better to keep the History clean. Too many prompts and unrelated
-						questions will lead to poorer results so if you have the opportunity to scratch some portion
-						then you should. <br />
-						Yacana allows you to make history snapshots and rollback to any of them. This is particularly
-						useful when reaching the end of a flow branch and wanting to go back onto another. </p>
-					<span class="image main"><img
-							src="https://github.com/user-attachments/assets/824d7fa1-c1b1-4434-85e9-dfa261c2c8e3"
-							alt="Checkpoint1A" /></span>
-					<p>It is as simple as this: </p>
-					<pre><code class="language-python">
+					</code></pre>
+                <br>
+                <p>Output speaks for itself. </p>
+                <h2 id="creating-and-loading-checkpoints">Creating and loading checkpoints</h2>
+                <p>As mentioned earlier it's better to keep the History clean. Too many prompts and unrelated
+                    questions will lead to poorer results so if you have the opportunity to scratch some portion
+                    then you should. <br/>
+                    Yacana allows you to make history snapshots and rollback to any of them. This is particularly
+                    useful when reaching the end of a flow branch and wanting to go back onto another. </p>
+                <span class="image main"><img
+                        src="https://github.com/user-attachments/assets/824d7fa1-c1b1-4434-85e9-dfa261c2c8e3"
+                        alt="Checkpoint1A"/></span>
+                <p>It is as simple as this: </p>
+                <pre><code class="language-python">
 # Creating a checkpoint
 checkpoint_id: str = agent1.history.create_check_point()
-					</code></pre><br>
-					<p>The checkpoint_id is only a unique identifier that you can use to load back a save. Like this:
-					</p>
-					<pre><code class="language-python">
+					</code></pre>
+                <br>
+                <p>The checkpoint_id is only a unique identifier that you can use to load back a save. Like this:
+                </p>
+                <pre><code class="language-python">
 # Go back in time to when the checkpoint was created
 agent1.history.load_check_point(checkpoint_id)
-					</code></pre><br>
-					<p class="icon solid fa-info-circle"> Note that nothing prevents you from making a snapshot before
-						rolling back to a previous save.
-						This way you could go back… to the future. ^^ <br />
-						Are you okay Marty? </p>
-					<p>Let's take a concrete example. You have a pastry website that generates pastry recipes. <br />
-						The flow will look like this: </p>
-					<ol>
-						<li>Propose 5 pastry names ;</li>
-						<li>Create a checkpoint ;</li>
-						<li>The user chooses one of the pastries ;</li>
-						<li>We show the associated calories of the selected pastry ;</li>
-						<li>If the user is okay with it we end the program ;</li>
-						<li>If the user is not okay with the calorie count we go back to the checkpoint and propose to
-							choose from the the list again ;</li>
-						<li>Repeat until satisfied ;</li>
-						<li>We'll show the final agent's History and make sure that it ONLY stored the selected pastry ;
-						</li>
-					</ol>
-					<p>With a bit of color, it would look like this: </p>
-					<p style="text-align: center;"><img
-							src="https://github.com/user-attachments/assets/3a4952aa-18f3-4b6d-93c1-85b909cf24f4"
-							alt="pastry1B" /></p>
-					<pre><code class="language-python">
+					</code></pre>
+                <br>
+                <p class="icon solid fa-info-circle"> Note that nothing prevents you from making a snapshot before
+                    rolling back to a previous save.
+                    This way you could go back… to the future. ^^ <br/>
+                    Are you okay Marty? </p>
+                <p>Let's take a concrete example. You have a pastry website that generates pastry recipes. <br/>
+                    The flow will look like this: </p>
+                <ol>
+                    <li>Propose 5 pastry names ;</li>
+                    <li>Create a checkpoint ;</li>
+                    <li>The user chooses one of the pastries ;</li>
+                    <li>We show the associated calories of the selected pastry ;</li>
+                    <li>If the user is okay with it we end the program ;</li>
+                    <li>If the user is not okay with the calorie count we go back to the checkpoint and propose to
+                        choose from the the list again ;
+                    </li>
+                    <li>Repeat until satisfied ;</li>
+                    <li>We'll show the final agent's History and make sure that it ONLY stored the selected pastry ;
+                    </li>
+                </ol>
+                <p>With a bit of color, it would look like this: </p>
+                <p style="text-align: center;"><img
+                        src="https://github.com/user-attachments/assets/3a4952aa-18f3-4b6d-93c1-85b909cf24f4"
+                        alt="pastry1B"/></p>
+                <pre><code class="language-python">
 from yacana import LoggerManager, Agent, Task
 
 # Let's deactivate automatic logging so that only OUR prints are shown; Maybe reactivate (to "info") if you want to see what's happening behind the scenes.
@@ -243,9 +253,10 @@ while True:
 print("############## Agent 1 history pretty print ##################")
 agent1.history.pretty_print()
 print("############## END ##################")
-					</code></pre><br>
-					<p>▶️ Output:</p>
-					<pre><code class="text-output">
+					</code></pre>
+                <br>
+                <p>▶️ Output:</p>
+                <pre><code class="text-output">
 Welcome, you may order one of the following pastries
 1. Whipped Wonders
 2. Creamy Confections
@@ -287,48 +298,52 @@ The user said 'yes'. Evaluate if the user was okay with the order. If he was, ON
 yes
 
 ############## END ##################
-					</code></pre><br>
-					<p>As you can see in the above output, we went for <i>"the creamy one"</i> but when shown the
-						calories,
-						refused to continue… After that, we chose the <i>"Golden Galettes"</i> which was satisfying.
-						Then the
-						program ended with an output of the agent's history. <br />
-						We can see in the agent's output that it only remembered us choosing the <i>"Golden
-							Galettes"</i> but not
-						the <i>"Creamy Confections"</i>. This is because we loaded the last checkpoint which rolled us
-						back to
-						making our choice again.</p>
-					<p class="icon solid fa-info-circle"> Note that the Task replacing the variables might not work very
-						well with dumb LLMs. It could
-						be reworked by splitting it into two. One that would extract the name of the chosen pastry from
-						the user's input and a second one that would generate the associated calories. Finally, print
-						the sentence with the variables pre-generated. Using local models is all about knowing the
-						maximum performance of your LLM and adapting the prompts to match that performance. The dumber,
-						the more guidance it needs! </p>
+					</code></pre>
+                <br>
+                <p>As you can see in the above output, we went for <i>"the creamy one"</i> but when shown the
+                    calories,
+                    refused to continue… After that, we chose the <i>"Golden Galettes"</i> which was satisfying.
+                    Then the
+                    program ended with an output of the agent's history. <br/>
+                    We can see in the agent's output that it only remembered us choosing the <i>"Golden
+                        Galettes"</i> but not
+                    the <i>"Creamy Confections"</i>. This is because we loaded the last checkpoint which rolled us
+                    back to
+                    making our choice again.</p>
+                <p class="icon solid fa-info-circle"> Note that the Task replacing the variables might not work very
+                    well with dumb LLMs. It could
+                    be reworked by splitting it into two. One that would extract the name of the chosen pastry from
+                    the user's input and a second one that would generate the associated calories. Finally, print
+                    the sentence with the variables pre-generated. Using local models is all about knowing the
+                    maximum performance of your LLM and adapting the prompts to match that performance. The dumber,
+                    the more guidance it needs! </p>
 
-					<hr class="major" />
+                <hr class="major"/>
 
-					<h2 id="Zero-prompt-shot-vs-multi-prompt-shot">Zero-prompt shot vs multi-prompt shot</h2>
-					<p>When an LLM struggles to solve a complex task and achieve a good success rate it may be time to
-						give it a little help. </p>
-					<p>In large language models, the approach to prompting can significantly influence the model's
-						performance. </p>
-					<ul>
-						<li><em>Zero-shot prompting</em> asks the model to complete a task without any prior examples,
-							relying solely on its pre-existing knowledge. This can lead to varied results, especially in
-							more complex tasks.</li>
-						<li><em>One-shot prompting</em> improves accuracy by providing the model with a single example,
-							offering some guidance on how to approach the task.</li>
-						<li><em>Few-shot prompting</em> further enhances performance by supplying multiple examples,
-							allowing the model to have a better understanding of the task's nuances and producing more
-							reliable and accurate results.</li>
-					</ul>
-					<p>Yacana provides you with a way to add new Messages to the History manually. The History class
-						exposes an <code>.add(...)</code> method. <br />
-						It takes an argument of type <code>Message()</code> with two parameters: a
-						[MessageRole]() enum and the string message itself. </p>
-					<p>For example: </p>
-					<pre><code class="language-python">
+                <h2 id="Zero-prompt-shot-vs-multi-prompt-shot">Zero-prompt shot vs multi-prompt shot</h2>
+                <p>When an LLM struggles to solve a complex task and achieve a good success rate it may be time to
+                    give it a little help. </p>
+                <p>In large language models, the approach to prompting can significantly influence the model's
+                    performance. </p>
+                <ul>
+                    <li><em>Zero-shot prompting</em> asks the model to complete a task without any prior examples,
+                        relying solely on its pre-existing knowledge. This can lead to varied results, especially in
+                        more complex tasks.
+                    </li>
+                    <li><em>One-shot prompting</em> improves accuracy by providing the model with a single example,
+                        offering some guidance on how to approach the task.
+                    </li>
+                    <li><em>Few-shot prompting</em> further enhances performance by supplying multiple examples,
+                        allowing the model to have a better understanding of the task's nuances and producing more
+                        reliable and accurate results.
+                    </li>
+                </ul>
+                <p>Yacana provides you with a way to add new Messages to the History manually. The History class
+                    exposes an <code>.add(...)</code> method. <br/>
+                    It takes an argument of type <code>Message()</code> with two parameters: a
+                    [MessageRole]() enum and the string message itself. </p>
+                <p>For example: </p>
+                <pre><code class="language-python">
 from yacana import Agent, Message, MessageRole
 
 # Creating a basic agent with an empty history
@@ -346,33 +361,36 @@ agent1.history.add(fake_ai_response)
 
 # Print the content of the history
 agent1.history.pretty_print()
-					</code></pre><br>
-					<p>Outputs:</p>
-					<pre><code class="text-output">
+					</code></pre>
+                <br>
+                <p>Outputs:</p>
+                <pre><code class="text-output">
 [user]:
 What's 2+2 ?
 
 [assistant]:
 The answer is 4
-					</code></pre><br>
-					<p>The Agent's History successfully contains the two messages we manually added. </p>
-					<p class="icon solid fa-info-circle"> The <code>.add()</code> method can only
-						<strong>append</strong> messages to the end of the
-						History.
-					</p>
-					<p>⚠️ Try to keep the alternation of USER and ASSISTANT as this is how "instruct" LLMs have been
-						trained. </p>
-					<hr />
-					<p>Let's see a 0-shot example asking for a JSON output extracted from a given sentence: </p>
-					<pre><code class="language-python">
+					</code></pre>
+                <br>
+                <p>The Agent's History successfully contains the two messages we manually added. </p>
+                <p class="icon solid fa-info-circle"> The <code>.add()</code> method can only
+                    <strong>append</strong> messages to the end of the
+                    History.
+                </p>
+                <p>⚠️ Try to keep the alternation of USER and ASSISTANT as this is how "instruct" LLMs have been
+                    trained. </p>
+                <hr/>
+                <p>Let's see a 0-shot example asking for a JSON output extracted from a given sentence: </p>
+                <pre><code class="language-python">
 from yacana import Agent, Task
 
 agent1 = Agent("Ai assistant", "llama3.1:8b")
 
 Task(f"Print the following sentence as JSON, extracting the names and rephrasing the actions: 'Marie is walking her dog. Ryan is watching them through the window. The dark sky is pouring down heavy raindrops.'", agent1).solve()
-					</code></pre><br>
-					<p>Outputs:</p>
-					<pre><code class="text-output">
+					</code></pre>
+                <br>
+                <p>Outputs:</p>
+                <pre><code class="text-output">
 INFO: [PROMPT]: Print the following sentence as JSON extracting the names and rephrasing the actions: 'Marie is walking her dog. Ryan is watching them through the window. The dark sky is pouring down heavy raindrops.'
 
 INFO: [AI_RESPONSE]: Here is the sentence rewritten in JSON format:
@@ -393,28 +411,31 @@ INFO: [AI_RESPONSE]: Here is the sentence rewritten in JSON format:
 	}
 }
 Let me know if you'd like me to help with anything else!
-					</code></pre><br>
-					<p>Not bad but there's noise. We would like to output the JSON and nothing else. No bedside manners.
-						The <code>Let me know if you'd like me to help with anything else!</code> must go. <br />
-						Let's introduce another optional Task() parameter: <code>json_output=True</code>. This relies on
-						Ollama to force the output as JSON. <br />
-						⚠️ It is preferable to prompt the LLM to output as JSON in addition to this option. </p>
-					<p>Replace the Task with this one:</p>
-					<pre><code class="language-python">
+					</code></pre>
+                <br>
+                <p>Not bad but there's noise. We would like to output the JSON and nothing else. No bedside manners.
+                    The <code>Let me know if you'd like me to help with anything else!</code> must go. <br/>
+                    Let's introduce another optional Task() parameter: <code>json_output=True</code>. This relies on
+                    Ollama to force the output as JSON. <br/>
+                    ⚠️ It is preferable to prompt the LLM to output as JSON in addition to this option. </p>
+                <p>Replace the Task with this one:</p>
+                <pre><code class="language-python">
 Task(f"Print the following sentence as JSON extracting the names and rephrasing the actions: 'Marie is walking her dog. Ryan is watching them through the window. The dark sky is pouring down heavy raindrops.'", agent1, json_output=True).solve()
-					</code></pre><br>
-					<p>Outputs:</p>
-					<pre><code class="text-output">
+					</code></pre>
+                <br>
+                <p>Outputs:</p>
+                <pre><code class="text-output">
 INFO: [PROMPT]: Print the following sentence as JSON extracting the names and rephrasing the actions: 'Marie is walking her dog. Ryan is watching them through the window. The dark sky is pouring down heavy raindrops.'
 
 INFO: [AI_RESPONSE]: {"names": ["Marie", "Ryan"], "actions": {"Marie": "is walking", "Ryan": "is watching"}, "description": [{"location": "window", "activity": "watching"}, {"location": "outdoors", "activity": "pouring raindrops"}]}
-					</code></pre><br>
-					<p>Way better. No more noise. <br />
-						However, we would prefer having an array of <code>name</code> and <code>action</code> even for
-						the weather (the name would be <em>sky</em> and the action <em>raining</em>).</p>
-					<p>To achieve this let's give the LLM an example of what we expect by making it believe it already
-						outputted it correctly once: </p>
-					<pre><code class="language-python">
+					</code></pre>
+                <br>
+                <p>Way better. No more noise. <br/>
+                    However, we would prefer having an array of <code>name</code> and <code>action</code> even for
+                    the weather (the name would be <em>sky</em> and the action <em>raining</em>).</p>
+                <p>To achieve this let's give the LLM an example of what we expect by making it believe it already
+                    outputted it correctly once: </p>
+                <pre><code class="language-python">
 from yacana import Agent, Task, MessageRole, Message
 
 agent1 = Agent("Ai assistant", "llama3.1:8b")
@@ -424,22 +445,24 @@ agent1.history.add(Message(MessageRole.USER, "Print the following sentence as js
 agent1.history.add(Message(MessageRole.ASSISTANT, '[{"name": "John", "action": "Reading a book.", "Cold wind": "Blowing through the trees."]'))
 
 Task(f"Print the following sentence as json extracting the names and rephrasing the actions: 'Marie is walking her dog. Ryan is watching them through the window. The dark sky is pouring down heavy raindrops.'", agent1).solve()
-					</code></pre><br>
-					<p>Outputs:</p>
-					<pre><code class="text-output">
+					</code></pre>
+                <br>
+                <p>Outputs:</p>
+                <pre><code class="text-output">
 INFO: [PROMPT]: Print the following sentence as JSON extracting the names and rephrasing the actions: 'Marie is walking her dog. Ryan is watching them through the window. The dark sky is pouring down heavy raindrops.'
 
 INFO: [AI_RESPONSE]: [{"name": "Marie", "action": "Walking her dog."}, {"name": "Ryan", "action": "Watching Marie and her dog through the window."}, {"name": "The dark sky", "action": "Pouring down heavy raindrops."}]
-					</code></pre><br>
-					<p>This is perfect! <br />
-						(❕ Model temperature may impact performance here. Consider using a low value.) <br />
-						You can add multiple fake interactions like this one to cover more advanced use cases and train
-						the LLM on how to react when they happen. It would become multi-shot prompting. </p>
-					<hr />
-					<p>You can also do multi-shot prompting with self-reflection. This takes more CPU time because you
-						decompose the task into multiple subtasks but can be beneficial in some scenarios. </p>
-					<p>For example: </p>
-					<pre><code class="language-python">
+					</code></pre>
+                <br>
+                <p>This is perfect! <br/>
+                    (❕ Model temperature may impact performance here. Consider using a low value.) <br/>
+                    You can add multiple fake interactions like this one to cover more advanced use cases and train
+                    the LLM on how to react when they happen. It would become multi-shot prompting. </p>
+                <hr/>
+                <p>You can also do multi-shot prompting with self-reflection. This takes more CPU time because you
+                    decompose the task into multiple subtasks but can be beneficial in some scenarios. </p>
+                <p>For example: </p>
+                <pre><code class="language-python">
 from yacana import Agent, Task
 
 agent1 = Agent("Ai assistant", "llama3.1:8b")
@@ -447,9 +470,10 @@ agent1 = Agent("Ai assistant", "llama3.1:8b")
 Task('I will give you a sentence where you must extract as JSON all the names and rephrase all the actions. For example in the following sentence: "John is reading a book on the porch while the cold wind blows through the trees." would result in this JSON output: [{"name": "John", "action": "Reading a book."}, {"name": "Cold wind", "action": "Blowing through the trees."}] ', agent1).solve()
 
 Task(f"Marie is walking her dog. Ryan is watching them through the window. The dark sky is pouring down heavy raindrops.", agent1, json_output=True).solve()
-					</code></pre><br>
-					<p>Outputs</p>
-					<pre><code class="text-output">
+					</code></pre>
+                <br>
+                <p>Outputs</p>
+                <pre><code class="text-output">
 INFO: [PROMPT]: I will give you a sentence where you must extract as JSON all the names and rephrase all the actions. For example in the following sentence: "John is reading a book on the porch while the cold wind blows through the trees." would result in this JSON output: [{"name": "John", "action": "Reading a book."}, {"name": "Cold wind", "action": "Blowing through the trees."}]
 
 INFO: [AI_RESPONSE]: I'm ready to extract the names and rephrase the actions. What's the sentence?
@@ -457,21 +481,22 @@ INFO: [AI_RESPONSE]: I'm ready to extract the names and rephrase the actions. Wh
 INFO: [PROMPT]: Marie is walking her dog. Ryan is watching them through the window. The dark sky is pouring down heavy raindrops.
 
 INFO: [AI_RESPONSE]: {"name": "Marie", "action": "Walking with her dog."}
-					</code></pre><br>
-					<p>:-( <br />
-						In this case, it didn't work very well as only one name was extracted as JSON. But in more
-						complex scenarios we can assure you that letting the LLM reflect on the guideline beforehand,
-						can be very beneficial to solving the task. </p>
+					</code></pre>
+                <br>
+                <p>:-( <br/>
+                    In this case, it didn't work very well as only one name was extracted as JSON. But in more
+                    complex scenarios we can assure you that letting the LLM reflect on the guideline beforehand,
+                    can be very beneficial to solving the task. </p>
 
-					<hr class="major" />
+                <hr class="major"/>
 
-					<h2 id="saving-agent-state">Saving Agent state</h2>
-					<p>Maybe your program needs to start, stop, and resume where it stopped. For this use case, Yacana
-						provides a way to store an Agent state into a file and load it later. All of the Agent's
-						properties are saved including the History. Only checkpoints are lost as they are more of a
-						runtime thing. We might include them in the save file one day if the need arises. </p>
-					<p>To save an Agent do the following: </p>
-					<pre><code class="language-python">
+                <h2 id="saving-agent-state">Saving Agent state</h2>
+                <p>Maybe your program needs to start, stop, and resume where it stopped. For this use case, Yacana
+                    provides a way to store an Agent state into a file and load it later. All of the Agent's
+                    properties are saved including the History. Only checkpoints are lost as they are more of a
+                    runtime thing. We might include them in the save file one day if the need arises. </p>
+                <p>To save an Agent do the following: </p>
+                <pre><code class="language-python">
 from yacana import Agent, Task
 
 agent1 = Agent("Ai assistant", "llama3.1:8b")
@@ -480,9 +505,10 @@ Task("What's 2+2 ?", agent1).solve()
 
 # Exporting the agent1 current state to a file called agent1_save.json
 agent1.export_state("./agent1_save.json")
-					</code></pre><br>
-					<p>If you look at the file <code>agent1_save.json</code> you'll see something like this:</p>
-					<pre><code class="text-output">
+					</code></pre>
+                <br>
+                <p>If you look at the file <code>agent1_save.json</code> you'll see something like this:</p>
+                <pre><code class="text-output">
 {
     "name": "Ai assistant",
     "model_name": "llama3.1:8b",
@@ -500,191 +526,205 @@ agent1.export_state("./agent1_save.json")
         }
     ]
 }
-					</code></pre><br>
-					<p>Now let's load back this agent from the dead using <code>.get_agent_from_state()</code>! <br />
-						<strong>In another Python file</strong> add this code snippet:
-					</p>
-					<pre><code class="language-python">
+					</code></pre>
+                <br>
+                <p>Now let's load back this agent from the dead using <code>.get_agent_from_state()</code>! <br/>
+                    <strong>In another Python file</strong> add this code snippet:
+                </p>
+                <pre><code class="language-python">
 from yacana import Agent, Task
 
 agent2: Agent = Agent.get_agent_from_state("./agent1_save.json")
 
 Task("Multiply by 2 the previous result", agent2).solve()
-					</code></pre><br>
-					<p class="icon solid fa-info-circle"> The <code>.get_agent_from_state(...)</code> works like a
-						factory pattern, returning a new
-						instance of an Agent.</p>
-					<p>▶️ Output:</p>
-					<pre><code class="text-output">
+					</code></pre>
+                <br>
+                <p class="icon solid fa-info-circle"> The <code>.get_agent_from_state(...)</code> works like a
+                    factory pattern, returning a new
+                    instance of an Agent.</p>
+                <p>▶️ Output:</p>
+                <pre><code class="text-output">
 INFO: [PROMPT]: Multiply by 2 the previous result
 
 INFO: [AI_RESPONSE]: If we multiply 4 by 2, we get...
 
 8!
-					</code></pre><br>
-					<p>As you can see when asked to multiply by 2 the previous result, it remembered agent1's result
-						which was 4. It then did 4 x 2 and got us 8. </p>
+					</code></pre>
+                <br>
+                <p>As you can see when asked to multiply by 2 the previous result, it remembered agent1's result
+                    which was 4. It then did 4 x 2 and got us 8. </p>
 
-					<div style="text-align: center; margin-top: 50px;">
-						<h4>Pagination</h4>
-						<ul class="pagination">
-							<li><a href="routing.html#concepts-of-routing" class="button">Prev</a></li>
+                <div style="text-align: center; margin-top: 50px;">
+                    <h4>Pagination</h4>
+                    <ul class="pagination">
+                        <li><a href="routing.html#concepts-of-routing" class="button">Prev</a></li>
 
-							<li><a href="tool_calling.html#concept-of-calling-tools" class="button">Next</a></li>
-						</ul>
-					</div>
-				</section>
-			</div>
-		</div>
+                        <li><a href="tool_calling.html#concept-of-calling-tools" class="button">Next</a></li>
+                    </ul>
+                </div>
+            </section>
+        </div>
+    </div>
 
-		<!-- Sidebar -->
-		<div id="sidebar">
-			<div class="inner">
+    <!-- Sidebar -->
+    <div id="sidebar">
+        <div class="inner">
 
-				<!-- Search -->
-				<section id="search" class="alt">
-					<form method="post" action="#">
-						<input type="text" name="query" id="query" placeholder="Search" />
-					</form>
-				</section>
+            <!-- Search -->
+            <section id="search" class="alt">
+                <form method="post" action="#">
+                    <input type="text" name="query" id="query" placeholder="Search"/>
+                </form>
+            </section>
 
-				<!-- Menu -->
-				<nav id="menu">
-					<header class="major">
-						<h2>Menu</h2>
-					</header>
-					<ul>
-						<li><a href="../index.html">Homepage</a></li>
-						<li>
-							<span class="opener">I. Installation</span>
-							<ul>
-								<li><a href="installation.html#installing-ollama">Installing Ollama</a></li>
-								<li><a href="installation.html#choosing-an-llm-model">Choosing an LLM model</a>
-								</li>
-								<li><a href="installation.html#running-the-model">Running the model</a></li>
-								<li><a href="installation.html#installing-yacana">Installing Yacana</a></li>
-								<li><a href="installation.html#imports">Imports</a></li>
-							</ul>
-						</li>
-						<li>
-							<span class="opener">II. Agents & Tasks</span>
-							<ul>
-								<li><a href="agents_and_tasks.html#creating-an-agent">Creating an Agent</a></li>
-								<li><a href="agents_and_tasks.html#basic-roleplay">Basic roleplay</a></li>
-								<li><a href="agents_and_tasks.html#creating-tasks">Creating Tasks</a></li>
-								<li><a href="agents_and_tasks.html#getting-the-result-of-a-task">Getting the
-										result of a Task</a></li>
-								<li><a href="agents_and_tasks.html#chaining-tasks">Chaining Tasks</a></li>
-								<li><a href="agents_and_tasks.html#logging-levels">Logging levels</a></li>
-								<li><a href="agents_and_tasks.html#configuring-llms-settings">Configuring LLM's
-										settings</a></li>
-							</ul>
-						</li>
-						<li>
-							<span class="opener">III. Routing</span>
-							<ul>
-								<li><a href="routing.html#concepts-of-routing">Concepts of routing</a></li>
-								<li><a href="routing.html#self-reflection-routing">Self-reflection routing</a>
-								</li>
-								<li><a href="routing.html#cleaning-history">Cleaning history</a></li>
-								<li><a href="routing.html#routing-demonstration">Routing demonstration</a></li>
-							</ul>
-						</li>
-						<li>
-							<span class="opener">IV. Managing Agents history</span>
-							<ul>
-								<li><a href="managing_agent_history.html#printing-history">Printing history</a>
-								</li>
-								<li><a href="managing_agent_history.html#creating-and-loading-checkpoints">Creating
-										and loading checkpoints</a></li>
-								<li><a href="managing_agent_history.html#Zero-prompt-shot-vs-multi-prompt-shot">Zero-prompt
-										shot vs multi-prompt shot</a></li>
-								<li><a href="managing_agent_history.html#saving-agent-state">Saving Agent
-										state</a></li>
-							</ul>
-						</li>
-						<li>
-							<span class="opener">V. Tool calling</span>
-							<ul>
-								<li><a href="tool_calling.html#concept-of-calling-tools">Concepts of calling
-										tools</a></li>
-								<li><a href="tool_calling.html#writing-good-tool-prompts">Writing good tool
-										prompts</a></li>
-								<li><a href="tool_calling.html#calling-a-tool">Calling a tool</a></li>
-								<li><a href="tool_calling.html#improving-tool-calling-results">Improving
-										tool-calling results</a></li>
-								<li><a href="tool_calling.html#optional-tools">Optional tools</a></li>
-								<li><a href="tool_calling.html#assigning-multiple-tools">Assigning multiple
-										Tools</a></li>
-							</ul>
-						</li>
-						<li>
-							<span class="opener">VI. Dual-agents chat</span>
-							<ul>
-								<li><a href="dual_agents_chat.html#stopping-chat-using-maximum-iterations">Stopping
-										chat using 'maximum iterations'</a></li>
-								<li><a href="dual_agents_chat.html#letting-agents-end-the-chat">Letting Agents end
-										the chat</a></li>
-								<li><a href="dual_agents_chat.html#controlling-the-shift-message">Controlling the
-										Shift Message</a></li>
-								<li><a href="dual_agents_chat.html#using-tools-in-chat">Using tools in chat</a>
-								</li>
-							</ul>
-						</li>
-						<li><a href="multi_agents_chat.html#multi-agents-chat">VII. Multi-agents chat</a></li>
+            <!-- Menu -->
+            <nav class="menu">
+                <header class="major">
+                    <h2>Menu</h2>
+                </header>
+                <ul>
+                    <li><a href="../index.html">Homepage</a></li>
+                    <li>
+                        <span class="opener">I. Installation</span>
+                        <ul>
+                            <li><a href="installation.html#installing-ollama">Installing Ollama</a></li>
+                            <li><a href="installation.html#choosing-an-llm-model">Choosing an LLM model</a>
+                            </li>
+                            <li><a href="installation.html#running-the-model">Running the model</a></li>
+                            <li><a href="installation.html#installing-yacana">Installing Yacana</a></li>
+                            <li><a href="installation.html#imports">Imports</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <span class="opener">II. Agents & Tasks</span>
+                        <ul>
+                            <li><a href="agents_and_tasks.html#creating-an-agent">Creating an Agent</a></li>
+                            <li><a href="agents_and_tasks.html#basic-roleplay">Basic roleplay</a></li>
+                            <li><a href="agents_and_tasks.html#creating-tasks">Creating Tasks</a></li>
+                            <li><a href="agents_and_tasks.html#getting-the-result-of-a-task">Getting the
+                                result of a Task</a></li>
+                            <li><a href="agents_and_tasks.html#chaining-tasks">Chaining Tasks</a></li>
+                            <li><a href="agents_and_tasks.html#logging-levels">Logging levels</a></li>
+                            <li><a href="agents_and_tasks.html#configuring-llms-settings">Configuring LLM's
+                                settings</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <span class="opener">III. Routing</span>
+                        <ul>
+                            <li><a href="routing.html#concepts-of-routing">Concepts of routing</a></li>
+                            <li><a href="routing.html#self-reflection-routing">Self-reflection routing</a>
+                            </li>
+                            <li><a href="routing.html#cleaning-history">Cleaning history</a></li>
+                            <li><a href="routing.html#routing-demonstration">Routing demonstration</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <span class="opener">IV. Managing Agents history</span>
+                        <ul>
+                            <li><a href="managing_agent_history.html#printing-history">Printing history</a>
+                            </li>
+                            <li><a href="managing_agent_history.html#creating-and-loading-checkpoints">Creating
+                                and loading checkpoints</a></li>
+                            <li><a href="managing_agent_history.html#Zero-prompt-shot-vs-multi-prompt-shot">Zero-prompt
+                                shot vs multi-prompt shot</a></li>
+                            <li><a href="managing_agent_history.html#saving-agent-state">Saving Agent
+                                state</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <span class="opener">V. Tool calling</span>
+                        <ul>
+                            <li><a href="tool_calling.html#concept-of-calling-tools">Concepts of calling
+                                tools</a></li>
+                            <li><a href="tool_calling.html#writing-good-tool-prompts">Writing good tool
+                                prompts</a></li>
+                            <li><a href="tool_calling.html#calling-a-tool">Calling a tool</a></li>
+                            <li><a href="tool_calling.html#improving-tool-calling-results">Improving
+                                tool-calling results</a></li>
+                            <li><a href="tool_calling.html#optional-tools">Optional tools</a></li>
+                            <li><a href="tool_calling.html#assigning-multiple-tools">Assigning multiple
+                                Tools</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <span class="opener">VI. Dual-agents chat</span>
+                        <ul>
+                            <li><a href="dual_agents_chat.html#stopping-chat-using-maximum-iterations">Stopping
+                                chat using 'maximum iterations'</a></li>
+                            <li><a href="dual_agents_chat.html#letting-agents-end-the-chat">Letting Agents end
+                                the chat</a></li>
+                            <li><a href="dual_agents_chat.html#controlling-the-shift-message">Controlling the
+                                Shift Message</a></li>
+                            <li><a href="dual_agents_chat.html#using-tools-in-chat">Using tools in chat</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li><a href="multi_agents_chat.html#multi-agents-chat">VII. Multi-agents chat</a></li>
+                </ul>
+                <br>
+                <ul>
+                    <li>
+                        <a href="classes.html">
+                            <span style="display: inline" class="icon solid fa-cog">
+                                <span class="label">
+                                    Technical Documentation
+                                </span>
+                                Technical Documentation
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
 
+            <!-- Section -->
+            <section>
+                <header class="major">
+                    <h2>Related Youtube video</h2>
+                </header>
+                <div class="mini-posts">
+                    <article>
+                        <a href="#" class="image"><img src="../images/youtube_down.jpg" alt=""/></a>
+                        <p>Youtube video for this section is still under creation. Please be patient ^^</p>
+                    </article>
+                </div>
+            </section>
 
-					</ul>
-				</nav>
+            <!-- Section -->
+            <section>
+                <nav class="menu">
+                    <header class="major">
+                        <h2>Page menu</h2>
+                    </header>
+                    <ul>
+                        <li><a href="managing_agent_history.html#printing-history">Printing history</a>
+                        </li>
+                        <li><a href="managing_agent_history.html#creating-and-loading-checkpoints">Creating
+                            and loading checkpoints</a></li>
+                        <li><a href="managing_agent_history.html#Zero-prompt-shot-vs-multi-prompt-shot">Zero-prompt
+                            shot vs multi-prompt shot</a></li>
+                        <li><a href="managing_agent_history.html#saving-agent-state">Saving Agent
+                            state</a></li>
+                    </ul>
+                </nav>
+            </section>
 
-				<!-- Section -->
-				<section>
-					<header class="major">
-						<h2>Related Youtube video</h2>
-					</header>
-					<div class="mini-posts">
-						<article>
-							<a href="#" class="image"><img src="../images/youtube_down.jpg" alt="" /></a>
-							<p>Youtube video for this section is still under creation. Please be patient ^^</p>
-						</article>
-					</div>
-				</section>
+            <!-- Footer -->
+            <footer id="footer">
+                <p class="copyright">&copy; Emilien Lancelot. All rights reserved.<br>
+                    Design: <a href="https://html5up.net">HTML5UP</a>.</p>
+            </footer>
+        </div>
+    </div>
 
-				<!-- Section -->
-				<section>
-					<nav id="menu">
-						<header class="major">
-							<h2>Page menu</h2>
-						</header>
-						<ul>
-							<li><a href="managing_agent_history.html#printing-history">Printing history</a>
-							</li>
-							<li><a href="managing_agent_history.html#creating-and-loading-checkpoints">Creating
-									and loading checkpoints</a></li>
-							<li><a href="managing_agent_history.html#Zero-prompt-shot-vs-multi-prompt-shot">Zero-prompt
-									shot vs multi-prompt shot</a></li>
-							<li><a href="managing_agent_history.html#saving-agent-state">Saving Agent
-									state</a></li>
-						</ul>
-					</nav>
-				</section>
+</div>
 
-				<!-- Footer -->
-				<footer id="footer">
-					<p class="copyright">&copy; Emilien Lancelot. All rights reserved.<br>
-						Design: <a href="https://html5up.net">HTML5UP</a>.</p>
-				</footer>
-			</div>
-		</div>
-
-	</div>
-
-	<!-- Scripts -->
-	<script src="../assets/js/jquery.min.js"></script>
-	<script src="../assets/js/browser.min.js"></script>
-	<script src="../assets/js/breakpoints.min.js"></script>
-	<script src="../assets/js/util.js"></script>
-	<script src="../assets/js/main.js"></script>
+<!-- Scripts -->
+<script src="../assets/js/jquery.min.js"></script>
+<script src="../assets/js/browser.min.js"></script>
+<script src="../assets/js/breakpoints.min.js"></script>
+<script src="../assets/js/util.js"></script>
+<script src="../assets/js/main.js"></script>
 
 </body>
 
