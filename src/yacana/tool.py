@@ -1,11 +1,29 @@
 import inspect
 import json
 import logging
-from typing import List, Callable
+from enum import Enum
+from typing import List, Callable, Dict, Any, Tuple
 
-from .exceptions import IllogicalConfiguration
+from .exceptions import IllogicalConfiguration, McpBadToolConfig
 from .function_to_json_schema import function_to_json_with_pydantic
 from .history import History, MessageRole, OllamaUserMessage
+
+
+class ToolType(Enum):
+    """
+    <b>ENUM:</b> ToolType
+
+    How a tool must be presented to the LLM so it can be called.
+
+    Attributes
+    ----------
+    OPENAI : str
+        Tool calling will follow the OpenAi function calling format.
+    YACANA : str
+        Tool calling will follow the Yacana function calling format available to all LLMs.
+    """
+    OPENAI = "OPENAI"
+    YACANA = "YACANA"
 
 
 class Tool:
@@ -42,6 +60,9 @@ class Tool:
         Note that Yacana uses the parameters given to the LLM to call the tool so if they are invalid then Yacana will have a hard time to fix the situation.
         You should try to give examples to the LLM on how to call the tool either in the tool description or when using the @usage_examples attribute to help the model.
         Defaults to 5.
+    shush : bool, optional
+        If True, the tool won't warn anymore about the unsupported tool setting optional=True and using Ollama + OpenAi style tool calling.
+        Defaults to False.
 
     Attributes
     ----------
@@ -59,6 +80,12 @@ class Tool:
         Maximum number of custom errors (raised from the function) allowed before stopping the task.
     max_call_error : int
         Maximum number of call errors (eg: python can't find the function) allowed before stopping the task.
+    is_mcp: bool
+        Is this tool a local tool or an MCP tool.
+    shush : bool
+        If True, suppresses warnings about unsupported optional tool configurations with Ollama.
+    tool_type: ToolType
+        The tool execution style. Either use the Yacana style (default) or follow the OpenAi style.
 
     Raises
     ------
@@ -67,23 +94,59 @@ class Tool:
     """
 
     def __init__(self, tool_name: str, function_description: str, function_ref: Callable, optional: bool = False,
-                 usage_examples: List[dict] | None = None, max_custom_error: int = 5, max_call_error: int = 5) -> None:
+                 usage_examples: List[dict] | None = None, max_custom_error: int = 5, max_call_error: int = 5,
+                 tool_type: ToolType = ToolType.YACANA, mcp_input_schema: dict = None, shush=False) -> None:
         self.tool_name: str = tool_name
         self.function_description: str = function_description
         self.function_ref: Callable = function_ref
+        self.is_mcp: bool = mcp_input_schema is not None
         self.optional: bool = optional
         self.usage_examples: List[dict] = usage_examples if usage_examples is not None else []
-        self._function_prototype: str = Tool._extract_prototype(function_ref)
-        self._function_args: List[str] = Tool._extract_parameters(function_ref)
-        self._openai_function_schema: dict | None = None
+        self.mcp_input_schema: dict = mcp_input_schema
+
+        if mcp_input_schema is not None:
+            self._openai_function_schema: dict = self._function_to_json_with_mcp(mcp_input_schema)
+            params: List[Tuple[str, str]] = self.input_shema_to_prototype(mcp_input_schema)
+            self._function_prototype: str = self.tool_name + "(" + ", ".join([f"{name}: {type_}" for name, type_ in params]) + ")"
+            self._function_args: List[str] = [param[0] for param in params]
+        else:
+            self._openai_function_schema: dict = self._function_to_json_with_pydantic()
+            self._function_prototype: str = Tool._extract_prototype(function_ref)
+            self._function_args: List[str] = Tool._extract_parameters(function_ref)
+
         self.max_custom_error: int = max_custom_error
         self.max_call_error: int = max_call_error
+        self.tool_type: ToolType = tool_type
+        self.shush = shush
+
         if max_custom_error < 0 or max_call_error < 0:
             raise IllogicalConfiguration("@max_custom_error and @max_call_error must be > 0")
         if " " in self.tool_name:
-            logging.warning(f"Tool name {self.tool_name} contains spaces. Some inference servers may not support it. We recommand you use CamelCase instead.")
-        # Unused for now as it poses pb when there are multiple tools. We lack of a tool parent object that could store this information.
-        #self.post_tool_prompt: str | None = post_tool_prompt_reflection
+            logging.warning(f"Tool name {self.tool_name} contains spaces. Some inference servers may not support it. We recommend you use CamelCase instead.")
+
+    def input_shema_to_prototype(self, input_shema: dict) -> List[Tuple[str, str]]:
+        """
+        Converts the input schema to a function prototype string.
+
+        Parameters
+        ----------
+        input_shema : dict
+            The input schema to convert.
+
+        Returns
+        -------
+         List[(str, str)]
+            tuple[0] is the param name and tuple[1] is the param type.
+        """
+        if input_shema.get("type") != "object" or "properties" not in input_shema:
+            raise McpBadToolConfig(f"For tool '{self.tool_name}' from source MCP : Input schema must be an object with properties.")
+
+        result: List[Tuple[str, str]] = []
+        for param_name, param_info in input_shema["properties"].items():
+            param_type = param_info.get("type", "Any")
+            result.append((param_name, param_type))
+
+        return result
 
     def _get_examples_as_history(self, tags: List[str]) -> History:
         """
@@ -154,7 +217,7 @@ class Tool:
         # Extract the parameter names into a list
         return [param_name for param_name in parameters]
 
-    def _function_to_json_with_pydantic(self) -> None:
+    def _function_to_json_with_pydantic(self) -> Dict:
         """
         Convert the function to a JSON schema using Pydantic.
 
@@ -162,4 +225,32 @@ class Tool:
         OpenAI's function calling API. The schema is stored in the
         _openai_function_schema attribute.
         """
-        self._openai_function_schema = function_to_json_with_pydantic(self.tool_name, self.function_description, self.function_ref)
+        return function_to_json_with_pydantic(self.tool_name, self.function_description, self.function_ref)
+
+    def _function_to_json_with_mcp(self, input_shema: dict) -> Dict:
+        return {
+            "type": "function",
+            "function": {
+                "name": self.tool_name,
+                "description": self.function_description,
+                "parameters": input_shema,
+                "strict": True
+            }
+        }
+
+    @staticmethod
+    def bulk_tool_type_update(tools: List['Tool'], tool_type: ToolType) -> None:
+        """
+        Update the tool type for a list of tools.
+        !Warning!: the tool type will remain the same until it is changed otherwise.
+        This is different from mcp.get_tools_as(<tool_type>) which returns a copy of the tools.
+
+        Parameters
+        ----------
+        tools : List[Tool]
+            The list of tools to update.
+        tool_type : ToolType
+            The new tool type to set for all tools in the list.
+        """
+        for tool in tools:
+            tool.tool_type = tool_type

@@ -84,3 +84,61 @@ def function_to_json_with_pydantic(tool_name: str, description: str, func: Calla
     }
 
     return func_json
+
+
+def input_schema_to_function_json(tool_name: str, description: str, input_schema: dict) -> dict:
+    """
+    Convert a JSON input schema to the structured function calling format.
+
+    Args:
+        tool_name (str): Name of the tool/function.
+        description (str): Description of the tool/function.
+        input_schema (dict): The schema describing parameters, e.g. {"type": "object", "properties": ..., "required": ...}.
+
+    Returns:
+        dict: JSON structure in the format expected for LLM function calls.
+    """
+
+    def map_json_schema_type(prop: dict) -> dict:
+        """Map JSON Schema types to expected format."""
+        json_type_mapping = {
+            "integer": "number",
+            "string": "string",
+            "array": "array",
+            "object": "object",
+            "boolean": "boolean",
+            "number": "number",
+        }
+        prop_type = prop.get("type", "string")
+        mapped_type = json_type_mapping.get(prop_type, "string")
+
+        result = {"type": mapped_type}
+
+        if mapped_type == "array" and "items" in prop:
+            result["items"] = map_json_schema_type(prop["items"])
+
+        return result
+
+    properties = input_schema.get("properties", {})
+    required = input_schema.get("required", [])
+
+    # Map and transform properties
+    transformed_properties = {
+        name: map_json_schema_type(prop)
+        for name, prop in properties.items()
+    }
+
+    return {
+        "type": "function",
+        "function": {
+            "name": tool_name,
+            "description": description,
+            "parameters": {
+                "type": "object",
+                "properties": transformed_properties,
+                "required": required,
+                "additionalProperties": False
+            },
+            "strict": True
+        }
+    }

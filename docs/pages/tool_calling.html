@@ -54,28 +54,24 @@
             <!-- Content -->
             <section>
                 <header class="main">
-                    <h1 id="concept-of-calling-tools">V. Tool calling</h1>
+                    <h1 id="concept-of-calling-tools">IV. Tool calling</h1>
                 </header>
 
                 <span class="image main"><img src="../images/toolcalling.jpg" alt="Tool calling"/></span>
 
                 <h2>Introduction to the tool calling concept</h2>
-                <p>Allowing the LLM to call a tool is the most important thing an agent can do! But what is a
-                    "tool"? A tool simply refers to a Python function. This function can be the entry point to any
-                    level of underlying complexity. But it doesn't matter. What matters is that the LLM can call the
-                    tool with parameters that match the function. This way, LLMs can interact with <em>classic</em>
-                    programming interfaces that produce deterministic results (aka normal programming).
-                </p>
-                <p>For instance, let's say you want a calculator powered by an LLM. You cannot rely on the LLM to do
-                    the math because even though it knows how to decompose equations to an extent and has basic
-                    arithmetics, it will fail on more advanced calculations. Therefore we do not expect the LLM to
-                    perform the operation itself. We already have the CPU to do this task perfectly. On the other
-                    hand, we expect the LLM to decompose the equation correctly and call tools for each arithmetic
-                    operation needed to solve it.
-                </p>
+                <div>
+                    Letting an LLM call a tool is the most powerful thing an agent can do. But what is a “tool”? Simply put, it’s a Python function.
+                    This function might be simple or wrap complex logic, it doesn’t matter. What matters is that the LLM can call it with the right parameters.
+                    This allows LLMs to interact with traditional, deterministic code.
+
+                    For example, imagine building an LLM-powered calculator. You shouldn’t rely on the LLM to do the math itself. It may handle basic arithmetic but will fail on more complex expressions.
+                    Instead, let the CPU do the math. The LLM’s job is to break down the equation and call the appropriate tools to compute each step.
+                </div>
                 <br>
-                <h4>In what way is Yacana different than other frameworks?</h4>
-                <p>Other frameworks assign their tools to the agent during its initialization. This creates a hard
+                <h4>In what way is Yacana different from other frameworks?</h4>
+                <p>
+                    Other frameworks assign their tools to the agent during its initialization. This creates a hard
                     link between the tools and the agents. In our opinion, this implementation tends to confuse the
                     agent because it's getting access to many tools that may not be relevant to the immediate task
                     it is given. In Yacana tools are only available at the Task level. Thus no noise is generated
@@ -85,58 +81,57 @@
                 </p>
                 <br>
                 <h4>Understanding the underlying mechanism of tool calling in LLMs</h4>
-                <p>A side note for those interested...</p>
-                <p>If you don't understand how a text-to-text neural network can call a Python function let me tell
-                    you: It doesn't.
-                </p><br>
-                <p>When we refer to <em>tool calling</em> we also refer to <em>function calling</em> which is very
-                    poorly named. Function calling is the ability of an inference server to make the LLM output the
-                    text in a particular format. As of today, only JSON is supported but there is no doubt that more
-                    formats will be available soon.
-                </p><br>
-                <p>
-                    That said, now that we can control how the LLM answers, we can parse a JSON of which we know the
-                    structure. Therefore, we can ask the LLM for a JSON that matches the prototype of a Python
-                    function. For instance the function name and some parameter values.
-                </p><br>
-                <p>
-                    Some LLMs have been trained to output JSON in a particular way that matches a particular JSON
-                    structure. This particular JSON structure has become a convention and was pushed by big AI
-                    players like OpenAI.<br>
-                    <br>
-                    Unfortunately, the size and complexity of this JSON doesn't work very well with our dumb 8B
-                    LLMs. This is a problem that ChatGPT, Claude, Grok and other smart LLMs don't have.<br>
-                    To overcome this particular issue, Yacana comes with its own JSON structure to call Python
-                    functions! It's way lighter than the OpenAI standard and Yacana uses <a href="https://youtube.com/shorts/Sb1spHDHU_4?si=yZsSLGx-7LeyG-5B">percussive
-                        maintenance</a> to force the LLM to output the JSON in a way that the tool
-                    expects.
-                </p>
-                <br>
-                <h4>Difference between the OllamaAgent and the OpenAIAgent</h4>
-                <p>
-                    Tools in Yacana share the same programming API across both Ollama and OpenAI-compatible backends. 
-                    However, they currently don't behave identically.<br>
-                    The OllamaAgent uses an enhanced tool calling mechanism tailored for local open-source models. 
-                    In contrast, the OpenAIAgent uses the standard OpenAI function calling approach, fully compatible with 
-                    ChatGPT and any backend that follows OpenAI’s API (like vLLM).<br>
-                </p>
-                    At the moment, each agent is stuck with its respective mechanism:
+                <p>A side note for beginners...</p><br>
+                <details>
+                  <summary>Show section...</summary><br>
+                    <p>
+                        You might wonder: how can a text-generating AI call a Python function? Well, <b>it can't</b>. Not directly.
+                    </p><br>
+
+                    <p>
+                        When we talk about <b><em>tool calling</em></b> (sometimes called <b><em>function calling</em></b>), we’re referring to a specific process: the LLM outputs a well-structured JSON object that 
+                        describes a function to call, including its name and the parameters to use. These parameters, and their values, are generated by the model.
+                    </p><br>
+
+                    <p>
+                        Since LLMs don’t normally speak JSON, it’s easy to detect when they’re trying to call a function. If the output matches the expected JSON structure, we parse it and trigger 
+                        the corresponding Python function with the provided parameters. Otherwise, the LLM’s response is treated like any regular reply, and the workflow continues.
+                    </p><br>
+
+                    <p>
+                        But how does the model know which functions it can call, and how to call them? Before the LLM can make any function call, you must send it a message containing two things:
+                    </p>
                     <ul>
-                        <li>The <a href=classes.html#tech-doc-OllamaAgent>OllamaAgent</a> uses the Enhanced Tool Calling</li>
-                        <li>The <a href=classes.html#tech-doc-openai-agent>OpenAiAgent</a> uses the OpenAI standard.</li>
+                        <li>A task or instruction</li>
+                        <li>A list of available tools</li>
                     </ul>
-                <p>
-                    In the near future, Yacana will support both mechanisms on both agents. The Enhanced Tool Calling 
-                    system will be made available to OpenAI-compatible backends, and the OllamaAgent will gain support for the 
-                    OpenAI standard via Ollama’s OpenAI-compatible endpoint.<br>
-                    Also, note that you can connect the OpenAIAgent to Ollama's OpenAI-compatible endpoint hence
-                    using the OpenAI tool calling standard with your Ollama instance.
-                </p>
+                    <p>
+                        This tool list is itself a JSON array. It includes each function’s name, description, and the parameters it accepts, including the expected types.<br>
+                        <b>The types are important:</b> passing <code>"4"</code> (a string) instead of <code>4</code> (an integer) can break the call or cause bugs.
+                        Some parameters may also be marked as <b>optional</b>, allowing the LLM to skip the function call if it feels it can answer the task directly.
+                    </p><br>
+
+                    <p>
+                        The most widely used standard for function calling comes from OpenAI. But not all LLMs can follow it. Why? Because <b>function calling requires specialized training.</b><br>
+                        Most LLMs are trained to follow instructions in a chat format, usually with <code>USER</code> and <code>ASSISTANT</code> messages. But for tool use, 
+                        a third message type — <code>TOOL</code> — is needed, and only <a href="https://ollama.com/search?c=tools">certain models</a> (like Llama, Gemma, or DeepSeek) are fine-tuned to handle it correctly.
+                    </p><br>
+
+                    <p>
+                        Unfortunately, the OpenAI JSON format can be quite heavy, and smaller models (like basic 7B or 8B models) often struggle with it.
+                        That’s why <b><em>Yacana includes its own lightweight function-calling format.</em></b> It’s easier for smaller models to handle and uses
+                        <a href="https://youtube.com/shorts/Sb1spHDHU_4?si=yZsSLGx-7LeyG-5B">percussive maintenance</a> to nudge the model into outputting valid JSON.
+                    </p><br>
+
+                    <p>
+                        As a result, Yacana enables tool calling with almost any LLM, while still supporting the OpenAI format when needed.
+                    </p>
+                </details>                
 
                 <hr class="major"/>
 
                 <h2 id="calling-a-tool">Calling a tool</h2>
-                <p>Let's write our first tool call to perform a simple addition!</p>
+                <p>Let's write our first tool call to perform a simple addition!</p><br>
                 <p>First, let's define our tool:</p>
                 <pre><code class="language-python">
 def adder(first_number: int, second_number: int) -> int:
@@ -249,15 +244,15 @@ Equation result =  22
 
                 <p>
                     Since LLMs are not deterministic, we can never be certain of the values they’ll send to our tools. 
-                    That’s why you should think of a tool the same way you would a web server route—it requires server-side validation. 
+                    That’s why you should think of a tool the same way you would a web server route,it requires server-side validation. 
                     Your tool must verify the input it receives and raise an error if the data is invalid.
                 </p>
                 <p>
                     This involves adding strict validation checks to your tool. 
                     When the LLM sends an incorrect value, an error will be raised, not just any error, but a ToolError(...). 
                     Yacana will catch this exception and notify the LLM that something went wrong during the tool call.<br>
-                    It’s crucial to provide clear and specific error messages in the exception, as the LLM will use that message to adjust its next attempt.
-                </p>
+                    <b>It’s crucial to provide clear and specific error messages in the exception, as the LLM will use that message to adjust its next attempt.</b>
+                </p><br>
                 <p>Let's upgrade our adder tool!</p>
                 <pre><code class="language-python">
 from yacana import OllamaAgent, Tool, Task, ToolError
@@ -298,7 +293,6 @@ def adder(first_number: int, second_number: int) -> int:
     print("Result of added tool is: ", ret)
     return ret
 
-# No more examples
 adder_tool: Tool = Tool("Adder", "Adds two numbers and returns the result", adder)
 
 result: str = Task(f"What's 2+2 ?", agent1, tools=[adder_tool]).solve().content
@@ -431,17 +425,17 @@ What's 2+2 ?
 
 INFO: [AI_RESPONSE][From: Ai assistant]: {"first_number": 2, "second_number": 2}
 
-Tool adder was called with param '2' (<class 'int'>) and '2' (<class 'int'>)
+Tool adder was called with param '2' (&ltclass 'int'&gt) and '2' (&ltclass 'int'&gt)
 Equation result =  4
 				</code></pre>
                 <br>
                 <p>It worked!<br>
                     The LLM saw that the tool needed integers for input. As such, it called the tool with the correct
-                    types therefore the adder tool returned <code>4</code> as it was expected. Houra!</p>
+                    types therefore the adder tool returned <code>4</code> as it was expected. Hurray!</p>
                 <p>⚠️ Do not abuse this technic as it tends to create some noise. Trying to manage too many
                     hypothetical use cases might, in the end, degrade the performance of the tool call.</p>
                 <p class="icon solid fa-info-circle">
-                    You should combine both server-side validaton and multi-shot prompting.<br>
+                    You should combine both server-side validation and multi-shot prompting.<br>
                     Providing one example may prevent one tool call failure hence less lost CPU time.
                     Though, adding many validation checks in your tool raising with explicit
                     error messages is the best way to ensure that nothing breaks! Nothing beats good all fashion
@@ -477,15 +471,111 @@ adder_tool: Tool = Tool("Adder", "Adds two numbers and returns the result", adde
 
                 <hr class="major"/>
 
+                <h2 id="tool-calling-styles">Choosing tool calling style</h2>
+
+                <b>Tool calling</b> refers to the ability to call your application's functions. So far you used the default tool calling style wich is <b>Yacana style</b>.<br>
+                But like everything on this earth it has its pros and cons. Also, you can <em>change it to the one from OpenAi.</em><br><br>
+
+                <h4>Difference between Yacana and OpenAi tool calling styles</h4>
+                
+                <p>
+                    Both can call functions inside your application but have pros and cons.<br><br>
+
+                    ▶️ <u>A tool should use <b>OpenAi</b> style when:</u><br>
+                    <ul style="margin-bottom: 0;">
+                        <li>The LLM has been fine-tuned on tool calling.</li>
+                        <li>Tool calling needs to happen fast.</li>
+                        <li>LLM is smart (like chatGPT or opensource 45B+).</li>
+                    </ul>
+                <span style="padding-top">You can find if your LLM supports tool calling in the model's card
+                    description. In ollama you can even filter LLMs by
+                    <a href="https://ollama.com/search?c=tools">tool calling support</a>.</span><br><br>
+                    
+                    
+                    ▶️ <u>A tool should use the <b>Yacana</b> style when:</u><br>
+                    <ul>
+                        <li>The LLM isn't fine-tuned on tool calling.</li>
+                        <li>Time is not the issue.</li>
+                        <li>LLM knows english.</li>
+                        <li>LLM is dumb (8B-).</li>
+                        <li>Your Task has multiple assigned tools and needs native multi turn tool calls.</li>
+                    </ul>
+                    
+                </p>
+
+                <h4>Changing tool execution type</h4>
+                <div>
+                    To change the tool type to <i>OpenAi</i> use the <code>tool_type=</code> parameter in the <a href="classes.html#tech-doc-tool">Tool's constructor</a>.<br>
+                    Available values are <code>ToolType.YACANA</code> or <code>ToolType.OPENAI</code>.<br>
+                    Let's see an example:
+                </div>
+                <pre><code class="language-python">
+from yacana import OllamaAgent, Tool, Task, ToolError, ToolType
+
+agent1 = OllamaAgent("Ai assistant", "llama3.1:8b")
+
+def adder(first_number: int, second_number: int) -> int:
+    print(f"Tool adder was called with param '{first_number}' ({type(first_number)}) and '{second_number}' ({type(second_number)})")
+    if not (isinstance(first_number, int)):
+        raise ToolError("Parameter 'first_number' expected a type integer")
+    if not (isinstance(second_number, int)):
+        raise ToolError("Parameter 'second_number' expected a type integer")
+    ret = first_number + second_number
+    print("Result of added tool is: ", ret)
+    return ret
+
+# => Here we set the tool type to OPENAI
+adder_tool: Tool = Tool("Adder", "Adds two numbers and returns the result", adder, tool_type=ToolType.OPENAI)
+
+result: str = Task(f"What's 2+2 ?", agent1, tools=[adder_tool]).solve().content
+
+print(f"Equation result = {result}")                    
+                </code></pre><br>
+
+                Output:<br>
+                
+                <pre><code class="text-output">
+INFO: [PROMPT][To: Ai assistant]: What's 2+2 ?
+
+WARNING: You chose to use the OpenAI style tool calling with the OllamaAgent for the tool 'Adder'. This tool is set by default as optional=False (hence making it mandatory to use). Note that Ollama does NOT support setting tools optional status on tools! They are all optional by default and this cannot be changed. Yacana may in the future mitigate this issue. If this is important for you please open an issue on the Yacana Github. You can hide this warning by setting `shush=True` in the Tool constructor.
+
+INFO: [AI_RESPONSE][From: Ai assistant]: [{"id": "756f8bd1-0df9-471a-8463-dcc9ed36d68b", "type": "function", "function": {"name": "Adder", "arguments": {"first_number": 2, "second_number": 2}}}]
+Tool adder was called with param '2' (&ltclass 'int'&gt) and '2' (&ltclass 'int'&gt)
+Result of added tool is:  4
+
+INFO: [TOOL_RESPONSE][Adder]: 4
+
+
+INFO: [PROMPT][To: Ai assistant]: Retrying with original task and tools answer: 'What's 2+2 ?'
+
+INFO: [AI_RESPONSE][From: Ai assistant]: Simple math problem! The answer is indeed 4.
+Equation result = Simple math problem! The answer is indeed 4.                    
+                </code></pre><br>
+
+                <div>
+                    As you can see above, the LLM outputed a <em>function calling</em> JSON string: <code>[{"id":
+                    "XX", "type": "function", "function": {"name": "Adder", "arguments": {"first_number": 2, "second_number": 2}}}]</code>.<br>
+                    This method is way faster than the Yacana style. But as mentioned before, not all LLMs support this type of tool calling.<br><br>
+                    Note that you can change the <code>tool_type</code> member of a <a href="classes.html#tech-doc-tool">Tool</a> instance during runtime and not only in the constructor.<br>
+                    Meaning that you can use the same tool with different execution types in 2 separate Tasks: <code>tool_instance.tool_type=ToolType.OPENAI</code>. 
+                </div>
+
+                <hr class="major"/>
+
                 <h2 id="optional-tools">Optional tools</h2>
-                <p>Sometimes you assign a Tool to a Task without knowing for sure that the tool will be useful. If
+                <p>
+                    Sometimes you assign a Tool to a Task without knowing for sure that the tool will be useful. If
                     you have a fine-tuned model or doing basic operations you may want to rely on the LLM's
                     reasoning to choose if it really needs to call the tool or use his own training knowledge.
                     Setting the <code>optional: bool = True</code> will tweak how Yacana proposes the Tools to the
-                    LLM, leaving it a chance to pass on the offer of the tool and use its own knowledge instead.</p>
-                <p>To demonstrate this, let's make a tool that returns a temperature from a city. It will return a
-                    fake temperature as we don't really care. We <strong>won't</strong> set
-                    <code>optionnal=True</code> so it will be forced to use the tool:
+                    LLM, leaving it a chance to pass on the offer of the tool and use its own knowledge instead.
+                </p><br>
+                <h4>Forcing tool call and giving it a prompt that makes sense</h4><br>
+                <p>
+                    To demonstrate this, let's make a tool that returns a temperature from a city. It will return a
+                    fake temperature as we don't really care.<br>
+                    We <strong>won't</strong> set
+                    <code>optional=True</code> so it will be forced to use the tool:
                 </p>
                 <pre><code class="language-python">
 from yacana import Task, OllamaAgent, Tool
@@ -531,9 +621,13 @@ INFO: [AI_RESPONSE][From: Ai assistant]: { "city": "NY" }
 Temperature = 20			
 					</code></pre>
                 <br>
-                <p>The tool was called with <code>{ "city": "NY" }</code> which returned 20. Good!</p>
+                <p>The tool was called with <code>{ "city": "NY" }</code> which returned 20. Good!</p><br>
+
                 <hr>
-                <p>Now let's ask something completely unrelated but keep the tool mandatory:</p>
+                
+                <h4>Forcing tool call and giving it a prompt that DOESN'T make sense</h4><br>
+
+                <p>Now let's ask something completely <b>unrelated</b> but keep the tool <b>mandatory</b>:</p>
                 <pre><code class="language-python">
 result: str = Task(f"Why is the sky blue ?", agent1, tools=[Tool("get_temp", "Returns the celsius temperature of a given city", get_temperature)]).solve().content					
 					</code></pre>
@@ -566,9 +660,12 @@ Temperature = 20
 					</code></pre>
                 <br>
                 <p>It asked the tool for the temperature in the city 'Paris' without any particular reason. We can't
-                    blame it. The tool we provided and the Task to solve have nothing to do with each other. So it's
-                    making things up, like this city name.</p>
+                    blame it. The tool we provided and the Task to solve have nothing to do with each other. So <b>it's
+                    making things up</b>, like this city name.</p>
                 <hr>
+
+                <h4>Optional tool call and giving it a prompt that DOESN'T make sense</h4><br>
+
                 <p>Now let's make the tool optional with <code>optional=True</code> and keep our unrelated Task:</p>
                 <pre><code class="language-python">
 result: str = Task(f"Why is the sky blue ?", agent1, tools=[Tool("get_temp", "Returns the celsius temperature of a given city", get_temperature, optional=True)]).solve().content						
@@ -621,11 +718,22 @@ So, to summarize: the sky appears blue because of the selective scattering of sh
                 <pre><code class="text-output">
 						In my opinion, using the `get_temperature` tool is NOT relevant to solving this task. The task asks about why the sky is blue, and temperature doesn't seem to be directly related to that.
 					</code></pre>
-                <br>
+                
+                 <hr/>
+
+                <h4>Ollama and optional tool support</h4><br>
+                
+                <div>
+                    When using the <a href="classes.html#tech-doc-ollamaagent">OllamaAgent</a> with the tool type <code>ToolType.OPENAI</code> you may encounter a minor issue.<br>
+                    Ollama doesn't support mandatory tools when using the OpenAi tool calling style. So, <b>all Tools are optional by default</b> and setting <code>optional=False</code> in
+                    the <a href="classes.html#tech-doc-tool">Tool's</a> constructor will have no effect.<br>
+                    It you realy need to enforce a Tool as mandatory then set the tool's type as <code>ToolType.YACANA</code> (default).<br><br>
+                </div>
 
                 <hr class="major"/>
 
                 <h2 id="assigning-multiple-tools">Assigning multiple Tools</h2>
+
                 <p>In this section, we will see that you can assign more than one tool to a Task. You can add as
                     many Tools as you wish and the LLM will be asked what tool it wants to use. After using one of
                     the tools it will be asked if it considers its Task complete. If it says "no" then Yacana will
@@ -651,8 +759,9 @@ So, to summarize: the sky appears blue because of the selective scattering of sh
                         chosen.
                     </p>
                 </blockquote>
-                <p>⚠️ For this next section we assume that you have already read section <strong>Assigning a tool to
-                    a Task</strong> of the documentation.</p>
+                <p>
+                    ⚠️ <b>When assigning multiple tools to a Task, all Tools are considered optional!</b> Setting the <code>optional=True/False</code> in the Task's constructor will not have any effects anymore!
+                </p><br>
                 <p>Let's make a more advanced calculator and solve <code>2 + 2 - 6 * 8</code>. We'll add the missing
                     tools and give them some
                     "server-side" checking to help the LLM use them properly.</p>
@@ -668,7 +777,7 @@ def adder(first_number: int, second_number: int) -> int:
     print(f"Adder was called with param = |{first_number}| and |{second_number}|")
     return first_number + second_number
 
-def multiplier(first_number, second_number) -> int:
+def multiplier(first_number: int, second_number: int) -> int:
     print("Multiplier was called with types = ", str(type(first_number)), str(type(second_number)))
     if not (isinstance(first_number, int)):
         raise ToolError("Parameter 'first_number' expected a type integer")
@@ -677,7 +786,7 @@ def multiplier(first_number, second_number) -> int:
     print(f"Multiplier was called with param = |{first_number}| and |{second_number}|")
     return first_number * second_number
 
-def substractor(first_number, second_number) -> int:
+def substractor(first_number: int, second_number: int) -> int:
     print("substractor was called with types = ", str(type(first_number)), str(type(second_number)))
     if not (isinstance(first_number, int)):
         raise ToolError("Parameter 'first_number' expected a type integer")
@@ -868,7 +977,139 @@ Since I have now calculated all parts of the original expression, there are no m
                 <br>
                 <p>
                     -44 is the correct answer!
+                </p><br>
+
+                <h4>Multiple tools with OpenAi tool execution</h4>
+
+                In the previous snippet we did not set the <code>ToolType</code> so the default was Yacana.<br>
+                Now, let's use the OpenAi tool calling style which is faster to execute!<br>
+                But before we do, there is a key difference to understand about how both mode behave.<br><br>
+
+                ▶️ <u>Yacana relies on iterative prompt engineering to make the tool calls.</u><br>
+                This means that when a tool returns a value, Yacana will prompt the LLM to see if it wants to use another one. That's why you can call 3 tools with only one Task.
+                <p>
+                    It looks like that:<br>
+                    <span class="image main"><img style="width: 400px; height: auto;" src="../images/multi_tool_yacana.png" alt="Tool calling with multiple tools using yacana."/></span>
                 </p>
+
+                ▶️ <u>On the other hand, if using the OpenAi tool execution a Task can only call ONE tool.</u>
+                <p>
+                    It looks like that:<br>
+                    <span class="image main"><img style="width: 400px; height: auto;" src="../images/multi_tool_openai_incomplete.png" alt="Tool calling with multiple tools using OpenAi can only call one tool at a time."/></span>
+                    If you need the LLM to call more than one Tool you will have to do the prompt engineering yourself...
+                </p><br>
+                <div>
+                    Let's fix that by implementing the logic ourselves!
+                    <p>
+                        <b>We'll make a loop allowing the LLM to decide if it must keep calling tools or not :</b><br>
+                        <span class="image main"><img style="width: 50%; height: auto;" src="../images/multi_tool_openai_full.png" alt="Tool calling with multiple tools using OpenAi can only call one tool at a time."/></span>
+                        In the above example the LLM called the 3 tools one after the other using results it got from previous iterations.
+                    </p>
+                </div>
+                <pre><code class="language-python">
+from yacana import Task, OllamaAgent, Tool, ToolError, ToolType
+
+def adder(first_number: int, second_number: int) -> int:
+    print("Adder was called with types = ", str(type(first_number)), str(type(second_number)))
+    if not (isinstance(first_number, int)):
+        raise ToolError("Parameter 'first_number' expected a type integer")
+    if not (isinstance(second_number, int)):
+        raise ToolError("Parameter 'second_number' expected a type integer")
+    print(f"Adder was called with param = |{first_number}| and |{second_number}|")
+    return first_number + second_number
+
+def multiplier(first_number: int, second_number: int) -> int:
+    print("Multiplier was called with types = ", str(type(first_number)), str(type(second_number)))
+    if not (isinstance(first_number, int)):
+        raise ToolError("Parameter 'first_number' expected a type integer")
+    if not (isinstance(second_number, int)):
+        raise ToolError("Parameter 'second_number' expected a type integer")
+    print(f"Multiplier was called with param = |{first_number}| and |{second_number}|")
+    return first_number * second_number
+
+def substractor(first_number: int, second_number: int) -> int:
+    print("substractor was called with types = ", str(type(first_number)), str(type(second_number)))
+    if not (isinstance(first_number, int)):
+        raise ToolError("Parameter 'first_number' expected a type integer")
+    if not (isinstance(second_number, int)):
+        raise ToolError("Parameter 'second_number' expected a type integer")
+    print(f"substractor was called with param = |{first_number}| and |{second_number}|")
+    return first_number - second_number
+
+# Defining 3 tools as optional and ToolType set to OPENAI
+adder_tool: Tool = Tool("Adder", "Adds two numbers and returns the result", adder, optional=True, tool_type=ToolType.OPENAI)
+substractor_tool: Tool = Tool("Substractor", "Subtracts two numbers and returns the result. When having, for instance, 2 - 6 the arguments are 2 and 6 and not 2 and -6. The tool does the subtraction.", substractor, optional=True, tool_type=ToolType.OPENAI)
+multiplier_tool: Tool = Tool("Multiplier", "Multiplies two numbers and returns the result.", multiplier, optional=True, tool_type=ToolType.OPENAI)
+
+agent1 = OllamaAgent("Ai assistant", "llama3.1:8b")
+
+# Initial Task
+Task(f"What's `2 + 2 - 6 * 8` ? You can only do one operation at a time. Don't worry you will be ask to continue with the operations later. Follow PEMDAS to solve correcttly the equation. You are not allowed to guess the result of any operation. Wait for each tool result before continuing. Only call one tool at a time. When you belive you're finished output 'FINISH'.", agent1, tools=[adder_tool, substractor_tool, multiplier_tool]).solve()
+
+# Creating Tasks in a loop until the LLM decides it's done
+while True:
+    msg = Task(f"Continue solving the equation! You can only do one operation at a time. Don't worry you will be ask to continue with the operations later. Follow PEMDAS to solve correctly the equation. Only call one tool at a time. When you belive you're finished output 'FINISH'", agent1, tools=[adder_tool, substractor_tool, multiplier_tool]).solve()
+    
+    # If the LLM prints "finish" then it means it's done and we exit the loop
+    if "finish" in msg.content.lower():
+        break
+                </code></pre><br>
+
+                Output:<br>
+                <pre><code class="text-output">
+INFO: [PROMPT][To: Ai assistant]: What's `2 + 2 - 6 * 8` ? You can only do one operation at a time. Don't worry you will be ask to continue with the operations later. Follow PEMDAS to solve correcttly the equation. You are not allowed to guess the result of any operation. Wait for each tool result before continuing. Only call one tool at a time. When you belive you're finished output 'FINISH'.
+
+INFO: [AI_RESPONSE][From: Ai assistant]: [{"id": "28f9264d-8064-46e6-b59e-01fe0d6147e5", "type": "function", "function": {"name": "Multiplication", "arguments": {"number_one": 6, "number_two": 8}}}]
+tool = 6 * 8 =  48
+
+INFO: [TOOL_RESPONSE][Multiplication]: 48
+
+
+INFO: [PROMPT][To: Ai assistant]: Retrying with original task and tools answer: 'What's `2 + 2 - 6 * 8` ? You can only do one operation at a time. Don't worry you will be ask to continue with the operations later. Follow PEMDAS to solve correcttly the equation. You are not allowed to guess the result of any operation. Wait for each tool result before continuing. Only call one tool at a time. When you belive you're finished output 'FINISH'.'
+
+INFO: [AI_RESPONSE][From: Ai assistant]: Now that we have the result of the multiplication, let's go back to our original equation:
+
+`2 + 2 - 48`
+
+Next operation is addition.
+
+{"name": "Addition", "parameters": {"number_one":2,"number_two":2}}
+
+INFO: [PROMPT][To: Ai assistant]: Continue solving the equation! You can only do one operation at a time. Don't worry you will be ask to continue with the operations later. Follow PEMDAS to solve correctly the equation. Only call one tool at a time. When you belive you're finished output 'FINISH'
+
+INFO: [AI_RESPONSE][From: Ai assistant]: [{"id": "3741caad-0030-401e-a92f-ffe29889c2da", "type": "function", "function": {"name": "Addition", "arguments": {"number_one": 2, "number_two": 2}}}]
+tool = 2 + 2 =  4
+
+INFO: [TOOL_RESPONSE][Addition]: 4
+
+
+INFO: [PROMPT][To: Ai assistant]: Retrying with original task and tools answer: 'Continue solving the equation! You can only do one operation at a time. Don't worry you will be ask to continue with the operations later. Follow PEMDAS to solve correctly the equation. Only call one tool at a time. When you belive you're finished output 'FINISH''
+
+INFO: [AI_RESPONSE][From: Ai assistant]: Now that we have the result of the addition, let's go back to our original equation:
+
+`4 - 48`
+
+Next operation is subtraction.
+
+{"name": "Subtraction", "parameters": {"number_one":4,"number_two":48}}
+
+INFO: [PROMPT][To: Ai assistant]: Continue solving the equation! You can only do one operation at a time. Don't worry you will be ask to continue with the operations later. Follow PEMDAS to solve correctly the equation. Only call one tool at a time. When you belive you're finished output 'FINISH'
+
+INFO: [AI_RESPONSE][From: Ai assistant]: [{"id": "f8946e10-d4b1-400d-9836-3932c8d312cc", "type": "function", "function": {"name": "Subtraction", "arguments": {"number_one": 4, "number_two": 48}}}]
+tool = 4 - 48 =  -44
+
+INFO: [TOOL_RESPONSE][Subtraction]: -44
+
+
+INFO: [PROMPT][To: Ai assistant]: Retrying with original task and tools answer: 'Continue solving the equation! You can only do one operation at a time. Don't worry you will be ask to continue with the operations later. Follow PEMDAS to solve correctly the equation. Only call one tool at a time. When you belive you're finished output 'FINISH''
+
+INFO: [AI_RESPONSE][From: Ai assistant]: Now that we have the result of the subtraction, our equation is complete.
+
+FINISH
+                </code></pre><br>
+                <div>
+                    As you can see, using the OpenAi style executes way faster than the Yacana style. However, it requires you to inplement the looping mechanism yourself.<br><br>
+                </div>
                 <div style="text-align: center; margin-top: 50px;">
                     <h4>Pagination</h4>
                     <ul class="pagination">
@@ -884,7 +1125,7 @@ Since I have now calculated all parts of the original expression, there are no m
 
     <!-- Sidebar -->
     <div id="sidebar">
-        <div class="inner">
+        <div class="inner inner-sidebar">
 
             <!-- Search -->
             <section id="search" class="alt">
@@ -893,15 +1134,11 @@ Since I have now calculated all parts of the original expression, there are no m
                 </form>
             </section>
 
-            <!-- Menu Container -->
-            <div id="menu-container"></div>
+            <!-- Main website Menu Container -->
+            <nav id="menu" class="menu"></nav>
 
-            <!-- Section -->
-            <section>
-                <div class="page-nav-container">
-                    <!-- Dynamic page navigation will be inserted here -->
-                </div>
-            </section>
+            <!-- Page navigation menu -->
+            <nav id="page-nav-container" class="menu"></nav>
 
             <!-- Section -->
             <section>
@@ -911,7 +1148,7 @@ Since I have now calculated all parts of the original expression, there are no m
                 <div class="mini-posts">
                     <article>
                         <a href="#" class="image"><img src="../images/youtube_down.jpg" alt=""/></a>
-                        <p>Youtube video for this section is still under creation. Please be patient ^^</p>
+                        <p>YouTube video for this section is still under creation. Please be patient ^^</p>
                     </article>
                 </div>
             </section>

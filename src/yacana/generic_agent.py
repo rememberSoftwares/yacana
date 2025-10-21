@@ -6,10 +6,11 @@ from typing import List, Type, T, Callable, Dict
 from pydantic import BaseModel
 
 from .TokenCount import HuggingFaceDetails
+from .yacana_tool_calling import YacanaToolCaller
 from .history import History, GenericMessage, MessageRole, Message
-from .logging_config import LoggerManager
 from .model_settings import ModelSettings
-from .tool import Tool
+from .open_ai_tool_calling import OpenAiToolCaller
+from .tool import Tool, ToolType
 from .exceptions import IllogicalConfiguration
 
 logger = logging.getLogger(__name__)
@@ -48,6 +49,9 @@ class GenericAgent(ABC):
     thinking_tokens : Tuple[str, str] | None, optional
         A tuple containing the start and end tokens of a thinking LLM. For instance, "<think>" and "</think>" for Deepseek-R1.
         Setting this prevents the framework from getting sidetracked during the thinking steps and helps maintain focus on the final result.
+    structured_thinking : bool, optional
+        If True, Yacana will use structured_output internally to get better accuracy. If your LLM doesn't support structured_output set this to False.
+        Defaults to True.
 
     Raises
     ------
@@ -81,17 +85,20 @@ class GenericAgent(ABC):
     thinking_tokens : Tuple[str, str] | None
         A tuple containing the start and end tokens of a thinking LLM. For instance, "<think>" and "</think>" for Deepseek-R1.
         Setting this prevents the framework from getting sidetracked during the thinking steps and helps maintain focus on the final result.
+    structured_thinking : bool, optional
+        If True, Yacana will use structured_output internally to get better accuracy. If your LLM doesn't support structured_output set this to False.
+        Defaults to True.
     """
 
     _registry = {}
 
     def __init__(self, name: str, model_name: str, model_settings: ModelSettings, system_prompt: str | None = None, endpoint: str | None = None,
                  api_token: str = "", headers=None, runtime_config: Dict | None = None, history: History | None = None, task_runtime_config: Dict | None = None,
-                 thinking_tokens: tuple[str, str] | None = None, hugging_face_repo_name: str | None = None, hugging_face_token: str | None = None) -> None:
+                 thinking_tokens: tuple[str, str] | None = None, structured_thinking=True, hugging_face_repo_name: str | None = None, hugging_face_token: str | None = None) -> None:
         if model_settings is None:
             raise ValueError("model_settings cannot be None. Please provide a valid ModelSettings instance.")
 
-        # Vérification de la validité de thinking_tokens
+        # Checking if user used the right format for thinking tokens (aka tuple)
         if thinking_tokens is not None:
             if (not isinstance(thinking_tokens, tuple) or len(thinking_tokens) != 2 or
                     not all(isinstance(t, str) and t.strip() for t in thinking_tokens)):
@@ -108,8 +115,8 @@ class GenericAgent(ABC):
         self.task_runtime_config = task_runtime_config if task_runtime_config is not None else {}
         self._tags: List[str] = []
         self.thinking_tokens: tuple[str, str] | None = thinking_tokens
-        self.hugging_face_repo_name: str | None = hugging_face_repo_name
-        self.hugging_face_token: str | None = hugging_face_token
+        self.structured_thinking: bool = structured_thinking
+        self.tool_caller: YacanaToolCaller | OpenAiToolCaller | None = None
 
         # Configuring History to use the correct model name and HF repo specific to this agent (These are not mandatory but if provided will allow to get an accurate token count)
         self.history: History = history if history is not None else History()
@@ -130,6 +137,25 @@ class GenericAgent(ABC):
         """
         super().__init_subclass__(**kwargs)
         GenericAgent._registry[cls.__name__] = cls
+
+    def _chat(self, history: History, task: str | None, medias: List[str] | None = None, json_output=False, structured_output: Type[T] | None = None, save_to_history: bool = True, tools: List[Tool] | None = None, streaming_callback: Callable | None = None) -> GenericMessage:
+        raise NotImplemented(f"This method must be subclassed by the child class. It allows to interact with the LLM server using the correct client library.")
+
+    def _set_correct_tool_caller(self, tools: List[Tool]) -> None:
+        """
+        Based on the first tool type in the list, sets the appropriate tool caller.
+        All tools have the same type so checking the first one is enough.
+
+        Parameters
+        ----------
+        tools : List[Tool]
+            List of tools to determine the tool caller type.
+        """
+        if len(tools) > 0:
+            if tools[0].tool_type == ToolType.YACANA:
+                self.tool_caller = YacanaToolCaller(self)
+            elif tools[0].tool_type == ToolType.OPENAI:
+                self.tool_caller = OpenAiToolCaller(self)
 
     def _strip_thinking_tags(self, message: str) -> str:
         """
@@ -240,6 +266,7 @@ class GenericAgent(ABC):
             Optional runtime configuration for the task.
         tags : List[str] | None
             Optional list of tags.
+
         Returns
         -------
         GenericMessage

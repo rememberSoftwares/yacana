@@ -1,7 +1,7 @@
 import unittest
 import os
 from tests.test_base import BaseAgentTest
-from yacana import Task, Message, MessageRole, History, HistorySlot, OpenAiModelSettings
+from yacana import Task, Message, MessageRole, History, HistorySlot, OpenAiModelSettings, Tool
 from yacana.generic_agent import GenericAgent
 
 class TestBasicInference(BaseAgentTest):
@@ -377,6 +377,39 @@ class TestBasicInference(BaseAgentTest):
         # Supprimer le slot restant via delete_slot_by_id
         history.delete_slot_by_id(slot4.id)
         self.assertEqual(len(history.slots), 0)
+
+    def test_no_structure_thinking(self):
+        """Test the ability to not use JSON structured output internally."""
+
+        def update_server() -> None:
+            """Updates the server."""
+            return None
+
+        def rollback_server() -> None:
+            """Rollbacks the server."""
+            return None
+        update_server = Tool("update_server", "Triggers a server update.", update_server)
+        rollback_server = Tool("rollback_server", "Triggers a server rollback.", rollback_server)
+
+        def test(agent: GenericAgent):
+            agent.structured_thinking = False
+            Task("Update the server", agent, tools=[update_server]).solve()
+            Task("Update the server", agent, tools=[update_server, rollback_server]).solve()
+            agent.structured_thinking = True
+            # Vérifier que le mot "JSON" n'apparaît qu'une seule fois dans les contenus des messages
+            all_messages = agent.history.get_all_messages()
+            json_count = sum("JSON" in message.content for message in all_messages)
+            self.assertEqual(json_count, 2, 'Le mot "JSON" doit apparaître exactement 2 fois dans les contenus des messages (1 par Task)')
+
+        if self.run_openai:
+            test(self.openai_agent)
+        if self.run_vllm:
+            test(self.vllm_agent)
+        if self.run_ollama:
+            test(self.ollama_agent)
+        if self.run_lmstudio:
+            test(self.lmstudio_agent)
+
 
     @classmethod
     def setUpClass(cls):

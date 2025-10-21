@@ -108,3 +108,62 @@ class UnknownResponseFromLLM(Exception):
     def __init__(self, message):
         self.message = message
         super().__init__(self.message)
+
+
+class McpBadToolConfig(Exception):
+    """
+    Exception raised when the input shema from the MCP server is not valid.
+    """
+
+    def __init__(self, message):
+        self.message = message
+        super().__init__(self.message)
+
+
+class McpBadTransport(Exception):
+    """
+    Exception raised when the protocol used by the MCP server response was neither application/JSON or
+    SSE and parsing as JSON failed.
+
+    Parameters
+    ----------
+    message : str
+        A descriptive message about the transport issue.
+    """
+
+    def __init__(self, message):
+        self.message = message
+        super().__init__(self.message)
+
+
+class McpResponseError(Exception):
+    """
+    Exception raised when the MCP server sent an error as part of the response.
+
+    Parameters
+    ----------
+    message : str
+        A descriptive message about the transport issue.
+    """
+
+    def __init__(self, message):
+        self.message = message
+        super().__init__(self.message)
+
+
+class McpServerNotYetInitialized(Exception):
+    """
+    Exception raised when the MCP server is not yet initialized.
+
+    This exception is used to indicate that the MCP server has not been set up
+    or is not ready to handle requests.
+
+    Parameters
+    ----------
+    message : str
+        A descriptive message indicating that the MCP server is not initialized.
+    """
+
+    def __init__(self, message):
+        self.message = message
+        super().__init__(self.message)

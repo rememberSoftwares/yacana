@@ -17,8 +17,6 @@
     <link rel="stylesheet" href="../assets/css/codemirror-custom.css">
     <link rel="stylesheet" href="../assets/css/zenburn.min.css">
     <link rel="stylesheet" href="../assets/css/fontawesome-all.min.css">
-    <link rel="shortcut icon" href="../images/favicon.ico" type="image/x-icon">
-    <link rel="icon" href="../images/favicon.ico" type="image/x-icon">
 
     <script src="../assets/js/codemirror.min.js"></script>
     <script src="../assets/js/python.min.js"></script>
@@ -56,7 +54,7 @@
 
             <section>
                 <header class="main">
-                    <h1 id="tech-doc">Technical documentation - Yacana 0.2.1</h1>
+                    <h1 id="tech-doc">Technical documentation - Yacana 0.3.3</h1>
                 </header>
                 <span class="image main"><img src="../images/tech_doc.jpg" alt="Roadmap"/></span>
 
@@ -80,6 +78,19 @@
                             </tr>
                             </thead>
                             <tbody>
+                            
+                            <tr>
+                                <td><code>_agent_type</code></td>
+                                <td style="text-align:center">
+                                    <a href="#tech-doc-agenttype">
+                                        AgentType
+                                    </a>&nbsp
+                                    <span></span>
+                                </td>
+                                <td style="text-align:center">
+                                        Type of the Agent to circumvent partial import when determining agent's type at runtime.
+                                </td>
+                            </tr>
                             
                             <tr>
                                 <td><code>name</code></td>
@@ -234,6 +245,19 @@
                                 </td>
                                 <td style="text-align:center">
                                         A tuple containing the start and end tokens of a thinking LLM. For instance, "<think>" and "</think>" for Deepseek-R1.<br>    Setting this prevents the framework from getting sidetracked during the thinking steps and helps maintain focus on the final result.
+                                </td>
+                            </tr>
+                            
+                            <tr>
+                                <td><code>structured_thinking</code></td>
+                                <td style="text-align:center">
+                                    <a href="#tech-doc-bool">
+                                        bool
+                                    </a>&nbsp
+                                    <span>Optional</span>
+                                </td>
+                                <td style="text-align:center">
+                                        If True, Yacana will use structured_output internally to get better accuracy. If your LLM doesn't support structured_output set this to False.<br>    Defaults to True.
                                 </td>
                             </tr>
                             
@@ -369,6 +393,19 @@
                                     </td>
                                 </tr>
                                 
+                                <tr>
+                                    <td><code>structured_thinking</code></td>
+                                    <td style="text-align:center">
+                                        <a
+                                                href="#tech-doc-bool">bool
+                                        </a>&nbsp
+                                        <span>Optional</span>
+                                    </td>
+                                    <td style="text-align:center">
+                                            If True, Yacana will use structured_output internally to get better accuracy. If your LLM doesn't support structured_output set this to False.<br>    Defaults to True.
+                                    </td>
+                                </tr>
+                                
                                 </tbody>
                             </table>
                         </div>
@@ -482,6 +519,19 @@
                             </tr>
                             </thead>
                             <tbody>
+                            
+                            <tr>
+                                <td><code>_agent_type</code></td>
+                                <td style="text-align:center">
+                                    <a href="#tech-doc-agenttype">
+                                        AgentType
+                                    </a>&nbsp
+                                    <span></span>
+                                </td>
+                                <td style="text-align:center">
+                                        Type of the Agent to circumvent partial import when determining agent's type at runtime.
+                                </td>
+                            </tr>
                             
                             <tr>
                                 <td><code>name</code></td>
@@ -636,6 +686,19 @@
                                 </td>
                                 <td style="text-align:center">
                                         A tuple containing the start and end tokens of a thinking LLM. For instance, "<think>" and "</think>" for Deepseek-R1.<br>    Setting this prevents the framework from getting sidetracked during the thinking steps and helps maintain focus on the final result.
+                                </td>
+                            </tr>
+                            
+                            <tr>
+                                <td><code>structured_thinking</code></td>
+                                <td style="text-align:center">
+                                    <a href="#tech-doc-bool">
+                                        bool
+                                    </a>&nbsp
+                                    <span>Optional</span>
+                                </td>
+                                <td style="text-align:center">
+                                        If True, Yacana will use structured_output internally to get better accuracy. If your LLM doesn't support structured_output set this to False.<br>    Defaults to True.
                                 </td>
                             </tr>
                             
@@ -781,6 +844,19 @@
                                     </td>
                                     <td style="text-align:center">
                                             A tuple containing the start and end tokens of a thinking LLM. For instance, "<think>" and "</think>" for Deepseek-R1.<br>    Setting this prevents the framework from getting sidetracked during the thinking steps and helps maintain focus on the final result.
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td><code>structured_thinking</code></td>
+                                    <td style="text-align:center">
+                                        <a
+                                                href="#tech-doc-bool">bool
+                                        </a>&nbsp
+                                        <span>Optional</span>
+                                    </td>
+                                    <td style="text-align:center">
+                                            If True, Yacana will use structured_output internally to get better accuracy. If your LLM doesn't support structured_output set this to False.<br>    Defaults to True.
                                     </td>
                                 </tr>
                                 
@@ -1438,6 +1514,45 @@
                                 </td>
                             </tr>
                             
+                            <tr>
+                                <td><code>is_mcp</code></td>
+                                <td style="text-align:center">
+                                    <a href="#tech-doc-bool">
+                                        bool
+                                    </a>&nbsp
+                                    <span></span>
+                                </td>
+                                <td style="text-align:center">
+                                        Is this tool a local tool or an MCP tool.
+                                </td>
+                            </tr>
+                            
+                            <tr>
+                                <td><code>shush</code></td>
+                                <td style="text-align:center">
+                                    <a href="#tech-doc-bool">
+                                        bool
+                                    </a>&nbsp
+                                    <span></span>
+                                </td>
+                                <td style="text-align:center">
+                                        If True, suppresses warnings about unsupported optional tool configurations with Ollama.
+                                </td>
+                            </tr>
+                            
+                            <tr>
+                                <td><code>tool_type</code></td>
+                                <td style="text-align:center">
+                                    <a href="#tech-doc-tooltype">
+                                        ToolType
+                                    </a>&nbsp
+                                    <span></span>
+                                </td>
+                                <td style="text-align:center">
+                                        The tool execution style. Either use the Yacana style (default) or follow the OpenAi style.
+                                </td>
+                            </tr>
+                            
                             </tbody>
                         </table>
                     </div>
@@ -1557,6 +1672,19 @@
                                     </td>
                                 </tr>
                                 
+                                <tr>
+                                    <td><code>shush</code></td>
+                                    <td style="text-align:center">
+                                        <a
+                                                href="#tech-doc-bool">bool
+                                        </a>&nbsp
+                                        <span>Optional</span>
+                                    </td>
+                                    <td style="text-align:center">
+                                            If True, the tool won't warn anymore about the unsupported tool setting optional=True and using Ollama + OpenAi style tool calling.<br>    Defaults to False.
+                                    </td>
+                                </tr>
+                                
                                 </tbody>
                             </table>
                         </div>
@@ -1569,6 +1697,124 @@
                                 </a>
                                 <span></span>
                             
+                                </i>
+                                <br>
+                                <br>
+                    
+                        <h4><span style="color: green;">➤</span> bulk_tool_type_update(...)</h4>
+                        
+                        <i>
+                            <span
+                                    style="background-color: orange; color: white; border-radius: 3px; padding: 1px 5px;">@</span>&nbsp static method
+                        </i>
+                        
+                        
+                        <div>
+                            Update the tool type for a list of tools.<br>!Warning!: the tool type will remain the same until it is changed otherwise.<br>This is different from mcp.get_tools_as(<tool_type>) which returns a copy of the tools.
+                        </div>
+
+                        
+                        <br>
+                        <div class="table-wrapper">
+                            <table class="alt no-table-margin">
+                                <thead>
+                                <tr>
+                                    <th>Parameter name</th>
+                                    <th style="text-align:center">Parameter type</th>
+                                    <th style="text-align:center">Parameter description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                
+                                <tr>
+                                    <td><code>tools</code></td>
+                                    <td style="text-align:center">
+                                        <a
+                                                href="#tech-doc-tool">List[Tool]
+                                        </a>&nbsp
+                                        <span></span>
+                                    </td>
+                                    <td style="text-align:center">
+                                            The list of tools to update.
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td><code>tool_type</code></td>
+                                    <td style="text-align:center">
+                                        <a
+                                                href="#tech-doc-tooltype">ToolType
+                                        </a>&nbsp
+                                        <span></span>
+                                    </td>
+                                    <td style="text-align:center">
+                                            The new tool type to set for all tools in the list.
+                                    </td>
+                                </tr>
+                                
+                                </tbody>
+                            </table>
+                        </div>
+                        
+
+                        <i>Return type:
+                            
+                                <a href="#tech-doc-">None
+                                </a>
+                                <span>
+                                    
+                                </span>
+                                
+                                </i>
+                                <br>
+                                <br>
+                    
+                        <h4><span style="color: green;">➤</span> input_shema_to_prototype(...)</h4>
+                        
+                        
+                        <div>
+                            Converts the input schema to a function prototype string.
+                        </div>
+
+                        
+                        <br>
+                        <div class="table-wrapper">
+                            <table class="alt no-table-margin">
+                                <thead>
+                                <tr>
+                                    <th>Parameter name</th>
+                                    <th style="text-align:center">Parameter type</th>
+                                    <th style="text-align:center">Parameter description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                
+                                <tr>
+                                    <td><code>input_shema</code></td>
+                                    <td style="text-align:center">
+                                        <a
+                                                href="#tech-doc-dict">dict
+                                        </a>&nbsp
+                                        <span></span>
+                                    </td>
+                                    <td style="text-align:center">
+                                            The input schema to convert.
+                                    </td>
+                                </tr>
+                                
+                                </tbody>
+                            </table>
+                        </div>
+                        
+
+                        <i>Return type:
+                            
+                                <a href="#tech-doc-">None
+                                </a>
+                                <span>
+                                    
+                                </span>
+                                
                                 </i>
                                 <br>
                                 <br>
@@ -1670,19 +1916,6 @@
                                 </td>
                                 <td style="text-align:center">
                                         Pydantic model for structured output.
-                                </td>
-                            </tr>
-                            
-                            <tr>
-                                <td><code>tool_call_id</code></td>
-                                <td style="text-align:center">
-                                    <a href="#tech-doc-str">
-                                        str | None
-                                    </a>&nbsp
-                                    <span></span>
-                                </td>
-                                <td style="text-align:center">
-                                        ID of the associated tool call.
                                 </td>
                             </tr>
                             
@@ -2080,19 +2313,6 @@
                             </tr>
                             
                             <tr>
-                                <td><code>tool_call_id</code></td>
-                                <td style="text-align:center">
-                                    <a href="#tech-doc-str">
-                                        str | None
-                                    </a>&nbsp
-                                    <span></span>
-                                </td>
-                                <td style="text-align:center">
-                                        ID of the associated tool call.
-                                </td>
-                            </tr>
-                            
-                            <tr>
                                 <td><code>tags</code></td>
                                 <td style="text-align:center">
                                     <a href="#tech-doc-str">
@@ -2195,19 +2415,6 @@
                                     </td>
                                     <td style="text-align:center">
                                             An optional pydantic model that can be used to store the result of a JSON response by the LLM.
-                                    </td>
-                                </tr>
-                                
-                                <tr>
-                                    <td><code>tool_call_id</code></td>
-                                    <td style="text-align:center">
-                                        <a
-                                                href="#tech-doc-str">str | None
-                                        </a>&nbsp
-                                        <span>Optional</span>
-                                    </td>
-                                    <td style="text-align:center">
-                                            The ID of the tool call this message is associated with.
                                     </td>
                                 </tr>
                                 
@@ -4000,6 +4207,407 @@
                             
                                 <a href="#tech-doc-slotposition">
                                     SlotPosition
+                                </a>
+                                <span></span>
+                            
+                                </i>
+                                <br>
+                                <br>
+                    
+                    <br>
+                
+                    <h2 id="tech-doc-mcp"><a><u>Mcp</u></a></h2>
+                    <p>
+                        Connects to an HTTP streamable MCP server to get the tools and make them available to your Tasks.
+                    </p>
+                    <br>
+
+                    <h3>▶️ Member variables</h3>
+
+                    
+                    <div class="table-wrapper">
+                        <table class="alt">
+                            <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th style="text-align:center">Type</th>
+                                <th style="text-align:center">Description</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            
+                            <tr>
+                                <td><code>server_url</code></td>
+                                <td style="text-align:center">
+                                    <a href="#tech-doc-str">
+                                        str
+                                    </a>&nbsp
+                                    <span></span>
+                                </td>
+                                <td style="text-align:center">
+                                        Url of the remote MCP server.
+                                </td>
+                            </tr>
+                            
+                            <tr>
+                                <td><code>headers</code></td>
+                                <td style="text-align:center">
+                                    <a href="#tech-doc-dict">
+                                        dict
+                                    </a>&nbsp
+                                    <span></span>
+                                </td>
+                                <td style="text-align:center">
+                                        Dict of headers passed to all requests made to the MCP server. Use this for authentification.
+                                </td>
+                            </tr>
+                            
+                            <tr>
+                                <td><code>session</code></td>
+                                <td style="text-align:center">
+                                    <a href="#tech-doc-request.session">
+                                        request.session
+                                    </a>&nbsp
+                                    <span></span>
+                                </td>
+                                <td style="text-align:center">
+                                        The network session from connecting to the server using request.
+                                </td>
+                            </tr>
+                            
+                            <tr>
+                                <td><code>tools</code></td>
+                                <td style="text-align:center">
+                                    <a href="#tech-doc-tool">
+                                        List[Tool]
+                                    </a>&nbsp
+                                    <span></span>
+                                </td>
+                                <td style="text-align:center">
+                                        The list of tools auto discovered on the server.
+                                </td>
+                            </tr>
+                            
+                            <tr>
+                                <td><code>initialized</code></td>
+                                <td style="text-align:center">
+                                    <a href="#tech-doc-bool">
+                                        bool
+                                    </a>&nbsp
+                                    <span></span>
+                                </td>
+                                <td style="text-align:center">
+                                        Is the connection to the server established.
+                                </td>
+                            </tr>
+                            
+                            <tr>
+                                <td><code>session_id</code></td>
+                                <td style="text-align:center">
+                                    <a href="#tech-doc-optionalstr">
+                                        Optional[str]
+                                    </a>&nbsp
+                                    <span></span>
+                                </td>
+                                <td style="text-align:center">
+                                        Id of the request session.
+                                </td>
+                            </tr>
+                            
+                            </tbody>
+                        </table>
+                    </div>
+                    
+
+                    <h3>▶️ Methods</h3>
+
+                    
+                        <h4><span style="color: green;">➤</span> __init__(...)</h4>
+                        
+                        
+                        <div>
+                            
+                        </div>
+
+                        
+                        <br>
+                        <div class="table-wrapper">
+                            <table class="alt no-table-margin">
+                                <thead>
+                                <tr>
+                                    <th>Parameter name</th>
+                                    <th style="text-align:center">Parameter type</th>
+                                    <th style="text-align:center">Parameter description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                
+                                <tr>
+                                    <td><code>server_url</code></td>
+                                    <td style="text-align:center">
+                                        <a
+                                                href="#tech-doc-str">str
+                                        </a>&nbsp
+                                        <span></span>
+                                    </td>
+                                    <td style="text-align:center">
+                                            Url of the remote MCP server.
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td><code>headers</code></td>
+                                    <td style="text-align:center">
+                                        <a
+                                                href="#tech-doc-dict">dict
+                                        </a>&nbsp
+                                        <span></span>
+                                    </td>
+                                    <td style="text-align:center">
+                                            Dict of headers passed to all requests made to the MCP server. Use this for authentification.
+                                    </td>
+                                </tr>
+                                
+                                </tbody>
+                            </table>
+                        </div>
+                        
+
+                        <i>Return type:
+                            
+                                <a href="#tech-doc-mcp">
+                                    Mcp
+                                </a>
+                                <span></span>
+                            
+                                </i>
+                                <br>
+                                <br>
+                    
+                        <h4><span style="color: green;">➤</span> connect()</h4>
+                        
+                        
+                        <div>
+                            Initializes connection with the MCP server
+                        </div>
+
+                        
+
+                        <i>Return type:
+                            
+                                <a href="#tech-doc-">None
+                                </a>
+                                <span>
+                                    
+                                </span>
+                                
+                                </i>
+                                <br>
+                                <br>
+                    
+                        <h4><span style="color: green;">➤</span> disconnect()</h4>
+                        
+                        
+                        <div>
+                            Explicitly disconnects from the server
+                        </div>
+
+                        
+
+                        <i>Return type:
+                            
+                                <a href="#tech-doc-">None
+                                </a>
+                                <span>
+                                    
+                                </span>
+                                
+                                </i>
+                                <br>
+                                <br>
+                    
+                        <h4><span style="color: green;">➤</span> forget_tool(...)</h4>
+                        
+                        
+                        <div>
+                            Forgets about a tool from the MCP server. Note that using a tool leaves a trace in the history, hence it is not<br>possible to completely forget about a tool. However, the tool won't be proposed for future tasks. Call this method<br>right after connecting to the MCP server.
+                        </div>
+
+                        
+                        <br>
+                        <div class="table-wrapper">
+                            <table class="alt no-table-margin">
+                                <thead>
+                                <tr>
+                                    <th>Parameter name</th>
+                                    <th style="text-align:center">Parameter type</th>
+                                    <th style="text-align:center">Parameter description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                
+                                <tr>
+                                    <td><code>tool_name</code></td>
+                                    <td style="text-align:center">
+                                        <a
+                                                href="#tech-doc-str">str
+                                        </a>&nbsp
+                                        <span></span>
+                                    </td>
+                                    <td style="text-align:center">
+                                            The name of the tool to delete.
+                                    </td>
+                                </tr>
+                                
+                                </tbody>
+                            </table>
+                        </div>
+                        
+
+                        <i>Return type:
+                            
+                                <a href="#tech-doc-">None
+                                </a>
+                                <span>
+                                    
+                                </span>
+                                
+                                </i>
+                                <br>
+                                <br>
+                    
+                        <h4><span style="color: green;">➤</span> get_tools_as(...)</h4>
+                        
+                        
+                        <div>
+                            Returns the tools from the remote MCP server as a list of Tool objects. You choose how these tools will be called<br>by specifying the tools_type parameter. This list of tools must be given to a Task() object.<br>!Warning!: This returns a deep copy of the tools list !
+                        </div>
+
+                        
+                        <br>
+                        <div class="table-wrapper">
+                            <table class="alt no-table-margin">
+                                <thead>
+                                <tr>
+                                    <th>Parameter name</th>
+                                    <th style="text-align:center">Parameter type</th>
+                                    <th style="text-align:center">Parameter description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                
+                                <tr>
+                                    <td><code>tools_type</code></td>
+                                    <td style="text-align:center">
+                                        <a
+                                                href="#tech-doc-tooltype">ToolType
+                                        </a>&nbsp
+                                        <span></span>
+                                    </td>
+                                    <td style="text-align:center">
+                                            The type of tools to return.
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td><code>optional</code></td>
+                                    <td style="text-align:center">
+                                        <a
+                                                href="#tech-doc-bool">bool
+                                        </a>&nbsp
+                                        <span>Optional</span>
+                                    </td>
+                                    <td style="text-align:center">
+                                            Changes the optional status of all tools in the MCP client. !WARNING! The status will remain for the next Tasks!
+                                    </td>
+                                </tr>
+                                
+                                </tbody>
+                            </table>
+                        </div>
+                        
+
+                        <i>Return type:
+                            
+                                <a href="#tech-doc-">None
+                                </a>
+                                <span>
+                                    
+                                </span>
+                                
+                                </i>
+                                <br>
+                                <br>
+                    
+                    <br>
+                
+                    <h2 id="tech-doc-tooltype"><a><u>ToolType</u></a></h2>
+                    <p>
+                        <b>ENUM:</b> ToolType
+                    </p>
+                    <br>
+
+                    <h3>▶️ Member variables</h3>
+
+                    
+                    <div class="table-wrapper">
+                        <table class="alt">
+                            <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th style="text-align:center">Type</th>
+                                <th style="text-align:center">Description</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            
+                            <tr>
+                                <td><code>OPENAI</code></td>
+                                <td style="text-align:center">
+                                    <a href="#tech-doc-str">
+                                        str
+                                    </a>&nbsp
+                                    <span></span>
+                                </td>
+                                <td style="text-align:center">
+                                        Tool calling will follow the OpenAi function calling format.
+                                </td>
+                            </tr>
+                            
+                            <tr>
+                                <td><code>YACANA</code></td>
+                                <td style="text-align:center">
+                                    <a href="#tech-doc-str">
+                                        str
+                                    </a>&nbsp
+                                    <span></span>
+                                </td>
+                                <td style="text-align:center">
+                                        Tool calling will follow the Yacana function calling format available to all LLMs.
+                                </td>
+                            </tr>
+                            
+                            </tbody>
+                        </table>
+                    </div>
+                    
+
+                    <h3>▶️ Methods</h3>
+
+                    
+                        <h4><span style="color: green;">➤</span> __init__()</h4>
+                        
+                        
+                        <div>
+                            
+                        </div>
+
+                        
+
+                        <i>Return type:
+                            
+                                <a href="#tech-doc-tooltype">
+                                    ToolType
                                 </a>
                                 <span></span>
                             
@@ -6306,7 +6914,7 @@
 
     <!-- Sidebar -->
     <div id="sidebar">
-        <div class="inner">
+        <div class="inner inner-sidebar">
 
             <!-- Search -->
             <section id="search" class="alt">
@@ -6315,15 +6923,11 @@
                 </form>
             </section>
 
-            <!-- Menu Container -->
-            <div id="menu-container"></div>
+              <!-- Main website Menu Container -->
+            <nav id="menu" class="menu"></nav>
 
-            <!-- Section -->
-            <section>
-                <div class="page-nav-container">
-                    <!-- Dynamic page navigation will be inserted here -->
-                </div>
-            </section>
+            <!-- Page navigation menu -->
+            <nav id="page-nav-container" class="menu"></nav>
 
             <!-- Section -->
             <section>

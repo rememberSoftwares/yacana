@@ -15,3 +15,6 @@ venv/
 # IDE / Editor
 .vscode/
 .idea/
+
+# Darwin Operating Systems
+.DS_Store

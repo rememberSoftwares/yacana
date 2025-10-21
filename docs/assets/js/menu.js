@@ -4,8 +4,8 @@ function initializeMainNavMenu(templatePath = 'templates/tuto_nav.html') {
     fetch(templatePath)
         .then(response => response.text())
         .then(html => {
-            document.getElementById('menu-container').innerHTML = html;
-            
+            document.getElementById('menu').innerHTML = html;
+
             // Initialize menu event handlers after template is loaded
             var $menu = $('.menu'),
                 $menu_openers = $menu.children('ul').find('.opener');
@@ -39,7 +39,7 @@ function initializeMainNavMenu(templatePath = 'templates/tuto_nav.html') {
         });
 }
 
-// Function to initialize the page navigation menu
+// Function to initialize the page navigation menu. It scans for H2 content on the page.
 function initializePageNavMenu() {
     // Get all h2 elements in the main content
     const h2Elements = document.querySelectorAll('#main .inner h2');
@@ -68,9 +68,9 @@ function initializePageNavMenu() {
             const menuHtml = html.replace('<!-- Dynamic menu items will be inserted here -->', menuItems);
             
             // Find the page navigation container and insert the menu
-            const pageNavContainer = document.querySelector('.page-nav-container');
+            const pageNavContainer = document.getElementById('page-nav-container');
             if (pageNavContainer) {
                 pageNavContainer.innerHTML = menuHtml;
             }
         });
-} 
+}

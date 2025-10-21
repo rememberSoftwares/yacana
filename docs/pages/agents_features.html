@@ -56,23 +56,28 @@
                     <h1 id="agents-features">V. Agents' features</h1>
                 </header>
 
-                <span class="image main"><img src="../images/structured_output_banner.jpg" alt="Structured output"/></span>
+                <span class="image main"><img src="../images/structured_output_banner.jpg"
+                                              alt="Structured output"/></span>
 
                 <h2 id="simple-json-mode">Simple JSON Mode</h2>
-                <p>The simplest way to get JSON output is to use the <code>json_output=True</code> parameter on a task:</p>
+                <p>The simplest way to get JSON output is to use the <code>json_output=True</code> parameter on a task:
+                </p>
                 <pre><code class="language-python">
 message = Task("Tell me 1 fact about Canada using the format {'countryName': '', 'fact': ''}", agent, json_output=True).solve()
                 </code></pre>
                 <br>
                 <p>
-                    However, this approach is "best effort". This means the agent will do its best to generate valid JSON, but there's no 
+                    However, this approach is "best effort". This means the agent will do its best to generate valid
+                    JSON, but there's no
                     guarantee on the syntactic quality of the generated JSON as no grammar is enforced.<br>
-                    Also, always ask for JSON output in the prompt or else the LLM will have trouble generating anything.<br>
-                    Optionnaly, you can pass a struture for the LLM to follow. This way you can parse the output.
+                    Also, always ask for JSON output in the prompt or else the LLM will have trouble generating
+                    anything.<br>
+                    Optionally, you can pass a structure for the LLM to follow. This way you can parse the output.
                 </p>
                 <hr>
 
                 <h2 id="structured-output-with-pydantic">Structured Output with Pydantic</h2>
+                <h4>Benefits of structured output</h4>
                 <p>
                     To get more reliable and typed JSON outputs, Yacana offers <code>structured_output</code>.
                     This feature uses Pydantic to define a strict schema that the response must follow.
@@ -91,9 +96,11 @@ class Facts(BaseModel):
                 </code></pre>
                 <br>
                 <div>
-                    The above snippet represents the Fact class. This class has a member <code>countryFacts</code> which is a list of
-                    <code>CountryFact</code>. And this new class has 2 members a <code>name</code> (string) and an associated <code>fact</code> (string).<br>
-                    In JSON it could be represented like so:
+                    The above snippet represents the Fact class. This class has a member <code>countryFacts</code> which
+                    is a list of
+                    <code>CountryFact</code>. And this new class has 2 members a <code>name</code> (string) and an
+                    associated <code>fact</code> (string).<br>
+                    In JSON, it could be represented like so:
                     <pre><code class="text-output">
 [
     {
@@ -106,15 +113,14 @@ class Facts(BaseModel):
     }
 ]
                     </code></pre>
-                    <br>           
-                    The benefits of using a class based approch instead of a JSON one is that parsing is way cleaner.<br>
-                    When parsing JSON, your IDE won't help you access correct member as it doesn't know the JSON format.
-                    This can lead in many programming mistakes.<br>
-                    Whereas using the Pydantic class approch ensures you access existing members and loop over items that
-                    can actually be looped uppon, etc.
                     <br>
-                    <br>
-                    Now, let's ask an LLM to fill this pydantic base class:
+                    There are many benefits of using a class based approach instead of a JSON one.<br>
+                    First, parsing LLM outputs is way cleaner for you as developer.<br>
+                    And secondly, it's way more accurate for AI workflows as <b>structured output is forced onto the LLM</b> output!
+                    This is way stronger than the simple <a href="agents_features.html#simple-json-mode">JSON mode</a>.<br>
+                    Having reliable output from an LLM is the sinews of war. Knowing for sure that you'll get actual JSON following a knowledgeable structure helps a lot with building AI applications.
+                    <br><br>
+                    Let's ask an LLM to fill this pydantic base class:
                 </div>
                 <pre><code class="language-python">
 from pydantic import BaseModel
@@ -147,18 +153,72 @@ print("Fact = ", message.structured_output.countryFacts[0].fact)
                     <li>IDE autocompletion support</li>
                 </ul>
 
-                <p>The <code>structured_output</code> is particularly useful when you need to process responses programmatically and want to guarantee the data structure.</p>
+                <p>The <code>structured_output</code> is particularly useful when you need to process responses
+                    programmatically and want to guarantee the data structure.</p><br>
+
+                <h4>Increasing routing accuracy</h4>
+
+                <div>
+                    You can use structured output to get a more precise answer from the LLM to do routing.<br>
+                    In the <a href="agents_and_tasks.html#concepts-of-routing">routing</a> documentation, we asked
+                    the LLM for <i>'yes/no'</i> string answers. Then we try
+                    to
+                    match either strings to go
+                    down a specific path based on that string.<br>
+                    But matching <i>'yes'</i> and <i>'no'</i> from an LLM isn't very robust...<br>
+                    Using structured output can create a simple boolean class the LLM will use to
+                    answer.<br><br>
+                </div>
+                For example:
+                <pre><code class="language-python">
+from yacana import OllamaAgent, Task, GenericAgent
+from pydantic import BaseModel
+
+agent1 = OllamaAgent("AI assistant", "llama3.1:8b", system_prompt="You are a helpful AI assistant")
+
+# Structured output for boolean answer
+class IsAboutPlant(BaseModel):
+    isAboutPlant: bool
+
+# Let's invent a question about 'plants'
+question: str = "Why do leaves fall in autumn ?"
+
+# Ask if the question is plant related: yes or no
+router_answer: GenericAgent = Task(f"Is the following question about plants ? &ltquestion&gt{question}&lt/question&gt. Answer by true or false as JSON", agent1, structured_output=IsAboutPlant).solve()
+
+# Getting the result of the structured output
+if router_answer.structured_output.isAboutPlant is True:
+    print("Yes, question is about plants")
+    # next step in the workflow that involves plants
+
+elif router_answer.structured_output.isAboutPlant is False:
+    print("No, question is NOT about plants")
+    # Next step in the workflow that DOESN'T involve plants
+                </code></pre><br>
+                Output<br>
+                <pre><code class="text-output">
+INFO: [PROMPT][To: AI assistant]: Is the following question about plants ? &ltquestion&gtWhy do leaves fall in autumn?&lt/question&gt Answer by true or false as JSON
+
+INFO: [AI_RESPONSE][From: AI assistant]: {
+  "isAboutPlant": true
+}
+Yes, question is about plants
+                </code></pre><br>
+
                 <hr class="major">
-                
+
                 <header class="main">
                     <h2 id="streaming">Streaming</h2>
                 </header>
                 <p>
-                    Streaming allows you to get the output of an LLM token by token instead of waiting for the whole response to come back.
+                    Streaming allows you to get the output of an LLM token by token instead of waiting for the whole
+                    response to come back.
                     <br>
-                    It's particularly useful when you want to display the response to the user in real-time or need to process the response incrementally.
+                    It's particularly useful when you want to display the response to the user in real-time or need to
+                    process the response incrementally.
                     <br>
-                    To enable streaming, you can define a streaming callback that will receive the tokens as they are generated:
+                    To enable streaming, you can define a streaming callback that will receive the tokens as they are
+                    generated:
                 </p>
                 <pre><code class="language-python">
 from yacana import Task, OllamaAgent, GenericMessage
@@ -202,41 +262,47 @@ The Eiffel Tower in Paris, France was originally intended to be a temporary stru
                     <br>
                     You can even mix tools and medias in the same task!
                     <br>
-                    To use medias with Ollama you'll need to install a multi-modal model like 
-                    <a href="https://ollama.com/library/llama3.2-vision">llama3.2-vision</a> or <a href="https://ollama.com/library/llava">Llava</a>.
-                    <pre><code class="text-output">
-ollama pull llama3.2-vision:11b
+                    To use medias with Ollama you'll need to install a multi-modal model like
+                    <a href="https://ollama.com/library/llama3.2-vision">llama3.2-vision</a> or <a
+                        href="https://ollama.com/library/llava">Llava</a>.
+                <pre><code class="text-output">
+ollama pull llama3.2-vision:11b       # For lighter PC: llama3.2-vision:11b-instruct-q4_K_M
                     </code></pre>
-                    <br>
-                    <p class="icon solid fa-info-circle">
-                        You can use the OpenAiAgent with 'gpt-4o-mini' as its multi modal by default and supports images and sound.
-                        However, every medias is transformed into tokens and will count in your rate limit! The media is encoded to base64
-                        before being sent.
-                    </p>
-                    <br>
-                    To run the following snippets, cd into the <a href="https://github.com/rememberSoftwares/yacana">root github repo</a>, create the file there and run the code.
-                    <pre><code class="language-python">
+                <br>
+                <p class="icon solid fa-info-circle">
+                    You can use the OpenAiAgent with 'gpt-4o-mini' as its multi-modal by default and supports images and
+                    sound.
+                    However, every medias is transformed into tokens and will count in your rate limit! The media is
+                    encoded to base64
+                    before being sent.
+                </p>
+                <br>
+                To run the following snippets, cd into the <a href="https://github.com/rememberSoftwares/yacana">root
+                GitHub repo</a>, create the file there and run the code.
+                <pre><code class="language-python">
 from yacana import Task, OllamaAgent, GenericMessage
 
 vision_agent = OllamaAgent("AI assistant", "llama3.2-vision:11b", system_prompt="You are a helpful AI assistant")
 
 Task("Describe this image", vision_agent, medias=["./tests/assets/burger.jpg"]).solve()
                     </code></pre>
-                    <br>
-                    Outputs:
-                    <pre><code class="text-output">
+                <br>
+                Outputs:
+                <pre><code class="text-output">
 INFO: [PROMPT][To: AI assistant]: Describe this image
 
 INFO: [AI_RESPONSE][From: AI assistant]: This black and white photo showcases a close-up view of a hamburger. The burger is centered on the image, with its bun covered in sesame seeds and two patties visible beneath. A slice of cheese is positioned between the buns, while lettuce peeks out from underneath. A small amount of ketchup or mustard is visible at the bottom of the patty.
                         
  The background is blurred, suggesting that the burger was photographed on a table or countertop. The overall mood and atmosphere of this photo are casual and informal, as if it was taken by someone enjoying their meal in a relaxed setting.
                     </code></pre>
-                    <br>
-                    This model doesn't support multiple medias in the same request, but you can use <a href="other_inference_servers.html">Yacana with ChatGPT</a> to do so.
-                    <hr>
-                    Now let's use tools on medias ! The following snippet will analyse an image and send the dominant color to a tool.
-                    The tool will return the associated hexa code for the given color.
-                    <pre><code class="language-python">
+                <br>
+                This model doesn't support multiple medias in the same request, but you can use <a
+                    href="other_inference_servers.html">Yacana with ChatGPT</a> to do so.
+                <hr>
+                Now let's use tools on medias ! The following snippet will analyse an image and send the dominant color
+                to a tool.
+                The tool will return the associated hexa code for the given color.
+                <pre><code class="language-python">
 from yacana import Task, OllamaAgent, GenericMessage, Tool
 
 # Defining a simple function to be used as tool. It translates a common color name to its hexa version
@@ -258,10 +324,10 @@ vision_agent = OllamaAgent("AI assistant", "llama3.2-vision:11b", system_prompt=
 
 Task("What color is the object ?", vision_agent, medias=["https://avatars.githubusercontent.com/u/12821004"], tools=[color_name_to_hexa_tool]).solve()
                     </code></pre>
-                </p>
                 <br>
-                Yacana supports HTTPS URLs in addition to local file system. In this example we are giving an image by its URL. Note,
-                that even when using an URL, the media will still be converted to tokens before being sent.
+                Yacana supports HTTPS URLs in addition to local file system. In this example we are giving an image by
+                its URL. Note,
+                that even when using a URL, the media will still be converted to tokens before being sent.
                 <br>
                 <br>
                 Output:
@@ -301,13 +367,19 @@ INFO: [TOOL_RESPONSE][ColorNameToHexa]: #0000FF
 
                 <h2 id="thinking-llms">Thinking LLMs (ie: Deepseek)</h2>
                 <p>
-                    Thinking LLMs are a new breed of LLMs that can reason and think step by step to solve complex problems.<br>
-                    They work in a similar way to Yacana's tool calling feature as the LLM makes it own reasoning loop before giving the final answer.<br>
-                    The most famous opensource thinking LLM is <a href="https://ollama.com/library/deepseek-r1">Deepseek</a>.<br>
+                    Thinking LLMs are a new breed of LLMs that can reason and think step by step to solve complex
+                    problems.<br>
+                    They work in a similar way to Yacana's tool calling feature as the LLM makes it own reasoning loop
+                    before giving the final answer.<br>
+                    The most famous opensource thinking LLM is <a
+                        href="https://ollama.com/library/deepseek-r1">Deepseek</a>.<br>
                     <br>
-                    However, the result of a <code>Task(...)</code> with a thinking LLM returns the complete reasoning process, not just the final answer.<br>
-                    This means that the <code>message.content</code> will have the tokens <code>&lt;think&gt;&lt;/think&gt;</code> followed by the final response.<br>
-                    The content in between these tokens can disrupt Yacana so you should provide the framework's Agent class the correct delimiters to use.<br>
+                    However, the result of a <code>Task(...)</code> with a thinking LLM returns the complete reasoning
+                    process, not just the final answer.<br>
+                    This means that the <code>message.content</code> will have the tokens <code>&lt;think&gt;&lt;/think&gt;</code>
+                    followed by the final response.<br>
+                    The content in between these tokens can disrupt Yacana so you should provide the framework's Agent
+                    class the correct delimiters to use.<br>
                 </p>
                 <pre><code class="language-python">
 from yacana import OllamaAgent, Task, Tool
@@ -333,9 +405,156 @@ agent.history.pretty_print()
                 </code></pre>
                 <br>
                 <p>
-                    In the above snippet we used the <code>thinking_tokens=("start_token", "end_token")</code> to tell Yacana what is Deepseek's self reasonning process and what's the actual answer.<br>
-                    This way it will not disrupt Yacana's features anymore and you can use this LLM as any normal LLM.<br>
-                </p>
+                    In the above snippet we used the <code>thinking_tokens=("start_token", "end_token")</code> to tell
+                    Yacana what is Deepseek's self reasoning process and what's the actual answer.<br>
+                    This way it will not disrupt Yacana's features anymore, and you can use this LLM as any normal
+                    LLM.<br>
+                </p><br><br>
+
+                <h2 id="mcp-tools">MCP tools</h2>
+
+                <div> Yacana offers MCP tools discovery and calling. It can connect to HTTP streamable endpoints.
+                    Meaning that it can connect to remote MCP servers like
+                    <code>https://mcp.deepwiki.com/mcp</code>.
+                </div>
+                <div>
+                    We do not and will not support local MCP servers using STDIO transport. STDIO servers are a bad
+                    practice and will slowly be deprecated in the future. If you have an STDIO server you want to use,
+                    you can
+                    make it HTTP streamable by using an MCP reverse proxy like <a
+                        href="https://github.com/sparfenyuk/mcp-proxy">mcp-proxy</a>.
+                </div><br>
+                <div>
+                    For now, Yacana only support tools discovery and not the other types of resources that can be
+                    exposed by the MCP server like "templates", etc.
+                </div>
+                <br>
+
+                <h4>Connecting to an MCP server</h4>
+                <pre><code class="language-python">
+from yacana import Mcp
+
+deepwiki = Mcp("https://mcp.deepwiki.com/mcp")
+deepwiki.connect()
+                </code></pre>
+                <br>
+
+                Output:
+                <pre><code class="text-output">
+INFO: [MCP] Connecting to MCP server (https://mcp.deepwiki.com/mcp)...
+
+INFO: [MCP] Connected to MCP server: DeepWiki v0.0.1
+
+INFO: [MCP] Available tool: read_wiki_structure - Get a list of documentation topics for a GitHub repository
+
+INFO: [MCP] Available tool: read_wiki_contents - View documentation about a GitHub repository
+
+INFO: [MCP] Available tool: ask_question - Ask any question about a GitHub repository
+                </code></pre>
+                <br>
+                <div>
+                    As you can see, Yacana discovered 3 tools from the MCP server. You can now use them as any other
+                    tool in your Tasks.
+                </div><br>
+                <div class="icon solid fa-info-circle">
+                    <a href="https://deepwiki.com/">Deepwiki</a> is a website proposing an AI agent and an MCP
+                    server to ask questions about public GitHub repositories. It was made by the team behind Devin.
+                    And even though their original product was highly controversial, the Deepwiki project is quite
+                    nice.
+                </div>
+                <hr>
+                <div>
+                    If you need to remove a tool from the list you can do it like this:
+                    <code>deepwiki.forget_tool("read_wiki_structure")</code>. This way when you get the tools from the
+                    Mcp object it will not return this tool anymore.
+                </div>
+                <br>
+
+                <h4>Calling MCP tools</h4>
+                <div>
+                    ▶️ Like any other tool, you can use the MCP tools in a Task and choose the type of execution you
+                    want. It can either be the Yacana style (default) or the OpenAi style.<br>
+                </div>
+                <div>
+                    Using the method <code>get_tools(&lt;tool_type&gt;)</code> on the Mcp object will return a list of all
+                    the remote tools using the required execution type.<br>
+                    For example:
+                </div>
+                <pre><code class="language-python">
+from yacana import Task, Tool, OllamaAgent, Mcp, ToolType
+
+deepwiki = Mcp("https://mcp.deepwiki.com/mcp")
+deepwiki.connect()
+
+ollama_agent = OllamaAgent("Ai assistant", "llama3.1:8b")
+
+Task("Asking question about repo: In the repo 'rememberSoftwares/yacana' how do you instantiate an ollama agent ?", ollama_agent, tools=deepwiki.get_tools_as(ToolType.YACANA)).solve()
+                </code></pre><br>
+                <div class="icon solid fa-info-circle"> A few important notes about the MCP tools:
+                    <ol>
+                        <li>MCP tools are <b>optional</b> by default (and by design).</li>
+                        <li>You cannot mix tools with different execution types in the same Task.</li>
+                        <li>Ollama does not support defining tools as <b>required</b> when using OpenAi execution mode.
+                            In this mode, Ollama tools are always considered optional even is you set
+                            <code>optional=False</code> in the Tool constructor.</li>
+                    </ol>
+                </div>
+                <div>
+                    ▶️ To call the MCP tools using the OpenAi style, you can use the
+                    <code>get_tools_as(...)</code> method with value <code>ToolType.OPENAI</code><br>
+                    For example: <code>Task("Asking question about repo: XXXXX ?", ollama_agent,
+                    tools=deepwiki.get_tools_as(ToolType.YACANA)).solve()</code>.
+                </div>
+                <br>
+
+                <h4>Mixing MCP and local tools</h4>
+                <div>
+                    You can mix MCP tools with local tools in the same Task. This way you can use the best of both
+                    worlds.<br>
+                    For example, let's add an <code>actualize_server</code> tool to our previous Task and ask the LLM to
+                    use it:
+                </div>
+                <pre><code class="language-python">
+
+from yacana import Task, Tool, OllamaAgent, Mcp, ToolType
+
+
+def update_server() -> None:
+    """Updates the server."""
+    return None
+
+update_server_tool = Tool("update_server", "Triggers a server update.", update_server)
+
+deepwiki = Mcp("https://mcp.deepwiki.com/mcp")
+deepwiki.connect()
+
+ollama_agent = OllamaAgent("Ai assistant", "llama3.1:8b")
+
+Task("Please update the server.", ollama_agent, tools=deepwiki.get_tools_as(ToolType.YACANA) + [update_server_tool]).solve()
+                </code></pre>
+                <br>
+                <div>
+                    The important part here is <code>tools=deepwiki.get_tools_as(ToolType.YACANA) +
+                    [update_server_tool]</code>. The <code>tools=</code> parameter takes a list of tools. Python can
+                    concatenate lists so because <code>get_tools_as(...)</code> returns a list of tools, we can
+                    concatenate it with our local tool list between <code>[...]</code>.<br>
+                </div>
+                <br>
+                <h4>Authentication with MCp servers</h4>
+
+                <div>
+                    Because MCP servers can be protected by an authentication system, Yacana supports passing headers to
+                    the MCP server when connecting to it. Every call made to the server will send these headers.<br>
+                    Use this to pass a bearer token or any other authentication header required by the server.<br>
+                </div>
+                <pre><code class="language-python">
+                    deepwiki = Mcp("https://mcp.deepwiki.com/mcp", {"lookatthis": "header"})
+                </code></pre>
+                <br>
+                <div>
+                    MCP support is available as an Alpha feature. Please open an issue if you encounter any problem
+                    while using it.
+                </div>
 
 
                 <div style="text-align: center; margin-top: 50px;">
@@ -352,7 +571,7 @@ agent.history.pretty_print()
 
     <!-- Sidebar -->
     <div id="sidebar">
-        <div class="inner">
+        <div class="inner inner-sidebar">
 
             <!-- Search -->
             <section id="search" class="alt">
@@ -361,15 +580,11 @@ agent.history.pretty_print()
                 </form>
             </section>
 
-            <!-- Menu Container -->
-            <div id="menu-container"></div>
+            <!-- Main website Menu Container -->
+            <nav id="menu" class="menu"></nav>
 
-            <!-- Section -->
-            <section>
-                <div class="page-nav-container">
-                    <!-- Dynamic page navigation will be inserted here -->
-                </div>
-            </section>
+            <!-- Page navigation menu -->
+            <nav id="page-nav-container" class="menu"></nav>
 
             <!-- Section -->
             <section>
@@ -379,7 +594,7 @@ agent.history.pretty_print()
                 <div class="mini-posts">
                     <article>
                         <a href="#" class="image"><img src="../images/youtube_down.jpg" alt=""/></a>
-                        <p>Youtube video for this section is still under creation. Please be patient ^^</p>
+                        <p>YouTube video for this section is still under creation. Please be patient ^^</p>
                     </article>
                 </div>
             </section>

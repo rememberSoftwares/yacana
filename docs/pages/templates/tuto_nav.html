@@ -1,5 +1,5 @@
 <!-- Menu -->
-<nav class="menu">
+
     <header class="major">
         <h2>Menu</h2>
     </header>
@@ -61,12 +61,13 @@
                 <li><a href="../pages/agents_features.html#streaming">Streaming</a></li>
                 <li><a href="../pages/agents_features.html#using-medias">Using medias</a></li>
                 <li><a href="../pages/agents_features.html#thinking-llms">Thinking LLMs (ie: Deepseek)</a></li>
+                <li><a href="../pages/agents_features.html#mcp-tools">Mcp tools</a></li>
             </ul>
         </li>
         <li>
             <span class="opener">VI. Multi-agents chat</span>
             <ul>
-                <li><a href="../pages/dual_agents_chat.html#stopping-chat-using-maximum-iterations">Stopping chat using 'maximum iterations'</a></li>
+                <li><a href="../pages/dual_agents_chat.html#multi-agents-chats">Stopping chat using 'maximum iterations'</a></li>
                 <li><a href="../pages/dual_agents_chat.html#letting-agents-end-the-chat">Letting Agents end the chat</a></li>
                 <li><a href="../pages/dual_agents_chat.html#controlling-the-shift-message">Controlling the Shift Message</a></li>
                 <li><a href="../pages/dual_agents_chat.html#using-tools-in-chat">Using tools in chat</a></li>
@@ -87,19 +88,14 @@
         <li>
             <a href="../pages/classes.html">
                 <span style="display: inline" class="icon solid fa-cog">
-                    <span class="label">
-                        Technical Documentation
-                    </span>
                     Technical Documentation
                 </span>
             </a>
         </li>
     </ul>
-</nav>
 <script>
     // Reinitialize menu event handlers after the menu is loaded
     $(document).ready(function() {
-        console.log("Menu loader")
         var $menu = $('.menu'),
             $menu_openers = $menu.children('ul').find('.opener');
 

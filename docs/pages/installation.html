@@ -65,7 +65,9 @@
                 <p style="text-align: center;"><img
                         src="https://github.com/user-attachments/assets/f3c45d0e-efca-4853-8237-3e56d90e1747"
                         alt="image"></p>
-                <p>Yacana was initially designed to work with <strong>Ollama</strong>, but now supports any OpenAI-compatible endpoints like <strong>ChatGPT</strong> or <strong>VLLM</strong>.<br>
+                <p>
+                    Yacana was initially designed to work with <strong>Ollama</strong>, but now also supports any
+                    OpenAI-compatible endpoints like <strong>ChatGPT</strong> or <strong>VLLM</strong>.<br>
                     This documentation serves as a comprehensive tutorial, guiding you through Yacana's features step by step.
                     Since the programming API is identical across all inference servers, we'll primarily demonstrate examples using the Ollama agent.
                     You can easily adapt any code snippets to work with your preferred inference server by simply <a href="other_inference_servers.html">swapping the agent type</a>.
@@ -88,13 +90,16 @@
                 <hr class="major"/>
 
                 <h2 id="choosing-an-llm-model">Choosing an LLM model</h2>
-                <p>After Ollama is installed you can browse the list of available LLMs on the <a
+                <h4>Choosing a model that fits</h4>
+                <p>
+                    After Ollama is installed you can browse the list of available LLMs on the <a
                         href="https://ollama.com/library">Ollama website</a> and download any model you want (or
                     your computer can
                     deal with).<br>
                     For reference, if you don't know what LLM model to choose (we've all been there) here is a list
                     of models you
-                    can try out on consumer hardware:</p>
+                    can try out on consumer hardware:
+                </p><br>
                 <div class="table-wrapper">
                     <table class="alt">
                         <thead>
@@ -140,9 +145,75 @@
                         </tbody>
                     </table>
                 </div>
-                <p>If you have access to a GPU VM with A LOT of RAM then you should try the state-of-the-art
-                    'llama3.1:405b' model.
-                    HF</p>
+                <p>
+                    If you are still unsure what LLM to pick remember that loading an LLM won't destroy your
+                    computer.<br>
+                    If the model is too large, the inference server will abort or crash, and then you can just delete
+                    the LLM and install a smaller one.<br>
+                    To help you choose an LLM that fits you can use this <a
+                        href="https://apxml.com/tools/vram-calculator">online calculator</a>.
+                </p><br>
+                <h4>Understanding model names</h4>
+                <details>
+                  <summary>Show section...</summary>
+                  <div><br>
+                    ▶️ <b>Parameters size</b><br><br>
+                    Large Language Models have a default number of parameters. For instance
+                    <a href="https://ollama.com/library/llama3.1">Lama3.1</a> has 3 different versions: "8B", "70B"
+                    and "405B".<br>
+                    <b>=><i>8B</i> means <i>8 Billon parameters</i></b> and the higher, the smarter. But it also means
+                    that
+                    it will consume more RAM.<br>
+                    Most consumer hardware can load "8B" parameters models but not much higher.<br><br>
+
+                    ▶️ <b>Quantization Overview</b><br><br>
+
+                    Next, let’s talk about quantization. Every model has a
+                    <a href="https://ollama.com/library/llama3.1/tags">quantized version of itself</a>.<br>
+                    For example, the model <i>llama3.1:8b-instruct-q4_K_S</i> is quantized to 4 bits, that’s what the
+                    <i>-q4</i> means.<br><br>
+
+                    The lower the number after the <i>q</i>, the more heavily quantized the model is. Heavier quantization reduces the model’s RAM usage on your machine.<br>
+                    By default, models use full precision (16-bit), indicated by <i>-fp16</i> in their name.<br>
+                    You can load a lighter version like <i>-q8</i>, which has half the precision of <i>fp16</i>, uses half the memory, but may also perform slightly worse.<br><br>
+
+                    The great thing about quantization is that the drop in performance isn’t directly proportional to the reduction in size.<br>
+                    This means it's often better to run a larger model in a quantized form than a smaller model in full precision.<br><br>
+
+                    For instance, <i>llama3.1:70b-instruct-q4_0</i> (LLaMA 3.1 with 70 billion parameters, fine-tuned for instruction-following, quantized to 4 bits) will generally outperform <i>llama3.1:8b-instruct-fp16</i> (LLaMA 3.1 with only 8 billion parameters in full precision), while using similar or even less RAM.<br><br>
+
+                    <b>In short:</b> it's usually better to use a larger, quantized model than a smaller,
+                    full-precision one, if it fits in your system’s RAM.<br><br>
+
+                    <b>Note:</b> On Ollama, the <i>latest</i> tag usually points to the <i>8B q4</i> model. You can
+                    confirm this by checking the hash under the model name, both <i>latest</i> and <i>8b-q4</i> will share the same hash.
+
+                </div>
+                </details>
+                <br>
+                <h4>Computer's RAM VS Graphic Cards' RAM</h4>
+                <details>
+                  <summary>Show section...</summary>
+                  <div><br>
+                     ▶️ When using a PC, it has its own native RAM, the classic system memory you're already familiar
+                    with.<br>
+                    But if you have a dedicated graphics card, it also comes with its own type of memory called <b>VRAM</b> (Video RAM).<br>
+                    VRAM is faster than regular RAM because it can be accessed directly, without needing to go through the operating system’s kernel.<br><br>
+
+                    A program that requires large amounts of memory and can use VRAM will typically run faster. This is why inference servers like Ollama try to load the LLM model directly into VRAM.<br><br>
+
+                    ▶️ <b>What happens if the model is too large to fit in VRAM?</b><br>
+                    That’s where <b>shared GPU memory</b> comes in!<br>
+                    This is a portion of your system’s regular RAM that the graphics card can use as if it were its own. From Ollama’s perspective, it will look like your GPU has more VRAM than it actually does.<br>
+                    However, since this memory still goes through the kernel, it's significantly slower than true VRAM.<br>
+                    As a result, using shared GPU memory can cause performance drops, and it’s generally best to stay within the limits of your available VRAM whenever possible.<br><br>
+
+                    ▶️ On Macs, the memory is <b>unified</b>, meaning the CPU and GPU share the same pool of RAM.
+                    This architecture allows both the graphics processor and the main processor to access memory
+                    quickly and seamlessly, so there's no distinction between RAM and VRAM ; it's always fast.
+
+                  </div>
+                </details>
 
                 <hr class="major"/>
 
@@ -171,15 +242,17 @@ pip install yacana
                 <hr class="major"/>
 
                 <h2 id="imports">Imports</h2>
-                <p>When using other frameworks 'import hell' quickly appears. To prevent this bothersome problem we
+                <p>
+                    When using other frameworks 'import hell' quickly appears. To prevent this bothersome problem we
                     propose that you always import all of Yacana's modules and when finished developing let the IDE
                     remove the unused imports.
-                    Unused imports generally appear grayed. Thus we recommend that you prepend these imports in all
+                    Unused imports generally appear grayed. Thus, we recommend that you prepend these imports in all
                     your files and clean them later. This way the IDE will have auto-completion available and will
-                    help you develop 10 times faster.</p>
+                    help you develop 10 times faster.
+                </p>
                 <pre><code class="language-python">
-                    from yacana import OllamaAgent, OpenAiAgent, GenericAgent, Task, Tool, Message, GenericMessage, MessageRole, GroupSolve, EndChat, EndChatMode, OllamaModelSettings, OpenAiModelSettings, LoggerManager, ToolError, MaxToolErrorIter
-					</code></pre>
+                    from yacana import OllamaAgent, OpenAiAgent, GenericAgent, Task, Tool, ToolType, Message, GenericMessage, MessageRole, GroupSolve, EndChat, EndChatMode, OllamaModelSettings, OpenAiModelSettings, LoggerManager, ToolError, MaxToolErrorIter
+                </code></pre>
 
 
                 <div style="text-align: center; margin-top: 50px;">
@@ -197,7 +270,7 @@ pip install yacana
 
     <!-- Sidebar -->
     <div id="sidebar">
-        <div class="inner">
+        <div class="inner inner-sidebar">
 
             <!-- Search -->
             <section id="search" class="alt">
@@ -206,15 +279,11 @@ pip install yacana
                 </form>
             </section>
 
-            <!-- Menu Container -->
-            <div id="menu-container"></div>
+            <!-- Main website Menu Container -->
+            <nav id="menu" class="menu"></nav>
 
-            <!-- Section -->
-            <section>
-                <div class="page-nav-container">
-                    <!-- Dynamic page navigation will be inserted here -->
-                </div>
-            </section>
+            <!-- Page navigation menu -->
+            <nav id="page-nav-container" class="menu"></nav>
 
             <!-- Section -->
             <section>

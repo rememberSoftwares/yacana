@@ -25,12 +25,14 @@ The real strength of the framework lies in its ability to deliver impressive res
 
 Yacana offers a **guided workflow** approach or **multi-turn chat** for production-grade capabilities, leveraging what we typically call '*Agents*'. However, Yacana takes a different approach to Agents compared to other frameworks, focusing more on chaining Tasks together rather than on the Agents themselves.
 
+[Take this 1-minute survey to tell us what you think!](https://docs.google.com/forms/d/e/1FAIpQLSeaDaHgYagJWsQ97EkZTGRvpvq6tWzz7U9H7lojCsCI3fw9EQ/viewform?usp=dialog)
+
 ---
 
 ## Key Features
 
 * 🔗 **Link** tasks together to create workflows
-* 🧰 Enhanced Tool Calling for **every** local LLMs
+* 🧰 Enhanced **Tool Calling** for **every** local LLMs + **MCP** tools support
 * 🤖 **Multi-agents** & **multi-turn** autonomous chat
 * 🚄 **Streaming** for speed and **structured output** for reliability
 * 🛠️ Same dev. API for both **Ollama** and **OpenAi** compatible servers
@@ -59,8 +61,8 @@ from yacana import Task, OllamaAgent
 
 ollama_agent = OllamaAgent("AI assistant", "llama3.1:8b", system_prompt="You are a helpful AI assistant")
 
-# Create a task to tell a joke
-message = Task("Tell me a joke. But do NOT tell me the answer.", ollama_agent).solve()
+# Create a task to tell a riddle
+message = Task("Tell me a riddle. But do NOT tell me the answer.", ollama_agent).solve()
 
 # "Why was the math book sad?"
 print(message.content)
@@ -228,9 +230,9 @@ python3 quick_demo.py
 
 ➡️
 ```python
-agent1 = Agent("Expert banker", "llama3.1:8b", model_settings=ms)
-agent2 = Agent("Naming expert", "llama3.1:8b")
-agent3 = Agent("File-system helper", "llama3.1:8b", model_settings=ms)
+agent1 = OllamaAgent("Expert banker", "llama3.1:8b", model_settings=ms)
+agent2 = OllamaAgent("Naming expert", "llama3.1:8b")
+agent3 = OllamaAgent("File-system helper", "llama3.1:8b", model_settings=ms)
 ```
 * If you are not using Ollama please refer to: [Using other inference servers](https://remembersoftwares.github.io/yacana/pages/other_inference_servers.html) and use one of the corresponding [demos](https://github.com/rememberSoftwares/yacana/tree/main/examples/invoices_checker).
 
@@ -387,9 +389,27 @@ for invoice_file in files:
 
 ![invoice_demo](https://github.com/user-attachments/assets/7cf6fd5f-325f-4868-b4c9-0667a30543fd)
 
+To look at more complete examples try the [examples folder](https://github.com/rememberSoftwares/yacana/tree/main/examples).
+
 ---
 
 ## Releases
+
+**0.3.3**  
++ Minor doc fixes.
+
+**0.3.2**  
++ Fixed streaming error.
+
+**0.3.1**  
++ Fixed major error in requirements asking for Numpy.
+
+**0.3.0**  
++ MCP tools support in Alpha.
++ Mixing Yacana and OpenAi tool calling styles with both OllamaAgent and OpenAiAgent.
++ Internal use of structured output can be shutdown if your LLM does not support it.
++ Tools without arguments now have their own workflow when using Yacana tool calling style.
++ Removed Herobrine
 
 **0.2.1**  
 + Ollama Enhanced Tool Calling is now better (70% accuracy upgrade!).
@@ -408,13 +428,11 @@ for invoice_file in files:
 ## Roadmap
 
 ❗ Highest priority  
-* Making Enhanced Tool Calling available for the OpenAi compatible backends and OpenAi standard for Ollama backends  
-* Compatibility with **MCP**
-* Support for thinking models like deepseek
+* Adding native RAG capabilities
+* More MCP resources support
 
 ❕ Lower priority  
-* Adding memory to agents  
-* Adding native RAG capabilities
+* Adding memory to agents
 * Simplify shift message and maybe rework GroupChat itself a bit.  
 * Keeping working on the documentation.  
 * Adding a section about code generation.  

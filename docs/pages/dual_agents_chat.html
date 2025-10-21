@@ -54,10 +54,12 @@
             <!-- Content -->
             <section>
                 <header class="main">
-                    <h1 id="stopping-chat-using-maximum-iterations">VI. Dual-agents chat</h1>
+                    <h1 id="multi-agents-chats">VI. Multi-agents chat</h1>
                 </header>
 
                 <span class="image main"><img src="../images/dual_chat.jpg" alt="Dual chat"/></span>
+
+                <h2 id="stopping-chat-using-maximum-iterations">Dual-agents chat</h2>
 
                 <p>A crucial functionality available in some other frameworks like CrewAI is allowing Agents to
                     speak with one another. Yacana also has this functionality. <br/>
@@ -109,7 +111,7 @@ GroupSolve([task1, task2], EndChat(EndChatMode.MAX_ITERATIONS_ONLY)).solve()
                 <br>
                 <p>In the above code, we can see that the end of the chat condition is
                     <code>EndChatMode.MAX_ITERATIONS_ONLY</code>. This means that both agents will exit the
-                    conversation after a predefined number of iterations. <strong>By default set to 5</strong>.
+                    conversation after a predefined number of iterations. <strong>By default, set to 5</strong>.
                 </p>
                 <p>You can set the max iteration level in the EndChat object with the <code>max_iterations=10</code>
                     parameter: </p>
@@ -199,7 +201,7 @@ These are just a few ideas to get you started! What do you think? Would you like
                     ever read the documentation of the Microsoft Autogen framework? If you have, I hope you're
                     having a better time with Yacana than I did with Autogen. That said, the conversational patterns
                     they show are a series of dual-agent conversations. And never did I understand the mess they did
-                    before Yacana came to life. The reason why they chain two-agent conversations is because LLMs
+                    before Yacana came to life. The reason why they chain two-agent conversations is that LLMs
                     have been trained to speak in alternation with a user. It's how all "instruct" models have been
                     fine-tuned. <br/>
                     So to get the best performance out of the LLMs they chose to limit the number of participants to
@@ -284,13 +286,11 @@ These are just a few ideas to get you started! What do you think? Would you like
                     quickly see how prompt engineering is important in this matter. <br/>
                     Yacana uses the following wording: </p>
                 <blockquote>
-                    "In your opinion, what objectives from your initial task have you 'NOT completed?" <br/>
+                    "In your opinion, what objectives from your initial task have you NOT completed?" <br/>
                 </blockquote>
                 <p>
-                    Therefore you should use the same prompt style in your Task prompt. For instance <em>"The
-                    task is fulfilled when the objective
-                    <insert here> is completed."
-                    </em>.<br/>
+                    Therefore, you should use the same prompt style in your Task prompt. For instance <em>"The
+                    task is fulfilled when the objective &#60;insert here&#62; is completed."</em>.<br/>
                     You should try different versions of this "objective completed" prompt to find one that
                     matches your task and LLM best.
                 </p>
@@ -400,7 +400,7 @@ You must find a secret number from 1 to 3. Propose one number.
  Thank you for the information! In that case, based on your hint, I propose the number 2 as my final answer to find the secret number. Good luck with your game!
 					</code></pre>
                 <br>
-                <p>The important part is in the INFO logs. Extracted from above as follow:</p>
+                <p>The important part is in the INFO logs. Extracted from above as follows:</p>
                 <pre><code class="text-output">
 INFO: [PROMPT][To: Ai assistant 1]: In your opinion, what objectives from your initial task have you NOT completed ?
 
@@ -783,7 +783,7 @@ task2.agent.history.pretty_print()
                     </li>
                     <li>To control who gets the shift, use the
                         <code>shift_message_owner=&#60;task instance&#62;</code>
-                        optionnal parameter from the GroupSolve() class.
+                        optional parameter from the GroupSolve() class.
                     </li>
                     <li>For instance:
                         <code>GroupSolve([task1, task2], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION),
@@ -793,9 +793,7 @@ task2.agent.history.pretty_print()
                         side (default) or be set by you.
                         <ul>
                             <li>To control the content of the shift message, use the
-                                <code>shift_message_content="
-                                    <Some message>"
-                                </code> optional parameter from the
+                                <code>shift_message_content="A message"</code> optional parameter from the
                                 GroupSolve() class. Not specifying this parameter results in the message being
                                 automatically copied from the first Agent answer to the second Agent (cf graph).
                             </li>
@@ -1053,9 +1051,9 @@ GroupSolve([task1, task2], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION),
                     glaring elements in this diagram: </p>
                 <ol>
                     <li>Agent2 has one more message (8) than Agent1 (7) due to the shift message.</li>
-                    <li>Both agents have the same History for the first four messages but they also share the same
+                    <li>Both agents have the same History for the first four messages, but they also share the same
                         "USER" / "ASSISTANT" scheme. This means that from Agent1's POV, you addressed it with
-                        message 3 and it responded with message 4. Which is false. The same problem arises with
+                        message 3, and it responded with message 4. Which is false. The same problem arises with
                         Agent2 POV which sees message 1 as us addressing it and message 2 as its response. Which is
                         also not true as they were meant for the other Agent.
                     </li>
@@ -1322,7 +1320,7 @@ Let's do it again sometime soon!
                         In the end:
                     </li>
                     <li>Agent2 tries 13</li>
-                    <li>Agent1 tells it it won!</li>
+                    <li>Agent1 tells it, it won!</li>
                 </ul>
                 <p>No, it didn't !? The initial secret number was 14! Not 13… </p>
                 <p>There are two issues here:</p>
@@ -1385,7 +1383,7 @@ Task("Your task is to generate a secret random number between 1 and 20. Output t
 player_task = Task("Your task is to guess a number between 1 and 20. You will receive feedback after each guess: either 'lower,' 'higher,' or 'You won!' Adjust your guess based on this feedback. You must propose only one number at a time. Continue guessing until you receive confirmation that you have guessed correctly and the game is won. Your objective is fulfilled when you won the game.", player, llm_stops_by_itself=True)
 
 # The Game Master Task will call the tool and return the output as feedback to the player 
-game_master_task = Task("A player will try to guess the number you generated. Respond to the guesses you receive with one of the following:\n* If the guess is higher than your number, say 'lower.'\n* If the guess is lower than your number, say 'higher.'\n* If the guess matches your number, say 'You won!' and end the game.\nDo not provide any other feedback or responses, and only play one round. To help you compare the numbers you have acces to a tool that describes the relation between your initial number and the guessed number", game_master, tools=[high_low_tool])
+game_master_task = Task("A player will try to guess the number you generated. Respond to the guesses you receive with one of the following:\n* If the guess is higher than your number, say 'lower.'\n* If the guess is lower than your number, say 'higher.'\n* If the guess matches your number, say 'You won!' and end the game.\nDo not provide any other feedback or responses, and only play one round. To help you compare the numbers you have access to a tool that describes the relation between your initial number and the guessed number", game_master, tools=[high_low_tool])
 
 print("################Starting GroupSolve#################")
 GroupSolve([player_task, game_master_task], EndChat(EndChatMode.END_CHAT_AFTER_FIRST_COMPLETION)).solve()
@@ -1469,7 +1467,7 @@ A player will try to guess the number you generated. Respond to the guesses you 
 * If the guess is higher than your number, say 'lower.'
 * If the guess is lower than your number, say 'higher.'
 * If the guess matches your number, say 'You won!' and end the game.
-Do not provide any other feedback or responses, and only play one round. To help you compare the numbers you have acces to a tool that describes the relation between your initial number and the guessed number
+Do not provide any other feedback or responses, and only play one round. To help you compare the numbers you have access to a tool that describes the relation between your initial number and the guessed number
 
 [assistant]:
 I can use the tool 'high_low' related to the task to solve it correctly.
@@ -1974,7 +1972,7 @@ I will give you your task in the next message.
 
     <!-- Sidebar -->
     <div id="sidebar">
-        <div class="inner">
+        <div class="inner inner-sidebar">
 
             <!-- Search -->
             <section id="search" class="alt">
@@ -1983,15 +1981,11 @@ I will give you your task in the next message.
                 </form>
             </section>
 
-            <!-- Menu Container -->
-            <div id="menu-container"></div>
+            <!-- Main website Menu Container -->
+            <nav id="menu" class="menu"></nav>
 
-            <!-- Section -->
-            <section>
-                <div class="page-nav-container">
-                    <!-- Dynamic page navigation will be inserted here -->
-                </div>
-            </section>
+            <!-- Page navigation menu -->
+            <nav id="page-nav-container" class="menu"></nav>
 
             <!-- Section -->
             <section>
@@ -2001,7 +1995,7 @@ I will give you your task in the next message.
                 <div class="mini-posts">
                     <article>
                         <a href="#" class="image"><img src="../images/youtube_down.jpg" alt=""/></a>
-                        <p>Youtube video for this section is still under creation. Please be patient ^^</p>
+                        <p>YouTube video for this section is still under creation. Please be patient ^^</p>
                     </article>
                 </div>
             </section>

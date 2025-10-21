@@ -63,22 +63,31 @@
 
                 <h2 id="compatibility-with-openai-api">Compatibility with OpenAI API</h2>
                 <p>
-                    Yacana was initially designed to work only with Ollama. However, many projects require mixing both private LLM providers and local open source models to achieve
-                    a greater production grade product. Private LLM providers like OpenAI or Anthropic are great for production due to their quality but cost a lot of money.
-                    On the other hand, local open source models are way cheaper to run but their quality is not always there. Hence having the ability to mix both is a great asset.
+                    Yacana was initially designed to work only with Ollama. However, many projects require mixing both
+                    private LLM providers and local open source models to achieve
+                    a greater production grade product. Private LLM providers like OpenAI or Anthropic are great for
+                    production due to their quality but cost a lot of money.
+                    On the other hand, local open source models are way cheaper to run but their quality is not always
+                    there. Hence, having the ability to mix both is a great asset.
                 </p>
                 <br>
                 <p>
-                    The force of Yacana is to provide you with the same programming API whether you use Ollama or an OpenAI-compatible endpoint.
+                    The force of Yacana is to provide you with the same programming API whether you use Ollama or an
+                    OpenAI-compatible endpoint.
                     <br>
-                    To be fair there is one important difference between the OllamaAgent and OpenAiAgent : the way tools are called.
+                    To be fair there is one important difference between the OllamaAgent and OpenAiAgent : the way tools
+                    are called.
                     <br>
-                    For Ollama, tools are called using an "enhanced tool calling" system where Yacana will iterate over the tools and call the appropriate ones with its own 
-                    internal method. This system was made specifically for local LLMs to achieve higher call success rates.
+                    For Ollama, tools are called using an "enhanced tool calling" system where Yacana will iterate over
+                    the tools and call the appropriate ones with its own
+                    internal method. This system was made specifically for local LLMs to achieve higher call success
+                    rates.
                     <br>
                     <br>
-                    For OpenAI, tools are called following the OpenAI standard. So, when using ChatGPT you won't have any troubles calling tools as chatGPT is tailored for this.<br>
-                    However, when using other inference servers like VLLM you will have a lower success rate at calling tools. This is a little bit unfortunate and will be addressed in
+                    For OpenAI, tools are called following the OpenAI standard. So, when using ChatGPT you won't have
+                    any troubles calling tools as chatGPT is tailored for this.<br>
+                    However, when using other inference servers like VLLM you will have a lower success rate at calling
+                    tools. This is a little bit unfortunate and will be addressed in
                     another update. Our aim is to make both Agents capable of using both tool calling systems.
                     <br>
                     Stay tuned for future updates!
@@ -86,10 +95,13 @@
                 <br>
                 <h2 id="using-chatgpt">Using ChatGPT</h2>
                 <p>
-                    Using ChatGpt requires using the <code>OpenAiAgent</code>. It has the same constructor and functionnalities
-                    than the <code>OllamaAgent</code>. It just has one more parameter: the <code>api_token</code> required to authenticate to OpenAI servers.
+                    Using ChatGpt requires using the <code>OpenAiAgent</code>. It has the same constructor and
+                    functionalities
+                    than the <code>OllamaAgent</code>. It just has one more parameter: the <code>api_token</code>
+                    required to authenticate to OpenAI servers.
                     <br>
-                    To connect Yacana to ChatGPT, simply use the <a href="classes.html#tech-doc-openai-agent">OpenAiAgent</a> like this:
+                    To connect Yacana to ChatGPT, simply use the <a
+                        href="classes.html#tech-doc-openaiagent">OpenAiAgent</a> like this:
                 </p>
                 <pre><code class="language-python">
 from yacana import OpenAiAgent, Task, GenericMessage
@@ -102,74 +114,27 @@ print(message.content)
                 </code></pre>
                 <hr>
 
-                <h4>Using tools</h4>
-                The Yacana API for calling tools with the  <a href="classes.html#tech-doc-openai-agent">OpenAiAgent</a>
-                is the same as with the <a href="classes.html#tech-doc-OllamaAgent">OllamaAgent</a>. The difference lies in how they are 
-                called internaly. Let me show you what I mean:
-                <pre><code class="language-python">
-from yacana import OpenAiAgent, Task, ToolError, Tool
-
-def get_temperature(city: str):
-    if type(city) is not str:
-        raise ToolError("City name must be a string.")
-    return f"The temperature in {city} is 18 degrees celcius."
-
-get_temperature_tool = Tool("get_temperature", "Takes a city name and returns the temperature in this city.", get_temperature)
-
-openai_agent = OpenAiAgent("AI assistant", "gpt-4o-mini", system_prompt="You are a helpful AI assistant", api_token="sk-proj-XXXXXXXXXXXXXXXXX")
-
-Task("What's the temperature in Paris?", openai_agent, tools=[get_temperature_tool]).solve()
-                </code></pre>
-                <br>
-                Output:
-                <pre><code class="text-output">
-INFO: [PROMPT][To: AI assistant]: What's the temperature in Paris?
-
-INFO: [AI_RESPONSE][From: AI assistant]: [{"id": "call_aJvyCX0wamCaORoNfQcyE5O2", "type": "function", "function": {"name": "get_temperature", "arguments": "{\"city\": \"Paris\"}"}}]
-
-INFO: [TOOL_RESPONSE][get_temperature]: The temperature in Paris is 18 degrees celcius.
-
-
-INFO: [PROMPT][To: AI assistant]: Retrying with original task and tools answer: 'What's the temperature in Paris?'
-
-INFO: [AI_RESPONSE][From: AI assistant]: The temperature in Paris is currently 18 degrees Celsius.
-                </code></pre>
-                <br>
-                First, in the ouput we can see that the tool calling is more concise than the one done by the <a href="classes.html#tech-doc-OllamaAgent">OllamaAgent</a>.
-                This effectiveness can only work with very smart LLMs like ChatGPT.
-                <br>
-                What’s particularly interesting is this line:
-                <pre><code class="text-output">
-INFO: [PROMPT][To: AI assistant]: Retrying with original task and tools answer: 'What's the temperature in Paris?'
-                </code></pre>
-                <br>
-                This line indicates that after the tool has responded,
-                the LLM is prompted again to complete the original task. It's essentially a kind of replay!<br>
-                In fact, within a single Task, the LLM is prompted twice: first, when it doesn't yet know the answer 
-                and calls the tool; then again, once the tool's response is available, so the LLM can generate a final answer.
-                The result you get from this Task is <i>that</i> final answer.<br>
-                In contrast, the <a href="classes.html#tech-doc-OllamaAgent">OllamaAgent</a> does not perform this replay, you would need to create a second Task manually to handle the tool’s output.
-                <br>
-                Using the enhaced tool calling for the OpenAIAgent will be addressed in a future update.
-                <br>
-                <hr>
-
                 <h4>Configuring model settings</h4>
 
-                Yacana offers a class to configure the LLM. For Ollama it's <a href="classes.html#tech-doc-OllamaAgent">OllamaModelSettings</a> 
-                and for OpenAi it's <a href="classes.html#tech-doc-openai-agent">OpenAiModelSettings</a><br>
-                The class was made to aggregate all the parameters understood by the OpenAI API so you don't have to do it yourself ^^.
+                Yacana offers a class to configure the LLM. For Ollama it's <a
+                    href="classes.html#tech-doc-ollamamodelsettings">OllamaModelSettings</a>
+                and for OpenAi it's <a href="classes.html#tech-doc-openaimodelsettings">OpenAiModelSettings</a><br>
+                The class was made to aggregate all the parameters understood by the OpenAI API so you don't have to do
+                it yourself ^^.
                 <br>
-                ⚠️ Note that it was made specifically for chatGPT and some settings may not work with other OpenAi compatible inference servers.
+                ⚠️ Note that it was made specifically for chatGPT and some settings may not work with other OpenAi
+                compatible inference servers.
                 <br>
                 <br>
                 In the following example we will use the <code>OpenAiModelSettings</code> class to configure the
                 LLM to show the <code>logprobs</code>.
-                Logprobs are the probability for each next token. It ranges from 0 to minus infinity. So the closer to 0 the most probable will
+                Logprobs are the probability for each next token. It ranges from 0 to minus infinity. So the closer to 0
+                the most probable will
                 the next token be. Using the model config, we'll ask for the best 3 candidates for each token.
                 <br>
                 <br>
-                However, Yacana was not meant to parse the logprobs in particular. So, we'll use the <code>.raw_llm_json</code> member to access
+                However, Yacana was not meant to parse the logprobs in particular. So, we'll use the
+                <code>.raw_llm_json</code> member to access
                 the raw JSON output of the LLM. In there we'll find all the information we need.<br>
                 let's see!
                 <br>
@@ -305,21 +270,27 @@ Raw JSON output from LLM :
                 </code></pre>
                 <br>
                 <b>About the output:</b><br>
-                We can see that for the first token, the 3 best candidates were: "Canada" (-0.011), "One" (-4.51), " Canada" (-11.38). Makes sense that "Canada" (-0,11) was picked.<br>
-                For the second token we have: " is" ( -0.08), " has" (-2.46), " possesses" (-12.58). It's quite interesting to see the possible outcomes and their probability.<br>
+                We can see that for the first token, the 3 best candidates were: "Canada" (-0.011), "One" (-4.51), "
+                Canada" (-11.38). Makes sense that "Canada" (-0,11) was picked.<br>
+                For the second token we have: " is" ( -0.08), " has" (-2.46), " possesses" (-12.58). It's quite
+                interesting to see the possible outcomes and their probability.<br>
                 <br>
-                <b>About the <a href="classes.html#tech-doc-history-slot">HistorySlot</a></b>:<br>
+                <b>About the <a href="classes.html#tech-doc-historyslot">HistorySlot</a></b>:<br>
 
-                The HistorySlot is class that wraps the message from the LLM. There are very few usecases where you'll need to
-                interact with it. When accessing a Message from the history in reality you go through the HistorySlot object even though you can't see it.
+                The HistorySlot is the class that wraps the message from the LLM. There are very few use cases where
+                you'll need to
+                interact with it. When accessing a Message from the history in reality you go through the HistorySlot
+                object even though you can't see it.
                 <br>
-                However, in this case the <code>logprobs</code> data is not available inside the <a href="classes.html#tech-doc-message">Message</a> object itself. So, we must use the <code>.raw_llm_json</code> 
+                However, in this case the <code>logprobs</code> data is not available inside the <a
+                    href="classes.html#tech-doc-message">Message</a> object itself. So, we must use the <code>.raw_llm_json</code>
                 member from the surrounding slot to access the raw JSON LLM output and get a look at the logprobs.
                 <hr>
 
                 <h4>Using multiple medias</h4>
-                <p>
-                    Using media with ChatGPT is similar to the OllamaAgent, with the key difference being that ChatGPT supports multiple media files in a single request.
+                <div>
+                    Using media with ChatGPT is similar to the OllamaAgent, with the key difference being that ChatGPT
+                    supports multiple media files in a single request.
                     <pre><code class="language-python">
 from yacana import Task, OpenAiAgent
 
@@ -328,19 +299,22 @@ openai_agent = OpenAiAgent("AI assistant", "gpt-4o-mini", system_prompt="You are
 Task("Describe this image", openai_agent, medias=["./tests/assets/burger.jpg", "./tests/assets/flower.png"]).solve()
                     </code></pre>
                     <br>
-                    ⚠️ Images are transformed into base64 before being sent to the LLM. This means that the size of the request will be quite large and you will pay for a lot of tokens.
-                </p>
+                    ⚠️ Images are transformed into base64 before being sent to the LLM. This means that the size of the
+                    request will be quite large and you will pay for a lot of tokens.
+                </div>
 
                 <hr>
 
                 <h3>Getting alternative responses</h3>
                 <p>
-                    ChatGPT has a feature allowing it to return multiple version of the same message. It's used to provide you with alternative responses. For instance,
+                    ChatGPT has a feature allowing it to return multiple version of the same message. It's used to
+                    provide you with alternative responses. For instance,
                     some could be more formal, some could be more creative, etc.
                     <br>
                     Yacana offers a way to get these alternative responses.
                     <br>
-                    Let's say we want 3 alternative responses to the prompt "What is the main invention of Nicolas Tesla?" then select
+                    Let's say we want 3 alternative responses to the prompt "What is the main invention of Nicolas
+                    Tesla?" then select
                     the third one as the main message of the slot instead of the first one (default).
                 </p>
                 <pre><code class="language-python">
@@ -394,42 +368,50 @@ Current main message is: One of Nikola Tesla's main inventions is the alternatin
                 </code></pre>
                 <br>
                 <p>
-                    The <a href="classes.html#tech-doc-history-slot">HistorySlot</a> has been discused above. But to put it simply, it wraps each message in the history.
-                    This means that the history is not a list of <a href="classes.html#tech-doc-message">Message</a> but a list of slots (makes sense?).<br>
-                    Each slot has one or more message. In our case, we have 3. The first one is the main message and is the one presented to the LLM during inference
+                    The <a href="classes.html#tech-doc-historyslot">HistorySlot</a> has been disused above. But to put
+                    it simply, it wraps each message in the history.
+                    This means that the history is not a list of <a href="classes.html#tech-doc-message">Message</a> but
+                    a list of slots (makes sense?).<br>
+                    Each slot has one or more message. In our case, we have 3. The first one is the main message and is
+                    the one presented to the LLM during inference
                     and the other 2 are alternate messages.<br>
                     The slot allows to switch what message should be considered as main message using <code>.set_main_message_index(n)</code>.<br>
                     <br>
-                    In the output, the first look at <i>Current main message</i> shows that the first message is selected (ends with "engineering").<br>
-                    After setting the index at 2 (starting from 0) the second round of <i>Current main message</i> show the third message is selected (ends with "grid").<br>
+                    In the output, the first look at <i>Current main message</i> shows that the first message is
+                    selected (ends with "engineering").<br>
+                    After setting the index at 2 (starting from 0) the second round of <i>Current main message</i>
+                    shows the third message is selected (ends with "grid").<br>
                 </p>
                 <hr>
 
                 <h2 id="using-vllm">Using VLLM</h2>
                 <h4>Installation</h4>
                 <p>
-                    To help you go through the installation process on WSL you can follow this tutorial: <a href="https://itnext.io/making-vllm-work-on-wsl2-61182235424f">Installing VLLM on WSL</a>.
+                    To help you go through the installation process on WSL you can follow this tutorial: <a
+                        href="https://itnext.io/making-vllm-work-on-wsl2-61182235424f">Installing VLLM on WSL</a>.
                 </p>
                 <br>
-                <p>
-                    First, let's install the VLLM.
-                    <br>
-                    You can find the detailed installation steps on the <a href="https://docs.vllm.ai/en/stable/getting_started/installation/gpu.html">VLLM documentation</a>.
-                    <br>
-                    We recommand you use conda to install VLLM. Note that conda does not allow you to use it in an enterprise environment without paying for a license. You can use 'uv' instead.
-                    <br>
-                    Once conda is installed you can simply pip install vllm.
-                    <pre><code class="language-python">
+                First, let's install the VLLM.
+                <br>
+                You can find the detailed installation steps on the <a
+                    href="https://docs.vllm.ai/en/stable/getting_started/installation/gpu.html">VLLM documentation</a>.
+                <br>
+                We recommend you use conda to install VLLM. Note that conda does not allow you to use it in an
+                enterprise environment without paying for a license. You can use 'uv' instead.
+                <br>
+                Once conda is installed you can simply pip install vllm.
+                <pre><code class="language-python">
 conda create -n vllm python=3.12 -y
 conda activate vllm
 pip install vllm
-                    </code></pre>
-                </p>
+                </code></pre>
                 <br>
                 <p>
-                    Now, let's start the inference server with a model. If it's not already present it will be downloaded.
+                    Now, let's start the inference server with a model. If it's not already present it will be
+                    downloaded.
                     <br>
-                    We'll use the <a href="https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct">Llama-3.2-1B-Instruct model</a>.
+                    We'll use the <a href="https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct">Llama-3.2-1B-Instruct
+                    model</a>.
                     <br>
                 </p>
                 <pre><code class="language-python">
@@ -437,27 +419,30 @@ vllm serve meta-llama/Llama-3.1-8B-Instruct --max-model-len 8192 --guided-decodi
                 </code></pre>
                 <br>
                 <p>
-                    For the inference to start you will need a HuggingFace Account to validate the Facebook's license agreement.
+                    For the inference to start you will need a HuggingFace Account to validate the Facebook's license
+                    agreement.
                     <br>
                     Read the VLLM tutorial if you need help with that step.
                 </p>
                 <br>
+                About the vllm command line parameters:
+                <ul>
+                    <li>
+                        <b>guided-decoding-backend</b>: This parameter is used to specify the backend for guided
+                        decoding. It's used for structured outputs.
+                    </li>
+                    <li>
+                        <b>enable-auto-tool-choice</b>: This parameter is used to enable the auto tool choice. Required
+                        when at least one tool is defined as optional.
+                    </li>
+                    <li>
+                        <b>tool-call-parser</b>: This parameter is used to specify what shema to expect when doing tool
+                        calls. As we are using facebook's llama we will use the "llama3_json" parser.
+                    </li>
+                </ul>
                 <p>
-                    About the vllm command line parameters:
-                    <ul>
-                        <li>
-                            <b>guided-decoding-backend</b>: This parameter is used to specify the backend for guided decoding. It's used for structured outputs.
-                        </li>
-                        <li>
-                            <b>enable-auto-tool-choice</b>: This parameter is used to enable the auto tool choice. Required when at least one tool is defined as optional.
-                        </li>
-                        <li>
-                            <b>tool-call-parser</b>: This parameter is used to specify what shema to expect when doing tool calls. As we are using facebook's llama we will use the "llama3_json" parser.
-                        </li>
-                    </ul>
-                </p>
-                <p>
-                    Once the inference server is running, you can use the following code to create an OpenAI-compatible agent:
+                    Once the inference server is running, you can use the following code to create an OpenAI-compatible
+                    agent:
                 </p>
                 <pre><code class="language-python">
 from yacana import OpenAiAgent, GenericMessage, Task
@@ -497,20 +482,25 @@ Task("What's the weather in paris ?", vllm_agent, tools=[get_weather_tool], runt
                 </code></pre>
                 <br>
                 <p>
-                    Note how we used the <code>runtime_config</code> parameter to specify the guided decoding backend. You can use this parameter to specify other parameters as well.
-                    This is a direct access to the underlying library.
+                    Note how we used the <code>runtime_config</code> parameter to specify the guided decoding backend.
+                    You can use this parameter to specify other parameters as well.
+                    This is direct access to the underlying library.
                     <br>
-                    For OpenAI we use the <a href="https://github.com/openai/openai-python">OpenAI python client</a>. You can set any parameter supported by this library.
+                    For OpenAI, we use the <a href="https://github.com/openai/openai-python">OpenAI python client</a>.
+                    You can set any parameter supported by this library.
                     <br>
-                    These settings can either be set at the Agent level or at the Task level. For more information 
-                    please refer to the <a href="agents_and_tasks.html#accessing-the-underlying-client-library">Accessing the underlying client library</a> section.
+                    These settings can either be set at the Agent level or at the Task level. For more information
+                    please refer to the <a href="agents_and_tasks.html#accessing-the-underlying-client-library">Accessing
+                    the underlying client library</a> section.
                 </p>
                 <br>
                 <h4>Using structured outputs</h4>
                 <p>
-                    Using structured outputs is the same as with the OllamaAgent. This is the power of Yacana. It provides you with the same API for structured outputs on
-                    local LLMs as on OpenAI. However, you still need to provide the <code>outline</code> parameter. In this example we set it at the Agent level because it will be
-                    usefull for every future task requiring grammar enforcement.
+                    Using structured outputs is the same as with the OllamaAgent. This is the power of Yacana. It
+                    provides you with the same API for structured outputs on
+                    local LLMs as on OpenAI. However, you still need to provide the <code>outline</code> parameter. In
+                    this example we set it at the Agent level because it will be
+                    useful for every future task requiring grammar enforcement.
                 </p>
                 <pre><code class="language-python">
 from pydantic import BaseModel
@@ -534,7 +524,8 @@ print("Name = ", message.structured_output.countryFacts[0].name)
 print("Fact = ", message.structured_output.countryFacts[0].fact)
                 </code></pre>
                 <p>
-                    All other features, like medias, streaming, etc. are also available with the OpenAiAgent and can be used in the exact same way.
+                    All other features, like medias, streaming, etc. are also available with the OpenAiAgent and can be
+                    used in the exact same way.
                     Please refer to the main documentation for more information.
                 </p>
                 <br>
@@ -545,74 +536,65 @@ print("Fact = ", message.structured_output.countryFacts[0].fact)
                         <li><a class="button disabled">Next</a></li>
                     </ul>
                 </div>
+            </section>
         </div>
     </div>
+            <!-- Sidebar -->
+            <div id="sidebar">
+                <div class="inner inner-sidebar">
 
-    <!-- Sidebar -->
-    <div id="sidebar">
-        <div class="inner">
+                    <!-- Search -->
+                    <section id="search" class="alt">
+                        <form method="post" action="#">
+                            <input type="text" name="query" id="query" placeholder="Search"/>
+                        </form>
+                    </section>
 
-            <!-- Search -->
-            <section id="search" class="alt">
-                <form method="post" action="#">
-                    <input type="text" name="query" id="query" placeholder="Search"/>
-                </form>
-            </section>
+                    <!-- Main website Menu Container -->
+                    <nav id="menu" class="menu"></nav>
 
-            <!-- Menu Container -->
-            <div id="menu-container"></div>
+                    <!-- Page navigation menu -->
+                    <nav id="page-nav-container" class="menu"></nav>
 
-            <!-- Section -->
-            <section>
-                <div class="page-nav-container">
-                    <!-- Dynamic page navigation will be inserted here -->
+                    <!-- Section -->
+                    <section>
+                        <header class="major">
+                            <h2>Related Youtube video</h2>
+                        </header>
+                        <div class="mini-posts">
+                            <article>
+                                <a href="#" class="image"><img src="../images/youtube_down.jpg" alt=""/></a>
+                                <p>YouTube video for this section is still under creation. Please be patient ^^</p>
+                            </article>
+                        </div>
+                    </section>
+
+                    <!-- Footer -->
+                    <footer id="footer">
+                        <p class="copyright">&copy; Emilien Lancelot. All rights reserved.<br>
+                            Design: <a href="https://html5up.net">HTML5UP</a>.</p>
+                    </footer>
+
                 </div>
-            </section>
-
-            <!-- Section -->
-            <section>
-                <header class="major">
-                    <h2>Related Youtube video</h2>
-                </header>
-                <div class="mini-posts">
-                    <article>
-                        <a href="#" class="image"><img src="../images/youtube_down.jpg" alt=""/></a>
-                        <p>Youtube video for this section is still under creation. Please be patient ^^</p>
-                    </article>
-                </div>
-            </section>
-
-            <!-- Footer -->
-            <footer id="footer">
-                <p class="copyright">&copy; Emilien Lancelot. All rights reserved.<br>
-                    Design: <a href="https://html5up.net">HTML5UP</a>.</p>
-            </footer>
+            </div>
 
         </div>
-    </div>
 
-</div>
-
-<!-- Scripts -->
-<script src="../assets/js/jquery.min.js"></script>
-<script src="../assets/js/browser.min.js"></script>
-<script src="../assets/js/breakpoints.min.js"></script>
-<script src="../assets/js/util.js"></script>
-<script src="../assets/js/main.js"></script>
-<script src="../assets/js/menu.js"></script>
-<script>
-    // Initialize both menus when the document is ready
-    $(document).ready(function() {
-        initializeMainNavMenu();
-        initializePageNavMenu();
-    });
-</script>
+        <!-- Scripts -->
+        <script src="../assets/js/jquery.min.js"></script>
+        <script src="../assets/js/browser.min.js"></script>
+        <script src="../assets/js/breakpoints.min.js"></script>
+        <script src="../assets/js/util.js"></script>
+        <script src="../assets/js/main.js"></script>
+        <script src="../assets/js/menu.js"></script>
+        <script>
+            // Initialize both menus when the document is ready
+            $(document).ready(function() {
+                initializeMainNavMenu();
+                initializePageNavMenu();
+            });
+        </script>
 
 </body>
 
 </html>
-
-
-
-
-

@@ -1,10 +1,11 @@
 import copy
+import logging
 import uuid
 from typing import List, Type, Callable, Dict
 from pydantic import BaseModel
 
 from .generic_agent import GenericAgent, GenericMessage
-from .exceptions import MaxToolErrorIter, IllogicalConfiguration
+from .exceptions import IllogicalConfiguration
 from .history import History
 from .logging_config import LoggerManager
 from .tool import Tool
@@ -115,10 +116,11 @@ class Task:
         if self.streaming_callback is not None and self.structured_output is not None:
             raise IllogicalConfiguration("You can't have streaming_callback and structured_output at the same time. Having incomplete JSON is useless.")
 
+        self._check_tools_are_same_type()
+        self._check_tool_names_are_unique()
+
         # Only used when @forget is True
         self._initial_history: History | None = None
-
-        #self._update_tool_schema_if_openai()
 
     @property
     def uuid(self) -> str:
@@ -131,6 +133,41 @@ class Task:
             A unique task identifier.
         """
         return self._uuid
+
+    def _check_tools_are_same_type(self):
+        """
+        All tools must be of the same type. We can't mix tools because they are not proposed in the same way to the LLM.
+        """
+        if len(self.tools) > 0:
+            first_tool_type = self.tools[0].tool_type
+            for tool in self.tools:
+                if tool.tool_type != first_tool_type:
+                    raise IllogicalConfiguration("All tools must be of the same type. Mixing tool types is not allowed. Use ToolType.YACANA or ToolType.OPENAI to specify the type of tool execution you want to use.")
+
+    def _check_tool_names_are_unique(self):
+        """
+        Check that all local tools have unique names and that MCP tools do not conflict with local tool names.
+        """
+        local_tool_names: List[str] = [tool.tool_name for tool in self.tools if not tool.is_mcp]
+
+        if len(set(local_tool_names)) != len(local_tool_names):
+            raise IllogicalConfiguration("All local tools must have unique names. Found duplicates in the task's tool list.")
+
+        unique_mcp_tools: List[Tool] = []
+        mcp_tools: List[Tool] = [tool for tool in self.tools if tool.is_mcp]
+
+        for mcp_tool in mcp_tools:
+            if mcp_tool.tool_name not in local_tool_names:
+                unique_mcp_tools.append(mcp_tool)
+            else:
+                logging.warning(
+                    "Tool '%s' is a MCP tool but its name '%s' is already used by a tool defined at Task "
+                    "level. Local task tools take precedence upon remote MCP tools for security reasons. You should either change your local tool name or use the .forget_tool() method from the Mcp class. For now the remote tool will no be available.",
+                    mcp_tool.tool_name,
+                    mcp_tool.tool_name
+                )
+
+        self.tools = [tool for tool in self.tools if not tool.is_mcp] + unique_mcp_tools
 
     def add_tool(self, tool: Tool) -> None:
         """

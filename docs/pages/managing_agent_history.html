@@ -81,7 +81,7 @@
                 </ul>
                 <span><i>You may also have noticed a "Tool" message:</i></span>
                 <ul>
-                    <li>4: The "Tool" message is is used by the OpenAi standard to use tools. This is abstract by Yacana so you don't have to deal with this fine mess.</li>
+                    <li>4: The "Tool" message is used by the OpenAi standard to use tools. This is abstract by Yacana so you don't have to deal with this fine mess.</li>
                 </ul>
                 <hr/>
                 <div>
@@ -104,7 +104,7 @@
                     could use the <code>forget=True</code> parameter in the <code>Task()</code> class so the prompt and the LLM
                     response do not get saved to the history. You'll see there are many ways to preserve the history from useless noise. <br/>
                 </p>
-                <p>
+                <div>
                     The Agent class comes with a <code>.history</code> property of type <a href="classes.html#tech-doc-history">History</a>.
                     It exposes methods to manipulate and view the history.
                     For instance, you can use the <code>.pretty_print()</code> method to print the history on the standard output
@@ -119,7 +119,7 @@ messages = agent1.history.get_messages_as_dict()
 messages[0].content # First message
 messages[1].content # Second message
                     </code></pre>
-                </p>
+                </div>
 
                 <p>Let's discover all the different ways to interact with an agent's history!</p>
                 <hr/>
@@ -187,7 +187,7 @@ Let me know if you have any other questions!
 
 ############## END ##################
 
--------------- Agent 1 history dictionnary --------------
+-------------- Agent 1 history dictionary --------------
 [{'role': 'system', 'content': 'You are a pastry chef'}, {'role': 'user', 'content': 'Generate 5 pastry names followed by the associated estimated calorie.'}, {'role': 'assistant', 'content': 'Here are 5 pastry names with their associated estimated calorie counts:\n\n1. **Cinnamon Swirl Brioche** (250-300 calories) - A sweet, buttery brioche filled with a gooey cinnamon swirl.\n2. **Lemon Lavender Mille-Feuille** (400-450 calories) - Layers of flaky pastry, lemon curd, and lavender cream create a bright and airy dessert.\n3. **Chocolate Soufflé Cake** (500-550 calories) - A rich, decadent chocolate cake that rises like a cloud from the oven, served with a scoop of vanilla ice cream.\n4. **Raspberry Almond Croissant** (200-250 calories) - Flaky, buttery croissants filled with sweet and tart raspberry jam and topped with sliced almonds.\n5. **Pistachio Rosewater Macarons** (150-200 calories) - Delicate, chewy macarons flavored with pistachio and rosewater, sandwiched together with a light and creamy filling.\n\nNote: The estimated calorie counts are approximate and may vary based on specific ingredients and portion sizes used.'}, {'role': 'user', 'content': 'Rank the pastries from the lowest calorie count to the largest.'}, {'role': 'assistant', 'content': 'Based on the estimated calorie counts I provided earlier, here are the pastries ranked from lowest to highest:\n\n1. **Pistachio Rosewater Macarons** (150-200 calories)\n2. **Raspberry Almond Croissant** (200-250 calories)\n3. **Cinnamon Swirl Brioche** (250-300 calories)\n4. **Lemon Lavender Mille-Feuille** (400-450 calories)\n5. **Chocolate Soufflé Cake** (500-550 calories)\n\nLet me know if you have any other questions!'}]
 -------------- END --------------
 					</code></pre>
@@ -318,7 +318,7 @@ Generate 5 pastry names displayed as a list. ONLY output the names and nothing e
 5. Sugar Serenades
 
 [user]:
-The user said 'Hummm. The golden one ?'. Your task is to output a specific sentence and replace the <replace> tags with the correct values: 'You selected the <replace>selected pastry</replace>. The average calorie intake for this pastry is <replace>average associated calories for the selected pastry</replace>. Do you wish to continue ?
+The user said 'Hummm. The golden one ?'. Your task is to output a specific sentence and replace the &#60;replace&#62; tags with the correct values: 'You selected the &#60;replace&#62;selected pastry&#60;/replace&#62;. The average calorie intake for this pastry is &#60;replace&#62;average associated calories for the selected pastry&#60;/replace&#62;. Do you wish to continue ?
 
 [assistant]:
 You selected the Golden Galettes. The average calorie intake for this pastry is approximately 250-300 calories per serving. Do you wish to continue?
@@ -403,7 +403,7 @@ The answer is 4
                 <p>⚠️ Try to keep the alternation of USER and ASSISTANT as this is how "instruct" LLMs have been
                     trained. </p>
                 <hr/>
-                <p>Let's see a 0-shot example asking for a JSON output extracted from a given sentence: </p>
+                <p>▶️ Let's see a 0-shot example asking for a JSON output extracted from a given sentence: </p>
                 <pre><code class="language-python">
 from yacana import OllamaAgent, Task
 
@@ -436,14 +436,16 @@ INFO: [AI_RESPONSE][From: Ai assistant]: Here is the sentence rewritten in JSON 
 Let me know if you'd like me to help with anything else!
 					</code></pre>
                 <br>
-                <p>Not bad but there's noise. We would like to output the JSON and nothing else. No bedside manners.
+                <div>
+                    Not bad but there's noise. We would like to output the JSON and nothing else. No bedside manners.
                     The <code>Let me know if you'd like me to help with anything else!</code> must go. <br/>
                     Let's introduce another optional Task() parameter: <code>json_output=True</code>. This relies on
                     the inference server (Ollama, OpenAI, etc.) to output as JSON. <br/>
-                    <p class="icon solid fa-info-circle"> It is preferable to prompt the LLM to "output as JSON" in addition to this option. </p>
-                    <p>⚠️ This is only <b>best effort</b> ! Meaning that it may fail at ouputing correct JSON. If you need reliable JSON then go try <a href="agents_features.html#structured-output">structured output</a> !</p>
-                </p>
-                <p>Replace the Task with this one:</p>
+                    <p class="icon solid fa-info-circle"> It is preferable to prompt the LLM to <i>"output as JSON"</i> in addition to this option. </p><br>
+                    <p>⚠️ This is only <b>best effort</b> ! Meaning that it may fail at outputting correct JSON. If you
+                        need reliable JSON then go try <a href="agents_features.html#structured-output-with-pydantic">structured output</a> !</p>
+                </div><br>
+                <p>▶️ Replace the Task with this one:</p>
                 <pre><code class="language-python">
 Task(f"Print the following sentence as JSON extracting the names and rephrasing the actions: 'Marie is walking her dog. Ryan is watching them through the window. The dark sky is pouring down heavy raindrops.'", agent1, json_output=True).solve()
 					</code></pre>
@@ -455,11 +457,15 @@ INFO: [PROMPT][To: Ai assistant]: Print the following sentence as JSON extractin
 INFO: [AI_RESPONSE][From: Ai assistant]: {"names": ["Marie", "Ryan"], "actions": {"Marie": "is walking", "Ryan": "is watching"}, "description": [{"location": "window", "activity": "watching"}, {"location": "outdoors", "activity": "pouring raindrops"}]}
 					</code></pre>
                 <br>
-                <p>Way better. No more noise. <br/>
+                <p>
+                    Way better. No more noise. <br/>
                     However, we would prefer having an array of <code>name</code> and <code>action</code> even for
-                    the weather (the name would be <em>sky</em> and the action <em>raining</em>).</p>
-                <p>To achieve this let's give the LLM an example of what we expect by making it believe it already
-                    outputted it correctly once: </p>
+                    the weather (the name would be <em>sky</em> and the action <em>raining</em>).
+                </p>
+                <p>
+                    ▶️ Let's give the LLM an example of what we expect by making it believe it already
+                    outputted it correctly once:
+                </p>
                 <pre><code class="language-python">
 from yacana import OllamaAgent, Task, MessageRole, Message
 
@@ -483,41 +489,12 @@ INFO: [AI_RESPONSE][From: Ai assistant]: [{"name": "Marie", "action": "Walking h
                     (❕ Model temperature may impact performance here. Consider using a lower value.) <br/>
                     You can add multiple fake interactions like this one to cover more advanced use cases and train
                     the LLM on how to react when they happen. It would become multi-shot prompting. </p>
-                <hr/>
-                <p>You can also do multi-shot prompting with self-reflection. This takes more CPU time because you
-                    decompose the task into multiple subtasks but can be beneficial in some scenarios. </p>
-                <p>For example: </p>
-                <pre><code class="language-python">
-from yacana import OllamaAgent, Task
-
-agent1 = OllamaAgent("Ai assistant", "llama3.1:8b")
-
-Task('I will give you a sentence where you must extract as JSON all the names and rephrase all the actions. For example in the following sentence: "John is reading a book on the porch while the cold wind blows through the trees." would result in this JSON output: [{"name": "John", "action": "Reading a book."}, {"name": "Cold wind", "action": "Blowing through the trees."}] ', agent1).solve()
-
-Task(f"Marie is walking her dog. Ryan is watching them through the window. The dark sky is pouring down heavy raindrops.", agent1, json_output=True).solve()
-					</code></pre>
-                <br>
-                <p>Outputs</p>
-                <pre><code class="text-output">
-INFO: [PROMPT]: I will give you a sentence where you must extract as JSON all the names and rephrase all the actions. For example in the following sentence: "John is reading a book on the porch while the cold wind blows through the trees." would result in this JSON output: [{"name": "John", "action": "Reading a book."}, {"name": "Cold wind", "action": "Blowing through the trees."}]
-
-INFO: [AI_RESPONSE]: I'm ready to extract the names and rephrase the actions. What's the sentence?
-
-INFO: [PROMPT]: Marie is walking her dog. Ryan is watching them through the window. The dark sky is pouring down heavy raindrops.
-
-INFO: [AI_RESPONSE]: {"name": "Marie", "action": "Walking with her dog."}
-					</code></pre>
-                <br>
-                <p>:-( <br/>
-                    In this case, it didn't work very well as only one name was extracted as JSON. But in more
-                    complex scenarios we can assure you that letting the LLM reflect on the guideline beforehand,
-                    can be very beneficial to solving the task. </p>
 
                 <hr class="major"/>
 
                 <h2 id="saving-agent-state">Saving Agent state</h2>
-                <p>
-                    Yacana provides a way to store an Agent state into a file and load it later. All of the Agent's
+                <div>
+                    Yacana provides a way to store an Agent state into a file and load it later. All the Agent's
                     properties, model settings, etc are saved including the History.<br><br>
                     Examples of use cases:
                     <ul>
@@ -527,12 +504,12 @@ INFO: [AI_RESPONSE]: {"name": "Marie", "action": "Walking with her dog."}
                         </li>
                         <li>
                             You are facing a crash at some point in a script and need to restart the whole inference steps to get to the desired history state.<br>
-                            Doing this cost a lot of money because tokens are not free. Fortunatly, you can save agent state just before the crash.<br>
+                            Doing this cost a lot of money because tokens are not free. Fortunately, you can save agent state just before the crash.<br>
                             Now, you can boot your script right before the crash point, load the agent's state and investigate
                             the crash by replaying it for free all the times you need.
                         </li>
                     </ul>
-                </p>
+                </div>
                 <p>To save an Agent do the following: </p>
                 <pre><code class="language-python">
 from yacana import OllamaAgent, Task
@@ -572,14 +549,16 @@ agent1.export_to_file("./agent1_save.json")
                 <pre><code class="language-python">
 from yacana import GenericAgent, Task
 
-# You can use any of the Agent classes? The GenericAgent is merely the abstract parent class.
+# You can use any of the Agent classes. The GenericAgent is merely the abstract parent class.
 agent2: GenericAgent = GenericAgent.import_from_file("./agent1_save.json")
 
 Task("Multiply by 2 the previous result", agent2).solve()
 					</code></pre>
                 <br>
-                <p class="icon solid fa-info-circle"> The <code>.import_from_file(...)</code> works like a
-                    factory pattern, returning a new Agent instance.</p>
+                <p class="icon solid fa-info-circle">
+                    The <code>.import_from_file(...)</code> acts as a factory pattern, returning a new Agent instance.
+                </p><br>
+                
                 <p>▶️ Output:</p>
                 <pre><code class="text-output">
 INFO: [PROMPT]: Multiply by 2 the previous result
@@ -592,8 +571,11 @@ INFO: [AI_RESPONSE]: If we multiply 4 by 2, we get...
                 <p>
                     As you can see when asked to multiply by 2 the previous result, it remembered agent1's result
                     which was 4. Then it performed the multiplication and got us 8. &#127881;
-                </p>
-                <br>
+                </p><br>
+                <div class="icon solid fa-info-circle">
+                    Example use case: A user ends its conversation with a chatbot. The agent saves its state to a file. When the user logs in later, the Agent is loaded with the history and the conversation can carry on where it was left of.
+                </div><br>
+
 
                 <h2>Managing Agent History using tags</h2>
 
@@ -601,7 +583,7 @@ INFO: [AI_RESPONSE]: If we multiply 4 by 2, we get...
                     The <code>Task()</code> class exposes a parameter to attach tags to messages. You can then use the tags to  find specific messages inside the history to
                     read or alter them.
                     <br>
-                    Tags are a convinient way to keep track of things and change history state during runtime.
+                    Tags are a convenient way to keep track of things and change history state during runtime.
                 </p>
                 <br>
                 <p>
@@ -609,23 +591,23 @@ INFO: [AI_RESPONSE]: If we multiply 4 by 2, we get...
                     <br>
                     To add tags to your prompt messages use the <code>tags=[...]</code> parameter like this:
                     <pre><code class="language-python">
-from yacana import OllamaAgent, Task
+from yacana import OllamaAgent, Task, GenericMessage
 
 agent1 = OllamaAgent("Ai assistant", "llama3.1:8b")
 
-first_message: Message = Task("What's 2+2 ?", agent1, tags=["first_task"]).solve()
+first_response: GenericMessage = Task("What's 2+2 ?", agent1, tags=["first_task"]).solve()
                     </code></pre>
                     <br>
                     <p>
-                        This told Yacana to add the tag <code>"first_task"</code> to both  the prompt and LLM output message generated by the task.
+                        This told Yacana to add the tag <code>"first_task"</code> <b>to both the prompt and LLM output message</b> generated by the task.
                     </p>
                     <p>
-                        Note that you can also tag individual Message manualy:
+                        Note that you can also tag individual Message manually:
                     </p>
                     <pre><code class="language-python">
 ...
 
-first_message.add_tags(["first_task_response"])
+first_response.add_tags(["first_task_response"])
                     </code></pre>
                     <br>
                     <p>
@@ -645,13 +627,13 @@ Task("What's 2+2 ?", agent1, tags=["first_task"]).solve().add_tags(["first_task_
                     <br>
                     <p>
                         Let's make a longer example to show how tagging works. Bellow is a script that will ask 3 numeric related questions to the LLM.<br>
-                        The script will then change the second question + answer to something completly different.
+                        The script will then change the second question + answer to something completely different.
                         Finally, the script will ask the LLM what question was not about numbers. Because we updated the second task, it should tell us that it's the second one.
                     </p>
                     <pre><code class="language-python">
 from yacana import OllamaAgent, Task, GenericMessage
 
-agent1 = OllamaAgent("Ai assistant", "llama3.1:latest")
+agent1 = OllamaAgent("Ai assistant", "llama3.1:8b")
 
 # Creating 3 numeric related questions with one tag each
 Task("What's 2+2 ?", agent1, tags=["first_task"]).solve()
@@ -765,7 +747,7 @@ That would be "Why is the sky blue?" It's a classic example of an explanation of
                     <br>
                     It's quite specific so be sure to understand the range we're selecting.
                     <br>
-                    We'll just be counting but you can think of anything, even deleting the messages!
+                    We'll just be counting, but you can think of anything, even deleting the messages!
                 </p>
                 <pre><code class="language-python">
 from typing import List
@@ -830,7 +812,7 @@ Number of messages between the two selected messages:  2
 
     <!-- Sidebar -->
     <div id="sidebar">
-        <div class="inner">
+        <div class="inner inner-sidebar">
 
             <!-- Search -->
             <section id="search" class="alt">
@@ -839,14 +821,11 @@ Number of messages between the two selected messages:  2
                 </form>
             </section>
 
-            <!-- Menu Container -->
-            <div id="menu-container"></div>
+            <!-- Main website Menu Container -->
+            <nav id="menu" class="menu"></nav>
 
-            <section>
-                <div class="page-nav-container">
-                    <!-- Dynamic page navigation will be inserted here -->
-                </div>
-            </section>
+            <!-- Page navigation menu -->
+            <nav id="page-nav-container" class="menu"></nav>
 
             <!-- Section -->
             <section>
@@ -856,7 +835,7 @@ Number of messages between the two selected messages:  2
                 <div class="mini-posts">
                     <article>
                         <a href="#" class="image"><img src="../images/youtube_down.jpg" alt=""/></a>
-                        <p>Youtube video for this section is still under creation. Please be patient ^^</p>
+                        <p>YouTube video for this section is still under creation. Please be patient ^^</p>
                     </article>
                 </div>
             </section>

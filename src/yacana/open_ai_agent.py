@@ -1,19 +1,17 @@
-import json
 import logging
-from json import JSONDecodeError
+import openai
 from openai import OpenAI, Stream
 from typing import List, Mapping, Type, Any, Literal, T, Dict, Callable
 from collections.abc import Iterator
 from openai.types.chat.chat_completion import Choice, ChatCompletion
 from pydantic import BaseModel
-
 from openai.types.chat import ChatCompletionChunk
 
 from .generic_agent import GenericAgent
 from .model_settings import OpenAiModelSettings
-from .utils import Dotdict
-from .exceptions import MaxToolErrorIter, ToolError, IllogicalConfiguration, TaskCompletionRefusal, UnknownResponseFromLLM
-from .history import OpenAIToolCallingMessage, HistorySlot, GenericMessage, MessageRole, ToolCallFromLLM, OpenAIFunctionCallingMessage, OpenAITextMessage, History, OpenAIStructuredOutputMessage, OpenAIUserMessage
+from .utils import Dotdict, AgentType
+from .exceptions import IllogicalConfiguration, TaskCompletionRefusal, UnknownResponseFromLLM
+from .history import HistorySlot, GenericMessage, MessageRole, ToolCallFromLLM, OpenAIFunctionCallingMessage, OpenAITextMessage, History, OpenAIStructuredOutputMessage, OpenAIUserMessage
 from .tool import Tool
 from .constants import PROMPT_TAG, RESPONSE_TAG
 
@@ -51,6 +49,14 @@ class OpenAiAgent(GenericAgent):
     thinking_tokens : Tuple[str, str] | None, optional
         A tuple containing the start and end tokens of a thinking LLM. For instance, "<think>" and "</think>" for Deepseek-R1.
         Setting this prevents the framework from getting sidetracked during the thinking steps and helps maintain focus on the final result.
+    structured_thinking : bool, optional
+        If True, Yacana will use structured_output internally to get better accuracy. If your LLM doesn't support structured_output set this to False.
+        Defaults to True.
+
+    Attributes
+    ----------
+    _agent_type : AgentType
+        Type of the Agent to circumvent partial import when determining agent's type at runtime.
 
     Raises
     ------
@@ -59,84 +65,18 @@ class OpenAiAgent(GenericAgent):
     """
 
     def __init__(self, name: str, model_name: str, system_prompt: str | None = None, endpoint: str | None = None,
-                 api_token: str = "cant_be_empty", headers=None, model_settings: OpenAiModelSettings = None, runtime_config: Dict | None = None, thinking_tokens: tuple[str, str] | None = None, hugging_face_repo_name: str | None = None, hugging_face_token: str | None = None, **kwargs) -> None:
+                 api_token: str = "cant_be_empty", headers=None, model_settings: OpenAiModelSettings = None, runtime_config: Dict | None = None, thinking_tokens: tuple[str, str] | None = None, structured_thinking=True, **kwargs) -> None:
         if api_token == "":
             logging.warning(f"Empty api_token provided. This will most likely clash with the underlying inference library. You should probably set this to any non empty string.")
         model_settings = OpenAiModelSettings() if model_settings is None else model_settings
         if not isinstance(model_settings, OpenAiModelSettings):
             raise IllogicalConfiguration("model_settings must be an instance of OpenAiModelSettings.")
-        super().__init__(name, model_name, model_settings, system_prompt=system_prompt, endpoint=endpoint, api_token=api_token, headers=headers, runtime_config=runtime_config, history=kwargs.get("history", None), task_runtime_config=kwargs.get("task_runtime_config", None), thinking_tokens=thinking_tokens, hugging_face_repo_name=hugging_face_repo_name, hugging_face_token=hugging_face_token)
+        self._agent_type: AgentType = AgentType.OPENAI
+        super().__init__(name, model_name, model_settings, system_prompt=system_prompt, endpoint=endpoint, api_token=api_token, headers=headers, runtime_config=runtime_config, history=kwargs.get("history", None), task_runtime_config=kwargs.get("task_runtime_config", None), thinking_tokens=thinking_tokens, structured_thinking=structured_thinking)
         if self.api_token == "":
             logging.warning("OpenAI requires an API token to be set.")
 
-    def _call_openai_tool(self, tool: Tool, function_args: Dict) -> str:
-        """
-        Executes a tool call and handles any errors that occur.
-
-        Parameters
-        ----------
-        tool : Tool
-            The tool to execute.
-        function_args : Dict
-            The arguments to pass to the tool function.
-
-        Returns
-        -------
-        str
-            The output from the tool execution.
-
-        Raises
-        ------
-        MaxToolErrorIter
-            If too many errors occur during tool execution.
-        """
-        max_call_error: int = tool.max_call_error
-        max_custom_error: int = tool.max_custom_error
-        tool_output: str = ""
-
-        while True:
-            try:
-                tool_output: str = tool.function_ref(**function_args)
-                if tool_output is None:
-                    tool_output = f"Tool {tool.tool_name} was called successfully. It didn't return anything."
-                else:
-                    tool_output = str(tool_output)
-                logging.info(f"[TOOL_RESPONSE][{tool.tool_name}]: {tool_output}\n")
-                break
-            except (ToolError, TypeError, JSONDecodeError) as e:
-                if type(e) is ToolError or type(e) is JSONDecodeError:
-                    logging.warning(f"Tool '{tool.tool_name}' raised an error\n")
-                    max_custom_error -= 1
-                    tool_output = e.message
-                elif type(e) is TypeError:
-                    logging.warning(f"Yacana failed to call tool '{tool.tool_name}' correctly based on the LLM output\n")
-                    tool_output = str(e)
-                    max_call_error -= 1
-
-                if max_custom_error < 0:
-                    raise MaxToolErrorIter(
-                        f"Too many errors were raise by the tool '{tool.tool_name}'. Stopping after {tool.max_custom_error} errors. You can change the maximum errors a tool can raise in the Tool constructor with @max_custom_error.")
-                if max_call_error < 0:
-                    raise MaxToolErrorIter(
-                        f"Too many errors occurred while trying to call the python function by Yacana (tool name: {tool.tool_name}). Stopping after {tool.max_call_error} errors. You can change the maximum call error in the Tool constructor with @max_call_error.")
-                self._chat(self.history, f"The tool returned an error: `{tool_output}`\nUsing this error message, fix the JSON you generated.")
-        return tool_output
-
-    def _update_tool_definition(self, tools: List[Tool]) -> None:
-        """
-        Updates the OpenAI function schema for each tool.
-
-        Parameters
-        ----------
-        tools : List[Tool]
-            List of tools to update.
-        """
-        tools: List[Tool] = [] if tools is None else tools
-        for tool in tools:
-            if tool._openai_function_schema is None:
-                tool._function_to_json_with_pydantic()
-
-    def _interact(self, task: str, tools: List[Tool], json_output: bool, structured_output: Type[BaseModel] | None, images: List[str] | None, streaming_callback: Callable | None = None, task_runtime_config: Dict | None = None, tags: List[str] | None = None) -> GenericMessage:
+    def _interact(self, task: str, tools: List[Tool], json_output: bool, structured_output: Type[BaseModel] | None, medias: List[str] | None, streaming_callback: Callable | None = None, task_runtime_config: Dict | None = None, tags: List[str] | None = None) -> GenericMessage:
         """
         Main interaction method that handles task execution with optional tool usage.
 
@@ -150,7 +90,7 @@ class OpenAiAgent(GenericAgent):
             Whether to output JSON.
         structured_output : Type[BaseModel] | None
             Optional structured output type.
-        images : List[str] | None
+        medias : List[str] | None
             Optional list of image files.
         streaming_callback : Callable | None, optional
             Optional callback for streaming responses. Defaults to None.
@@ -168,24 +108,14 @@ class OpenAiAgent(GenericAgent):
         ValueError
             If a requested tool is not found in the tools list.
         """
+        self._set_correct_tool_caller(tools)
         self._tags = tags if tags is not None else []
-        self._update_tool_definition(tools)
         self.task_runtime_config = task_runtime_config if task_runtime_config is not None else {}
 
         if len(tools) == 0:
-            self._chat(self.history, task, medias=images, json_output=json_output, structured_output=structured_output, streaming_callback=streaming_callback)
+            self._chat(self.history, task, medias=medias, json_output=json_output, structured_output=structured_output, streaming_callback=streaming_callback)
         elif len(tools) > 0:
-            self._chat(self.history, task, medias=images, json_output=json_output, structured_output=structured_output, tools=tools)
-            if isinstance(self.history.get_last_message(), OpenAIFunctionCallingMessage):
-                for tool_call in self.history.get_last_message().tool_calls:
-                    tool = next((tool for tool in tools if tool.tool_name == tool_call.name), None)
-                    if tool is None:
-                        raise ValueError(f"Tool {tool_call.name} not found in tools list")
-                    logging.debug("Found tool: %s", tool.tool_name)
-                    tool_output: str = self._call_openai_tool(tool, tool_call.arguments)
-                    self.history.add_message(OpenAIToolCallingMessage(tool_output, tool_call.call_id, tags=self._tags))
-                logging.info(f"[PROMPT][To: {self.name}]: Retrying with original task and tools answer: '{task}'")
-                self._chat(self.history, None, medias=images, json_output=json_output, structured_output=structured_output, streaming_callback=streaming_callback)
+            self.tool_caller.propose_tools(task, tools, json_output, structured_output, medias, streaming_callback, task_runtime_config, tags)
         return self.history.get_last_message()
 
     def _is_structured_output(self, choice: Choice) -> bool:
@@ -320,7 +250,7 @@ class OpenAiAgent(GenericAgent):
         all_function_calling_json = [tool._openai_function_schema for tool in tools] if tools else []
 
         tool_choice_option = self._find_right_tool_choice_option(tools)
-        response_format = self._find_right_output_format(structured_output, json_output)
+        response_format = self._get_expected_output_format(structured_output, json_output)
 
         client = OpenAI(
             api_key=self.api_token,
@@ -340,12 +270,27 @@ class OpenAiAgent(GenericAgent):
         }
         logging.debug("Runtime parameters before inference: %s", str(params))
 
+        has_tried_no_json_mode = False
+        response = None
         answer_slot = HistorySlot()
-        if structured_output is not None:
-            response = client.beta.chat.completions.parse(**params)
-        else:
-            response = client.chat.completions.create(**params)
-            response = self._dispatch_chunk_if_streaming(response, streaming_callback)
+        for _ in range(2):
+            try:
+                if structured_output is not None:
+                    response = client.beta.chat.completions.parse(**params)
+                else:
+                    response = client.chat.completions.create(**params)
+                    response = self._dispatch_chunk_if_streaming(response, streaming_callback)
+                break
+            except openai.BadRequestError as e:
+                logging.error(e.message)
+                if e.status_code == 400 and has_tried_no_json_mode is False:
+                    logging.warning("An error occurred during inference with the OpenAiAgent. Are you sure the backend is OpenAi compatible ? Whatever the case, Yacana will retry the request without the JSON mode. Maybe your LLM or backend doesn't deal with JSON correctly. Therefore we will rely solely on prompt engineering to get valid JSON output.")
+                    params.pop("response_format", None)
+                    has_tried_no_json_mode = True
+                else:
+                    raise
+        if response is None:
+            raise UnknownResponseFromLLM("Something went wrong... Please open an issue is you see this message. It should not happen.")
 
         self.task_runtime_config = {}
         answer_slot.set_raw_llm_json(response.model_dump_json())
@@ -363,7 +308,7 @@ class OpenAiAgent(GenericAgent):
                 logging.debug("Response assessment is tool calling")
                 tool_calls: List[ToolCallFromLLM] = []
                 for tool_call in choice.message.tool_calls:
-                    tool_calls.append(ToolCallFromLLM(tool_call.id, tool_call.function.name, json.loads(tool_call.function.arguments)))
+                    tool_calls.append(ToolCallFromLLM(tool_call.id, tool_call.function.name, tool_call.function.arguments))
                     logging.debug("Tool info : Id= %s, Name= %s, Arguments= %s", tool_call.id, tool_call.function.name, tool_call.function.arguments)
                 answer_slot.add_message(OpenAIFunctionCallingMessage(tool_calls, tags=self._tags))
 
@@ -378,7 +323,6 @@ class OpenAiAgent(GenericAgent):
         if save_to_history is False:
             if task:
                 history.delete_slot(question_slot)
-            history.delete_slot(answer_slot)
         else:
             history.add_slot(answer_slot)
         return last_message
@@ -417,9 +361,9 @@ class OpenAiAgent(GenericAgent):
         elif all_required:
             return "required"
         else:
-            raise IllogicalConfiguration("OpenAI does not allow mixing required and optional tools.")
+            raise IllogicalConfiguration("OpenAI does not allow mixing required and optional tools. If you are mixing MCP and local tools, remember that local tools are NOT optional by default. On the other hand, MCP tools ARE optional by default. You can set optional status on the local tools definition or when requesting the tools from MCp with mcpClient.get_tools_as(ToolType.XX, optional=True | False).")
 
-    def _find_right_output_format(self, structured_output: Type[T] | None, json_output: bool) -> Any:
+    def _get_expected_output_format(self, structured_output: Type[T] | None, json_output: bool) -> Any:
         """
         Determines the appropriate output format based on the configuration.
         It determines if we want to get a structured output or a best effort JSON object.

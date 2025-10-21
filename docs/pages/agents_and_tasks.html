@@ -164,13 +164,13 @@ So, the result of solving the equation 2 + 2 is indeed 4.
                     hierarchical programming way of scheduling the tasks and keeping control of the flow. It also
                     allows creating new Tasks dynamically if the need arises. You shall rely on your programming
                     skills and good OOP to have a clean code and good Task ordering. Yacana will never propose
-                    any hardlinked code or flat configurations.</p>
+                    any hardlink code or flat configurations.</p>
 
                 <hr class="major"/>
 
                 <h2 id="getting-the-result-of-a-task">Getting the result of a Task</h2>
                 <p>Although the logs appear in the terminal's standard output, we still need to extract the LLM's response to the Task in order to use it.<br>
-                    Getting the string message out of it is quite easy as the <code>.solve()</code> method returns a <code></code>Message()</code> class.<br>
+                    Getting the string message out of it is quite easy as the <code>.solve()</code> method returns a <code>Message()</code> class.<br>
                     Maybe you are thinking &quot;Ho nooo, another class to deal with&quot;. Well, let me tell you
                     that it's always better to have an OOP class than some semi-random Python dictionary where
                     you'll forget what keys it contains in a matter of minutes. Also, the Message class is very
@@ -289,7 +289,7 @@ from yacana import OllamaAgent, Task, GenericMessage, LoggerManager
 
 LoggerManager.set_log_level(None)
 
-ollama_agent = OllamaAgent("AI assistant", "llama3.2:latest", system_prompt="You are a helpful AI assistant", endpoint="http://127.0.0.1:11434")
+ollama_agent = OllamaAgent("AI assistant", "llama3.1:8b", system_prompt="You are a helpful AI assistant", endpoint="http://127.0.0.1:11434")
 print("Ask me questions!")
 while True:
     user_input = input("> ")
@@ -305,8 +305,8 @@ Boats float due to their displacement in water, which creates an upward buoyant 
                     </code></pre>
                     If we change the agent's system prompt we can talk to a pirate!
                     <pre><code class="language-python">
-ollama_agent = OllamaAgent("AI assistant", "llama3.2:latest", system_prompt="You are a pirate", endpoint="http://127.0.0.1:11434")
-                    </code></pre>
+ollama_agent = OllamaAgent("AI assistant", "llama3.1:8b", system_prompt="You are a pirate", endpoint="http://127.0.0.1:11434")
+                    </code></pre><br>
                     Output:
                     <pre><code class="text-output">
 Ask me questions!
@@ -335,9 +335,11 @@ Now, I be trustin' ye to keep this little chat between us, savvy?
                     Matt Williams did on this subject.</p>
                 <p class="icon solid fa-info-circle"> These settings are set at the Agent level so that you can have
                     the same underlying model used by two separate agents and have them behave differently.</p>
-                <p class="icon solid fa-info-circle"> The <a href="">OllamaModelSettings</a> class is tailored for the Ollama backend. 
-                    You can use <a href="">OpenAiModelSettings</a> to configure non-Ollama LLMs with their own set of available settings.</p>
-                <p>We use the <a href="">OllamaModelSettings</a> class to configure the settings we need.</p>
+                <p class="icon solid fa-info-circle"> The <a href="classes.html#tech-doc-ollamamodelsettings">
+                    OllamaModelSettings</a> class is tailored for the Ollama backend.
+                    You can use <a href="classes.html#tech-doc-openaimodelsettings">OpenAiModelSettings</a> to
+                    configure non-Ollama LLMs with their own set of available settings.</p>
+                <p>We use the <a href="classes.html#tech-doc-ollamamodelsettings">OllamaModelSettings</a> class to configure the settings we need.</p>
                 <p>For example, let's lower the temperature of an Agent to 0.4:</p>
                 <pre><code class="language-python">
 from yacana import OllamaModelSettings, OllamaAgent
@@ -400,7 +402,7 @@ INFO: [AI_RESPONSE]: The sky appears blue because of a phenomenon called Rayleig
                 <h2 id="accessing-the-underlying-client-library">Accessing the underlying client library</h2>
                 <p>
                     Yacana cannot recreate every functionality made available by the underlying client library. This is why we provide you with
-                    a direct access to the underlying library. This way, if you need more control over the LLM, you can set the desired parameters yourself.
+                    direct access to the underlying library. This way, if you need more control over the LLM, you can set the desired parameters yourself.
                     <br>
                     <ul>
                         <li>For the <a href="classes.html#tech-doc-OllamaAgent">OllamaAgent</a>, the library used is <a href="https://github.com/ollama/ollama-python">python ollama</a>.</li>
@@ -426,14 +428,14 @@ Task("Tell me 2 facts about Canada.", agent, runtime_config={"extra_body": {'gui
                     <br>
                     Configuration at the Agent level will be effective during the whole agent's life span.
                     <br>
-                    Configuration at the task level will be effective for the current task only and will overide parameters given at Agent level.
+                    Configuration at the task level will be effective for the current task only and will override parameters given at Agent level.
                     <br>
                     To look at a more complete example, please refer to the <a href="other_inference_servers.html#using-vllm">VLLM inference server</a> section.
                 </p>
                 <br>
 
                 <header class="main">
-                    <h2 id="concepts-of-routing">Routing</h1>
+                    <h2 id="concepts-of-routing">Routing</h2>
                 </header>
 
                 <span class="image main"><img src="../images/routing.jpg" alt="Routing"/></span>
@@ -446,9 +448,9 @@ Task("Tell me 2 facts about Canada.", agent, runtime_config={"extra_body": {'gui
                     is good but to be efficient you have to create conditional workflows. In particular when using
                     local LLMs that don't have the power to solve all Tasks with only one prompt. You must create an
                     AI workflow in advance that will go forward step by step and converge to some expected result.
-                    AI allows you to deal with some level of unknown but you can't expect having a master brain
+                    AI allows you to deal with some level of unknown, but you can't expect having a master brain
                     (like in crewAI + chatGPT) that distributes tasks to agents and achieves an expected result. It's
-                    IMPOSSIBLE with local LLMs. They are too dumb! Therefore they need you to help them along their
+                    IMPOSSIBLE with local LLMs. They are too dumb! Therefore, they need you to help them along their
                     path. This is why LangGraph works well with local LLMs and Yacana does too. You should create
                     workflows and when conditions are met switch from one branch to another, treating more
                     specific cases. </p>
@@ -476,7 +478,7 @@ elif "no" in router_answer.lower():
                 <br>
                 <p>You should get the following output:</p>
                 <pre><code class="text-output">
-INFO: [PROMPT]: Is the following question about plants? &#60;question>Why do leaves fall in autumn ?&#60;/question&#62; Answer ONLY by 'yes' or 'no'.
+INFO: [PROMPT]: Is the following question about plants? &#60;question&#62;Why do leaves fall in autumn?&#60;/question&#62; Answer ONLY by 'yes' or 'no'.
 
 INFO: [AI_RESPONSE]: yes
 Question is about plants
@@ -499,7 +501,7 @@ Question is about plants
                         => Because we search for substrings
                         the condition would match the <i>"no"</i> part of the word <i>"Not"</i> even though the LLM
                         said <i>yes</i>.<br>
-                        We could use regexe to fix this but it's easier to just start the condition by looking for
+                        We could use regex to fix this, but it's easier to just start the condition by looking for
                         <i>"yes"</i> as there are no English words that contain <i>"yes"</i> in a substring (at
                         least no common
                         ones ^^).
@@ -513,14 +515,15 @@ Question is about plants
                         given in custom <code>&#60;question&#62;</code> tags. LLMs love delimiters. This way the LLM
                         knows
                         when the question starts and when the question ends. This technique helps to differentiate
-                        your prompt from the dynamic part. You don't have to add tags everywhere but they can prove
+                        your prompt from the dynamic part. You don't have to add tags everywhere, but they can prove
                         useful. Do not abuse them or the LLM might start using them in its response. Just keep this
                         trick in mind.
                     </li>
                 </ol>
-                <p class="icon solid fa-info-circle"> This is all basic prompt engineering. If you wish to build an
-                    app with local models you will
-                    definitely have to learn those tricks. LLMs are unpredictable.</p>
+                <p class="icon solid fa-info-circle"> This is all basic prompt engineering. If you want a <b>more
+                    accurate</b> way to check for 'yes/no', learn how to use structured output <a
+                            href="agents_features.html#structured-output-with-pydantic">here</a>.
+                </p>
 
                 <hr class="major"/>
 
@@ -530,8 +533,9 @@ Question is about plants
                     better results during routing, in particular when routing on more complex things (other than
                     "yes"|"no").</p>
                 <p>Let's update the routing section of our code to look like this: </p>
-                <pre><code class="language-python"># Asking for a reasoning step
-Task(f"Is the following question about plants ? <question>{question}</question>\nExplain your reasoning.", agent1).solve()
+                <pre><code class="language-python">
+# Asking for a reasoning step
+Task(f"Is the following question about plants ? &#60;question&#62;{question}&#60;/question&#62;\nExplain your reasoning.", agent1).solve()
 
 # Basic yes/no routing based on the previous reasoning
 router_answer: str = Task(f"To summarize in one word, was the question about plants ? Answer ONLY by 'yes' or 'no'.", agent1).solve().content
@@ -540,7 +544,7 @@ router_answer: str = Task(f"To summarize in one word, was the question about pla
                 <p>We added one more Task that executes BEFORE the router. </p>
                 <p>You should get this type of output:</p>
                 <pre><code class="text-output">
-INFO: [PROMPT][To: AI assistant]: Is the following question about plants ? <question>Why do leaves fall in autumn ?</question>
+INFO: [PROMPT][To: AI assistant]: Is the following question about plants ? &#60;question&#62;Why do leaves fall in autumn ?&#60;/question&#62;
 Explain your reasoning
 
 INFO: [AI_RESPONSE][From: AI assistant]: A great question!
@@ -567,7 +571,7 @@ Question is about plants
                 <ol>
                     <li><strong>Make it think</strong>: Using the expression "Explain your reasoning." makes it
                         generate a logical answer. Note that if the model is bad at reasoning or makes a mistake
-                        during this step it may result in extremely bad situations. But fear not, failsafes can be
+                        during this step it may result in terrible situations. But fear not, failsafe can be
                         built to limit bad reasoning. For instance, having another LLM check the logic and interact
                         with the original Agent (see <a href="dual_agents_chat.html">GroupSolve</a> later on) to show it its mistake. You could also
                         give tools to the Agent that will help it achieve the truth and not rely solely on his
@@ -576,7 +580,7 @@ Question is about plants
                     <li><strong>Making it two shots</strong>: Now that we have 2 Tasks instead of one, the second
                         one can focus on its subtask, choosing between <i>"yes"</i> or <i>"no"</i>. Cutting
                         objectives in multiple sub-tasks gives better performance. This why using an agentic
-                        framework is great but it's also why it consumes a lot of tokens and having "free"
+                        framework is great, but it's also why it consumes a lot of tokens and having "free"
                         local LLMs is great!
                     </li>
                 </ol>
@@ -589,7 +593,7 @@ agent1 = OllamaAgent("AI assistant", "llama3.1:8b", system_prompt="You are a hel
 question: str = "Why do leaves fall in autumn ?"
 
 # Asking for a reasoning step
-Task(f"Is the following question about plants ? <question>{question}</question>\nExplain your reasoning.", agent1).solve()
+Task(f"Is the following question about plants ? &#60;question&#62;{question}&#60;/question&#62;\nExplain your reasoning.", agent1).solve()
 
 # Basic yes/no routing based on the previous reasoning
 router_answer: str = Task(f"To summarize in one word, was the question about plants ? Answer ONLY by 'yes' or 'no'.", agent1).solve().content
@@ -608,7 +612,7 @@ elif "no" in router_answer.lower():
 
                 <h2 id="cleaning-history">Cleaning history</h2>
                 <p>Keeping the self-reflection prompt and the associated answer is always good. It helps
-                    guardrailing the LLM. But the "yes"/"no" router on the other hand adds unnecessary noise to the
+                    guard railing the LLM. But the "yes"/"no" router on the other hand adds unnecessary noise to the
                     Agent's history. Moreover, local models don't have huge context window sizes, so removing
                     useless interactions is always good. <br/>
                     The "yes"/"no" router is only useful once. Then we should make the Agent forget it ever happened
@@ -701,8 +705,7 @@ def check_has_specific_plant():
 def check_is_about_plants():
 
     # self-reflection
-    Task(f"Is the following question about plants ? <question>{question}</question>\nExplain your reasoning.",
-         agent1).solve()
+    Task(f"Is the following question about plants ? &#60;question&#62;{question}&#60;/question&#62;\nExplain your reasoning.", agent1).solve()
 
     # Actual router based on the previous reflection
     router_answer: str = Task(
@@ -801,9 +804,9 @@ So, there you have it! The falling of leaves in autumn is a complex process invo
                 <br>
                 <p class="icon solid fa-info-circle"> Later we'll see how to remove the automatic "[INFO]" prints so
                     that only YOUR prints are
-                    shown. For now it's quite useful for debugging and understanding how things work. So we'll leave
+                    shown. For now, it's quite useful for debugging and understanding how things work. So we'll leave
                     them in this tutorial section. </p>
-                <p><strong>Upating question to match the specific "plant info" workflow:</strong></p>
+                <p><strong>Updating question to match the specific "plant info" workflow:</strong></p>
                 <pre><code class="language-python">question: str = "Why do poppies fade so quickly ?"
 </code></pre>
                 <br>
@@ -894,7 +897,7 @@ Question is NOT about plants sorry.
 
     <!-- Sidebar -->
     <div id="sidebar">
-        <div class="inner">
+        <div class="inner inner-sidebar">
 
             <!-- Search -->
             <section id="search" class="alt">
@@ -903,15 +906,11 @@ Question is NOT about plants sorry.
                 </form>
             </section>
 
-            <!-- Menu Container -->
-            <div id="menu-container"></div>
+            <!-- Main website Menu Container -->
+            <nav id="menu" class="menu"></nav>
 
-            <!-- Section -->
-            <section>
-                <div class="page-nav-container">
-                    <!-- Dynamic page navigation will be inserted here -->
-                </div>
-            </section>
+            <!-- Page navigation menu -->
+            <nav id="page-nav-container" class="menu"></nav>
 
             <!-- Section -->
             <section>
@@ -921,7 +920,7 @@ Question is NOT about plants sorry.
                 <div class="mini-posts">
                     <article>
                         <a href="#" class="image"><img src="../images/youtube_down.jpg" alt=""/></a>
-                        <p>Youtube video for this section is still under creation. Please be patient ^^</p>
+                        <p>YouTube video for this section is still under creation. Please be patient ^^</p>
                     </article>
                 </div>
             </section>
