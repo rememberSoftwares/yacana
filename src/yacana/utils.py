@@ -1,5 +1,7 @@
 import json
 
+from regex import regex
+
 
 class Dotdict(dict):
     """dot.notation access to dictionary attributes with recursive conversion"""

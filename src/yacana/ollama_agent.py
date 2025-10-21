@@ -9,7 +9,7 @@ from pydantic import BaseModel
 
 from .generic_agent import GenericAgent
 from .model_settings import OllamaModelSettings
-from .structured_outputs import UseOtherTool, UseTool, MakeAnotherToolCall
+from .structured_outputs import UseTool, MakeAnotherToolCall
 from .utils import Dotdict
 from .exceptions import MaxToolErrorIter, ToolError, IllogicalConfiguration, TaskCompletionRefusal
 from .history import HistorySlot, GenericMessage, MessageRole, History, OllamaUserMessage, OllamaStructuredOutputMessage, OllamaTextMessage
@@ -58,11 +58,11 @@ class OllamaAgent(GenericAgent):
         If model_settings is not an instance of OllamaModelSettings.
     """
 
-    def __init__(self, name: str, model_name: str, system_prompt: str | None = None, endpoint: str = "http://127.0.0.1:11434", headers=None, model_settings: OllamaModelSettings = None, runtime_config: Dict | None = None, thinking_tokens: Tuple[str, str] | None = None, **kwargs) -> None:
+    def __init__(self, name: str, model_name: str, system_prompt: str | None = None, endpoint: str = "http://127.0.0.1:11434", headers=None, model_settings: OllamaModelSettings = None, runtime_config: Dict | None = None, thinking_tokens: Tuple[str, str] | None = None, hugging_face_repo_name: str | None = None, hugging_face_token: str | None = None, **kwargs) -> None:
         model_settings = OllamaModelSettings() if model_settings is None else model_settings
         if not isinstance(model_settings, OllamaModelSettings):
             raise IllogicalConfiguration("model_settings must be an instance of OllamaModelSettings.")
-        super().__init__(name, model_name, model_settings, system_prompt=system_prompt, endpoint=endpoint, api_token="", headers=headers, runtime_config=runtime_config, history=kwargs.get("history", None), task_runtime_config=kwargs.get("task_runtime_config", None), thinking_tokens=thinking_tokens)
+        super().__init__(name, model_name, model_settings, system_prompt=system_prompt, endpoint=endpoint, api_token="", headers=headers, runtime_config=runtime_config, history=kwargs.get("history", None), task_runtime_config=kwargs.get("task_runtime_config", None), thinking_tokens=thinking_tokens, hugging_face_repo_name=hugging_face_repo_name, hugging_face_token=hugging_face_token)
 
     def _choose_tool_by_name(self, local_history: History, tools: List[Tool]) -> Tool:
         """

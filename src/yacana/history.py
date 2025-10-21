@@ -1,15 +1,22 @@
 import copy
 import json
+import logging
 import uuid
 from datetime import datetime
 from enum import Enum
-from typing import List, Dict, Type, T, Any, Sequence
+from typing import List, Dict, Type, T, Sequence, TypedDict
 import importlib
+import regex
 from typing_extensions import Self
 from abc import ABC, abstractmethod
-import logging
 
+from .TokenCount import HuggingFaceDetails
 from .medias import Media
+
+
+class HFMessage(TypedDict):
+    role: str
+    content: str
 
 
 class MessageRole(Enum):
@@ -182,17 +189,54 @@ class GenericMessage(ABC):
 
     def __init__(self, role: MessageRole, content: str | None = None, tool_calls: List[ToolCallFromLLM] | None = None, medias: List[str] | None = None, structured_output: Type[T] | None = None, tool_call_id: str = None, tags: List[str] | None = None, id: uuid.UUID | None = None) -> None:
         self.id = str(uuid.uuid4()) if id is None else str(id)
-        self.role: MessageRole = role
-        self.content: str | None = content
-        self.tool_calls: List[ToolCallFromLLM] | None = tool_calls
-        self.medias: List[str] = medias if medias is not None else []
+        self._role: MessageRole = role
+        self._content: str | None = content
+        self._tool_calls: List[ToolCallFromLLM] | None = tool_calls
+        self._medias: List[str] = medias if medias is not None else []
         self.structured_output: Type[T] | None = structured_output
         self.tool_call_id: str | None = tool_call_id
         self.tags: List[str] = list(tags) if tags is not None else []
+        self._dirty = True
 
         # Checking that both @message and @tool_calls are neither None nor empty at the same time
         if content is None and (tool_calls is None or (tool_calls is not None and len(tool_calls) == 0)):
             raise ValueError("A Message must have a content or a tool call that is not None or [].")
+
+    @property
+    def role(self):
+        return self._role
+
+    @role.setter
+    def role(self, value):
+        self._role = value
+        self._dirty = True
+
+    @property
+    def content(self):
+        return self._content
+
+    @content.setter
+    def content(self, value):
+        self._content = value
+        self._dirty = True
+
+    @property
+    def tool_calls(self):
+        return self._tool_calls
+
+    @tool_calls.setter
+    def tool_calls(self, value):
+        self._tool_calls = value
+        self._dirty = True
+
+    @property
+    def medias(self):
+        return self._medias
+
+    @medias.setter
+    def medias(self, value):
+        self._medias = value
+        self._dirty = True
 
     def __init_subclass__(cls, **kwargs):
         """
@@ -264,7 +308,7 @@ class GenericMessage(ABC):
         NotImplementedError
             This method must be implemented by subclasses.
         """
-        raise(NotImplementedError("This method should be implemented in the child class"))
+        raise NotImplementedError("This method should be implemented in the child class")
 
     def get_as_pretty(self) -> str:
         """
@@ -413,12 +457,17 @@ class OpenAIUserMessage(GenericMessage):
     def get_message_as_dict(self):
         """
         Convert the message to a dictionary format for OpenAI API.
-        Mainly use to send the message to the inference server as JSON.
+        Mainly used to send the message to the inference server as JSON.
 
         Returns
         -------
         dict
             A dictionary containing the role, content, and media information.
+
+        Raise
+        -------
+        ValueError
+            If a media file type is not supported by OpenAI API.
         """
         message_as_dict = {
             "role": self.role.value,
@@ -1102,6 +1151,10 @@ class History:
 
     Parameters
     ----------
+    llm_model_name : str | None, optional
+        The name of the LLM model used for the conversation. Used to count tokens more accurately when using an OpenAi model. Will use Tiktoken under the hood.
+    hugging_face_details: HuggingFaceDetails | None, optional
+        Details for Hugging Face models, including repo name and access token. Used to count tokens more accurately when using an HuggingFace model. Will use the transformers library under the hood.
     **kwargs: Any
         Additional keyword arguments including:
         slots : List[HistorySlot], optional
@@ -1115,11 +1168,17 @@ class History:
         List of history slots.
     _checkpoints : Dict[str, list[HistorySlot]]
         Dictionary of checkpoints for the history.
+    llm_model_name : str | None
+        The name of the LLM model used for the conversation.
+    hugging_face_details: HuggingFaceDetails | None
+        Details for Hugging Face models, including repo name and access token.
     """
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, llm_model_name: str | None = None, hugging_face_details: HuggingFaceDetails | None = None, **kwargs) -> None:
         self.slots: List[HistorySlot] = kwargs.get('slots', [])
         self._checkpoints: Dict[str, list[HistorySlot]] = kwargs.get('_checkpoints', {})
+        self.llm_model_name = llm_model_name
+        self.hugging_face_details: HuggingFaceDetails = hugging_face_details
 
     def add_slot(self, history_slot: HistorySlot, position: int | SlotPosition = SlotPosition.BOTTOM) -> None:
         """
@@ -1240,7 +1299,7 @@ class History:
 
     def add_message(self, message: GenericMessage) -> HistorySlot:
         """
-        Adds a new message to the history by creating a new slot.
+        Adds a new message to the history by creating a new slot containing one solo message inside.
 
         Parameters
         ----------
@@ -1574,6 +1633,86 @@ class History:
             The history to concatenate.
         """
         self.slots = self.slots + history.slots
+
+    def get_token_count(self, padding_per_message: int = 4) -> int:
+        """
+        Get the total token count of messages in the history.
+
+        * If the hugging face repo name is provided, the token count will be calculated using the transformers library.
+        (If the llm is gated (private), the hugging_face_details.token must be provided to access the repo.)
+        * If the llm_model_name is provided and is an OpenAI LLM, the token count will be calculated using the tiktoken library.
+        * If none of the above conditions are met, an approximative token count will be returned. This is only a rough estimate and should not be used for precise calculations.
+
+        Note that using Tiktoken and transformers are precise but quite slow (loging to HF using the token is the worst). The approximative token count is very fast but not precise.
+
+        Returns
+        -------
+        int
+            The token count of the message.
+        """
+
+        hf_formated_messages: List[HFMessage] = []
+
+        # To apply chat template we need to simplify the representation of a message to only "role" and "content".
+        for message in self.get_all_messages():
+            history_message_as_dict: dict = message.get_message_as_dict()
+            role: str = history_message_as_dict["role"]
+            concat_of_all_dict_values: str = ""
+
+            del history_message_as_dict["role"]
+
+            for dict_value_item in history_message_as_dict.values():
+                if isinstance(dict_value_item, list) and len(dict_value_item) == 0:
+                    continue
+                elif isinstance(dict_value_item, dict) and bool(dict_value_item) is False:
+                    continue
+                elif isinstance(dict_value_item, str):
+                    concat_of_all_dict_values += dict_value_item + " "
+                else:
+                    concat_of_all_dict_values += json.dumps(dict_value_item) + " "
+
+            concat_of_all_dict_values = concat_of_all_dict_values.rstrip()
+            hf_formated_messages.append({"role": role, "content": concat_of_all_dict_values})
+            print("chelou ce content = ", concat_of_all_dict_values)
+
+        print("HF = ", json.dumps(hf_formated_messages))
+
+        if self.hugging_face_details and self.hugging_face_details.repo_name:
+            try:
+                from transformers import AutoTokenizer
+                if self.hugging_face_details.token:
+                    from huggingface_hub import login
+                    logging.debug("Logging into Hugging Face Hub to access private model for token counting. This may take some time...")
+                    login(self.hugging_face_details.token)
+                logging.debug("Loading tokenizer from Hugging Face Hub for model: " + self.hugging_face_details.repo_name)
+                tokenizer = AutoTokenizer.from_pretrained(self.hugging_face_details.repo_name)
+                tokens = tokenizer.apply_chat_template(hf_formated_messages, tokenize=True)
+                print("Decoded tokens:", tokenizer.decode(tokens))
+                return len(tokens) + padding_per_message * len(hf_formated_messages)
+            except Exception as e:
+                logging.warning(f"Could not load tokenizer for model {self.hugging_face_details.repo_name}. Falling back to approximative token count. Error: {e}")
+
+        elif self.llm_model_name:
+            import tiktoken
+            token_count = 0
+            try:
+                logging.debug("Loading tiktoken encoding for model: " + self.llm_model_name)
+                enc = tiktoken.encoding_for_model(self.llm_model_name)  # Getting correct encoding if it's an OpenAI model ONLY else ValueError
+                for hf_message in hf_formated_messages:
+                    token_count += len(enc.encode(hf_message["role"]) + enc.encode(hf_message["content"]))
+                return token_count + padding_per_message * len(hf_formated_messages)
+            except ValueError:
+                logging.debug(f"Could not find encoding for model {self.llm_model_name}. This is normal if this model is not from OpenAI. You should set the @hugging_face_repo_nama and token in the Agent class so Yacana may use the correct tokeniser for this LLM. Falling back to approximative token count instead.")
+
+        token_count = 0
+        token_match_regex = regex.compile(r"(?i:'s|'t|'re|'ve|'m|'ll|'d)|[^\r\n\p{L}\p{N}]?\p{L}+|\p{N}{1,3}| ?[^\s\p{L}\p{N}]+[\r\n]*|\s*[\r\n]+|\s+(?!\S)|\s+", regex.MULTILINE)
+        logging.debug("Using approximative token count method.")
+        for hf_message in hf_formated_messages:
+            print("len de ", hf_message["role"], "et len de ", hf_message["content"])
+            print(str(len(token_match_regex.findall(hf_message["role"]))) + str(len(token_match_regex.findall(hf_message["content"]))))
+            token_count += len(token_match_regex.findall(hf_message["role"]) + token_match_regex.findall(hf_message["content"]))
+        print("final padding = ", padding_per_message * len(hf_formated_messages))
+        return token_count + padding_per_message * len(hf_formated_messages)
 
     def __str__(self) -> str:
         """

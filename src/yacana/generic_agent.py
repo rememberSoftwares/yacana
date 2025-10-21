@@ -5,6 +5,7 @@ from abc import ABC, abstractmethod
 from typing import List, Type, T, Callable, Dict
 from pydantic import BaseModel
 
+from .TokenCount import HuggingFaceDetails
 from .history import History, GenericMessage, MessageRole, Message
 from .logging_config import LoggerManager
 from .model_settings import ModelSettings
@@ -86,7 +87,7 @@ class GenericAgent(ABC):
 
     def __init__(self, name: str, model_name: str, model_settings: ModelSettings, system_prompt: str | None = None, endpoint: str | None = None,
                  api_token: str = "", headers=None, runtime_config: Dict | None = None, history: History | None = None, task_runtime_config: Dict | None = None,
-                 thinking_tokens: tuple[str, str] | None = None) -> None:
+                 thinking_tokens: tuple[str, str] | None = None, hugging_face_repo_name: str | None = None, hugging_face_token: str | None = None) -> None:
         if model_settings is None:
             raise ValueError("model_settings cannot be None. Please provide a valid ModelSettings instance.")
 
@@ -107,8 +108,14 @@ class GenericAgent(ABC):
         self.task_runtime_config = task_runtime_config if task_runtime_config is not None else {}
         self._tags: List[str] = []
         self.thinking_tokens: tuple[str, str] | None = thinking_tokens
+        self.hugging_face_repo_name: str | None = hugging_face_repo_name
+        self.hugging_face_token: str | None = hugging_face_token
 
+        # Configuring History to use the correct model name and HF repo specific to this agent (These are not mandatory but if provided will allow to get an accurate token count)
         self.history: History = history if history is not None else History()
+        self.history.llm_model_name = model_name
+        self.history.hugging_face_details = HuggingFaceDetails(hugging_face_repo_name, hugging_face_token)
+
         if self.system_prompt is not None and history is None:
             self.history.add_message(Message(MessageRole.SYSTEM, system_prompt))
 

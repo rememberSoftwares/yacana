@@ -13,7 +13,7 @@ from .generic_agent import GenericAgent
 from .model_settings import OpenAiModelSettings
 from .utils import Dotdict
 from .exceptions import MaxToolErrorIter, ToolError, IllogicalConfiguration, TaskCompletionRefusal, UnknownResponseFromLLM
-from .history import OpenAIToolCallingMessage, HistorySlot, GenericMessage, MessageRole, ToolCallFromLLM, OpenAIFunctionCallingMessage, OpenAITextMessage, History, OllamaUserMessage, OpenAIStructuredOutputMessage, OpenAIUserMessage
+from .history import OpenAIToolCallingMessage, HistorySlot, GenericMessage, MessageRole, ToolCallFromLLM, OpenAIFunctionCallingMessage, OpenAITextMessage, History, OpenAIStructuredOutputMessage, OpenAIUserMessage
 from .tool import Tool
 from .constants import PROMPT_TAG, RESPONSE_TAG
 
@@ -59,13 +59,13 @@ class OpenAiAgent(GenericAgent):
     """
 
     def __init__(self, name: str, model_name: str, system_prompt: str | None = None, endpoint: str | None = None,
-                 api_token: str = "cant_be_empty", headers=None, model_settings: OpenAiModelSettings = None, runtime_config: Dict | None = None, thinking_tokens: tuple[str, str] | None = None, **kwargs) -> None:
+                 api_token: str = "cant_be_empty", headers=None, model_settings: OpenAiModelSettings = None, runtime_config: Dict | None = None, thinking_tokens: tuple[str, str] | None = None, hugging_face_repo_name: str | None = None, hugging_face_token: str | None = None, **kwargs) -> None:
         if api_token == "":
             logging.warning(f"Empty api_token provided. This will most likely clash with the underlying inference library. You should probably set this to any non empty string.")
         model_settings = OpenAiModelSettings() if model_settings is None else model_settings
         if not isinstance(model_settings, OpenAiModelSettings):
             raise IllogicalConfiguration("model_settings must be an instance of OpenAiModelSettings.")
-        super().__init__(name, model_name, model_settings, system_prompt=system_prompt, endpoint=endpoint, api_token=api_token, headers=headers, runtime_config=runtime_config, history=kwargs.get("history", None), task_runtime_config=kwargs.get("task_runtime_config", None), thinking_tokens=thinking_tokens)
+        super().__init__(name, model_name, model_settings, system_prompt=system_prompt, endpoint=endpoint, api_token=api_token, headers=headers, runtime_config=runtime_config, history=kwargs.get("history", None), task_runtime_config=kwargs.get("task_runtime_config", None), thinking_tokens=thinking_tokens, hugging_face_repo_name=hugging_face_repo_name, hugging_face_token=hugging_face_token)
         if self.api_token == "":
             logging.warning("OpenAI requires an API token to be set.")
 

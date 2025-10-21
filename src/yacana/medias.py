@@ -87,7 +87,7 @@ class Media:
     @staticmethod
     def path_to_base64(path: str) -> str:
         """
-        Convert the content of a file or URL to a base64-encoded string.
+        Convert the target's content of a file OR URL to a base64-encoded string.
 
         Parameters
         ----------
