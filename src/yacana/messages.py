@@ -957,10 +957,11 @@ class OllamaUserMessage(GenericMessage):
         final_medias = []
         for media in self.medias:
             final_medias.append(Media.path_to_base64(media))
+        has_media: bool = False if self.medias is None or len(self.medias) == 0 else True
         return {
             "role": self.role.value,
             "content": self.content,
-            **({"images": final_medias} if self.medias is not None else {}),
+            **({"images": final_medias} if has_media else {}),
         }
 
     def _structured_output_to_dict(self) -> Dict:
