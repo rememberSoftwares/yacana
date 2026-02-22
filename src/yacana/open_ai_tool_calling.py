@@ -58,9 +58,12 @@ class OpenAiToolCaller(BaseToolCaller):
     def propose_tools(self, task: str, tools: List[Tool], json_output: bool, structured_output: Type[BaseModel] | None, medias: List[str] | None, streaming_callback: Callable | None = None, task_runtime_config: Dict | None = None, tags: List[str] | None = None):
         error_tracking = ToolErrorsTracking(tools)
 
+        retry = False
+
         while True:
+            if not retry:
+                self.agent._chat(self.agent.history, task, medias=medias, json_output=json_output, structured_output=structured_output, tools=tools)
             retry = False
-            self.agent._chat(self.agent.history, task, medias=medias, json_output=json_output, structured_output=structured_output, tools=tools)
             if isinstance(self.agent.history.get_last_message(), OpenAIFunctionCallingMessage):
                 for tool_call in self.agent.history.get_last_message().tool_calls:
                     tool = next((tool for tool in tools if tool.tool_name == tool_call.name), None)
@@ -91,8 +94,13 @@ class OpenAiToolCaller(BaseToolCaller):
                 if retry:
                     continue
                 logging.info(f"[PROMPT][To: {self.agent.name}]: Retrying with original task and tools answer: '{task}'")
-                self.agent._chat(self.agent.history, None, medias=medias, json_output=json_output, structured_output=structured_output, streaming_callback=streaming_callback)
-                break
+                self.agent._chat(self.agent.history, None, medias=medias, json_output=json_output, structured_output=structured_output, streaming_callback=streaming_callback, tools=tools)
+                # If the LLM doesn't like the tool's output it can answer with a new function call. If it does, we use the retry mechanism to restart these steps.
+                if isinstance(self.agent.history.get_last_message(), OpenAIFunctionCallingMessage):
+                    retry = True
+                    continue
+                else:
+                    break
 
     def _call_openai_tool(self, tool: Tool, function_args: Dict) -> (str, Status):
         """
