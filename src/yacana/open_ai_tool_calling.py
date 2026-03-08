@@ -32,11 +32,14 @@ class ToolErrorsTracking:
     """
 
     def __init__(self, tools: List[Tool]):
+        # Map of tool name to its error count
         self.session_status = {}
+        # We initialize the error count for each tool based on the max errors defined in the tool constructor
         for tool in tools:
             self.session_status[tool.tool_name] = ErrorCount(call_error=tool.max_call_error, custom_error=tool.max_custom_error)
 
     def log_new_error(self, tool: Tool, error_type: Status):
+        """Logs a new error for a given tool and error type by decrementing associated counter until it reaches 0."""
         if error_type == Status.CALL_ERROR:
             self.session_status[tool.tool_name].call_error -= 1
         elif error_type == Status.CUSTOM_ERROR:
@@ -57,7 +60,6 @@ class OpenAiToolCaller(BaseToolCaller):
 
     def propose_tools(self, task: str, tools: List[Tool], json_output: bool, structured_output: Type[BaseModel] | None, medias: List[str] | None, streaming_callback: Callable | None = None, task_runtime_config: Dict | None = None, tags: List[str] | None = None):
         error_tracking = ToolErrorsTracking(tools)
-
         retry = False
 
         while True:
@@ -88,7 +90,7 @@ class OpenAiToolCaller(BaseToolCaller):
 
                     if status in (Status.CUSTOM_ERROR, Status.CALL_ERROR):
                         error_tracking.log_new_error(tool, status)
-                        task = "Retry tool calling using newly acquired knowledge. Follow openai's toolcaling JSON."
+                        task = "Retry tool calling using newly acquired knowledge. Follow Openai's tool calling JSON."
                         retry = True
 
                 if retry:
