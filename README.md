@@ -420,6 +420,9 @@ To look at more complete examples try the [examples folder](https://github.com/r
 
 ## Releases
 
+**0.4.2**  
++ Fix Mistral compatibility in OpenAI mode.
+
 **0.4.1**  
 + Added support for evaluation with Langfuse.  
 
