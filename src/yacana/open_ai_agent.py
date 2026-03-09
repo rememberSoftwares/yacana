@@ -278,7 +278,7 @@ class OpenAiAgent(GenericAgent):
                 # Extracting all json schema from tools, so it can be passed to the OpenAI API
                 all_function_calling_json = [tool._openai_function_schema for tool in tools] if tools else []
 
-                tool_choice_option = self._find_right_tool_choice_option(tools)
+                tool_choice_option = "auto" if task is None else self._find_right_tool_choice_option(tools)
                 response_format = self._get_expected_output_format(structured_output, json_output)
 
                 params = {
