@@ -420,8 +420,10 @@ To look at more complete examples try the [examples folder](https://github.com/r
 
 ## Releases
 
-**0.4.2**  
-+ Fix Mistral compatibility in OpenAI mode.
+**0.4.2 | 0.4.3**  
++ Fixed Mistral compatibility in OpenAI mode.
++ Fixed tool looping with non-optional tools in OpenAI mode.
++ Fixed tool arguments changed to strings when setting them as Optional.
 
 **0.4.1**  
 + Added support for evaluation with Langfuse.  
