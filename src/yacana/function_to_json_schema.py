@@ -5,7 +5,9 @@ import inspect
 from .exceptions import IllogicalConfiguration
 
 
-def function_to_json_with_pydantic(tool_name: str, description: str, func: Callable) -> dict:
+def function_to_json_with_pydantic(
+    tool_name: str, description: str, func: Callable
+) -> dict:
     """Convert a Python function to a JSON description with an exact match format."""
 
     # We keep this for later use, but we don't need it for now as it's not the function name that is used but the tool name given in the Tool constructor.
@@ -13,7 +15,9 @@ def function_to_json_with_pydantic(tool_name: str, description: str, func: Calla
 
     # Extract parameters and annotations
     signature = inspect.signature(func)
-    annotations = {name: param.annotation for name, param in signature.parameters.items()}
+    annotations = {
+        name: param.annotation for name, param in signature.parameters.items()
+    }
 
     # Checking annotations existence
     for name, annotation in annotations.items():
@@ -32,11 +36,9 @@ def function_to_json_with_pydantic(tool_name: str, description: str, func: Calla
     PydanticModel = create_model(
         func_name.capitalize() + "Params",
         **{
-            name: (annotation, ...)
-            if name in required_params
-            else (annotation, None)
+            name: (annotation, ...) if name in required_params else (annotation, None)
             for name, annotation in annotations.items()
-        }
+        },
     )
 
     # Extract properties and required fields from Pydantic model schema
@@ -54,6 +56,11 @@ def function_to_json_with_pydantic(tool_name: str, description: str, func: Calla
             "boolean": "boolean",
             "number": "number",
         }
+        if "anyOf" in prop:
+            for variant in prop["anyOf"]:
+                if variant.get("type") != "null":
+                    return map_pydantic_to_json_schema(variant)
+            return {"type": "string"}
         prop_type = prop.get("type", "string")
         mapped_type = json_type_mapping.get(prop_type, "string")
         result = {"type": mapped_type}
@@ -77,16 +84,18 @@ def function_to_json_with_pydantic(tool_name: str, description: str, func: Calla
                 "type": "object",
                 "properties": transformed_properties,
                 "required": required,
-                "additionalProperties": False
+                "additionalProperties": False,
             },
-            "strict": True
-        }
+            "strict": True,
+        },
     }
 
     return func_json
 
 
-def input_schema_to_function_json(tool_name: str, description: str, input_schema: dict) -> dict:
+def input_schema_to_function_json(
+    tool_name: str, description: str, input_schema: dict
+) -> dict:
     """
     Convert a JSON input schema to the structured function calling format.
 
@@ -124,8 +133,7 @@ def input_schema_to_function_json(tool_name: str, description: str, input_schema
 
     # Map and transform properties
     transformed_properties = {
-        name: map_json_schema_type(prop)
-        for name, prop in properties.items()
+        name: map_json_schema_type(prop) for name, prop in properties.items()
     }
 
     return {
@@ -137,8 +145,8 @@ def input_schema_to_function_json(tool_name: str, description: str, input_schema
                 "type": "object",
                 "properties": transformed_properties,
                 "required": required,
-                "additionalProperties": False
+                "additionalProperties": False,
             },
-            "strict": True
-        }
+            "strict": True,
+        },
     }
