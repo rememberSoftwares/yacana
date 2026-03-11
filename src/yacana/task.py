@@ -86,6 +86,9 @@ class Task:
         Optional runtime configuration for the task.
     tags : List[str] | None
         Optional list of tags that will be added to all message(s) corresponding to this task.
+    max_llm_calls: int
+        Number of call that can be sent to the LLM inside the Task. Set to -1 for infinite. Defaults to 500.
+        This is to prevent infinite loops.
 
     Raises
     ------
@@ -95,7 +98,7 @@ class Task:
     """
 
     def __init__(self, prompt: str, agent: GenericAgent, json_output=False, structured_output: Type[BaseModel] | None = None, tools: List[Tool] = None,
-                 medias: List[str] | None = None, llm_stops_by_itself: bool = False, use_self_reflection=False, forget=False, streaming_callback: Callable | None = None, runtime_config: Dict | None = None, tags: List[str] = None) -> None:
+                 medias: List[str] | None = None, llm_stops_by_itself: bool = False, use_self_reflection=False, forget=False, streaming_callback: Callable | None = None, runtime_config: Dict | None = None, tags: List[str] = None, max_llm_calls: int = 500) -> None:
         self.prompt: str = prompt
         self.agent: GenericAgent = agent
         self.json_output: bool = json_output
@@ -109,6 +112,7 @@ class Task:
         self.streaming_callback: Callable | None = streaming_callback
         self.runtime_config = runtime_config if runtime_config is not None else {}
         self.tags: List[str] = tags if tags is not None else []
+        self.max_llm_calls: int = max_llm_calls
 
         if len(self.tools) > 0 and self.structured_output is not None:
             raise IllogicalConfiguration("You can't have tools and structured_output at the same time. The tool output will be considered the LLM output hence not using the structured output.")
@@ -209,7 +213,7 @@ class Task:
             If tool errors exceed the limit.
         """
         self._save_history_state()
-        answer: GenericMessage = self.agent._interact(self.prompt, self.tools, self.json_output, self.structured_output, self.medias, self.streaming_callback, self.runtime_config, self.tags)
+        answer: GenericMessage = self.agent._interact(self.prompt, self.tools, self.json_output, self.structured_output, self.medias, self.streaming_callback, self.runtime_config, self.tags, self.max_llm_calls)
         self._restore_history_state()
         return answer
 

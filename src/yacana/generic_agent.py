@@ -12,7 +12,7 @@ from .messages import GenericMessage, MessageRole, Message
 from .model_settings import ModelSettings
 from .open_ai_tool_calling import OpenAiToolCaller
 from .tool import Tool, ToolType
-from .exceptions import IllogicalConfiguration
+from .exceptions import IllogicalConfiguration, MaxLLMCalls
 
 logger = logging.getLogger(__name__)
 
@@ -122,6 +122,7 @@ class GenericAgent(ABC):
         self.thinking_tokens: tuple[str, str] | None = thinking_tokens
         self.structured_thinking: bool = structured_thinking
         self.langfuse_connector: LangfuseConnector | None = langfuse_connector
+        self._max_llm_calls: int = 500
 
         self.tool_caller: YacanaToolCaller | OpenAiToolCaller | None = None
 
@@ -142,6 +143,18 @@ class GenericAgent(ABC):
         """
         super().__init_subclass__(**kwargs)
         GenericAgent._registry[cls.__name__] = cls
+
+    @property
+    def _max_llm_calls(self):
+        """Getter pour _ma_variable."""
+        return self._max_llm_calls
+
+    @_max_llm_calls.setter
+    def _max_llm_calls(self, value):
+        """-1 for each LLM call. When down to zero we raise to avoid infinite loops."""
+        if value < 0 and self._max_llm_calls != -1:
+            raise MaxLLMCalls(f"Reached maximum LLM call count ({self._max_llm_calls})")
+        self._max_llm_calls = value
 
     def _chat(self, history: History, task: str | None, medias: List[str] | None = None, json_output=False, structured_output: Type[T] | None = None, save_to_history: bool = True, tools: List[Tool] | None = None, streaming_callback: Callable | None = None) -> GenericMessage:
         raise NotImplemented(f"This method must be subclassed by the child class. It allows to interact with the LLM server using the correct client library.")
@@ -249,7 +262,7 @@ class GenericAgent(ABC):
         return cls(**members)
 
     @abstractmethod
-    def _interact(self, task: str, tools: List[Tool], json_output: bool, structured_output: Type[BaseModel] | None, medias: List[str] | None, streaming_callback: Callable | None, task_runtime_config: Dict | None, tags: List[str] | None) -> GenericMessage:
+    def _interact(self, task: str, tools: List[Tool], json_output: bool, structured_output: Type[BaseModel] | None, medias: List[str] | None, streaming_callback: Callable | None, task_runtime_config: Dict | None, tags: List[str] | None, max_llm_calls: int) -> GenericMessage:
         """
         Abstract method to start the inference using given parameters.
 
@@ -271,6 +284,9 @@ class GenericAgent(ABC):
             Optional runtime configuration for the task.
         tags : List[str] | None
             Optional list of tags.
+        max_llm_calls : int
+            Number of calls that can be sent to the LLM inside the Task. Set to -1 for infinite. Defaults to 500.
+            This is to prevent infinite loops.
 
         Returns
         -------

@@ -110,6 +110,17 @@ class UnknownResponseFromLLM(Exception):
         super().__init__(self.message)
 
 
+class MaxLLMCalls(Exception):
+    """
+    Exception raised when more than 500 (default) call to the LLM we made in one Task. This has been set to prevent
+    any LLM infinite loop issues.
+    """
+
+    def __init__(self, message):
+        self.message = message
+        super().__init__(self.message)
+
+
 class McpBadToolConfig(Exception):
     """
     Exception raised when the input shema from the MCP server is not valid.

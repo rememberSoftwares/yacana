@@ -86,7 +86,7 @@ class OpenAiAgent(GenericAgent):
         if self.api_token == "":
             logging.warning("OpenAI requires the API token to be set to any non empty value. Empty quotes are forbidden because it can create misleading errors in some OpenAi compatible endpoints.")
 
-    def _interact(self, task: str, tools: List[Tool], json_output: bool, structured_output: Type[BaseModel] | None, medias: List[str] | None, streaming_callback: Callable | None = None, task_runtime_config: Dict | None = None, tags: List[str] | None = None) -> GenericMessage:
+    def _interact(self, task: str, tools: List[Tool], json_output: bool, structured_output: Type[BaseModel] | None, medias: List[str] | None, streaming_callback: Callable | None = None, task_runtime_config: Dict | None = None, tags: List[str] | None = None, max_llm_calls: int = 500) -> GenericMessage:
         """
         Main interaction method that handles task execution with optional tool usage.
 
@@ -108,6 +108,10 @@ class OpenAiAgent(GenericAgent):
             Optional runtime configuration for the task. Defaults to None.
         tags : List[str] | None, optional
             Optional list of tags. Defaults to None.
+        max_llm_calls : int
+            Number of call that can be sent to the LLM inside the Task. Set to -1 for infinite. Defaults to 500.
+            This is to prevent infinite loops.
+
         Returns
         -------
         GenericMessage
@@ -121,6 +125,7 @@ class OpenAiAgent(GenericAgent):
         self._set_correct_tool_caller(tools)
         self._tags = tags if tags is not None else []
         self.task_runtime_config = task_runtime_config if task_runtime_config is not None else {}
+        self._max_llm_calls = max_llm_calls
 
         if len(tools) == 0:
             self._chat(self.history, task, medias=medias, json_output=json_output, structured_output=structured_output, streaming_callback=streaming_callback)
@@ -272,6 +277,7 @@ class OpenAiAgent(GenericAgent):
 
         with observation_ctx as root_span:
             with propagate_ctx:
+                self._max_llm_calls -= 1
                 if task:
                     logging.info(f"[PROMPT][To: {self.name}]: {task}")
                     question_slot = history.add_message(OpenAIUserMessage(MessageRole.USER, task, tags=self._tags + [PROMPT_TAG], medias=medias, structured_output=structured_output))
