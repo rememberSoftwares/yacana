@@ -2,7 +2,7 @@ import json
 import logging
 import re
 from abc import ABC, abstractmethod
-from typing import List, Type, T, Callable, Dict
+from typing import List, Type, T, Callable, Dict, Any
 from pydantic import BaseModel
 
 from .langfuse_connector import LangfuseConnector
@@ -181,6 +181,31 @@ class GenericAgent(ABC):
         pattern = fr'{self.thinking_tokens[0]}.*?{self.thinking_tokens[1]}'
         return re.sub(pattern, '', message, flags=re.DOTALL)
 
+    def _export(self, file_path: str | None = False, strip_api_token=False, strip_headers=False) -> None | str:
+        members_as_dict = self.__dict__.copy()
+        members_as_dict = {k: v for k, v in members_as_dict.items() if not k.startswith('_')}
+        members_as_dict["type"] = self.__class__.__name__
+        members_as_dict["model_settings"] = self.model_settings._export()
+        members_as_dict["history"] = self.history._export()
+
+        if self.api_token is not None and self.api_token != "" and strip_api_token is False:
+            logging.warning(
+                "Saving the agent state will leak the API key to the destination file. Consider using @strip_api_token=True to remove it.")
+        if self.headers is not None and bool(self.headers) is not False and strip_headers is False:
+            logging.warning(
+                "Saving the agent state will leak headers content to the destination file. Consider using @strip_headers=True to remove it.")
+        if strip_api_token:
+            members_as_dict["api_token"] = None
+        if strip_headers:
+            members_as_dict["headers"] = {}
+        if file_path is not None:
+            with open(file_path, 'w') as file:
+                json.dump(members_as_dict, file, indent=4)
+            logging.info("Agent state successfully exported to %s", file_path)
+            return None
+        else:
+            return json.dumps(members_as_dict)
+
     def export_to_file(self, file_path: str, strip_api_token=False, strip_headers=False) -> None:
         """
         Exports the current agent configuration to a file.
@@ -202,27 +227,30 @@ class GenericAgent(ABC):
         strip_headers : bool, optional
             If True, removes headers from the exported data. Defaults to False.
         """
-        members_as_dict = self.__dict__.copy()
-        members_as_dict = {k: v for k, v in members_as_dict.items() if not k.startswith('_')}
-        members_as_dict["type"] = self.__class__.__name__
-        members_as_dict["model_settings"] = self.model_settings._export()
-        members_as_dict["history"] = self.history._export()
+        self._export(file_path=file_path, strip_api_token=strip_api_token, strip_headers=strip_headers)
 
-        if self.api_token is not None and self.api_token != "" and strip_api_token is False:
-            logging.warning("Saving the agent state will leak the API key to the destination file. Consider using @strip_api_token=True to remove it.")
-        if self.headers is not None and bool(self.headers) is not False and strip_headers is False:
-            logging.warning("Saving the agent state will leak headers content to the destination file. Consider using @strip_headers=True to remove it.")
-        if strip_api_token:
-            members_as_dict["api_token"] = None
-        if strip_headers:
-            members_as_dict["headers"] = {}
+    def export_to_raw(self, strip_api_token=False, strip_headers=False) -> str:
+        """
+        Exports the current agent configuration as a JSON loadable string.
 
-        with open(file_path, 'w') as file:
-            json.dump(members_as_dict, file, indent=4)
-        logging.info("Agent state successfully exported to %s", file_path)
+        This contains all the agents data and history. This means that you can use the
+        import_to_raw() method to load this agent back again and continue where you left off.
+
+        Warning
+        -------
+        This will leak API keys and headers unless strip_api_token and strip_headers are set to True.
+
+        Parameters
+        ----------
+        strip_api_token : bool, optional
+            If True, removes the API token from the exported data. Defaults to False.
+        strip_headers : bool, optional
+            If True, removes headers from the exported data. Defaults to False.
+        """
+        return self._export(file_path=None, strip_api_token=strip_api_token, strip_headers=strip_headers)
 
     @classmethod
-    def import_from_file(cls, file_path: str) -> 'GenericAgent':
+    def _import(cls, agent_history: str | None = None, file_path: str | None = None) -> 'GenericAgent':
         """
         Loads the state previously exported from the export_to_file method.
 
@@ -239,14 +267,58 @@ class GenericAgent(ABC):
         GenericAgent
             A newly created Agent that is a copy from disk of a previously exported agent.
         """
-        with open(file_path, 'r') as file:
-            members: Dict = json.load(file)
+        if agent_history is not None:
+            if not isinstance(agent_history, str):
+                raise TypeError("Agent history should be a json STRING coming from `export_raw()`.")
+            members: Dict = json.loads(agent_history)
+        elif file_path is not None:
+            with open(file_path, 'r') as file:
+                members: Dict = json.load(file)
+        else:
+            raise ValueError(
+                "Import should have received either a raw json of history messages or a file path containing history messages")
 
         cls_name = members.pop("type")
         members["model_settings"] = ModelSettings.create_instance(members["model_settings"])
         members["history"] = History.create_instance(members["history"])
         cls = GenericAgent._registry.get(cls_name)
         return cls(**members)
+
+    @classmethod
+    def import_from_file(cls, file_path: str) -> 'GenericAgent':
+        """
+        Loads the state previously exported from the export_to_file method.
+        This will restore an Agent to the same state as it was when exported.
+
+        Parameters
+        ----------
+        file_path : str
+            The path to the file from which to load the Agent.
+
+        Returns
+        -------
+        GenericAgent
+            A newly created Agent that is a copy from disk of a previously exported agent.
+        """
+        return cls._import(agent_history=None, file_path=file_path)
+
+    @classmethod
+    def import_from_raw(cls, agent_history: str) -> 'GenericAgent':
+        """
+        Loads the state previously exported from the export_to_raw() method.
+        This will restore an Agent to the same state as it was when exported.
+
+        Parameters
+        ----------
+        agent_history : str
+            JSON loadable string containing the agent state (including history)
+
+        Returns
+        -------
+        GenericAgent
+            A newly created Agent that is a copy from disk of a previously exported agent.
+        """
+        return cls._import(agent_history=agent_history, file_path=None)
 
     @abstractmethod
     def _interact(self, task: str, tools: List[Tool], json_output: bool, structured_output: Type[BaseModel] | None, medias: List[str] | None, streaming_callback: Callable | None, task_runtime_config: Dict | None, tags: List[str] | None) -> GenericMessage:
