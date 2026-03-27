@@ -187,6 +187,7 @@ class GenericAgent(ABC):
         members_as_dict["type"] = self.__class__.__name__
         members_as_dict["model_settings"] = self.model_settings._export()
         members_as_dict["history"] = self.history._export()
+        members_as_dict["tool_caller"] = None
 
         if self.api_token is not None and self.api_token != "" and strip_api_token is False:
             logging.warning(
@@ -250,7 +251,7 @@ class GenericAgent(ABC):
         return self._export(file_path=None, strip_api_token=strip_api_token, strip_headers=strip_headers)
 
     @classmethod
-    def _import(cls, agent_history: str | None = None, file_path: str | None = None) -> 'GenericAgent':
+    def _import(cls, agent_state: str | None = None, file_path: str | None = None) -> 'GenericAgent':
         """
         Loads the state previously exported from the export_to_file method.
 
@@ -267,10 +268,10 @@ class GenericAgent(ABC):
         GenericAgent
             A newly created Agent that is a copy from disk of a previously exported agent.
         """
-        if agent_history is not None:
-            if not isinstance(agent_history, str):
+        if agent_state is not None:
+            if not isinstance(agent_state, str):
                 raise TypeError("Agent history should be a json STRING coming from `export_raw()`.")
-            members: Dict = json.loads(agent_history)
+            members: Dict = json.loads(agent_state)
         elif file_path is not None:
             with open(file_path, 'r') as file:
                 members: Dict = json.load(file)
@@ -300,7 +301,7 @@ class GenericAgent(ABC):
         GenericAgent
             A newly created Agent that is a copy from disk of a previously exported agent.
         """
-        return cls._import(agent_history=None, file_path=file_path)
+        return cls._import(agent_state=None, file_path=file_path)
 
     @classmethod
     def import_from_raw(cls, agent_history: str) -> 'GenericAgent':
@@ -318,7 +319,7 @@ class GenericAgent(ABC):
         GenericAgent
             A newly created Agent that is a copy from disk of a previously exported agent.
         """
-        return cls._import(agent_history=agent_history, file_path=None)
+        return cls._import(agent_state=agent_history, file_path=None)
 
     @abstractmethod
     def _interact(self, task: str, tools: List[Tool], json_output: bool, structured_output: Type[BaseModel] | None, medias: List[str] | None, streaming_callback: Callable | None, task_runtime_config: Dict | None, tags: List[str] | None) -> GenericMessage:

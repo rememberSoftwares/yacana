@@ -242,6 +242,10 @@ class GenericMessage(ABC):
         members["role"] = self.role.value
         if members["structured_output"] is not None:
             members["structured_output"] = self._structured_output_to_dict()
+        if members["_tool_calls"] is not None:
+            members["tool_calls"] = [tool_call._export() for tool_call in self.tool_calls]
+        else:
+            members["tool_calls"] = []
 
         for key, value in members.items():
             if key.startswith("_"):
@@ -267,6 +271,12 @@ class GenericMessage(ABC):
         """
         #  Converting the role string to its matching enum
         members["role"] = next((role for role in MessageRole if role.value == members["role"]), None)
+        if "tool_calls" in members:
+            members["tool_calls_tmp"] = [ToolCallFromLLM(tool_call["id"], tool_call["function"]["name"], tool_call["function"]["arguments"]) for tool_call in members["tool_calls"]]
+            members["tool_calls"] = members["tool_calls_tmp"]
+            del members["tool_calls_tmp"]
+        else:
+            members["tool_calls"] = []
 
         cls_name = members.pop("type")
         cls = GenericMessage._registry.get(cls_name)
